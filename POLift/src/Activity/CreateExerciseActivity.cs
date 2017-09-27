@@ -14,7 +14,6 @@ namespace POLift
         EditText ExerciseNameText;
         EditText RepRangeMaxText;
         Button CreateExerciseButton;
-        TextView ResultTextView;
 
         List<Exercise> all_exercises = new List<Exercise>();
 
@@ -28,7 +27,6 @@ namespace POLift
             ExerciseNameText = FindViewById<EditText>(Resource.Id.ExerciseNameText);
             RepRangeMaxText = FindViewById<EditText>(Resource.Id.RepRangeMaxText);
             CreateExerciseButton = FindViewById<Button>(Resource.Id.CreateExerciseButton);
-            ResultTextView = FindViewById<TextView>(Resource.Id.ResultTextView);
 
             CreateExerciseButton.Click += CreateExerciseButton_Click;
         }
@@ -39,12 +37,8 @@ namespace POLift
             {
                 Exercise ex = new Exercise(ExerciseNameText.Text, Int32.Parse(RepRangeMaxText.Text));
                 all_exercises.Add(ex);
-                ResultTextView.Text = ex.ToXml();
 
-                Intent result_intent = new Intent();
-                result_intent.PutExtra("exercise", ex.ToXml());
-                SetResult(Result.Ok, result_intent);
-                Finish();
+                ReturnExercise(ex);
             }
             catch (ArgumentException ae)
             {
@@ -53,6 +47,14 @@ namespace POLift
                 dialog.SetNegativeButton("Ok", delegate { });
                 dialog.Show();
             }
+        }
+
+        void ReturnExercise(Exercise exercise)
+        {
+            Intent result_intent = new Intent();
+            result_intent.PutExtra("exercise", exercise.ToXml());
+            SetResult(Result.Ok, result_intent);
+            Finish();
         }
 
     }

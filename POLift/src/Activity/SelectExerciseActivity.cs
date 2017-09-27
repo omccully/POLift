@@ -16,14 +16,13 @@ using System.Xml;
 namespace POLift
 {
     [Activity(Label = "Select Exercise")]
-    public class ExerciseSelectActivity : ListActivity
+    public class SelectExerciseActivity : ListActivity
     {
         List<Exercise> ExerciseList;
         ExerciseAdapter exercise_adapter;
 
         static int CreateExerciseRequestCode = 3;
 
-        //ArrayAdapter<string> ExerciseListAdapter;
         Button CreateExerciseLink;
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -31,23 +30,12 @@ namespace POLift
             base.OnCreate(savedInstanceState);
 
             // Create your application here
-            SetContentView(Resource.Layout.ExerciseSelect);
-
-            /*List<string> list = new List<string>() { "one", "two", "three" };
-            ExerciseListAdapter = new ArrayAdapter<string>(this,
-                Android.Resource.Layout.SimpleListItem1,
-                list);*/
-
-            //ExerciseListAdapter = new ArrayAdapter<Exercise>(this,
-            //   Android.Resource.Layout.SimpleListItem1,
-            //   ExerciseList);
+            SetContentView(Resource.Layout.SelectExercise);
 
             ExerciseList = GetDefaultExercises();
 
-            //this.ListAdapter = ExerciseListAdapter;
             exercise_adapter = new ExerciseAdapter(this, ExerciseList);
             this.ListAdapter = exercise_adapter;
-
 
             ListView.ItemClick += ListView_ItemClick;
 
@@ -91,6 +79,7 @@ namespace POLift
             {
                 Exercise new_exercise = Exercise.FromXml(data.GetStringExtra("exercise"));
                 exercise_adapter.Add(new_exercise);
+                ReturnExercise(new_exercise);
             }
         }
 
@@ -98,6 +87,11 @@ namespace POLift
         {
             Exercise exercise = exercise_adapter[e.Position];
 
+            ReturnExercise(exercise);
+        }
+
+        void ReturnExercise(Exercise exercise)
+        {
             Intent result_intent = new Intent();
             result_intent.PutExtra("exercise", exercise.ToXml());
 

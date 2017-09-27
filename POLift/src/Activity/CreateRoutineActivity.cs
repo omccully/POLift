@@ -19,7 +19,7 @@ namespace POLift
         ListView ExercisesListView;
         Button AddExerciseButton;
         Button CreateRoutineButton;
-       // ArrayAdapter<string> array_adapter;
+
         ExerciseAdapter exercise_adapter;
         
         List<Exercise> routine_exercises;
@@ -41,19 +41,22 @@ namespace POLift
 
             routine_exercises = new List<Exercise>();
             exercise_adapter = new ExerciseAdapter(this, routine_exercises);
-            // default_items
 
-            //array_adapter = new ArrayAdapter<string>(this,
-            //    Android.Resource.Layout.SimpleListItem1, routine_exercises);
-            ExercisesListView.Adapter = exercise_adapter; //array_adapter;
+            ExercisesListView.Adapter = exercise_adapter; 
 
             CreateRoutineButton.Click += CreateRoutineButton_Click;
         }
 
         private void CreateRoutineButton_Click(object sender, EventArgs e)
         {
-            Intent result_intent = new Intent();
             Routine routine = new Routine(RoutineTitleText.Text, routine_exercises);
+
+            ReturnRoutine(routine);
+        }
+
+        void ReturnRoutine(Routine routine)
+        {
+            Intent result_intent = new Intent();
 
             result_intent.PutExtra("routine", routine.ToXml());
 
@@ -64,7 +67,7 @@ namespace POLift
 
         protected void AddExerciseButton_Click(object sender, EventArgs e)
         {
-            var intent = new Intent(this, typeof(ExerciseSelectActivity));
+            var intent = new Intent(this, typeof(SelectExerciseActivity));
             StartActivityForResult(intent, SelectExerciseRequestCode);
         }
 
@@ -75,8 +78,7 @@ namespace POLift
             if (resultCode == Result.Ok && requestCode == SelectExerciseRequestCode)
             {
                 Exercise selected_exercise = Exercise.FromXml(data.GetStringExtra("exercise"));
-                // string 
-                //array_adapter.Add();
+
                 exercise_adapter.Add(selected_exercise);
                 routine_exercises.Add(selected_exercise);
             }
