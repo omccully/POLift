@@ -1,0 +1,27 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.16
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POLift", "POLift\POLift.csproj", "{671A4AC8-DCE1-48B7-9624-7FEEF2B149CB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{671A4AC8-DCE1-48B7-9624-7FEEF2B149CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{671A4AC8-DCE1-48B7-9624-7FEEF2B149CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{671A4AC8-DCE1-48B7-9624-7FEEF2B149CB}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{671A4AC8-DCE1-48B7-9624-7FEEF2B149CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{671A4AC8-DCE1-48B7-9624-7FEEF2B149CB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{671A4AC8-DCE1-48B7-9624-7FEEF2B149CB}.Release|Any CPU.Deploy.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B01A7C78-D25A-46C7-B7DA-E96750172E6F}
+	EndGlobalSection
+EndGlobal
