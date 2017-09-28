@@ -12,6 +12,8 @@ using Android.Widget;
 
 namespace POLift
 {
+    using Model;
+
     class ExerciseAdapter : BaseAdapter<Exercise>
     {
         List<Exercise> exercises;

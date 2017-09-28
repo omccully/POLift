@@ -12,6 +12,9 @@ using Android.Widget;
 
 namespace POLift
 {
+    using Model;
+    using Service;
+
     [Activity(Label = "Create Routine")]
     class CreateRoutineActivity : Activity
     {
@@ -50,7 +53,7 @@ namespace POLift
         private void CreateRoutineButton_Click(object sender, EventArgs e)
         {
             Routine routine = new Routine(RoutineTitleText.Text, routine_exercises);
-
+            POLDatabase.Insert(routine);
             ReturnRoutine(routine);
         }
 
@@ -58,7 +61,9 @@ namespace POLift
         {
             Intent result_intent = new Intent();
 
-            result_intent.PutExtra("routine", routine.ToXml());
+            //result_intent.PutExtra("routine", routine.ToXml());
+
+            result_intent.PutExtra("routine_id", routine.ID);
 
             SetResult(Result.Ok, result_intent);
 
@@ -77,7 +82,11 @@ namespace POLift
 
             if (resultCode == Result.Ok && requestCode == SelectExerciseRequestCode)
             {
-                Exercise selected_exercise = Exercise.FromXml(data.GetStringExtra("exercise"));
+                //Exercise selected_exercise = Exercise.FromXml(data.GetStringExtra("exercise"));
+
+                int id = data.GetIntExtra("exercise_id", -1);
+                if (id == -1) return;
+                Exercise selected_exercise = POLDatabase.ReadByID<Exercise>(id);
 
                 exercise_adapter.Add(selected_exercise);
                 routine_exercises.Add(selected_exercise);

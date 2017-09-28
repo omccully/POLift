@@ -11,13 +11,80 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 
-namespace POLift
-{
-    class Routine
-    {
-        public readonly string Name;
+using SQLite;
 
-        Exercise[] _exercises;
+namespace POLift.Model
+{
+    using Service;
+
+    class Routine : IIdentifiable
+    {
+        [PrimaryKey, AutoIncrement]
+        public int ID { get; set; }
+
+        string _Name;
+        public string Name
+        {
+            get
+            {
+                return _Name;
+            }
+            set
+            {
+                if (String.IsNullOrWhiteSpace(value))
+                {
+                    throw new ArgumentException("The exercise must have a name");
+                }
+                this._Name = value;
+            }
+        }
+
+
+         [Ignore]
+         public IEnumerable<Exercise> Exercises
+         {
+             get
+             {
+                // read exercises from DB based on the IDs
+                return ExerciseIDs.Split(',').Select(id_str =>
+                {
+                    try
+                    {
+                        int id = Int32.Parse(id_str);
+                        return POLDatabase.ReadByID<Exercise>(id);
+                    }
+                    catch(FormatException)
+                    {
+                        return null;
+                    }
+                }).Where(e => e != null);
+             }
+             set
+             {
+                ExerciseIDs = String.Join(",", value.Select(e => e.ID).ToArray());
+            }
+         }
+
+        string _ExerciseIDs;
+        public string ExerciseIDs
+        {
+            get
+            {
+                return _ExerciseIDs;
+            }
+            set
+            {
+                _ExerciseIDs = value;
+            }
+        }
+
+        public bool Deleted = false;
+
+        public Routine(string Name, string exercise_ids)
+        {
+            this.Name = Name;
+            ExerciseIDs = exercise_ids;
+        }
 
         public Routine(string Name, IEnumerable<Exercise> exercises)
         {
@@ -25,22 +92,14 @@ namespace POLift
             Exercises = exercises;
         }
 
-        public IEnumerable<Exercise> Exercises
+        public Routine() : this("", "")
         {
-            get
-            {
-                // return copy of exercises array
-                return _exercises.ToArray();
-            }
-            set
-            {
-                _exercises = value.ToArray();
-            }
+
         }
 
         public override string ToString()
         {
-            return $"{Name}, {_exercises.Length} exercises";
+            return $"{Name}, {Exercises.Count()} exercises (ID {ID})";
         }
 
         public static Routine FromXml(string xml)

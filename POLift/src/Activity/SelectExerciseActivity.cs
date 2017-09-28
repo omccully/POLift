@@ -15,6 +15,9 @@ using System.Xml;
 
 namespace POLift
 {
+    using Model;
+    using Service;
+
     [Activity(Label = "Select Exercise")]
     public class SelectExerciseActivity : ListActivity
     {
@@ -32,6 +35,8 @@ namespace POLift
             // Create your application here
             SetContentView(Resource.Layout.SelectExercise);
 
+            CreateExerciseLink = FindViewById<Button>(Resource.Id.CreateExerciseLink);
+
             ExerciseList = GetDefaultExercises();
 
             exercise_adapter = new ExerciseAdapter(this, ExerciseList);
@@ -39,14 +44,14 @@ namespace POLift
 
             ListView.ItemClick += ListView_ItemClick;
 
-            CreateExerciseLink = FindViewById<Button>(Resource.Id.CreateExerciseLink);
+            
             CreateExerciseLink.Click += CreateExerciseLink_Click;
         }
 
         List<Exercise> GetDefaultExercises()
         {
-            List<Exercise> result = new List<Exercise>();
 
+            /*
             using (Stream input = Assets.Open("default_exercises.xml"))
             {
                 using (StreamReader sr = new StreamReader(input))
@@ -59,8 +64,11 @@ namespace POLift
                         result.Add(Exercise.FromXmlNode(node));
                     }
                 }
-            }
+            }*/
 
+            //List<Exercise> result = new List<Exercise>();
+
+            List<Exercise> result = POLDatabase.Table<Exercise>().ToList();
             return result;
         }
 
@@ -77,9 +85,17 @@ namespace POLift
 
             if(resultCode == Result.Ok && requestCode == CreateExerciseRequestCode)
             {
-                Exercise new_exercise = Exercise.FromXml(data.GetStringExtra("exercise"));
-                exercise_adapter.Add(new_exercise);
-                ReturnExercise(new_exercise);
+                //Exercise new_exercise = Exercise.FromXml(data.GetStringExtra("exercise"));
+                int id = data.GetIntExtra("exercise_id", -1);
+                if (id == -1) return;
+
+                ReturnExercise(id);
+                //Exercise new_exercise = POLDatabase.ReadByID<Exercise>(id);
+
+                //exercise_adapter.Add(new_exercise);
+
+                // if the user just created an exercise, just return it back to the CreateRoutineActivity
+                //ReturnExercise(new_exercise);
             }
         }
 
@@ -92,8 +108,13 @@ namespace POLift
 
         void ReturnExercise(Exercise exercise)
         {
+            ReturnExercise(exercise.ID);
+        }
+
+        void ReturnExercise(int ID)
+        {
             Intent result_intent = new Intent();
-            result_intent.PutExtra("exercise", exercise.ToXml());
+            result_intent.PutExtra("exercise_id", ID);
 
             SetResult(Result.Ok, result_intent);
 

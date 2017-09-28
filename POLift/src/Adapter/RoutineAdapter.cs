@@ -12,6 +12,8 @@ using Android.Widget;
 
 namespace POLift
 {
+    using Model;
+
     class RoutineAdapter : BaseAdapter<Routine>
     {
         List<Routine> routines;

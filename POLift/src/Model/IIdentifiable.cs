@@ -10,11 +10,10 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 
-namespace POLift.Repository
+namespace POLift.Model
 {
-    class ExerciseRepository
+    interface IIdentifiable
     {
-
-
+        int ID { get; set; }
     }
 }

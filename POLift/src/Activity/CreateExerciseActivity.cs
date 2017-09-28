@@ -8,14 +8,15 @@ using Android.Runtime;
 
 namespace POLift
 {
+    using Model;
+    using Service;
+
     [Activity(Label = "Create Exercise")]
     public class CreateExerciseActivity : Activity
     {
         EditText ExerciseNameText;
         EditText RepRangeMaxText;
         Button CreateExerciseButton;
-
-        List<Exercise> all_exercises = new List<Exercise>();
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -36,9 +37,7 @@ namespace POLift
             try
             {
                 Exercise ex = new Exercise(ExerciseNameText.Text, Int32.Parse(RepRangeMaxText.Text));
-                all_exercises.Add(ex);
-
-                ReturnExercise(ex);
+                ReturnExercise(POLDatabase.Insert(ex));
             }
             catch (ArgumentException ae)
             {
@@ -51,8 +50,13 @@ namespace POLift
 
         void ReturnExercise(Exercise exercise)
         {
+            ReturnExercise(exercise.ID);
+        }
+
+        void ReturnExercise(int ID)
+        {
             Intent result_intent = new Intent();
-            result_intent.PutExtra("exercise", exercise.ToXml());
+            result_intent.PutExtra("exercise_id", ID);
             SetResult(Result.Ok, result_intent);
             Finish();
         }

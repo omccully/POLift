@@ -12,6 +12,9 @@ using Android.Widget;
 
 namespace POLift
 {
+    using Model;
+    using Service;
+
     [Activity(Label = "Progressive Overload Lifting", MainLauncher = true)]
     class MainActivity : Activity
     {
@@ -49,10 +52,14 @@ namespace POLift
         {
             base.OnActivityResult(requestCode, resultCode, data);
 
-            if(requestCode == CreateRoutineRequestCode)
+            if(resultCode == Result.Ok && requestCode == CreateRoutineRequestCode)
             {
-                string xml = data.GetStringExtra("routine");
-                Routine new_routine = Routine.FromXml(xml);
+                //string xml = data.GetStringExtra("routine");
+                //Routine new_routine = Routine.FromXml(xml);
+
+                int id = data.GetIntExtra("routine_id", -1);
+                if (id == -1) return;
+                Routine new_routine = POLDatabase.ReadByID<Routine>(id);
 
                 routine_adapter.Add(new_routine);
 
