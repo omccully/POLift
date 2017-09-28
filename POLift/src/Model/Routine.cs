@@ -33,7 +33,7 @@ namespace POLift.Model
             {
                 if (String.IsNullOrWhiteSpace(value))
                 {
-                    throw new ArgumentException("The exercise must have a name");
+                    throw new ArgumentException("The routine must have a name");
                 }
                 this._Name = value;
             }
@@ -41,68 +41,76 @@ namespace POLift.Model
 
 
          [Ignore]
-         public IEnumerable<Exercise> Exercises
+         public IEnumerable<ExerciseSets> ExerciseSets
          {
              get
              {
                 // read exercises from DB based on the IDs
-                return ExerciseIDs.Split(',').Select(id_str =>
+                if(ExerciseSetIDs == null)
+                {
+                    return new List<ExerciseSets>();
+                }
+
+                return ExerciseSetIDs.Split(',').Select(id_str =>
                 {
                     try
                     {
                         int id = Int32.Parse(id_str);
-                        return POLDatabase.ReadByID<Exercise>(id);
+                        return POLDatabase.ReadByID<ExerciseSets>(id);
                     }
-                    catch(FormatException)
+                    catch (FormatException)
                     {
                         return null;
                     }
                 }).Where(e => e != null);
-             }
+            }
              set
              {
-                ExerciseIDs = String.Join(",", value.Select(e => e.ID).ToArray());
+                ExerciseSetIDs = String.Join(",", value.Select(e => e.ID).ToArray());
             }
          }
 
-        string _ExerciseIDs;
-        public string ExerciseIDs
+        string _ExerciseSetIDs;
+        public string ExerciseSetIDs
         {
             get
             {
-                return _ExerciseIDs;
+                return _ExerciseSetIDs;
             }
             set
             {
-                _ExerciseIDs = value;
+                _ExerciseSetIDs = value;
             }
         }
 
         public bool Deleted = false;
 
-        public Routine(string Name, string exercise_ids)
+        public Routine(string Name, string exercise_set_ids)
         {
             this.Name = Name;
-            ExerciseIDs = exercise_ids;
+            ExerciseSetIDs = exercise_set_ids;
         }
 
-        public Routine(string Name, IEnumerable<Exercise> exercises)
+        public Routine(string Name, IEnumerable<ExerciseSets> exercise_sets)
         {
             this.Name = Name;
-            Exercises = exercises;
+            ExerciseSets = exercise_sets;
         }
 
-        public Routine() : this("", "")
+        public Routine() : this("Generic routine", "")
         {
 
         }
 
         public override string ToString()
         {
-            return $"{Name}, {Exercises.Count()} exercises (ID {ID})";
+            int exercises = ExerciseSets.Count();
+            int total_sets = ExerciseSets.Sum(e => e.SetCount);
+
+            return $"{Name}, {exercises} exercises, {total_sets} sets (ID {ID})";
         }
 
-        public static Routine FromXml(string xml)
+        /*public static Routine FromXml(string xml)
         {
             XmlDocument doc = new XmlDocument();
             doc.LoadXml(xml);
@@ -143,6 +151,6 @@ namespace POLift.Model
         public string ToXml()
         {
             return ToXmlElement().OuterXml;
-        }
+        }*/
     }
 }

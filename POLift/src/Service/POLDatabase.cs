@@ -36,8 +36,12 @@ namespace POLift.Service
         {
             try
             {
+                Connection.DropTable<Exercise>();
+                Connection.DropTable<Routine>();
+
                 CreateTableIfNotExists<Exercise>();
                 CreateTableIfNotExists<Routine>();
+                CreateTableIfNotExists<ExerciseSets>();
                 //CreateTableIfNotExists<ExerciseResult>();
                 //CreateTableIfNotExists<RoutineResult>();
 
@@ -83,9 +87,7 @@ namespace POLift.Service
         {
             lock(Locker)
             {
-                int ID = Connection.Insert(obj);
-                obj.ID = ID;
-                return ID;
+                return Connection.Insert(obj);
             }
         }
 

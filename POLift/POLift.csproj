@@ -74,6 +74,7 @@
   <ItemGroup>
     <Compile Include="src\Adapter\ExerciseAdapter.cs" />
     <Compile Include="src\Activity\CreateRoutineActivity.cs" />
+    <Compile Include="src\Adapter\ExerciseSetsAdapter.cs" />
     <Compile Include="src\Model\Exercise.cs" />
     <Compile Include="src\Activity\CreateExerciseActivity.cs" />
     <Compile Include="src\Activity\SelectExerciseActivity.cs" />
@@ -81,10 +82,12 @@
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="src\Model\ExerciseResult.cs" />
+    <Compile Include="src\Model\ExerciseSets.cs" />
     <Compile Include="src\Model\IIdentifiable.cs" />
     <Compile Include="src\Model\Routine.cs" />
     <Compile Include="src\Adapter\RoutineAdapter.cs" />
     <Compile Include="src\Model\RoutineResult.cs" />
+    <Compile Include="src\Service\Helpers.cs" />
     <Compile Include="src\Service\POLDatabase.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -103,6 +106,9 @@
       <SubType>Designer</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\ExerciseItem.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\ExerciseSetsItem.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>

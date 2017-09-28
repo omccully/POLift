@@ -14,6 +14,7 @@ namespace POLift
 {
     using Model;
     using Service;
+    using Adapter;
 
     [Activity(Label = "Create Routine")]
     class CreateRoutineActivity : Activity
@@ -23,9 +24,11 @@ namespace POLift
         Button AddExerciseButton;
         Button CreateRoutineButton;
 
-        ExerciseAdapter exercise_adapter;
+        //ExerciseAdapter exercise_adapter;
+        ExerciseSetsAdapter exercise_sets_adapter;
         
-        List<Exercise> routine_exercises;
+        //List<Exercise> routine_exercises;
+        List<ExerciseSets> routine_exercise_sets;
 
         static int SelectExerciseRequestCode = 1;
 
@@ -42,31 +45,44 @@ namespace POLift
 
             AddExerciseButton.Click += AddExerciseButton_Click;
 
-            routine_exercises = new List<Exercise>();
-            exercise_adapter = new ExerciseAdapter(this, routine_exercises);
+            //routine_exercises = new List<Exercise>();
+            // 
+            routine_exercise_sets = new List<ExerciseSets>();
 
-            ExercisesListView.Adapter = exercise_adapter; 
+           // exercise_adapter = new ExerciseAdapter(this, routine_exercises);
+            exercise_sets_adapter = new ExerciseSetsAdapter(this, routine_exercise_sets);
+
+
+            // ExercisesListView.Adapter = exercise_adapter; 
+            ExercisesListView.Adapter = exercise_sets_adapter;
 
             CreateRoutineButton.Click += CreateRoutineButton_Click;
         }
 
         private void CreateRoutineButton_Click(object sender, EventArgs e)
         {
-            Routine routine = new Routine(RoutineTitleText.Text, routine_exercises);
-            POLDatabase.Insert(routine);
-            ReturnRoutine(routine);
+            try
+            {
+                Routine routine = new Routine(RoutineTitleText.Text, routine_exercise_sets);
+                POLDatabase.Insert(routine);
+                ReturnRoutine(routine);
+            }
+            catch(ArgumentException ae)
+            {
+                Helpers.DisplayError(this, ae.Message);
+            }
         }
 
         void ReturnRoutine(Routine routine)
         {
+            ReturnRoutine(routine.ID);
+        }
+
+        void ReturnRoutine(int routine_id)
+        {
             Intent result_intent = new Intent();
-
-            //result_intent.PutExtra("routine", routine.ToXml());
-
-            result_intent.PutExtra("routine_id", routine.ID);
-
+            result_intent.PutExtra("routine_id", routine_id);
             SetResult(Result.Ok, result_intent);
-
             Finish();
         }
 
@@ -78,6 +94,8 @@ namespace POLift
 
         protected override void OnActivityResult(int requestCode, [GeneratedEnum] Result resultCode, Intent data)
         {
+            const int DEFAULT_SET_COUNT = 3;
+
             base.OnActivityResult(requestCode, resultCode, data);
 
             if (resultCode == Result.Ok && requestCode == SelectExerciseRequestCode)
@@ -88,8 +106,13 @@ namespace POLift
                 if (id == -1) return;
                 Exercise selected_exercise = POLDatabase.ReadByID<Exercise>(id);
 
-                exercise_adapter.Add(selected_exercise);
-                routine_exercises.Add(selected_exercise);
+                //exercise_adapter.Add(selected_exercise);
+                //routine_exercises.Add(selected_exercise);
+
+                ExerciseSets es = new ExerciseSets(selected_exercise, DEFAULT_SET_COUNT);
+                POLDatabase.Insert(es);
+                routine_exercise_sets.Add(es);
+                exercise_sets_adapter.Add(es);
             }
         }
     }

@@ -37,7 +37,8 @@ namespace POLift
             try
             {
                 Exercise ex = new Exercise(ExerciseNameText.Text, Int32.Parse(RepRangeMaxText.Text));
-                ReturnExercise(POLDatabase.Insert(ex));
+                POLDatabase.Insert(ex); // sets ex.ID
+                ReturnExercise(ex);
             }
             catch (ArgumentException ae)
             {

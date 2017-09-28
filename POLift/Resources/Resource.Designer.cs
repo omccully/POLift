@@ -50,20 +50,26 @@ namespace POLift
 			// aapt resource value: 0x7f040004
 			public const int CreateExerciseButton = 2130968580;
 			
-			// aapt resource value: 0x7f04000d
-			public const int CreateExerciseLink = 2130968589;
+			// aapt resource value: 0x7f040010
+			public const int CreateExerciseLink = 2130968592;
 			
 			// aapt resource value: 0x7f040009
 			public const int CreateRoutineButton = 2130968585;
 			
-			// aapt resource value: 0x7f04000c
-			public const int CreateRoutineLink = 2130968588;
+			// aapt resource value: 0x7f04000f
+			public const int CreateRoutineLink = 2130968591;
 			
 			// aapt resource value: 0x7f04000a
 			public const int ExerciseItemName = 2130968586;
 			
 			// aapt resource value: 0x7f040001
 			public const int ExerciseNameText = 2130968577;
+			
+			// aapt resource value: 0x7f04000b
+			public const int ExerciseSetsLayout = 2130968587;
+			
+			// aapt resource value: 0x7f04000d
+			public const int ExerciseSetsName = 2130968589;
 			
 			// aapt resource value: 0x7f040008
 			public const int ExercisesListView = 2130968584;
@@ -74,8 +80,11 @@ namespace POLift
 			// aapt resource value: 0x7f040005
 			public const int RoutineTitleText = 2130968581;
 			
-			// aapt resource value: 0x7f04000b
-			public const int RoutinesList = 2130968587;
+			// aapt resource value: 0x7f04000e
+			public const int RoutinesList = 2130968590;
+			
+			// aapt resource value: 0x7f04000c
+			public const int SetCountText = 2130968588;
 			
 			// aapt resource value: 0x7f040000
 			public const int textView1 = 2130968576;
@@ -109,10 +118,13 @@ namespace POLift
 			public const int ExerciseItem = 2130837506;
 			
 			// aapt resource value: 0x7f020003
-			public const int Main = 2130837507;
+			public const int ExerciseSetsItem = 2130837507;
 			
 			// aapt resource value: 0x7f020004
-			public const int SelectExercise = 2130837508;
+			public const int Main = 2130837508;
+			
+			// aapt resource value: 0x7f020005
+			public const int SelectExercise = 2130837509;
 			
 			static Layout()
 			{

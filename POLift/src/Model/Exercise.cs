@@ -111,7 +111,7 @@ namespace POLift.Model
             return $"{Name} for up to {MaxRepCount} reps, {RestPeriodSeconds} second rest (ID {ID})";
         }
 
-        public static Exercise FromXml(string xml)
+        /*public static Exercise FromXml(string xml)
         {
             XmlDocument doc = new XmlDocument();
             doc.LoadXml(xml);
@@ -140,6 +140,6 @@ namespace POLift.Model
         public string ToXml()
         {
             return ToXmlElement().OuterXml;
-        }
+        }*/
     }
 }
