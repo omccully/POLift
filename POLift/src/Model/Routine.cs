@@ -110,6 +110,29 @@ namespace POLift.Model
             return $"{Name}, {exercises} exercises, {total_sets} sets (ID {ID})";
         }
 
+        [Ignore]
+        public List<Exercise> Exercises
+        {
+            get
+            {
+                List<Exercise> results = new List<Exercise>();
+
+                foreach (ExerciseSets sets in this.ExerciseSets)
+                {
+                    Exercise ex = sets.Exercise;
+
+                    for(int i = 0; i < sets.SetCount; i++)
+                    {
+                        results.Add(ex);
+                    }
+                }
+
+                return results;
+            }
+            
+
+        }
+
         /*public static Routine FromXml(string xml)
         {
             XmlDocument doc = new XmlDocument();

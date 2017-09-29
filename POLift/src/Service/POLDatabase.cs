@@ -36,14 +36,14 @@ namespace POLift.Service
         {
             try
             {
-                Connection.DropTable<Exercise>();
-                Connection.DropTable<Routine>();
+                //Connection.DropTable<Exercise>();
+                //Connection.DropTable<Routine>();
 
                 CreateTableIfNotExists<Exercise>();
                 CreateTableIfNotExists<Routine>();
                 CreateTableIfNotExists<ExerciseSets>();
-                //CreateTableIfNotExists<ExerciseResult>();
-                //CreateTableIfNotExists<RoutineResult>();
+                CreateTableIfNotExists<ExerciseResult>();
+                CreateTableIfNotExists<RoutineResult>();
 
                 if (Table<Exercise>().Count() == 0)
                 {
@@ -107,7 +107,5 @@ namespace POLift.Service
                 return Connection.Get<T>(ID);
             }
         }
-
-
     }
 }

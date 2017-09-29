@@ -47,11 +47,14 @@ namespace POLift
 			// aapt resource value: 0x7f040007
 			public const int AddExerciseButton = 2130968583;
 			
+			// aapt resource value: 0x7f040015
+			public const int CountDownTextView = 2130968597;
+			
 			// aapt resource value: 0x7f040004
 			public const int CreateExerciseButton = 2130968580;
 			
-			// aapt resource value: 0x7f040010
-			public const int CreateExerciseLink = 2130968592;
+			// aapt resource value: 0x7f040016
+			public const int CreateExerciseLink = 2130968598;
 			
 			// aapt resource value: 0x7f040009
 			public const int CreateRoutineButton = 2130968585;
@@ -74,8 +77,20 @@ namespace POLift
 			// aapt resource value: 0x7f040008
 			public const int ExercisesListView = 2130968584;
 			
+			// aapt resource value: 0x7f040011
+			public const int NextExerciseView = 2130968593;
+			
 			// aapt resource value: 0x7f040003
 			public const int RepRangeMaxText = 2130968579;
+			
+			// aapt resource value: 0x7f040013
+			public const int RepResultEditText = 2130968595;
+			
+			// aapt resource value: 0x7f040014
+			public const int ReportResultButton = 2130968596;
+			
+			// aapt resource value: 0x7f040010
+			public const int RoutineDetails = 2130968592;
 			
 			// aapt resource value: 0x7f040005
 			public const int RoutineTitleText = 2130968581;
@@ -85,6 +100,9 @@ namespace POLift
 			
 			// aapt resource value: 0x7f04000c
 			public const int SetCountText = 2130968588;
+			
+			// aapt resource value: 0x7f040012
+			public const int WeightEditText = 2130968594;
 			
 			// aapt resource value: 0x7f040000
 			public const int textView1 = 2130968576;
@@ -124,7 +142,10 @@ namespace POLift
 			public const int Main = 2130837508;
 			
 			// aapt resource value: 0x7f020005
-			public const int SelectExercise = 2130837509;
+			public const int PerformRoutine = 2130837509;
+			
+			// aapt resource value: 0x7f020006
+			public const int SelectExercise = 2130837510;
 			
 			static Layout()
 			{

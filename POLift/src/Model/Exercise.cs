@@ -15,6 +15,8 @@ using SQLite;
 
 namespace POLift.Model
 {
+    using Service;
+
     class Exercise : IIdentifiable
     {
         [PrimaryKey, AutoIncrement]
@@ -110,6 +112,27 @@ namespace POLift.Model
         {
             return $"{Name} for up to {MaxRepCount} reps, {RestPeriodSeconds} second rest (ID {ID})";
         }
+
+        [Ignore]
+        public int NextWeight
+        {
+            get
+            {
+                ExerciseResult most_recent_result = 
+                    ExerciseResult.MostRecentResultOf(this);
+                if (most_recent_result == null) return WeightIncrement;
+
+                int weight = most_recent_result.Weight;
+
+                if(most_recent_result.RepCount >= MaxRepCount)
+                {
+                    weight += WeightIncrement;
+                }
+
+                return weight;
+            }
+        }
+
 
         /*public static Exercise FromXml(string xml)
         {

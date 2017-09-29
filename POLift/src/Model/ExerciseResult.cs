@@ -14,12 +14,23 @@ using SQLite;
 
 namespace POLift.Model
 {
+    using Service;
+
     class ExerciseResult : IIdentifiable
     {
         [PrimaryKey, AutoIncrement]
         public int ID { get; set; }
 
         public int ExerciseID { get; set; }
+
+        [Ignore]
+        public Exercise Exercise
+        {
+            get
+            {
+                return POLDatabase.ReadByID<Exercise>(ExerciseID);
+            }
+        }
 
         int _Weight;
         public int Weight
@@ -55,11 +66,11 @@ namespace POLift.Model
             }
         }
 
-        public ExerciseResult(Exercise Exercise, int Weight, int RepCount)
+        public DateTime Time { get; set; }
+
+        public ExerciseResult(Exercise Exercise, int Weight, int RepCount) : 
+            this(Exercise.ID, Weight, RepCount)
         {
-            this.ExerciseID = Exercise.ID;
-            this.Weight = Weight;
-            this.RepCount = RepCount;
         }
 
         public ExerciseResult(int ExerciseID, int Weight, int RepCount)
@@ -67,6 +78,27 @@ namespace POLift.Model
             this.ExerciseID = ExerciseID;
             this.Weight = Weight;
             this.RepCount = RepCount;
+            Time = DateTime.Now;
+        }
+
+        public ExerciseResult()
+        {
+
+        }
+
+        public static ExerciseResult MostRecentResultOf(Exercise exercise)
+        {
+            try
+            {
+                return POLDatabase.Table<ExerciseResult>()
+                    .Where(er => er.ExerciseID == exercise.ID)
+                    .MaxObject(er => er.Time);
+            }
+            catch(InvalidOperationException)
+            {
+                return null;
+            }
+            
         }
     }
 }

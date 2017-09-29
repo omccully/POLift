@@ -36,9 +36,22 @@ namespace POLift
             CreateRoutineLink = FindViewById<Button>(Resource.Id.CreateRoutineLink);
             CreateRoutineLink.Click += CreateRoutineButton_Click;
 
+            RoutinesList.ItemClick += RoutinesList_ItemClick;
             
             routine_adapter = new RoutineAdapter(this, POLDatabase.Table<Routine>());
             RoutinesList.Adapter = routine_adapter;
+        }
+
+        private void RoutinesList_ItemClick(object sender, AdapterView.ItemClickEventArgs e)
+        {
+            var intent = new Intent(this, typeof(PerformRoutineActivity));
+
+            Routine routine = routine_adapter[e.Position];
+            int id = routine.ID;
+
+            intent.PutExtra("routine_id", id);
+
+            StartActivity(intent);
         }
 
         protected void CreateRoutineButton_Click(object sender, EventArgs e)
