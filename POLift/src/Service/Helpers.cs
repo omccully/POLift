@@ -14,11 +14,23 @@ namespace POLift.Service
 {
     static class Helpers
     {
-        public static void DisplayError(Activity activity, string message)
+        public static void DisplayError(Context context, string message)
         {
-            AlertDialog.Builder dialog = new AlertDialog.Builder(activity);
+            AlertDialog.Builder dialog = new AlertDialog.Builder(context);
             dialog.SetMessage(message);
             dialog.SetNeutralButton("Ok", delegate { });
+            dialog.Show();
+        }
+
+        public static void DisplayConfirmation(Context context, string message, 
+            EventHandler<DialogClickEventArgs> action_if_yes,
+            EventHandler<DialogClickEventArgs> action_if_no = null)
+        {
+            if (action_if_no == null) action_if_no = delegate { };
+            AlertDialog.Builder dialog = new AlertDialog.Builder(context);
+            dialog.SetMessage(message);
+            dialog.SetPositiveButton("Yes", action_if_yes);
+            dialog.SetNegativeButton("No", action_if_no);
             dialog.Show();
         }
 

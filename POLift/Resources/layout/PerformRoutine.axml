@@ -51,11 +51,35 @@
         android:text="Report result"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/ReportResultButton" />
+        android:id="@+id/ReportResultButton"
+        android:paddingTop="15dip" />
     <TextView
         android:text="Start your set whenever you're ready"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/CountDownTextView" />
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:text="-30 sec"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/Sub30SecButton"
+            android:layout_weight="1" />
+        <Button
+            android:text="Skip timer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/SkipTimerButton"
+            android:layout_weight="1" />
+        <Button
+            android:text="+30 sec"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/Add30SecButton"
+            android:layout_weight="1" />
+    </LinearLayout>
 </LinearLayout>

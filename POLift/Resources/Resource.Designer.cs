@@ -44,71 +44,98 @@ namespace POLift
 		public partial class Id
 		{
 			
-			// aapt resource value: 0x7f040007
-			public const int AddExerciseButton = 2130968583;
+			// aapt resource value: 0x7f04001e
+			public const int Add30SecButton = 2130968606;
+			
+			// aapt resource value: 0x7f04000b
+			public const int AddExerciseButton = 2130968587;
+			
+			// aapt resource value: 0x7f04001b
+			public const int CountDownTextView = 2130968603;
+			
+			// aapt resource value: 0x7f040008
+			public const int CreateExerciseButton = 2130968584;
+			
+			// aapt resource value: 0x7f04001f
+			public const int CreateExerciseLink = 2130968607;
+			
+			// aapt resource value: 0x7f04000d
+			public const int CreateRoutineButton = 2130968589;
 			
 			// aapt resource value: 0x7f040015
-			public const int CountDownTextView = 2130968597;
+			public const int CreateRoutineLink = 2130968597;
 			
-			// aapt resource value: 0x7f040004
-			public const int CreateExerciseButton = 2130968580;
-			
-			// aapt resource value: 0x7f040016
-			public const int CreateExerciseLink = 2130968598;
-			
-			// aapt resource value: 0x7f040009
-			public const int CreateRoutineButton = 2130968585;
+			// aapt resource value: 0x7f040010
+			public const int ExerciseDeleteButton = 2130968592;
 			
 			// aapt resource value: 0x7f04000f
-			public const int CreateRoutineLink = 2130968591;
+			public const int ExerciseEditButton = 2130968591;
 			
-			// aapt resource value: 0x7f04000a
-			public const int ExerciseItemName = 2130968586;
+			// aapt resource value: 0x7f04000e
+			public const int ExerciseItemName = 2130968590;
 			
 			// aapt resource value: 0x7f040001
 			public const int ExerciseNameText = 2130968577;
 			
-			// aapt resource value: 0x7f04000b
-			public const int ExerciseSetsLayout = 2130968587;
-			
-			// aapt resource value: 0x7f04000d
-			public const int ExerciseSetsName = 2130968589;
-			
-			// aapt resource value: 0x7f040008
-			public const int ExercisesListView = 2130968584;
-			
 			// aapt resource value: 0x7f040011
-			public const int NextExerciseView = 2130968593;
+			public const int ExerciseSetsLayout = 2130968593;
+			
+			// aapt resource value: 0x7f040013
+			public const int ExerciseSetsName = 2130968595;
+			
+			// aapt resource value: 0x7f04000c
+			public const int ExercisesListView = 2130968588;
+			
+			// aapt resource value: 0x7f040017
+			public const int NextExerciseView = 2130968599;
 			
 			// aapt resource value: 0x7f040003
 			public const int RepRangeMaxText = 2130968579;
 			
-			// aapt resource value: 0x7f040013
-			public const int RepResultEditText = 2130968595;
+			// aapt resource value: 0x7f040019
+			public const int RepResultEditText = 2130968601;
 			
-			// aapt resource value: 0x7f040014
-			public const int ReportResultButton = 2130968596;
-			
-			// aapt resource value: 0x7f040010
-			public const int RoutineDetails = 2130968592;
+			// aapt resource value: 0x7f04001a
+			public const int ReportResultButton = 2130968602;
 			
 			// aapt resource value: 0x7f040005
-			public const int RoutineTitleText = 2130968581;
+			public const int RestPeriodSecondsTextBox = 2130968581;
 			
-			// aapt resource value: 0x7f04000e
-			public const int RoutinesList = 2130968590;
+			// aapt resource value: 0x7f040016
+			public const int RoutineDetails = 2130968598;
 			
-			// aapt resource value: 0x7f04000c
-			public const int SetCountText = 2130968588;
+			// aapt resource value: 0x7f040009
+			public const int RoutineTitleText = 2130968585;
+			
+			// aapt resource value: 0x7f040014
+			public const int RoutinesList = 2130968596;
 			
 			// aapt resource value: 0x7f040012
-			public const int WeightEditText = 2130968594;
+			public const int SetCountText = 2130968594;
+			
+			// aapt resource value: 0x7f04001d
+			public const int SkipTimerButton = 2130968605;
+			
+			// aapt resource value: 0x7f04001c
+			public const int Sub30SecButton = 2130968604;
+			
+			// aapt resource value: 0x7f040018
+			public const int WeightEditText = 2130968600;
+			
+			// aapt resource value: 0x7f040007
+			public const int WeightIncrementTextBox = 2130968583;
 			
 			// aapt resource value: 0x7f040000
 			public const int textView1 = 2130968576;
 			
+			// aapt resource value: 0x7f040004
+			public const int textView10 = 2130968580;
+			
 			// aapt resource value: 0x7f040006
-			public const int textView2 = 2130968582;
+			public const int textView11 = 2130968582;
+			
+			// aapt resource value: 0x7f04000a
+			public const int textView2 = 2130968586;
 			
 			// aapt resource value: 0x7f040002
 			public const int textView3 = 2130968578;

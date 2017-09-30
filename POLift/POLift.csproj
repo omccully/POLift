@@ -84,6 +84,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="src\Model\ExerciseResult.cs" />
     <Compile Include="src\Model\ExerciseSets.cs" />
+    <Compile Include="src\Model\IDeletable.cs" />
     <Compile Include="src\Model\IIdentifiable.cs" />
     <Compile Include="src\Model\Routine.cs" />
     <Compile Include="src\Adapter\RoutineAdapter.cs" />

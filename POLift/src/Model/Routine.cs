@@ -17,12 +17,13 @@ namespace POLift.Model
 {
     using Service;
 
-    class Routine : IIdentifiable
+    class Routine : IIdentifiable, IDeletable
     {
         [PrimaryKey, AutoIncrement]
         public int ID { get; set; }
 
         string _Name;
+        [Indexed(Name = "UniqueGroup", Order = 1, Unique = true)]
         public string Name
         {
             get
@@ -71,6 +72,7 @@ namespace POLift.Model
          }
 
         string _ExerciseSetIDs;
+        [Indexed(Name = "UniqueGroup", Order = 2, Unique = true)]
         public string ExerciseSetIDs
         {
             get
@@ -83,7 +85,7 @@ namespace POLift.Model
             }
         }
 
-        public bool Deleted = false;
+        public bool Deleted { get; set; } = false;
 
         public Routine(string Name, string exercise_set_ids)
         {
@@ -129,9 +131,64 @@ namespace POLift.Model
 
                 return results;
             }
-            
-
         }
+
+
+        public override bool Equals(object obj)
+        {
+            // If parameter is null return false.
+            if (obj == null)
+            {
+                return false;
+            }
+
+            // If parameter cannot be cast to Routine return false.
+            Routine r = obj as Routine;
+
+            return this.Equals(r);
+        }
+
+        public bool Equals(Routine r)
+        {
+            if ((System.Object)r == null)
+            {
+                return false;
+            }
+
+            // Return true if the fields match:
+            return (this.ExerciseSetIDs == r.ExerciseSetIDs &&
+                this.Name == r.Name);
+        }
+
+        public static bool operator==(Routine a, Routine b)
+        {
+            // If both are null, or both are same instance, return true.
+            if (System.Object.ReferenceEquals(a, b))
+            {
+                return true;
+            }
+
+            // If one is null, but not both, return false.
+            if (((object)a == null) || ((object)b == null))
+            {
+                return false;
+            }
+
+            // Return true if the fields match:
+            return a.Equals(b);
+        }
+
+        public static bool operator !=(Routine a, Routine b)
+        {
+            return !(a == b);
+        }
+
+        public override int GetHashCode()
+        {
+            return this.ExerciseSetIDs.GetHashCode() ^ this.Name.GetHashCode();
+        }
+
+
 
         /*public static Routine FromXml(string xml)
         {
@@ -158,7 +215,7 @@ namespace POLift.Model
             XmlElement routine_element = doc.CreateElement("Routine");
 
             routine_element.SetAttribute("name", Name);
-            
+
             foreach(Exercise ex in Exercises)
             {
                 XmlElement xml_element = ex.ToXmlElement();

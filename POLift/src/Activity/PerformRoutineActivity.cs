@@ -26,6 +26,10 @@ namespace POLift
         TextView CountDownTextView;
         EditText WeightEditText;
 
+        Button Sub30SecButton;
+        Button Add30SecButton;
+        Button SkipTimerButton;
+
         Routine routine;
         
         RoutineResult routine_result;
@@ -79,6 +83,10 @@ namespace POLift
             RepResultEditText = FindViewById<EditText>(Resource.Id.RepResultEditText);
             CountDownTextView = FindViewById<TextView>(Resource.Id.CountDownTextView);
             WeightEditText = FindViewById<EditText>(Resource.Id.WeightEditText);
+            Sub30SecButton = FindViewById<Button>(Resource.Id.Sub30SecButton);
+            Add30SecButton = FindViewById<Button>(Resource.Id.Add30SecButton);
+            SkipTimerButton = FindViewById<Button>(Resource.Id.SkipTimerButton);
+
 
             int id = Intent.GetIntExtra("routine_id", -1);
 
@@ -89,11 +97,33 @@ namespace POLift
 
             ReportResultButton.Click += ReportResultButton_Click;
 
+            Sub30SecButton.Click += Sub30SecButton_Click;
+            Add30SecButton.Click += Add30SecButton_Click;
+            SkipTimerButton.Click += SkipTimerButton_Click;
+            Sub30SecButton.Enabled = false;
+            Add30SecButton.Enabled = false;
+            SkipTimerButton.Enabled = false;
+
             // update Weight and exercise
             GetNextExerciseAndWeight();
 
             timer = new Timer(/*1000.0*/ 50);
             timer.Elapsed += Timer_Elapsed;
+        }
+
+        private void SkipTimerButton_Click(object sender, EventArgs e)
+        {
+            seconds_left = 0;
+        }
+
+        private void Add30SecButton_Click(object sender, EventArgs e)
+        {
+            seconds_left += 30;
+        }
+
+        private void Sub30SecButton_Click(object sender, EventArgs e)
+        {
+            seconds_left -= 30;
         }
 
         private void ReportResultButton_Click(object sender, EventArgs e)
@@ -121,6 +151,10 @@ namespace POLift
             ReportResultButton.Enabled = false;
             RepResultEditText.Enabled = false;
 
+            Sub30SecButton.Enabled = true;
+            Add30SecButton.Enabled = true;
+            SkipTimerButton.Enabled = true;
+
             // report the exercise result
             ExerciseResult ex_result =
                 new ExerciseResult(exercise, weight, reps);
@@ -129,12 +163,12 @@ namespace POLift
 
             // update Weight and exercise
             GetNextExerciseAndWeight();
-
+            // rest period is based on the NEXT exercise's rest period
             seconds_left = exercise.RestPeriodSeconds;
             timer.Start();
         }
 
-        int seconds_left = 0;
+        volatile int seconds_left = 0;
 
         private void Timer_Elapsed(object sender, ElapsedEventArgs e)
         {
@@ -161,6 +195,10 @@ namespace POLift
 
                     ReportResultButton.Enabled = true;
                     RepResultEditText.Enabled = true;
+
+                    Sub30SecButton.Enabled = false;
+                    Add30SecButton.Enabled = false;
+                    SkipTimerButton.Enabled = false;
                 });
             }
         }

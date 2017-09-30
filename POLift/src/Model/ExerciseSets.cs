@@ -16,6 +16,10 @@ namespace POLift.Model
 {
     using Service;
 
+    /// <summary>
+    /// Represents a series of sets of the same exercise.
+    /// ex: 3 sets of the exercise "bench, 6 max reps, 120 second rest, 5 weight increment"
+    /// </summary>
     class ExerciseSets : IIdentifiable
     {
         const int DEFAULT_SET_COUNT = 3;

@@ -8,6 +8,8 @@ using Android.Runtime;
 
 namespace POLift
 {
+    using Android.Preferences;
+    using Android.Views.InputMethods;
     using Model;
     using Service;
 
@@ -17,6 +19,8 @@ namespace POLift
         EditText ExerciseNameText;
         EditText RepRangeMaxText;
         Button CreateExerciseButton;
+        EditText RestPeriodSecondsText;
+        EditText WeightIncrementText;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -28,6 +32,28 @@ namespace POLift
             ExerciseNameText = FindViewById<EditText>(Resource.Id.ExerciseNameText);
             RepRangeMaxText = FindViewById<EditText>(Resource.Id.RepRangeMaxText);
             CreateExerciseButton = FindViewById<Button>(Resource.Id.CreateExerciseButton);
+            RestPeriodSecondsText = FindViewById<EditText>(Resource.Id.RestPeriodSecondsTextBox);
+            WeightIncrementText = FindViewById<EditText>(Resource.Id.WeightIncrementTextBox);
+
+            int edit_exercise_id = Intent.GetIntExtra("edit_exercise_id", -1);
+            if(edit_exercise_id == -1)
+            {
+                LoadPreferences();
+            }
+            else
+            {
+                Exercise exercise = POLDatabase.ReadByID<Exercise>(edit_exercise_id);
+
+                ExerciseNameText.Text = exercise.Name;
+                RepRangeMaxText.Text = exercise.MaxRepCount.ToString();
+                RestPeriodSecondsText.Text = exercise.RestPeriodSeconds.ToString();
+                WeightIncrementText.Text = exercise.WeightIncrement.ToString();
+            }
+
+            // TODO: fix this to make name text box focused when activity starts
+            ExerciseNameText.RequestFocus();
+            InputMethodManager imm = (InputMethodManager)GetSystemService(Context.InputMethodService);
+            imm.ShowSoftInput(ExerciseNameText, ShowFlags.Implicit);
 
             CreateExerciseButton.Click += CreateExerciseButton_Click;
         }
@@ -36,8 +62,16 @@ namespace POLift
         {
             try
             {
-                Exercise ex = new Exercise(ExerciseNameText.Text, Int32.Parse(RepRangeMaxText.Text));
-                POLDatabase.Insert(ex); // sets ex.ID
+                string name = ExerciseNameText.Text;
+                int max_reps = Int32.Parse(RepRangeMaxText.Text);
+                int weight_increment = Int32.Parse(WeightIncrementText.Text);
+                int rest_period_s = Int32.Parse(RestPeriodSecondsText.Text);
+
+                Exercise ex = new Exercise(name, max_reps, weight_increment, rest_period_s);
+                //POLDatabase.Insert(ex); // sets ex.ID
+                POLDatabase.InsertOrUndelete(ex);
+
+                SavePreferences();
                 ReturnExercise(ex);
             }
             catch (ArgumentException ae)
@@ -62,6 +96,23 @@ namespace POLift
             Finish();
         }
 
+        void SavePreferences()
+        {
+            ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(this);
+            ISharedPreferencesEditor editor = prefs.Edit();
+            editor.PutString("create_exercise_max_reps", RepRangeMaxText.Text);
+            editor.PutString("create_exercise_weight_increment", WeightIncrementText.Text);
+            editor.PutString("create_exercise_rest_period_seconds", RestPeriodSecondsText.Text);
+            editor.Apply();
+        }
+
+        void LoadPreferences()
+        {
+            ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(this);
+            RepRangeMaxText.Text = prefs.GetString("create_exercise_max_reps", "");
+            WeightIncrementText.Text = prefs.GetString("create_exercise_weight_increment", "5");
+            RestPeriodSecondsText.Text = prefs.GetString("create_exercise_rest_period_seconds", "120");
+        }
     }
 }
 

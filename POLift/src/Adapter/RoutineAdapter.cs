@@ -13,6 +13,7 @@ using Android.Widget;
 namespace POLift
 {
     using Model;
+    using Service;
 
     class RoutineAdapter : BaseAdapter<Routine>
     {
@@ -47,29 +48,45 @@ namespace POLift
         public override View GetView(int position, View convertView, ViewGroup parent)
         {
             var view = convertView;
-            ExerciseAdapterViewHolder holder = null;
+            RoutineAdapterViewHolder holder = null;
 
             if (view != null)
-                holder = view.Tag as ExerciseAdapterViewHolder;
+                holder = view.Tag as RoutineAdapterViewHolder;
 
             if (holder == null)
             {
-                holder = new ExerciseAdapterViewHolder();
+                holder = new RoutineAdapterViewHolder();
                 var inflater = context.GetSystemService(Context.LayoutInflaterService).JavaCast<LayoutInflater>();
                 //replace with your item and your holder items
                 //comment back in
                 view = inflater.Inflate(Resource.Layout.ExerciseItem, parent, false);
                 holder.Title = view.FindViewById<TextView>(Resource.Id.ExerciseItemName);
+                holder.EditButton = view.FindViewById<Button>(Resource.Id.ExerciseEditButton);
 
                 view.Tag = holder;
             }
 
+            view.Clickable = true;
+            holder.Title.Clickable = true;
+
+            holder.EditButton.Click += delegate (object sender, EventArgs e)
+            {
+                // defined here so we have access to position 
+                Helpers.DisplayError(context, $"button {position} clicked");
+            };
 
             //fill in your items
             //holder.Title.Text = "new text here";
             holder.Title.Text = this[position].ToString();
 
             return view;
+        }
+
+
+
+        private void EditButton_Click(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         public void Add(Routine r)
@@ -93,5 +110,6 @@ namespace POLift
     {
         //Your adapter views to re-use
         public TextView Title { get; set; }
+        public Button EditButton { get; set; }
     }
 }

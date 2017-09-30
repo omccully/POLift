@@ -17,12 +17,13 @@ namespace POLift.Model
 {
     using Service;
 
-    class Exercise : IIdentifiable
+    public class Exercise : IIdentifiable, IDeletable
     {
         [PrimaryKey, AutoIncrement]
         public int ID { get; set; }
 
         string _Name;
+        [Indexed(Name = "UniqueGroup", Order =1, Unique = true)]
         public string Name
         {
             get
@@ -40,6 +41,7 @@ namespace POLift.Model
         }
 
         int _MaxRepCount;
+        [Indexed(Name = "UniqueGroup", Order = 2, Unique = true)]
         public int MaxRepCount
         {
             get
@@ -57,6 +59,7 @@ namespace POLift.Model
         }
 
         int _WeightIncrement;
+        [Indexed(Name = "UniqueGroup", Order = 3, Unique = true)]
         public int WeightIncrement
         {
             get
@@ -75,6 +78,7 @@ namespace POLift.Model
 
 
         int _RestPeriodSeconds;
+        [Indexed(Name = "UniqueGroup", Order = 4, Unique = true)]
         public int RestPeriodSeconds
         {
             get
@@ -93,7 +97,7 @@ namespace POLift.Model
             }
         }
 
-        public bool Deleted = false;
+        public bool Deleted { get; set; } = false;
 
         public Exercise() : this("Generic exercise", 6)
         {
@@ -131,6 +135,64 @@ namespace POLift.Model
 
                 return weight;
             }
+        }
+
+
+        public override bool Equals(object obj)
+        {
+            // If parameter is null return false.
+            if (obj == null)
+            {
+                return false;
+            }
+
+            // If parameter cannot be cast to Routine return false.
+            Exercise r = obj as Exercise;
+
+            return this.Equals(r);
+        }
+
+        public bool Equals(Exercise r)
+        {
+            if ((System.Object)r == null)
+            {
+                return false;
+            }
+
+            // Return true if the fields match:
+            return (this.Name == r.Name &&
+                this.MaxRepCount == r.MaxRepCount && 
+                this.WeightIncrement == r.WeightIncrement &&
+                this.RestPeriodSeconds == r.RestPeriodSeconds);
+        }
+
+        public static bool operator ==(Exercise a, Exercise b)
+        {
+            // If both are null, or both are same instance, return true.
+            if (System.Object.ReferenceEquals(a, b))
+            {
+                return true;
+            }
+
+            // If one is null, but not both, return false.
+            if (((object)a == null) || ((object)b == null))
+            {
+                return false;
+            }
+
+            // Return true if the fields match:
+            return a.Equals(b);
+        }
+
+        public static bool operator !=(Exercise a, Exercise b)
+        {
+            return !(a == b);
+        }
+
+        public override int GetHashCode()
+        {
+            return this.Name.GetHashCode() ^ this.MaxRepCount.GetHashCode() ^
+                this.WeightIncrement.GetHashCode() ^ this.RestPeriodSeconds.GetHashCode();
         }
 
 

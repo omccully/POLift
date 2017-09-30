@@ -21,10 +21,10 @@ namespace POLift
     [Activity(Label = "Select Exercise")]
     public class SelectExerciseActivity : ListActivity
     {
-        List<Exercise> ExerciseList;
         ExerciseAdapter exercise_adapter;
 
-        static int CreateExerciseRequestCode = 3;
+        const int CreateExerciseRequestCode = 3;
+        const int EXERCISE_EDITED_REQUEST_CODE = 54697384;
 
         Button CreateExerciseLink;
 
@@ -37,39 +37,46 @@ namespace POLift
 
             CreateExerciseLink = FindViewById<Button>(Resource.Id.CreateExerciseLink);
 
-            ExerciseList = GetDefaultExercises();
+            this.ListView.Focusable = true;
+            this.ListView.ItemsCanFocus = true;
 
-            exercise_adapter = new ExerciseAdapter(this, ExerciseList);
-            this.ListAdapter = exercise_adapter;
+            RefreshExerciseList();
 
             ListView.ItemClick += ListView_ItemClick;
 
-            
             CreateExerciseLink.Click += CreateExerciseLink_Click;
         }
 
-        List<Exercise> GetDefaultExercises()
+
+
+        void RefreshExerciseList()
         {
+            exercise_adapter = new ExerciseAdapter(this, 
+                POLDatabase.Table<Exercise>()
+                .Where(e => !e.Deleted)
+                .ToList());
+            this.ListAdapter = exercise_adapter;
 
-            /*
-            using (Stream input = Assets.Open("default_exercises.xml"))
-            {
-                using (StreamReader sr = new StreamReader(input))
+            exercise_adapter.DeleteButtonClicked += Exercise_adapter_DeleteButtonClicked;
+            exercise_adapter.EditButtonClicked += Exercise_adapter_EditButtonClicked;
+        }
+
+        private void Exercise_adapter_EditButtonClicked(object sender, ExerciseEventArgs e)
+        {
+            var intent = new Intent(this, typeof(CreateExerciseActivity));
+            intent.PutExtra("edit_exercise_id", e.Exercise.ID);
+            StartActivityForResult(intent, EXERCISE_EDITED_REQUEST_CODE);
+        }
+
+        private void Exercise_adapter_DeleteButtonClicked(object sender, ExerciseEventArgs e)
+        {
+            Helpers.DisplayConfirmation(this, "Are you sure you want to remove the \"" +
+                e.Exercise.ToString() + "\" exercise? (this won't have any effect" + 
+                " on any routines that use this exercise)", delegate
                 {
-                    XmlDocument doc = new XmlDocument();
-                    doc.LoadXml(sr.ReadToEnd());
-
-                    foreach (XmlNode node in doc.GetElementsByTagName("Exercise"))
-                    {
-                        result.Add(Exercise.FromXmlNode(node));
-                    }
-                }
-            }*/
-
-            //List<Exercise> result = new List<Exercise>();
-
-            List<Exercise> result = POLDatabase.Table<Exercise>().ToList();
-            return result;
+                    POLDatabase.HideDeletable(e.Exercise);
+                    RefreshExerciseList();
+                });
         }
 
         private void CreateExerciseLink_Click(object sender, EventArgs e)
@@ -83,19 +90,29 @@ namespace POLift
         {
             base.OnActivityResult(requestCode, resultCode, data);
 
-            if(resultCode == Result.Ok && requestCode == CreateExerciseRequestCode)
+            if(resultCode == Result.Ok)
             {
-                //Exercise new_exercise = Exercise.FromXml(data.GetStringExtra("exercise"));
-                int id = data.GetIntExtra("exercise_id", -1);
-                if (id == -1) return;
+                if (requestCode == CreateExerciseRequestCode)
+                {
+                    //Exercise new_exercise = Exercise.FromXml(data.GetStringExtra("exercise"));
+                    int id = data.GetIntExtra("exercise_id", -1);
+                    if (id == -1) return;
 
-                ReturnExercise(id);
-                //Exercise new_exercise = POLDatabase.ReadByID<Exercise>(id);
+                    ReturnExercise(id);
+                    //Exercise new_exercise = POLDatabase.ReadByID<Exercise>(id);
 
-                //exercise_adapter.Add(new_exercise);
+                    //exercise_adapter.Add(new_exercise);
 
-                // if the user just created an exercise, just return it back to the CreateRoutineActivity
-                //ReturnExercise(new_exercise);
+                    // if the user just created an exercise, just return it back to the CreateRoutineActivity
+                    //ReturnExercise(new_exercise);
+                }
+                else
+                {
+                    // optionally, we could return the exercise_id
+
+                    // refresh ExerciseListView
+                    RefreshExerciseList();
+                }
             }
         }
 

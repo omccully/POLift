@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/ExerciseNameText" />
     <TextView
-        android:text="Rep Range (max)"
+        android:text="Max reps"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -24,6 +24,28 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/RepRangeMaxText" />
+    <TextView
+        android:text="Rest period (seconds)"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView10" />
+    <EditText
+        android:inputType="number"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/RestPeriodSecondsTextBox" />
+    <TextView
+        android:text="Weight increment"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView11" />
+    <EditText
+        android:inputType="number"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/WeightIncrementTextBox" />
     <Button
         android:text="Create Exercise"
         android:layout_width="match_parent"

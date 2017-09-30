@@ -60,6 +60,14 @@ namespace POLift.Service
             
         }
 
+        public static void Update(IIdentifiable obj)
+        {
+            lock (Locker)
+            {
+                Connection.Update(obj);
+            }
+        }
+
         public static void Invoke(DatabaseOperation operation)
         {
             lock(Locker)
@@ -91,6 +99,74 @@ namespace POLift.Service
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="obj">obj should implement ==, and
+        /// obj's table should have an index between
+        /// all of the properties that make obj unique</param>
+        /// <returns>True if new row was inserted, otherwise false</returns>
+        public static bool InsertOrUndelete<T>(T obj) where T : IDeletable, new()
+        {
+            lock (Locker)
+            {
+                try
+                {
+                    Connection.Insert(obj);
+                    return true;
+                }
+                catch(SQLiteException e)
+                {
+                    if(e.Result == SQLite3.Result.Constraint)
+                    {
+                        // obj already exists based on constraint
+
+                        T existing = Connection.Table<T>().First(o => o.Equals(obj));
+
+                        obj.ID = existing.ID;
+
+                        if(existing.Deleted && !obj.Deleted)
+                        {
+                            existing.Deleted = false;
+                            Connection.Update(existing);
+                        }
+
+                        return true;
+                    }
+                    else
+                    {
+                        throw e;
+                    }
+                }
+            }
+        }
+
+        public static bool HideDeletable<T>(T obj) where T : IDeletable, new()
+        {
+            obj.Deleted = true;
+            if(obj.ID == 0)
+            {
+                if (!FillIDValue<T>(obj)) return false;
+            }
+
+            // update Deleted=true where ID=id
+            Connection.Update(obj);
+            return true;
+        }
+
+        public static bool FillIDValue<T>(T obj) where T : IIdentifiable, new()
+        {
+            try
+            {
+                T found = Table<T>().First(o => o.Equals(obj));
+                obj.ID = found.ID;
+                return true;
+            }
+            catch(InvalidOperationException)
+            {
+                return false;
+            }
+        }
 
         public static TableQuery<T> Table<T>() where T : new()
         {

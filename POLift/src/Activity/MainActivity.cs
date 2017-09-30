@@ -37,7 +37,10 @@ namespace POLift
             CreateRoutineLink.Click += CreateRoutineButton_Click;
 
             RoutinesList.ItemClick += RoutinesList_ItemClick;
-            
+
+            RoutinesList.Focusable = true;
+            RoutinesList.Clickable = true;
+            RoutinesList.ItemsCanFocus = true;
             routine_adapter = new RoutineAdapter(this, POLDatabase.Table<Routine>());
             RoutinesList.Adapter = routine_adapter;
         }
