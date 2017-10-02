@@ -19,6 +19,9 @@ namespace POLift
     [Activity(Label = "Perform routine")]
     public class PerformRoutineActivity : Activity
     {
+        const string RestPeriodSecondsRemainingKey = "rest_period_seconds_remaining";
+
+
         TextView RoutineDetails;
         TextView NextExerciseView;
         Button ReportResultButton;
@@ -31,10 +34,23 @@ namespace POLift
         Button SkipTimerButton;
 
         Routine routine;
-        
-        RoutineResult routine_result;
 
-        Timer timer;
+        RoutineResult _routine_result;
+        RoutineResult routine_result
+        {
+            get
+            {
+                return _routine_result;
+            }
+            set
+            {
+                _routine_result = value;
+                GetNextExerciseAndWeight();
+            }
+        }
+
+
+       // Timer timer;
 
         Exercise _exercise;
         Exercise exercise
@@ -46,15 +62,18 @@ namespace POLift
             set
             {
                 _exercise = value;
-                if(value == null)
+                if (value == null)
                 {
                     NextExerciseView.Text = "Routine completed";
                 }
                 else
                 {
-                    NextExerciseView.Text = "Exercise: " + value.ToString();
+                    NextExerciseView.Text = $"Exercise {routine_result.ResultCount}/"
+                        + $"{ routine_result.ExerciseCount}: "
+                        + value.ToString();
+                    //throw new Exception();
                 }
-                
+
             }
         }
 
@@ -70,6 +89,39 @@ namespace POLift
             }
         }
 
+        bool _TimerRunning = false;
+        bool TimerRunning
+        {
+            get
+            {
+                return _TimerRunning;
+            }
+            set
+            {
+                _TimerRunning = value;
+
+                if (value)
+                {
+                    Sub30SecButton.Enabled = true;
+                    Add30SecButton.Enabled = true;
+                    SkipTimerButton.Enabled = true;
+
+                    ReportResultButton.Enabled = false;
+                    RepResultEditText.Enabled = false;
+                }
+                else
+                {
+                    Sub30SecButton.Enabled = false;
+                    Add30SecButton.Enabled = false;
+                    SkipTimerButton.Enabled = false;
+
+                    ReportResultButton.Enabled = true;
+                    RepResultEditText.Enabled = true;
+                }
+            }
+        }
+
+        
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -88,10 +140,72 @@ namespace POLift
             SkipTimerButton = FindViewById<Button>(Resource.Id.SkipTimerButton);
 
 
-            int id = Intent.GetIntExtra("routine_id", -1);
+            if(savedInstanceState != null)
+            {
+                // screen was rotated...
+                RestPeriodSecondsRemaining = savedInstanceState.GetInt(RestPeriodSecondsRemainingKey, -1);
 
-            routine = POLDatabase.ReadByID<Routine>(id);
-            routine_result = new RoutineResult(routine);
+                if (RestPeriodSecondsRemaining > 0)
+                {
+                    // timer was running last time
+
+                    SetCountDownText(RestPeriodSecondsRemaining);
+
+                    StaticTimer.TickedCallback += Timer_Ticked;
+                    StaticTimer.ElapsedCallback = Timer_Elapsed;
+
+                    TimerRunning = true;
+                }
+
+            }
+                
+            int routine_id = Intent.GetIntExtra("routine_id", -1);
+
+            routine = POLDatabase.ReadByID<Routine>(routine_id);
+            RoutineResult recent_uncompleted = RoutineResult.MostRecentUncompleted(routine);
+            if (recent_uncompleted == null || 
+                (DateTime.Now - recent_uncompleted.EndTime) > TimeSpan.FromDays(1))
+            {
+                // if there is no recent uncompleted routine result for this routine 
+                // OR
+                // if the most recent uncompleted routine result is more than a day ago, 
+                // just start a new one
+
+                routine_result = new RoutineResult(routine);
+            }
+            else
+            {
+                int resume_routine_result_id = (savedInstanceState == null ? -2 :
+                    savedInstanceState.GetInt("resume_routine_result_id", -1));
+
+                if(resume_routine_result_id == 0)
+                {
+                    // a routine result was started but has no contents
+                    routine_result = new RoutineResult(routine);
+                }
+                else if (recent_uncompleted.ID == resume_routine_result_id)
+                {
+                    // restore saved state
+                    routine_result = recent_uncompleted;
+                }
+                else
+                {
+                    Helpers.DisplayConfirmation(this, "You did not fiish this routine on " +
+                        recent_uncompleted.EndTime.ToString() + ". Would you like to resume it?",
+                        delegate
+                        {
+                            // yes
+
+                            routine_result = recent_uncompleted;
+                        },
+                        delegate
+                        {
+                            // no
+                            routine_result = new RoutineResult(routine);
+                        }
+                    );
+                }
+            }
 
             RoutineDetails.Text = ExtendedRoutineDetails(routine);
 
@@ -100,30 +214,45 @@ namespace POLift
             Sub30SecButton.Click += Sub30SecButton_Click;
             Add30SecButton.Click += Add30SecButton_Click;
             SkipTimerButton.Click += SkipTimerButton_Click;
-            Sub30SecButton.Enabled = false;
-            Add30SecButton.Enabled = false;
-            SkipTimerButton.Enabled = false;
 
-            // update Weight and exercise
-            GetNextExerciseAndWeight();
+            if(!TimerRunning) 
+                TimerRunning = false; // set textboxes properly;
+        }
 
-            timer = new Timer(/*1000.0*/ 50);
-            timer.Elapsed += Timer_Elapsed;
+        protected override void OnStop()
+        {
+           
+
+            base.OnStop();
+        }
+
+        protected override void OnSaveInstanceState(Bundle outState)
+        {
+            if(routine_result != null)
+            {
+                System.Diagnostics.Debug.WriteLine("set resume_routine_result_id = " + routine_result.ID);
+                outState.PutInt("resume_routine_result_id", routine_result.ID);
+            }
+
+            outState.PutInt(RestPeriodSecondsRemainingKey, RestPeriodSecondsRemaining);
+            
+            base.OnSaveInstanceState(outState);
         }
 
         private void SkipTimerButton_Click(object sender, EventArgs e)
         {
-            seconds_left = 0;
+            StaticTimer.StopTimer();
+            Timer_Elapsed();
         }
 
         private void Add30SecButton_Click(object sender, EventArgs e)
         {
-            seconds_left += 30;
+            StaticTimer.AddTicks(30);
         }
 
         private void Sub30SecButton_Click(object sender, EventArgs e)
         {
-            seconds_left -= 30;
+            StaticTimer.SubtractTicks(30);
         }
 
         private void ReportResultButton_Click(object sender, EventArgs e)
@@ -138,69 +267,83 @@ namespace POLift
                 weight = Weight;
                 reps = Int32.Parse(RepResultEditText.Text);
             }
-            catch(FormatException)
+            catch (FormatException)
             {
-                Helpers.DisplayError(this, 
+                Helpers.DisplayError(this,
                     "You must fill out the weight and rep count with integers");
                 return;
             }
 
             RepResultEditText.Text = "";
 
-            // execute rest period, disable button and text box
-            ReportResultButton.Enabled = false;
-            RepResultEditText.Enabled = false;
+            ReportExerciseResult(weight, reps);
+        }
 
-            Sub30SecButton.Enabled = true;
-            Add30SecButton.Enabled = true;
-            SkipTimerButton.Enabled = true;
-
+        void ReportExerciseResult(int weight, int reps)
+        {
             // report the exercise result
             ExerciseResult ex_result =
                 new ExerciseResult(exercise, weight, reps);
             POLDatabase.Insert(ex_result);
             routine_result.ReportExerciseResult(ex_result);
 
+            // insert or update the routine result after EVERY new result
+            // just in case the app crashes or something
+            POLDatabase.InsertOrUpdate(routine_result);
+
+            if (routine_result.Completed)
+            {
+                // no more exercises
+                ReturnRoutineResult(routine_result);
+                return;
+            }
+
             // update Weight and exercise
             GetNextExerciseAndWeight();
             // rest period is based on the NEXT exercise's rest period
-            seconds_left = exercise.RestPeriodSeconds;
-            timer.Start();
+
+            // execute rest period, disable button and text box
+            TimerRunning = true;
+
+            StaticTimer.StartTimer(1000, exercise.RestPeriodSeconds, Timer_Ticked, Timer_Elapsed);
         }
 
-        volatile int seconds_left = 0;
-
-        private void Timer_Elapsed(object sender, ElapsedEventArgs e)
+        void SetCountDownText(int seconds_left)
         {
-            if(seconds_left > 0)
+            CountDownTextView.Text = "Resting for another " +
+                    seconds_left.ToString() + " seconds";
+        }
+
+        volatile int RestPeriodSecondsRemaining = 0;
+        private void Timer_Ticked(int ticks_until_elapsed)
+        {
+            RestPeriodSecondsRemaining = ticks_until_elapsed;
+            RunOnUiThread(delegate
             {
-                // the timer has not finished yet
-                seconds_left--;
+                SetCountDownText(ticks_until_elapsed);
+            });
+        }
 
-                RunOnUiThread(delegate
-                {
-                    CountDownTextView.Text = "Resting for another " +
-                        seconds_left.ToString() + " seconds";
-                });
-            }
-            else
+        private void Timer_Elapsed()
+        {
+            RestPeriodSecondsRemaining = 0;
+            RunOnUiThread(delegate
             {
-                // time is up
+                CountDownTextView.Text = "TIME IS UP!!! *vibrate*" +
+                    System.Environment.NewLine +
+                    "Start your next set whenever you're ready";
 
-                RunOnUiThread(delegate
-                {
-                    CountDownTextView.Text = "TIME IS UP!!! *vibrate*" + 
-                        System.Environment.NewLine + 
-                        "Start your next set whenever you're ready";
+                TimerRunning = false;
+            });
 
-                    ReportResultButton.Enabled = true;
-                    RepResultEditText.Enabled = true;
+            Vibrator vibrator = (Vibrator)GetSystemService(Context.VibratorService);
+            vibrator.Vibrate(200);
+            System.Threading.Thread.Sleep(300);
+            vibrator.Vibrate(200);
+            System.Threading.Thread.Sleep(300);
+            vibrator.Vibrate(200);
 
-                    Sub30SecButton.Enabled = false;
-                    Add30SecButton.Enabled = false;
-                    SkipTimerButton.Enabled = false;
-                });
-            }
+            // TODO: make notification here
         }
 
         string ExtendedRoutineDetails(Routine routine)
@@ -213,25 +356,15 @@ namespace POLift
             return sb.ToString();
         }
 
-
         void GetNextExerciseAndWeight()
         {
             // get next exercise
             exercise = routine_result.NextExercise;
 
-            if(exercise == null)
+            if (exercise != null)
             {
-                // no more exercises!
-                // this is where the activity comes to an end
-                POLDatabase.Insert(routine_result);
-                ReturnRoutineResult(routine_result);
-                // TODO: insert this routine result as soon as first result is recorded
-                // and just update it as time goes on
+                Weight = exercise.NextWeight;
             }
-
-            // should get the correct new weight from the above
-            // inserted ExerciseResult if we've progressed
-            Weight = exercise.NextWeight;
         }
 
         void ReturnRoutineResult(RoutineResult routine_result)

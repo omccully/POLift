@@ -24,7 +24,7 @@ namespace POLift
         ExerciseAdapter exercise_adapter;
 
         const int CreateExerciseRequestCode = 3;
-        const int EXERCISE_EDITED_REQUEST_CODE = 54697384;
+        const int ExerciseEditedRequestCode = 4;
 
         Button CreateExerciseLink;
 
@@ -47,14 +47,10 @@ namespace POLift
             CreateExerciseLink.Click += CreateExerciseLink_Click;
         }
 
-
-
         void RefreshExerciseList()
         {
             exercise_adapter = new ExerciseAdapter(this, 
-                POLDatabase.Table<Exercise>()
-                .Where(e => !e.Deleted)
-                .ToList());
+                POLDatabase.TableWhereUndeleted<Exercise>().ToList());
             this.ListAdapter = exercise_adapter;
 
             exercise_adapter.DeleteButtonClicked += Exercise_adapter_DeleteButtonClicked;
@@ -65,7 +61,7 @@ namespace POLift
         {
             var intent = new Intent(this, typeof(CreateExerciseActivity));
             intent.PutExtra("edit_exercise_id", e.Exercise.ID);
-            StartActivityForResult(intent, EXERCISE_EDITED_REQUEST_CODE);
+            StartActivityForResult(intent, ExerciseEditedRequestCode);
         }
 
         private void Exercise_adapter_DeleteButtonClicked(object sender, ExerciseEventArgs e)
@@ -92,7 +88,8 @@ namespace POLift
 
             if(resultCode == Result.Ok)
             {
-                if (requestCode == CreateExerciseRequestCode)
+                if (requestCode == CreateExerciseRequestCode ||
+                    requestCode == ExerciseEditedRequestCode)
                 {
                     //Exercise new_exercise = Exercise.FromXml(data.GetStringExtra("exercise"));
                     int id = data.GetIntExtra("exercise_id", -1);

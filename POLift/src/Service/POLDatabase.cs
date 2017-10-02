@@ -38,6 +38,10 @@ namespace POLift.Service
             {
                 //Connection.DropTable<Exercise>();
                 //Connection.DropTable<Routine>();
+                //Connection.DropTable<ExerciseSets>();
+                //Connection.DropTable<ExerciseResult>(); 
+                //Connection.DropTable<RoutineResult>();
+
 
                 CreateTableIfNotExists<Exercise>();
                 CreateTableIfNotExists<Routine>();
@@ -102,11 +106,29 @@ namespace POLift.Service
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="obj">obj should implement ==, and
+        /// <param name="obj"></param>
+        /// <returns>True if new row inserted, false is old row was updated</returns>
+        public static bool InsertOrUpdate(IIdentifiable obj)
+        {
+            lock (Locker)
+            {
+                if(obj.ID == 0 || Connection.Update(obj) == 0)
+                {
+                    Connection.Insert(obj);
+                    return true;
+                }
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="obj">obj should implement Equals, and
         /// obj's table should have an index between
         /// all of the properties that make obj unique</param>
         /// <returns>True if new row was inserted, otherwise false</returns>
-        public static bool InsertOrUndelete<T>(T obj) where T : IDeletable, new()
+        public static bool InsertOrUndelete<T>(T obj) where T : class, IDeletable, new()
         {
             lock (Locker)
             {
@@ -120,8 +142,27 @@ namespace POLift.Service
                     if(e.Result == SQLite3.Result.Constraint)
                     {
                         // obj already exists based on constraint
+                        // find obj's ID
 
-                        T existing = Connection.Table<T>().First(o => o.Equals(obj));
+                        var table = Connection.Table<T>();
+
+                        T existing = null;
+                        foreach(T ex in table)
+                        {
+                            if(ex.Equals(obj))
+                            {
+                                existing = ex;
+                                break;
+                            }
+                        }
+
+                        if(existing == null)
+                        {
+                            throw new InvalidOperationException("This object does not exist in the database table.");
+                        }
+
+                       // T existing = table.First(o => 
+                        //    o.Equals(obj));
 
                         obj.ID = existing.ID;
 
@@ -176,12 +217,47 @@ namespace POLift.Service
             }
         }
 
+        public static List<T> TableWhereUndeleted<T>() where T : IDeletable, new()
+        {
+            lock (Locker)
+            {
+                /*var tab = Connection.Table<T>();
+                var were = tab.Where(e => !e.Deleted);
+                return were.ToList();*/
+
+                List<T> results = new List<T>();
+
+                foreach(T item in Connection.Table<T>())
+                {
+                    if (!item.Deleted) results.Add(item);
+                }
+
+                return results;
+            }
+        }
+
         public static T ReadByID<T>(int ID) where T : new()
         {
             lock(Locker)
             {
                 return Connection.Get<T>(ID);
             }
+        }
+
+        public static IEnumerable<T> ParseIDString<T>(string IDs) where T : class, new()
+        {
+            return IDs.Split(',').Select(id_str =>
+            {
+                try
+                {
+                    int id = Int32.Parse(id_str);
+                    return POLDatabase.ReadByID<T>(id);
+                }
+                catch (FormatException)
+                {
+                    return null;
+                }
+            }).Where(e => e != null);
         }
     }
 }

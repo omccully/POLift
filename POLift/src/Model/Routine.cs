@@ -52,22 +52,11 @@ namespace POLift.Model
                     return new List<ExerciseSets>();
                 }
 
-                return ExerciseSetIDs.Split(',').Select(id_str =>
-                {
-                    try
-                    {
-                        int id = Int32.Parse(id_str);
-                        return POLDatabase.ReadByID<ExerciseSets>(id);
-                    }
-                    catch (FormatException)
-                    {
-                        return null;
-                    }
-                }).Where(e => e != null);
+                return POLDatabase.ParseIDString<ExerciseSets>(ExerciseSetIDs);
             }
              set
              {
-                ExerciseSetIDs = String.Join(",", value.Select(e => e.ID).ToArray());
+                ExerciseSetIDs = value.ToIDString();
             }
          }
 

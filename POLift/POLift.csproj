@@ -73,9 +73,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="src\Activity\PerformRoutineActivity.cs" />
+    <Compile Include="src\Activity\ViewRoutineResultsActivity.cs" />
+    <Compile Include="src\Activity\WarmupRoutineActivity.cs" />
     <Compile Include="src\Adapter\ExerciseAdapter.cs" />
     <Compile Include="src\Activity\CreateRoutineActivity.cs" />
     <Compile Include="src\Adapter\ExerciseSetsAdapter.cs" />
+    <Compile Include="src\Adapter\RoutineResultAdapter.cs" />
     <Compile Include="src\Model\Exercise.cs" />
     <Compile Include="src\Activity\CreateExerciseActivity.cs" />
     <Compile Include="src\Activity\SelectExerciseActivity.cs" />
@@ -91,6 +94,7 @@
     <Compile Include="src\Model\RoutineResult.cs" />
     <Compile Include="src\Service\Helpers.cs" />
     <Compile Include="src\Service\POLDatabase.cs" />
+    <Compile Include="src\Service\StaticTimer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="GettingStarted.Xamarin" />
@@ -114,6 +118,12 @@
       <SubType>Designer</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\PerformRoutine.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\RoutineResult.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\WarmupRoutine.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>

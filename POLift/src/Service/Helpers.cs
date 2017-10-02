@@ -12,6 +12,8 @@ using Android.Widget;
 
 namespace POLift.Service
 {
+    using Model;
+
     static class Helpers
     {
         public static void DisplayError(Context context, string message)
@@ -61,6 +63,31 @@ namespace POLift.Service
             }
             if (first) throw new InvalidOperationException("Sequence is empty.");
             return maxObj;
+        }
+
+        public static string ToIDString(this IEnumerable<IIdentifiable> obj)
+        {
+            return String.Join(",", obj.Select(e => e.ID).ToArray());
+        }
+
+        public static int GetClosestToIncrement(int value, int increment, bool prefer_up = false)
+        {
+            int floor_increments = value / increment;
+
+            int floor = floor_increments * increment;
+            int ceil = floor + increment;
+
+            int floor_dif = value - floor;
+            int ceil_dif = ceil - value;
+
+            if (floor_dif == ceil_dif)
+            {
+                return (prefer_up ? ceil : floor);
+            }
+            else
+            {
+                return floor_dif > ceil_dif ? ceil : floor;
+            }
         }
     }
 }

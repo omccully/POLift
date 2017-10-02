@@ -22,6 +22,7 @@ namespace POLift
 
         ListView RoutinesList;
         Button CreateRoutineLink;
+        Button ViewRecentSessionsLink;
 
         RoutineAdapter routine_adapter;
 
@@ -32,6 +33,8 @@ namespace POLift
             SetContentView(Resource.Layout.Main);
 
             RoutinesList = FindViewById<ListView>(Resource.Id.RoutinesList);
+            ViewRecentSessionsLink = FindViewById<Button>(Resource.Id.ViewRecentSessionsButton);
+            ViewRecentSessionsLink.Click += ViewRecentSessionsLink_Click;
 
             CreateRoutineLink = FindViewById<Button>(Resource.Id.CreateRoutineLink);
             CreateRoutineLink.Click += CreateRoutineButton_Click;
@@ -41,8 +44,47 @@ namespace POLift
             RoutinesList.Focusable = true;
             RoutinesList.Clickable = true;
             RoutinesList.ItemsCanFocus = true;
-            routine_adapter = new RoutineAdapter(this, POLDatabase.Table<Routine>());
+
+            RefreshRoutineList();
+        }
+
+        private void ViewRecentSessionsLink_Click(object sender, EventArgs e)
+        {
+            var intent = new Intent(this, typeof(ViewRoutineResultsActivity));
+            StartActivity(intent);
+        }
+
+        void RefreshRoutineList()
+        {
+            routine_adapter = new RoutineAdapter(this,
+                POLDatabase.TableWhereUndeleted<Routine>());
             RoutinesList.Adapter = routine_adapter;
+
+            routine_adapter.DeleteButtonClicked += Routine_adapter_DeleteButtonClicked;
+            routine_adapter.EditButtonClicked += Routine_adapter_EditButtonClicked;
+        }
+
+        private void Routine_adapter_EditButtonClicked(object sender, RoutineEventArgs e)
+        {
+            var intent = new Intent(this, typeof(CreateRoutineActivity));
+            intent.PutExtra("edit_routine_id", e.Routine.ID);
+            StartActivity(intent);
+        }
+
+        private void Routine_adapter_DeleteButtonClicked(object sender, RoutineEventArgs e)
+        {
+            Helpers.DisplayConfirmation(this, "Are you sure you want to delete this routine?",
+                delegate
+                {
+                    // yes
+                    Routine routine_to_delete = e.Routine;
+
+                    routine_to_delete.Deleted = true;
+
+                    POLDatabase.Update(routine_to_delete);
+
+                    RefreshRoutineList();
+                });
         }
 
         private void RoutinesList_ItemClick(object sender, AdapterView.ItemClickEventArgs e)
@@ -53,7 +95,7 @@ namespace POLift
             int id = routine.ID;
 
             intent.PutExtra("routine_id", id);
-
+    
             StartActivity(intent);
         }
 
@@ -77,11 +119,9 @@ namespace POLift
                 if (id == -1) return;
                 Routine new_routine = POLDatabase.ReadByID<Routine>(id);
 
-                routine_adapter.Add(new_routine);
+                RefreshRoutineList();
 
             }
-
-
         }
     }
 }

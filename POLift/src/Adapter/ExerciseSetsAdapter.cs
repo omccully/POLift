@@ -16,20 +16,20 @@ namespace POLift.Adapter
 
     class ExerciseSetsAdapter : BaseAdapter<ExerciseSets>
     {
-        List<ExerciseSets> exercise_sets;
+        public List<ExerciseSets> ExerciseSetsList;
         Context context;
 
         public ExerciseSetsAdapter(Context context, IEnumerable<ExerciseSets> exercise_sets)
         {
             this.context = context;
-            this.exercise_sets = new List<ExerciseSets>(exercise_sets);
+            this.ExerciseSetsList = new List<ExerciseSets>(exercise_sets);
         }
 
         public override ExerciseSets this[int position]
         {
             get
             {
-                return exercise_sets[position];
+                return ExerciseSetsList[position];
             }
         }
 
@@ -82,7 +82,7 @@ namespace POLift.Adapter
 
         public void Add(ExerciseSets es)
         {
-            exercise_sets.Add(es);
+            ExerciseSetsList.Add(es);
             NotifyDataSetChanged();
         }
 
@@ -91,7 +91,7 @@ namespace POLift.Adapter
         {
             get
             {
-                return exercise_sets.Count;
+                return ExerciseSetsList.Count;
             }
         }
 

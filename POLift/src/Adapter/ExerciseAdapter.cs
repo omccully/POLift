@@ -90,16 +90,19 @@ namespace POLift
                 view.Tag = holder;
             }
 
-            view.Clickable = true;
+            //view.Clickable = true;
+
             holder.EditButton.Click += delegate 
             {
                 OnEditButtonClicked(new ExerciseEventArgs(this[position]));
             };
+            holder.EditButton.Focusable = false;
 
             holder.DeleteButton.Click += delegate
             {
                 OnDeleteButtonClicked(new ExerciseEventArgs(this[position]));
             };
+            holder.DeleteButton.Focusable = false;
 
             //fill in your items
             //holder.Title.Text = "new text here";

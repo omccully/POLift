@@ -28,9 +28,11 @@ namespace POLift
         ExerciseSetsAdapter exercise_sets_adapter;
         
         //List<Exercise> routine_exercises;
-        List<ExerciseSets> routine_exercise_sets;
+        //List<ExerciseSets> routine_exercise_sets;
 
         static int SelectExerciseRequestCode = 1;
+
+        Routine RoutineToDeleteIfDifferent = null;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -43,15 +45,33 @@ namespace POLift
             AddExerciseButton = FindViewById<Button>(Resource.Id.AddExerciseButton);
             CreateRoutineButton = FindViewById<Button>(Resource.Id.CreateRoutineButton);
 
+
+            exercise_sets_adapter = new ExerciseSetsAdapter(this, new List<ExerciseSets>());
+
+
+            int edit_routine_id = Intent.GetIntExtra("edit_routine_id", -1);
+            if (edit_routine_id != -1)
+            { 
+                Routine routine = POLDatabase.ReadByID<Routine>(edit_routine_id);
+
+                RoutineTitleText.Text = routine.Name;
+
+                foreach (ExerciseSets es in routine.ExerciseSets)
+                {
+                    exercise_sets_adapter.Add(es);
+                }
+
+                RoutineToDeleteIfDifferent = routine;
+            }
+
+
             AddExerciseButton.Click += AddExerciseButton_Click;
 
             //routine_exercises = new List<Exercise>();
             // 
-            routine_exercise_sets = new List<ExerciseSets>();
 
            // exercise_adapter = new ExerciseAdapter(this, routine_exercises);
-            exercise_sets_adapter = new ExerciseSetsAdapter(this, routine_exercise_sets);
-
+            
 
             // ExercisesListView.Adapter = exercise_adapter; 
             ExercisesListView.Adapter = exercise_sets_adapter;
@@ -63,8 +83,16 @@ namespace POLift
         {
             try
             {
-                Routine routine = new Routine(RoutineTitleText.Text, routine_exercise_sets);
+                Routine routine = new Routine(RoutineTitleText.Text, 
+                    exercise_sets_adapter.ExerciseSetsList);
                 POLDatabase.Insert(routine);
+
+                if(RoutineToDeleteIfDifferent != null &&
+                    RoutineToDeleteIfDifferent != routine)
+                {
+                    POLDatabase.HideDeletable(RoutineToDeleteIfDifferent);
+                }
+
                 ReturnRoutine(routine);
             }
             catch(ArgumentException ae)
@@ -111,7 +139,6 @@ namespace POLift
 
                 ExerciseSets es = new ExerciseSets(selected_exercise, DEFAULT_SET_COUNT);
                 POLDatabase.Insert(es);
-                routine_exercise_sets.Add(es);
                 exercise_sets_adapter.Add(es);
             }
         }

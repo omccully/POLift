@@ -20,6 +20,11 @@
         android:text="Create new routine"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/CreateRoutineLink" 
+        android:id="@+id/CreateRoutineLink"
         android:paddingTop="15dip" />
+    <Button
+        android:text="View recent sessions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/ViewRecentSessionsButton" />
 </LinearLayout>

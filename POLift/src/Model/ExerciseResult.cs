@@ -41,9 +41,9 @@ namespace POLift.Model
             }
             set
             {
-                if(value <= 0)
+                if(value < 0)
                 {
-                    throw new ArgumentException("Weight must be positive");
+                    throw new ArgumentException("Weight must be non-negative");
                 }
                 _Weight = value;
             }
@@ -99,6 +99,11 @@ namespace POLift.Model
                 return null;
             }
             
+        }
+
+        public override string ToString()
+        {
+            return $"exercise #{ExerciseID}, {Weight} weight, {RepCount} reps on {Time}";
         }
     }
 }
