@@ -87,10 +87,19 @@ namespace POLift
                     exercise_sets_adapter.ExerciseSetsList);
                 POLDatabase.Insert(routine);
 
+                // if this routine is being edited, then delete the old one
                 if(RoutineToDeleteIfDifferent != null &&
                     RoutineToDeleteIfDifferent != routine)
                 {
                     POLDatabase.HideDeletable(RoutineToDeleteIfDifferent);
+                }
+
+                // set the category for all of the exercises in this routine
+                foreach(ExerciseSets ex_sets in exercise_sets_adapter.ExerciseSetsList)
+                {
+                    Exercise ex = ex_sets.Exercise;
+                    ex.Category = routine.Name;
+                    POLDatabase.Update(ex);
                 }
 
                 ReturnRoutine(routine);

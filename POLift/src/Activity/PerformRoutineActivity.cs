@@ -35,6 +35,8 @@ namespace POLift
 
         Routine routine;
 
+        AlertDialog dialog;
+
         RoutineResult _routine_result;
         RoutineResult routine_result
         {
@@ -46,11 +48,26 @@ namespace POLift
             {
                 _routine_result = value;
                 GetNextExerciseAndWeight();
+
+                dialog = Helpers.DisplayConfirmation(this, "Would you like to do a warmup routine?",
+                    delegate
+                    {
+                        /*if(dialog != null && dialog.IsShowing)
+                        {
+                            dialog?.Dismiss();
+                        }
+                        
+                        //dialog?.Dispose();
+
+                        dialog = null;
+                        */
+                        var intent = new Intent(this, typeof(WarmupRoutineActivity));
+                        intent.PutExtra("exercise_id", exercise.ID);
+                        intent.PutExtra("working_set_weight", Weight);
+                        StartActivityForResult(intent, WARMUP_ROUTINE_REQUEST_CODE);
+                    });
             }
         }
-
-
-       // Timer timer;
 
         Exercise _exercise;
         Exercise exercise
@@ -217,13 +234,39 @@ namespace POLift
 
             if(!TimerRunning) 
                 TimerRunning = false; // set textboxes properly;
+
+            /*if(routine_result != null && savedInstanceState == null)
+            {
+                // not waiting for user to choose yes/no for resuming routine
+                // and screen didn't rotate
+
+                var intent = new Intent(this, typeof(WarmupRoutineActivity));
+
+
+            }*/
         }
 
-        protected override void OnStop()
-        {
-           
+        const int WARMUP_ROUTINE_REQUEST_CODE = 100;
 
-            base.OnStop();
+        protected override void OnActivityResult(int requestCode, [GeneratedEnum] Result resultCode, Intent data)
+        {
+            base.OnActivityResult(requestCode, resultCode, data);
+
+            if(resultCode == Result.Ok && requestCode == WARMUP_ROUTINE_REQUEST_CODE)
+            {
+                if(exercise != null)
+                {
+                    // start timer once warmup routine is finished.
+                    StartRestPeriod();
+                }
+            }
+        }
+
+        protected override void OnPause()
+        {
+            base.OnPause();
+
+
         }
 
         protected override void OnSaveInstanceState(Bundle outState)
@@ -302,6 +345,11 @@ namespace POLift
             GetNextExerciseAndWeight();
             // rest period is based on the NEXT exercise's rest period
 
+            StartRestPeriod();
+        }
+
+        void StartRestPeriod()
+        {
             // execute rest period, disable button and text box
             TimerRunning = true;
 

@@ -46,6 +46,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/WeightIncrementTextBox" />
+    <TextView
+        android:text="Math type"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView12" />
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/SelectMathTypeSpinner" />
     <Button
         android:text="Create Exercise"
         android:layout_width="match_parent"

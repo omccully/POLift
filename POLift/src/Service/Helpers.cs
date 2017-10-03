@@ -14,26 +14,43 @@ namespace POLift.Service
 {
     using Model;
 
-    static class Helpers
+    public static class Helpers
     {
-        public static void DisplayError(Context context, string message)
+        public static string UniformString(string name)
         {
-            AlertDialog.Builder dialog = new AlertDialog.Builder(context);
-            dialog.SetMessage(message);
-            dialog.SetNeutralButton("Ok", delegate { });
-            dialog.Show();
+            return name.ToLower().Trim();
         }
 
-        public static void DisplayConfirmation(Context context, string message, 
+        public static AlertDialog DisplayError(Context context, string message,
+            EventHandler<DialogClickEventArgs> action_when_ok=null)
+        {
+            if(action_when_ok != null) action_when_ok = delegate { };
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.SetMessage(message);
+            builder.SetNeutralButton("Ok", action_when_ok);
+            //dialog.Show();
+
+            AlertDialog dialog = builder.Create();
+            dialog.Show();
+            builder.Dispose();
+            return dialog;
+        }
+
+        public static AlertDialog DisplayConfirmation(Context context, string message, 
             EventHandler<DialogClickEventArgs> action_if_yes,
             EventHandler<DialogClickEventArgs> action_if_no = null)
         {
             if (action_if_no == null) action_if_no = delegate { };
-            AlertDialog.Builder dialog = new AlertDialog.Builder(context);
-            dialog.SetMessage(message);
-            dialog.SetPositiveButton("Yes", action_if_yes);
-            dialog.SetNegativeButton("No", action_if_no);
-            dialog.Show();
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.SetMessage(message);
+            builder.SetPositiveButton("Yes", action_if_yes);
+            builder.SetNegativeButton("No", action_if_no);
+            //dialog.Show();
+            AlertDialog ad = builder.Create();
+            ad.Show();
+            builder.Dispose();
+            return ad;
         }
 
         public static T MaxObject<T, U>(this IEnumerable<T> source, Func<T, U> selector)
@@ -70,8 +87,10 @@ namespace POLift.Service
             return String.Join(",", obj.Select(e => e.ID).ToArray());
         }
 
-        public static int GetClosestToIncrement(int value, int increment, bool prefer_up = false)
+        public static int GetClosestToIncrement(int value, int increment, int offset = 0, bool prefer_up = false)
         {
+            value -= offset;
+
             int floor_increments = value / increment;
 
             int floor = floor_increments * increment;
@@ -82,11 +101,11 @@ namespace POLift.Service
 
             if (floor_dif == ceil_dif)
             {
-                return (prefer_up ? ceil : floor);
+                return (prefer_up ? ceil : floor) + offset;
             }
             else
             {
-                return floor_dif > ceil_dif ? ceil : floor;
+                return (floor_dif > ceil_dif ? ceil : floor) + offset;
             }
         }
     }

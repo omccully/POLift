@@ -21,6 +21,7 @@ namespace POLift
         Button CreateExerciseButton;
         EditText RestPeriodSecondsText;
         EditText WeightIncrementText;
+        Spinner SelectMathTypeSpinner;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -34,6 +35,9 @@ namespace POLift
             CreateExerciseButton = FindViewById<Button>(Resource.Id.CreateExerciseButton);
             RestPeriodSecondsText = FindViewById<EditText>(Resource.Id.RestPeriodSecondsTextBox);
             WeightIncrementText = FindViewById<EditText>(Resource.Id.WeightIncrementTextBox);
+            SelectMathTypeSpinner = FindViewById<Spinner>(Resource.Id.SelectMathTypeSpinner);
+
+            SelectMathTypeSpinner.Adapter = new PlateMathTypeAdapter(this, PlateMath.PlateMathTypes);
 
             int edit_exercise_id = Intent.GetIntExtra("edit_exercise_id", -1);
             if(edit_exercise_id == -1)
@@ -48,6 +52,8 @@ namespace POLift
                 RepRangeMaxText.Text = exercise.MaxRepCount.ToString();
                 RestPeriodSecondsText.Text = exercise.RestPeriodSeconds.ToString();
                 WeightIncrementText.Text = exercise.WeightIncrement.ToString();
+
+                SelectMathTypeSpinner.SetSelection(exercise.PlateMathID);
             }
 
             // TODO: fix this to make name text box focused when activity starts
@@ -66,10 +72,16 @@ namespace POLift
                 int max_reps = Int32.Parse(RepRangeMaxText.Text);
                 int weight_increment = Int32.Parse(WeightIncrementText.Text);
                 int rest_period_s = Int32.Parse(RestPeriodSecondsText.Text);
+                PlateMath plate_math = null;
 
-                Exercise ex = new Exercise(name, max_reps, weight_increment, rest_period_s);
-                //POLDatabase.Insert(ex); // sets ex.ID
-                POLDatabase.InsertOrUndelete(ex);
+                int pos = SelectMathTypeSpinner.SelectedItemPosition;
+                plate_math = PlateMath.PlateMathTypes[pos];
+
+                Exercise ex = new Exercise(name, max_reps, weight_increment, 
+                    rest_period_s, plate_math);
+                
+                // sets ex.ID
+                POLDatabase.InsertOrUndeleteAndUpdate(ex);
 
                 SavePreferences();
                 ReturnExercise(ex);

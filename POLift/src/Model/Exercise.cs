@@ -99,22 +99,72 @@ namespace POLift.Model
 
         public bool Deleted { get; set; } = false;
 
+        public int PlateMathID
+        {
+            get
+            {
+                int index = Array.IndexOf(PlateMath.PlateMathTypes, PlateMath);
+                if (index == -1) return 0;
+                return index;
+            }
+            set
+            {
+                PlateMath = PlateMath.PlateMathTypes[value];
+            }
+        }
+
+        string _Category;
+
+        public string Category
+        {
+            get
+            {
+                return _Category;
+            }
+            set
+            {
+                if (value == null)
+                {
+                    _Category = null;
+                }
+                else
+                {
+                    _Category = Helpers.UniformString(value);
+                }
+            }
+        }
+        
+        [Ignore]
+        public PlateMath PlateMath { get; set; }
+
         public Exercise() : this("Generic exercise", 6)
         {
 
         }
 
-        public Exercise(string Name, int MaxRepCount, int WeightIncrement=5, int RestPeriodSeconds=120)
+        public Exercise(string Name, int MaxRepCount, int WeightIncrement=5, 
+            int RestPeriodSeconds=120, PlateMath plate_math = null)
         {
             this.Name = Name;
             this.MaxRepCount = MaxRepCount;
             this.WeightIncrement = WeightIncrement;
             this.RestPeriodSeconds = RestPeriodSeconds;
+            this.PlateMath = plate_math;
         }
 
         public override string ToString()
         {
-            return $"{Name} for up to {MaxRepCount} reps, {RestPeriodSeconds} second rest (ID {ID})";
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine(Name);
+            sb.Append($"up to {MaxRepCount} reps, {RestPeriodSeconds} second rest");
+            if(PlateMath != null)
+            {
+                sb.AppendLine();
+                sb.Append(PlateMath);
+            }
+            sb.Append($" (ID {ID})");
+
+            return sb.ToString();
         }
 
         [Ignore]

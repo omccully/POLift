@@ -12,7 +12,7 @@ using Android.Widget;
 
 namespace POLift.Model
 {
-    interface IDeletable : IIdentifiable
+    public interface IDeletable : IIdentifiable
     {
         bool Deleted { get; set; }
     }

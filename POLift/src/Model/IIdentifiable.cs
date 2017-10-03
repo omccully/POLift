@@ -12,7 +12,7 @@ using Android.Widget;
 
 namespace POLift.Model
 {
-    interface IIdentifiable
+    public interface IIdentifiable
     {
         int ID { get; set; }
     }

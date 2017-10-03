@@ -78,6 +78,7 @@
     <Compile Include="src\Adapter\ExerciseAdapter.cs" />
     <Compile Include="src\Activity\CreateRoutineActivity.cs" />
     <Compile Include="src\Adapter\ExerciseSetsAdapter.cs" />
+    <Compile Include="src\Adapter\PlateMathTypeAdapter.cs" />
     <Compile Include="src\Adapter\RoutineResultAdapter.cs" />
     <Compile Include="src\Model\Exercise.cs" />
     <Compile Include="src\Activity\CreateExerciseActivity.cs" />
@@ -93,6 +94,7 @@
     <Compile Include="src\Adapter\RoutineAdapter.cs" />
     <Compile Include="src\Model\RoutineResult.cs" />
     <Compile Include="src\Service\Helpers.cs" />
+    <Compile Include="src\Service\PlateMath.cs" />
     <Compile Include="src\Service\POLDatabase.cs" />
     <Compile Include="src\Service\StaticTimer.cs" />
   </ItemGroup>
@@ -124,6 +126,12 @@
       <SubType>Designer</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\WarmupRoutine.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\TimerControls.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\PlateMathItem.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>

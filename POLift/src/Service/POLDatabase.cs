@@ -32,36 +32,30 @@ namespace POLift.Service
 
         public static string Error = "";
 
+        static void ClearDatabase()
+        {
+            Connection.DropTable<Exercise>();
+            Connection.DropTable<Routine>();
+            Connection.DropTable<ExerciseSets>();
+            Connection.DropTable<ExerciseResult>(); 
+            Connection.DropTable<RoutineResult>();
+        }
+
+        static void InitializeDatabase()
+        {
+            CreateTableIfNotExists<Exercise>();
+            CreateTableIfNotExists<Routine>();
+            CreateTableIfNotExists<ExerciseSets>();
+            CreateTableIfNotExists<ExerciseResult>();
+            CreateTableIfNotExists<RoutineResult>();
+        }
+
         static POLDatabase()
         {
-            try
-            {
-                //Connection.DropTable<Exercise>();
-                //Connection.DropTable<Routine>();
-                //Connection.DropTable<ExerciseSets>();
-                //Connection.DropTable<ExerciseResult>(); 
-                //Connection.DropTable<RoutineResult>();
+            // comment this out unless testing
+            //ClearDatabase();
 
-
-                CreateTableIfNotExists<Exercise>();
-                CreateTableIfNotExists<Routine>();
-                CreateTableIfNotExists<ExerciseSets>();
-                CreateTableIfNotExists<ExerciseResult>();
-                CreateTableIfNotExists<RoutineResult>();
-
-                if (Table<Exercise>().Count() == 0)
-                {
-                    Insert(new Exercise("Flat barbell bench press", 6));
-                }
-            }
-            catch(Exception e)
-            {
-                Error = e.ToString();
-                string err = Error;
-                int i = 5;
-                i++;
-            }
-            
+            InitializeDatabase();
         }
 
         public static void Update(IIdentifiable obj)
@@ -104,7 +98,7 @@ namespace POLift.Service
         }
 
         /// <summary>
-        /// 
+        /// This should not be used for tables that have constraints that may prevent insertion
         /// </summary>
         /// <param name="obj"></param>
         /// <returns>True if new row inserted, false is old row was updated</returns>
@@ -122,13 +116,13 @@ namespace POLift.Service
         }
 
         /// <summary>
-        /// 
+        /// For tables that have constraints
         /// </summary>
         /// <param name="obj">obj should implement Equals, and
         /// obj's table should have an index between
         /// all of the properties that make obj unique</param>
         /// <returns>True if new row was inserted, otherwise false</returns>
-        public static bool InsertOrUndelete<T>(T obj) where T : class, IDeletable, new()
+        public static bool InsertOrUndeleteAndUpdate<T>(T obj) where T : class, IDeletable, new()
         {
             lock (Locker)
             {
@@ -161,16 +155,10 @@ namespace POLift.Service
                             throw new InvalidOperationException("This object does not exist in the database table.");
                         }
 
-                       // T existing = table.First(o => 
-                        //    o.Equals(obj));
-
                         obj.ID = existing.ID;
 
-                        if(existing.Deleted && !obj.Deleted)
-                        {
-                            existing.Deleted = false;
-                            Connection.Update(existing);
-                        }
+                        Connection.Update(obj);
+
 
                         return true;
                     }
