@@ -46,7 +46,22 @@ namespace POLift
             CreateRoutineButton = FindViewById<Button>(Resource.Id.CreateRoutineButton);
 
 
-            exercise_sets_adapter = new ExerciseSetsAdapter(this, new List<ExerciseSets>());
+            List<ExerciseSets> exercise_sets = null;
+            if(savedInstanceState != null)
+            {
+                int[] ids = savedInstanceState.GetIntArray(EXERCISE_SETS_IDS_KEY);
+                if(ids != null)
+                {
+                    exercise_sets = new List<ExerciseSets>(POLDatabase.ParseIDs<ExerciseSets>(ids));
+                }
+            }
+
+            if(exercise_sets == null)
+            {
+                exercise_sets = new List<ExerciseSets>();
+            }
+
+            exercise_sets_adapter = new ExerciseSetsAdapter(this, exercise_sets);
 
 
             int edit_routine_id = Intent.GetIntExtra("edit_routine_id", -1);
@@ -79,10 +94,33 @@ namespace POLift
             CreateRoutineButton.Click += CreateRoutineButton_Click;
         }
 
+        const string EXERCISE_SETS_IDS_KEY = "exercise_sets_ids";
+
+        protected override void OnSaveInstanceState(Bundle outState)
+        {
+            base.OnSaveInstanceState(outState);
+
+            SaveExerciseSets();
+            int[] ids = exercise_sets_adapter.ExerciseSetsList.Select(es => es.ID).ToArray();
+            outState.PutIntArray(EXERCISE_SETS_IDS_KEY, ids);
+        }
+
+        void SaveExerciseSets()
+        {
+            exercise_sets_adapter.RemoveZeroSets();
+
+            foreach (ExerciseSets ex_sets in exercise_sets_adapter.ExerciseSetsList)
+            {
+                POLDatabase.InsertOrUpdateNoID(ex_sets);
+            }
+        }
+
         private void CreateRoutineButton_Click(object sender, EventArgs e)
         {
             try
             {
+                SaveExerciseSets();
+
                 Routine routine = new Routine(RoutineTitleText.Text, 
                     exercise_sets_adapter.ExerciseSetsList);
                 POLDatabase.Insert(routine);
@@ -147,7 +185,6 @@ namespace POLift
                 //routine_exercises.Add(selected_exercise);
 
                 ExerciseSets es = new ExerciseSets(selected_exercise, DEFAULT_SET_COUNT);
-                POLDatabase.Insert(es);
                 exercise_sets_adapter.Add(es);
             }
         }

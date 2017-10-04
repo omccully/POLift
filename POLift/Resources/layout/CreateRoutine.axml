@@ -37,4 +37,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/CreateRoutineButton" />
+    <TextView
+        android:text="Tip: To delete an exercise, set the set count to 0"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView3" />
 </LinearLayout>

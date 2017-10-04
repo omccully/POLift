@@ -15,35 +15,6 @@ namespace POLift
     using Model;
     using Service;
 
-    class WarmupSet
-    {
-        int PercentOfWeight;
-        int PercentOfRestPeriod;
-
-        public readonly int Reps;
-        public readonly string Notes;
-
-        public WarmupSet(int reps, int percent_of_weight, int percent_of_rest_period, string notes="")
-        {
-            Reps = reps;
-            PercentOfWeight = percent_of_weight;
-            PercentOfRestPeriod = percent_of_rest_period;
-            Notes = notes;
-        }
-
-        public int GetWeight(Exercise ex, int max_weight)
-        {
-            return Helpers.GetClosestToIncrement((max_weight * PercentOfWeight) / 100, 
-                ex.WeightIncrement,
-                max_weight % ex.WeightIncrement);
-        }
-
-        public int GetRestPeriod(Exercise ex)
-        {
-            return (ex.RestPeriodSeconds * PercentOfRestPeriod) / 100;
-        }
-    }
-
     [Activity(Label = "Warmup")]
     public class WarmupRoutineActivity : Activity
     {
@@ -53,7 +24,21 @@ namespace POLift
         TextView TimeLeftTextView;
 
         Exercise first_exercise = null;
-        int working_weight = 0;
+
+        int _working_weight = 0;
+        int working_weight
+        {
+            get
+            {
+                return _working_weight;
+            }
+            set
+            {
+                _working_weight = value;
+                RefreshWarmupInfo();
+            }
+        }
+
 
         WarmupSet[] warmup_sets =
         {
@@ -76,24 +61,35 @@ namespace POLift
             set
             {
                 _warmup_set_index = value;
-
-                if (value >= warmup_sets.Length)
-                {
-                    WarmupRoutineTextView.Text = "Finished";
-                    return;
-                }
-
-                WarmupSet ws = warmup_sets[value];
-                string txt = $"{ws.Reps} reps of {first_exercise.Name} at a weight of ";
-                txt += ws.GetWeight(first_exercise, working_weight).ToString();
-                if (!String.IsNullOrEmpty(ws.Notes))
-                {
-                    txt += $" ({ws.Notes})";
-                }
-
-                WarmupRoutineTextView.Text = txt;
-                next_warmup_set = ws;
+                RefreshWarmupInfo();
             }
+        }
+
+        void RefreshWarmupInfo()
+        {
+            if (_warmup_set_index >= warmup_sets.Length)
+            {
+                WarmupRoutineTextView.Text = "Finished";
+                return;
+            }
+
+            WarmupSet ws = warmup_sets[_warmup_set_index];
+            string txt = $"{ws.Reps} reps of {first_exercise.Name} at a weight of ";
+
+            int weight = ws.GetWeight(first_exercise, working_weight);
+            txt += weight.ToString();
+            if (first_exercise.PlateMath != null)
+            {
+                txt += " (" + first_exercise.PlateMath.PlateCountsToString(weight) + ")";
+            }
+
+            if (!String.IsNullOrEmpty(ws.Notes))
+            {
+                txt += $" ({ws.Notes})";
+            }
+
+            WarmupRoutineTextView.Text = txt;
+            next_warmup_set = ws;
         }
 
         bool Finished
@@ -105,6 +101,18 @@ namespace POLift
         }
 
         Dialog error_dialog;
+        Dialog back_button_dialog;
+
+        public override void OnBackPressed()
+        {
+            back_button_dialog = Helpers.DisplayConfirmation(this, 
+                "Are you sure you want to end this warmup session? " +
+                " You will lose all of your progress in this warmup.",
+                delegate
+                {
+                    base.OnBackPressed();
+                });
+        }
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -148,9 +156,10 @@ namespace POLift
 
         protected override void OnPause()
         {
-            base.OnPause();
-
             error_dialog?.Dismiss();
+            back_button_dialog?.Dismiss();
+
+            base.OnPause();
         }
 
         private void WarmupSetFinishedButton_Click(object sender, EventArgs e)
@@ -164,7 +173,7 @@ namespace POLift
                 return;
             }
 
-            StaticTimer.StartTimer(80, next_warmup_set.GetRestPeriod(first_exercise),
+            StaticTimer.StartTimer(1000, next_warmup_set.GetRestPeriod(first_exercise),
                 Timer_Ticked, Timer_Elapsed);
         }
 

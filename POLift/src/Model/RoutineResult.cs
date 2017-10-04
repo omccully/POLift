@@ -71,7 +71,7 @@ namespace POLift.Model
         }
 
         [Ignore]
-        List<ExerciseResult> ExerciseResults { get; set; }
+        public List<ExerciseResult> ExerciseResults { get; set; }
 
         [Ignore]
         Exercise[] Exercises { get; set; }

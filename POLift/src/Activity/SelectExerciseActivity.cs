@@ -134,5 +134,29 @@ namespace POLift
 
             Finish();
         }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns>Ordered list of KVP category => list of exercises</returns>
+        List<KeyValuePair<string, List<Exercise>>> ExercisesInCategories()
+        {
+            Dictionary<string, List<Exercise>> dict = new Dictionary<string, List<Exercise>>();
+
+            foreach (Exercise ex in POLDatabase.Table<Exercise>())
+            {
+                if (dict.ContainsKey(ex.Category))
+                {
+                    dict[ex.Category].Add(ex);
+                }
+                else
+                {
+                    dict[ex.Category] = new List<Exercise>() { ex };
+                }
+            }
+
+            return dict.OrderBy(kvp => kvp.Value.Count).ToList();
+        }
     }
 }

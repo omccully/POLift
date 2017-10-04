@@ -19,7 +19,7 @@ namespace POLift.Service
 {
     public delegate void DatabaseOperation(SQLiteConnection Connection);
 
-    static class POLDatabase
+    public static class POLDatabase
     {
         static string DatabaseFileName = "database.db3";
         static string DatabaseDirectory = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
@@ -32,22 +32,31 @@ namespace POLift.Service
 
         public static string Error = "";
 
-        static void ClearDatabase()
+        public static void ClearDatabase()
         {
-            Connection.DropTable<Exercise>();
-            Connection.DropTable<Routine>();
-            Connection.DropTable<ExerciseSets>();
-            Connection.DropTable<ExerciseResult>(); 
-            Connection.DropTable<RoutineResult>();
+            lock(Locker)
+            {
+                Connection.DropTable<Exercise>();
+                Connection.DropTable<Routine>();
+                Connection.DropTable<ExerciseSets>();
+                Connection.DropTable<ExerciseResult>();
+                Connection.DropTable<RoutineResult>();
+            }
         }
 
-        static void InitializeDatabase()
+        public static void InitializeDatabase()
         {
             CreateTableIfNotExists<Exercise>();
             CreateTableIfNotExists<Routine>();
             CreateTableIfNotExists<ExerciseSets>();
             CreateTableIfNotExists<ExerciseResult>();
             CreateTableIfNotExists<RoutineResult>();
+        }
+
+        public static void ResetDatabase()
+        {
+            ClearDatabase();
+            InitializeDatabase();
         }
 
         static POLDatabase()
@@ -98,11 +107,12 @@ namespace POLift.Service
         }
 
         /// <summary>
-        /// This should not be used for tables that have constraints that may prevent insertion
+        /// May through SQLiteException if used on
+        /// tables that have constraints that may prevent insertion
         /// </summary>
         /// <param name="obj"></param>
         /// <returns>True if new row inserted, false is old row was updated</returns>
-        public static bool InsertOrUpdate(IIdentifiable obj)
+        public static bool InsertOrUpdateByID(IIdentifiable obj)
         {
             lock (Locker)
             {
@@ -116,13 +126,13 @@ namespace POLift.Service
         }
 
         /// <summary>
-        /// For tables that have constraints
+        /// For tables that have constraints, and for objects that do not have a known ID
         /// </summary>
         /// <param name="obj">obj should implement Equals, and
         /// obj's table should have an index between
         /// all of the properties that make obj unique</param>
         /// <returns>True if new row was inserted, otherwise false</returns>
-        public static bool InsertOrUndeleteAndUpdate<T>(T obj) where T : class, IDeletable, new()
+        public static bool InsertOrUpdateNoID<T>(T obj) where T : class, IIdentifiable, new()
         {
             lock (Locker)
             {
@@ -159,7 +169,6 @@ namespace POLift.Service
 
                         Connection.Update(obj);
 
-
                         return true;
                     }
                     else
@@ -169,6 +178,13 @@ namespace POLift.Service
                 }
             }
         }
+
+        public static bool InsertOrUndeleteAndUpdate<T>(T obj) where T : class, IDeletable, new()
+        {
+            obj.Deleted = false;
+            return InsertOrUpdateNoID(obj);
+        }
+
 
         public static bool HideDeletable<T>(T obj) where T : IDeletable, new()
         {
@@ -232,20 +248,24 @@ namespace POLift.Service
             }
         }
 
+        public static IEnumerable<T> ParseIDs<T>(IEnumerable<int> IDs) where T : class, new()
+        {
+            return IDs.Select(id => POLDatabase.ReadByID<T>(id));
+        }
+
         public static IEnumerable<T> ParseIDString<T>(string IDs) where T : class, new()
         {
-            return IDs.Split(',').Select(id_str =>
+            return ParseIDs<T>(IDs.Split(',').Select(id_str =>
             {
                 try
                 {
-                    int id = Int32.Parse(id_str);
-                    return POLDatabase.ReadByID<T>(id);
+                    return Int32.Parse(id_str);
                 }
                 catch (FormatException)
                 {
-                    return null;
+                    return 0;
                 }
-            }).Where(e => e != null);
+            }).Where(e => e != 0));
         }
     }
 }

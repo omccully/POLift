@@ -18,7 +18,8 @@ namespace POLift
     [Activity(Label = "Progressive Overload Lifting", MainLauncher = true)]
     class MainActivity : Activity
     {
-        static int CreateRoutineRequestCode = 2;
+        const int CreateRoutineRequestCode = 2;
+        const int EditRoutineRequestCode = 3;
 
         ListView RoutinesList;
         Button CreateRoutineLink;
@@ -68,7 +69,7 @@ namespace POLift
         {
             var intent = new Intent(this, typeof(CreateRoutineActivity));
             intent.PutExtra("edit_routine_id", e.Routine.ID);
-            StartActivity(intent);
+            StartActivityForResult(intent, EditRoutineRequestCode);
         }
 
         private void Routine_adapter_DeleteButtonClicked(object sender, RoutineEventArgs e)
@@ -110,13 +111,18 @@ namespace POLift
         {
             base.OnActivityResult(requestCode, resultCode, data);
 
-            if(resultCode == Result.Ok && requestCode == CreateRoutineRequestCode)
+            if(resultCode == Result.Ok && 
+                (requestCode == CreateRoutineRequestCode || 
+                requestCode == EditRoutineRequestCode))
             {
                 //string xml = data.GetStringExtra("routine");
                 //Routine new_routine = Routine.FromXml(xml);
 
                 int id = data.GetIntExtra("routine_id", -1);
-                if (id == -1) return;
+                if (id == -1)
+                {
+                    return;
+                }
                 Routine new_routine = POLDatabase.ReadByID<Routine>(id);
 
                 RefreshRoutineList();

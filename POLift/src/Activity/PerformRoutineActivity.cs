@@ -21,13 +21,14 @@ namespace POLift
     {
         const string RestPeriodSecondsRemainingKey = "rest_period_seconds_remaining";
 
-
         TextView RoutineDetails;
         TextView NextExerciseView;
         Button ReportResultButton;
         EditText RepResultEditText;
         TextView CountDownTextView;
         EditText WeightEditText;
+
+        TextView PlateMathTextView;
 
         Button Sub30SecButton;
         Button Add30SecButton;
@@ -36,6 +37,8 @@ namespace POLift
         Routine routine;
 
         AlertDialog dialog;
+
+        bool AskForWarmupRoutine = true;
 
         RoutineResult _routine_result;
         RoutineResult routine_result
@@ -49,23 +52,32 @@ namespace POLift
                 _routine_result = value;
                 GetNextExerciseAndWeight();
 
-                dialog = Helpers.DisplayConfirmation(this, "Would you like to do a warmup routine?",
+                ExerciseResult last_ex_result =_routine_result.ExerciseResults.LastOrDefault();
+                if(last_ex_result != null)
+                {
+                    int rest_period_seconds = last_ex_result.Exercise.RestPeriodSeconds;
+                    TimeSpan rest_period_span = TimeSpan.FromSeconds(rest_period_seconds);
+                    TimeSpan time_since_last_exercise = (DateTime.Now - last_ex_result.Time);
+                    if (time_since_last_exercise < rest_period_span)
+                    {
+                        int remaining_timer = (int)(rest_period_seconds - time_since_last_exercise.TotalSeconds);
+
+                        StaticTimer.StartTimer(1000, remaining_timer, Timer_Ticked, Timer_Elapsed);
+                    }
+                }
+
+                if(AskForWarmupRoutine)
+                {
+                    dialog = Helpers.DisplayConfirmation(this, "Would you like to do a warmup routine?",
                     delegate
                     {
-                        /*if(dialog != null && dialog.IsShowing)
-                        {
-                            dialog?.Dismiss();
-                        }
-                        
-                        //dialog?.Dispose();
-
-                        dialog = null;
-                        */
                         var intent = new Intent(this, typeof(WarmupRoutineActivity));
                         intent.PutExtra("exercise_id", exercise.ID);
                         intent.PutExtra("working_set_weight", Weight);
                         StartActivityForResult(intent, WARMUP_ROUTINE_REQUEST_CODE);
                     });
+                }
+                
             }
         }
 
@@ -155,9 +167,11 @@ namespace POLift
             Sub30SecButton = FindViewById<Button>(Resource.Id.Sub30SecButton);
             Add30SecButton = FindViewById<Button>(Resource.Id.Add30SecButton);
             SkipTimerButton = FindViewById<Button>(Resource.Id.SkipTimerButton);
+            PlateMathTextView = FindViewById<TextView>(Resource.Id.PlateMathTextView);
 
+            WeightEditText.TextChanged += WeightEditText_TextChanged;
 
-            if(savedInstanceState != null)
+            if (savedInstanceState != null)
             {
                 // screen was rotated...
                 RestPeriodSecondsRemaining = savedInstanceState.GetInt(RestPeriodSecondsRemainingKey, -1);
@@ -198,6 +212,7 @@ namespace POLift
                 if(resume_routine_result_id == 0)
                 {
                     // a routine result was started but has no contents
+                    AskForWarmupRoutine = false;
                     routine_result = new RoutineResult(routine);
                 }
                 else if (recent_uncompleted.ID == resume_routine_result_id)
@@ -212,7 +227,7 @@ namespace POLift
                         delegate
                         {
                             // yes
-
+                            AskForWarmupRoutine = false;
                             routine_result = recent_uncompleted;
                         },
                         delegate
@@ -244,6 +259,28 @@ namespace POLift
 
 
             }*/
+        }
+
+        public override void OnBackPressed()
+        {
+            base.OnBackPressed();
+        }
+
+        private void WeightEditText_TextChanged(object sender, Android.Text.TextChangedEventArgs e)
+        {
+            try
+            {
+                int weight = Weight;
+
+                if (exercise == null) return;
+                PlateMath plate_math = PlateMath.PlateMathTypes[exercise.PlateMathID];
+
+                PlateMathTextView.Text = " (" + plate_math.PlateCountsToString(weight) + ")";
+            }
+            catch(FormatException)
+            {
+
+            }
         }
 
         const int WARMUP_ROUTINE_REQUEST_CODE = 100;
@@ -332,7 +369,7 @@ namespace POLift
 
             // insert or update the routine result after EVERY new result
             // just in case the app crashes or something
-            POLDatabase.InsertOrUpdate(routine_result);
+            POLDatabase.InsertOrUpdateByID(routine_result);
 
             if (routine_result.Completed)
             {

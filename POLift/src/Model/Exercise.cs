@@ -174,7 +174,18 @@ namespace POLift.Model
             {
                 ExerciseResult most_recent_result = 
                     ExerciseResult.MostRecentResultOf(this);
-                if (most_recent_result == null) return WeightIncrement;
+                if (most_recent_result == null)
+                {
+                    if(PlateMath != null)
+                    {
+                        if(PlateMath.BarWeight != 0)
+                        {
+                            return PlateMath.BarWeight;
+                        }
+                        
+                    }
+                    return WeightIncrement;
+                }
 
                 int weight = most_recent_result.Weight;
 

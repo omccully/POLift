@@ -13,6 +13,7 @@ using Android.Widget;
 namespace POLift.Adapter
 {
     using Model;
+    using Service;
 
     class ExerciseSetsAdapter : BaseAdapter<ExerciseSets>
     {
@@ -47,34 +48,45 @@ namespace POLift.Adapter
         public override View GetView(int position, View convertView, ViewGroup parent)
         {
             var view = convertView;
-            ExerciseSetsAdapterViewHolder holder = null;
+            ExerciseSetsAdapterViewHolder holder = new ExerciseSetsAdapterViewHolder();
+            var inflater = context.GetSystemService(Context.LayoutInflaterService).JavaCast<LayoutInflater>();
+            //replace with your item and your holder items
+            //comment back in
+            //view = inflater.Inflate(Resource.Layout.item, parent, false);
+            //holder.Title = view.FindViewById<TextView>(Resource.Id.text);
 
-            if (view != null)
-                holder = view.Tag as ExerciseSetsAdapterViewHolder;
+            view = inflater.Inflate(Resource.Layout.ExerciseSetsItem, parent, false);
+            holder.Layout = view.FindViewById<LinearLayout>(Resource.Id.ExerciseSetsLayout);
+            holder.TextBox = view.FindViewById<EditText>(Resource.Id.SetCountText);
+            holder.TextView = view.FindViewById<TextView>(Resource.Id.ExerciseSetsName);
 
-            if (holder == null)
-            {
-                holder = new ExerciseSetsAdapterViewHolder();
-                var inflater = context.GetSystemService(Context.LayoutInflaterService).JavaCast<LayoutInflater>();
-                //replace with your item and your holder items
-                //comment back in
-                //view = inflater.Inflate(Resource.Layout.item, parent, false);
-                //holder.Title = view.FindViewById<TextView>(Resource.Id.text);
-
-                view = inflater.Inflate(Resource.Layout.ExerciseSetsItem, parent, false);
-                holder.Layout = view.FindViewById<LinearLayout>(Resource.Id.ExerciseSetsLayout);
-                holder.TextBox = view.FindViewById<EditText>(Resource.Id.SetCountText);
-                holder.TextView = view.FindViewById<TextView>(Resource.Id.ExerciseSetsName);
-
-                view.Tag = holder;
-            }
+            view.Tag = holder;
+            
 
 
             //fill in your items
             //holder.Title.Text = "new text here";
             ExerciseSets es = this[position];
             holder.TextBox.Text = es.SetCount.ToString();
-            holder.TextView.Text = es.Exercise.Name;
+            holder.TextView.Text = " sets of " + es.Exercise.Name;
+            //holder.TextView.Text = " sets of " + es.Exercise;
+
+            holder.TextBox.TextChanged += delegate
+            {
+                try
+                {
+                    es.SetCount = Int32.Parse(holder.TextBox.Text);
+                    if(es.SetCount == 0)
+                    {
+                        Helpers.DisplayConfirmation(context, "Would you like to delete this exercise?",
+                            delegate {
+                                ExerciseSetsList.RemoveAt(position);
+                                NotifyDataSetChanged();
+                            });
+                    }
+                }
+                catch (FormatException) { }
+            };
 
 
             return view;
@@ -84,6 +96,14 @@ namespace POLift.Adapter
         {
             ExerciseSetsList.Add(es);
             NotifyDataSetChanged();
+        }
+
+        public void RemoveZeroSets()
+        {
+            if(ExerciseSetsList.RemoveAll(ex_sets => ex_sets.SetCount == 0) > 0)
+            {
+                NotifyDataSetChanged();
+            }
         }
 
         //Fill in cound here, currently 0

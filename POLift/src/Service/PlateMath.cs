@@ -47,8 +47,8 @@ namespace POLift.Service
 
 
         float[] PlateWeights;
-        int BarWeight;
-        bool SplitWeights;
+        public readonly int BarWeight;
+        public readonly bool SplitWeights;
 
         public PlateMath(float[] plate_weights, int bar_weight = 0, bool split_weights = true)
         {
@@ -85,6 +85,16 @@ namespace POLift.Service
             }
 
             return CalculatePlateCountsOneSide(weight);
+        }
+
+        public string PlateCountsToString(int weight)
+        {
+            return PlateCountsToString(CalculateTotalPlateCounts(weight));
+        }
+
+        static string PlateCountsToString(Dictionary<float, int> dict)
+        {
+            return String.Join(", ", dict.Select(kv => $"{kv.Key}x{kv.Value}"));
         }
 
         /// <summary>

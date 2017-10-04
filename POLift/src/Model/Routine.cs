@@ -56,7 +56,7 @@ namespace POLift.Model
             }
              set
              {
-                ExerciseSetIDs = value.ToIDString();
+                ExerciseSetIDs = value.Where(ex_set => ex_set.SetCount > 0).ToIDString();
             }
          }
 

@@ -1,17 +1,18 @@
 ﻿using System;
 using NUnit.Framework;
+using Xamarin.Android.NUnitLite;
 
 
 namespace POLiftTest
 {
-    [TestFixture]
+    /*[TestFixture]
     public class TestsSample
     {
 
         [SetUp]
         public void Setup() { }
 
-
+         
         [TearDown]
         public void Tear() { }
 
@@ -40,5 +41,5 @@ namespace POLiftTest
         {
             Assert.Inconclusive("Inconclusive");
         }
-    }
+    }*/
 }

@@ -30,6 +30,11 @@
             android:layout_height="wrap_content"
             android:id="@+id/WeightEditText"
             android:width="80dip" />
+        <TextView
+            android:id="@+id/PlateMathTextView"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
     </LinearLayout>
     <LinearLayout
         android:orientation="horizontal"

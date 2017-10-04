@@ -44,14 +44,14 @@ namespace POLift
 		public partial class Id
 		{
 			
-			// aapt resource value: 0x7f040021
-			public const int Add30SecButton = 2130968609;
+			// aapt resource value: 0x7f040022
+			public const int Add30SecButton = 2130968610;
 			
 			// aapt resource value: 0x7f04000d
 			public const int AddExerciseButton = 2130968589;
 			
-			// aapt resource value: 0x7f04001e
-			public const int CountDownTextView = 2130968606;
+			// aapt resource value: 0x7f04001f
+			public const int CountDownTextView = 2130968607;
 			
 			// aapt resource value: 0x7f04000a
 			public const int CreateExerciseButton = 2130968586;
@@ -89,17 +89,17 @@ namespace POLift
 			// aapt resource value: 0x7f04001a
 			public const int NextExerciseView = 2130968602;
 			
-			// aapt resource value: 0x7f040022
-			public const int PlateMathTextView = 2130968610;
+			// aapt resource value: 0x7f04001c
+			public const int PlateMathTextView = 2130968604;
 			
 			// aapt resource value: 0x7f040003
 			public const int RepRangeMaxText = 2130968579;
 			
-			// aapt resource value: 0x7f04001c
-			public const int RepResultEditText = 2130968604;
-			
 			// aapt resource value: 0x7f04001d
-			public const int ReportResultButton = 2130968605;
+			public const int RepResultEditText = 2130968605;
+			
+			// aapt resource value: 0x7f04001e
+			public const int ReportResultButton = 2130968606;
 			
 			// aapt resource value: 0x7f040005
 			public const int RestPeriodSecondsTextBox = 2130968581;
@@ -122,11 +122,11 @@ namespace POLift
 			// aapt resource value: 0x7f040014
 			public const int SetCountText = 2130968596;
 			
-			// aapt resource value: 0x7f040020
-			public const int SkipTimerButton = 2130968608;
+			// aapt resource value: 0x7f040021
+			public const int SkipTimerButton = 2130968609;
 			
-			// aapt resource value: 0x7f04001f
-			public const int Sub30SecButton = 2130968607;
+			// aapt resource value: 0x7f040020
+			public const int Sub30SecButton = 2130968608;
 			
 			// aapt resource value: 0x7f040028
 			public const int TimeLeftTextView = 2130968616;
