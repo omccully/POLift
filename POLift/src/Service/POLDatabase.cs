@@ -64,6 +64,8 @@ namespace POLift.Service
             // comment this out unless testing
             //ClearDatabase();
 
+           // Connection.DropTable<RoutineResult>();
+
             InitializeDatabase();
         }
 

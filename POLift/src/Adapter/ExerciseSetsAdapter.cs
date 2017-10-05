@@ -62,8 +62,6 @@ namespace POLift.Adapter
 
             view.Tag = holder;
             
-
-
             //fill in your items
             //holder.Title.Text = "new text here";
             ExerciseSets es = this[position];

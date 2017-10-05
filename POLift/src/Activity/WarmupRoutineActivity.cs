@@ -12,35 +12,18 @@ using Android.Widget;
 
 namespace POLift
 {
+    using Android.Text;
     using Model;
     using Service;
 
     [Activity(Label = "Warmup")]
-    public class WarmupRoutineActivity : Activity
+    public class WarmupRoutineActivity : PerformRoutineBaseActivity
     {
-        Button WarmupSetFinishedButton;
-        EditText WorkingSetWeightEditText;
-        TextView WarmupRoutineTextView;
-        TextView TimeLeftTextView;
+        Exercise FirstExercise = null;
 
-        Exercise first_exercise = null;
+        const string WarmupSetIndexKey = "warmup_set_index";
 
-        int _working_weight = 0;
-        int working_weight
-        {
-            get
-            {
-                return _working_weight;
-            }
-            set
-            {
-                _working_weight = value;
-                RefreshWarmupInfo();
-            }
-        }
-
-
-        WarmupSet[] warmup_sets =
+        WarmupSet[] WarmupSets =
         {
             new WarmupSet(8, 50, 50),
             new WarmupSet(8, 50, 50),
@@ -49,10 +32,17 @@ namespace POLift
         };
 
 
-        WarmupSet next_warmup_set;
+        WarmupSet NextWarmupSet
+        {
+            get
+            {
+                if (WarmupFinished) return null;
+                return WarmupSets[WarmupSetIndex];
+            }
+        }
 
         int _warmup_set_index = 0;
-        int warmup_set_index
+        int WarmupSetIndex
         {
             get
             {
@@ -67,36 +57,43 @@ namespace POLift
 
         void RefreshWarmupInfo()
         {
-            if (_warmup_set_index >= warmup_sets.Length)
+            if (WarmupFinished)
             {
-                WarmupRoutineTextView.Text = "Finished";
+                NextExerciseView.Text = "Finished";
                 return;
             }
 
-            WarmupSet ws = warmup_sets[_warmup_set_index];
-            string txt = $"{ws.Reps} reps of {first_exercise.Name} at a weight of ";
+            string txt = $"{NextWarmupSet.Reps} reps of {FirstExercise.Name} at a weight of ";
 
-            int weight = ws.GetWeight(first_exercise, working_weight);
-            txt += weight.ToString();
-            if (first_exercise.PlateMath != null)
+            try
             {
-                txt += " (" + first_exercise.PlateMath.PlateCountsToString(weight) + ")";
+                int weight = NextWarmupSet.GetWeight(FirstExercise, WeightInput);
+                txt += weight.ToString();
+
+                if (FirstExercise.PlateMath != null)
+                {
+                    txt += " (" + FirstExercise.PlateMath.PlateCountsToString(weight) + ")";
+                }
+            }
+            catch(FormatException)
+            {
+                txt += "??";
+            }
+            
+
+            if (!String.IsNullOrEmpty(NextWarmupSet.Notes))
+            {
+                txt += $" ({NextWarmupSet.Notes})";
             }
 
-            if (!String.IsNullOrEmpty(ws.Notes))
-            {
-                txt += $" ({ws.Notes})";
-            }
-
-            WarmupRoutineTextView.Text = txt;
-            next_warmup_set = ws;
+            NextExerciseView.Text = txt;
         }
 
-        bool Finished
+        bool WarmupFinished
         {
             get
             {
-                return warmup_set_index >= warmup_sets.Length;
+                return WarmupSetIndex >= WarmupSets.Length;
             }
         }
 
@@ -114,29 +111,28 @@ namespace POLift
                 });
         }
 
+        protected override void WeightEditText_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            // base.WeightEditText_TextChanged(sender, e);
+
+            RefreshWarmupInfo();
+        }
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
 
             // Create your application here
 
-            SetContentView(Resource.Layout.WarmupRoutine);
-
-            WarmupSetFinishedButton = FindViewById<Button>(Resource.Id.WarmupSetFinishedButton);
-            WorkingSetWeightEditText = FindViewById<EditText>(Resource.Id.WorkingSetWeightEditText);
-            WarmupRoutineTextView = FindViewById<TextView>(Resource.Id.WarmupRoutineTextView);
-            TimeLeftTextView = FindViewById<TextView>(Resource.Id.TimeLeftTextView);
-
             int id = Intent.GetIntExtra("exercise_id", -1);
             if (id != -1)
             {
-                first_exercise = POLDatabase.ReadByID<Exercise>(id);
+                FirstExercise = POLDatabase.ReadByID<Exercise>(id);
             }
 
-            working_weight = Intent.GetIntExtra("working_set_weight", 0);
-            WorkingSetWeightEditText.Text = working_weight.ToString();
+            WeightInput = Intent.GetIntExtra("working_set_weight", 0);
 
-            if (first_exercise == null)
+            if (FirstExercise == null)
             {
                 error_dialog = Helpers.DisplayError(this, "Error (" + id + ")",
                     delegate
@@ -147,71 +143,55 @@ namespace POLift
                 return;
             }
 
-            WorkingSetWeightEditText.TextChanged += WorkingSetWeightEditText_TextChanged;
-            WarmupSetFinishedButton.Click += WarmupSetFinishedButton_Click;
-
+            if(savedInstanceState == null)
+            {
+                WarmupSetIndex = 0;
+            }
+            else
+            {
+                WarmupSetIndex = savedInstanceState.GetInt("warmup_set_index", 0);
+            }
             // set index and display the stuff
-            warmup_set_index = 0;
+
+            WeightLabel.Text = "Working set weight: ";
+            ReportResultButton.Text = "Set completed";
+            RepResultLabel.Visibility = ViewStates.Gone;
+            RepResultEditText.Visibility = ViewStates.Gone;
+
         }
 
-        protected override void OnPause()
+        protected override void ReportResultButton_Click(object sender, EventArgs e)
         {
-            error_dialog?.Dismiss();
-            back_button_dialog?.Dismiss();
+            // warmup set completed button clicked
+            WarmupSetIndex++;
 
-            base.OnPause();
-        }
-
-        private void WarmupSetFinishedButton_Click(object sender, EventArgs e)
-        {
-            warmup_set_index++;
-
-            if (Finished)
+            if (WarmupFinished)
             {
                 SetResult(Result.Ok);
                 Finish();
                 return;
             }
 
-            StaticTimer.StartTimer(1000, next_warmup_set.GetRestPeriod(first_exercise),
-                Timer_Ticked, Timer_Elapsed);
+            StartTimer(NextWarmupSet.GetRestPeriod(FirstExercise));
         }
 
-        private void WorkingSetWeightEditText_TextChanged(object sender, Android.Text.TextChangedEventArgs e)
-        {
-            try
-            {
-                working_weight = Int32.Parse(WorkingSetWeightEditText.Text);
-            }
-            catch (FormatException)
-            {
 
-            }
+        protected override void OnSaveInstanceState(Bundle outState)
+        {
+            outState.PutInt("warmup_set_index", WarmupSetIndex);
+
+            SaveTimerState(outState);
+
+            base.OnSaveInstanceState(outState);
         }
 
-        void SetCountDownText(int seconds_left)
+        protected override void OnPause()
         {
-            TimeLeftTextView.Text = "Resting for another " +
-                    seconds_left.ToString() + " seconds";
-        }
+            // dismiss dialog boxes to prevent window leaks
+            error_dialog?.Dismiss();
+            back_button_dialog?.Dismiss();
 
-        private void Timer_Ticked(int ticks_until_elapsed)
-        {
-            //RestPeriodSecondsRemaining = ticks_until_elapsed;
-            RunOnUiThread(delegate
-            {
-                SetCountDownText(ticks_until_elapsed);
-            });
-        }
-
-        private void Timer_Elapsed()
-        {
-            RunOnUiThread(delegate
-            {
-                TimeLeftTextView.Text = "TIME IS UP!!! *vibrate*" +
-                    System.Environment.NewLine +
-                    "Start your next set whenever you're ready";
-            });
+            base.OnPause();
         }
     }
 }

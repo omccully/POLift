@@ -4,13 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <TextView
-        android:text="Small Text"
-        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Routune"
+        android:textAppearance="?android:attr/textAppearanceMedium"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/RoutineDetails" />
+        android:id="@+id/RoutineDetails"
+        android:paddingBottom="20dip" />
     <TextView
-        android:text="Medium Text"
+        android:text="Exercise"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -23,7 +24,8 @@
             android:text="Weight:"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:id="@+id/WeightLabel" />
         <EditText
             android:inputType="number"
             android:layout_width="wrap_content"
@@ -44,7 +46,8 @@
             android:text="Reps:"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:id="@+id/RepResultLabel" />
         <EditText
             android:inputType="number"
             android:layout_width="wrap_content"
@@ -73,18 +76,21 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/Sub30SecButton"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:enabled="false" />
         <Button
             android:text="Skip timer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/SkipTimerButton"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:enabled="false" />
         <Button
             android:text="+30 sec"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/Add30SecButton"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:enabled="false" />
     </LinearLayout>
 </LinearLayout>

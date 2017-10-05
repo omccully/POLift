@@ -123,7 +123,7 @@ namespace POLift
                 {
                     return;
                 }
-                Routine new_routine = POLDatabase.ReadByID<Routine>(id);
+                //Routine new_routine = POLDatabase.ReadByID<Routine>(id);
 
                 RefreshRoutineList();
 

@@ -16,7 +16,7 @@ namespace POLift.Model
 {
     using Service;
 
-    class RoutineResult : IIdentifiable
+    class RoutineResult : IIdentifiable, IDeletable
     {
         [PrimaryKey, AutoIncrement]
         public int ID { get; set; }
@@ -75,7 +75,8 @@ namespace POLift.Model
 
         [Ignore]
         Exercise[] Exercises { get; set; }
-        //int next_exercise_index = 0;
+        
+        public bool Deleted { get; set; }
 
         public RoutineResult(Routine Routine) : this(Routine.ID)
         {

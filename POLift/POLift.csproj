@@ -116,6 +116,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="src\Activity\PerformRoutineActivity.cs" />
+    <Compile Include="src\Activity\PerformRoutineBaseActivity.cs" />
     <Compile Include="src\Activity\ViewRoutineResultsActivity.cs" />
     <Compile Include="src\Activity\WarmupRoutineActivity.cs" />
     <Compile Include="src\Adapter\ExerciseAdapter.cs" />

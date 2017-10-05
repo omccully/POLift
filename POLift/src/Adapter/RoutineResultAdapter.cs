@@ -73,6 +73,11 @@ namespace POLift
             return view;
         }
 
+        public void RemoveIndex(int pos)
+        {
+            routine_results.RemoveAt(pos);
+        }
+
         //Fill in cound here, currently 0
         public override int Count
         {
