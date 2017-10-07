@@ -1,7 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<Exercises>
-  <Exercise name="Flat barbell bench" min_rep="4" max_rep="6" weight_increment="5" />
-  <Exercise name="Flat dumbbell bench" min_rep="4" max_rep="6" weight_increment="5" />
-  <Exercise name="Incline barbell bench" min_rep="4" max_rep="6" weight_increment="5" />
-  <Exercise name="Incline dumbbell bench" min_rep="4" max_rep="6" weight_increment="5" />
-</Exercises>
