@@ -17,7 +17,7 @@
     <AndroidResgenClass>Resource</AndroidResgenClass>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <AndroidUseLatestPlatformSdk>True</AndroidUseLatestPlatformSdk>
-    <TargetFrameworkVersion>v7.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v7.0</TargetFrameworkVersion>
     <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
     <MonoAndroidResourcePrefix>Resources</MonoAndroidResourcePrefix>
     <MonoAndroidAssetsPrefix>Assets</MonoAndroidAssetsPrefix>
@@ -151,7 +151,6 @@
     <Compile Include="src\Adapter\ExerciseAdapter.cs" />
     <Compile Include="src\Activity\CreateRoutineActivity.cs" />
     <Compile Include="src\Adapter\ExerciseSetsAdapter.cs" />
-    <Compile Include="src\Adapter\ExercisesPagerAdapter.cs" />
     <Compile Include="src\Adapter\PlateMathTypeAdapter.cs" />
     <Compile Include="src\Adapter\RoutineResultAdapter.cs" />
     <Compile Include="src\Model\Exercise.cs" />

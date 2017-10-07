@@ -164,6 +164,7 @@ namespace POLift
         protected void AddExerciseButton_Click(object sender, EventArgs e)
         {
             var intent = new Intent(this, typeof(SelectExerciseActivity));
+            intent.PutExtra("routine_name", RoutineTitleText.Text);
             StartActivityForResult(intent, SelectExerciseRequestCode);
         }
 
@@ -183,6 +184,12 @@ namespace POLift
 
                 //exercise_adapter.Add(selected_exercise);
                 //routine_exercises.Add(selected_exercise);
+
+                // set the routine name from the category if user hasn't specified one yet
+                if(String.IsNullOrWhiteSpace(RoutineTitleText.Text))
+                {
+                    RoutineTitleText.Text = selected_exercise.Category;
+                }
 
                 ExerciseSets es = new ExerciseSets(selected_exercise, DEFAULT_SET_COUNT);
                 exercise_sets_adapter.Add(es);

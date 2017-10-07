@@ -12,6 +12,7 @@ using Android.Widget;
 using Java.IO;
 using System.IO;
 using System.Xml;
+using Android.Support.V4.View;
 
 namespace POLift
 {
@@ -19,14 +20,15 @@ namespace POLift
     using Service;
 
     [Activity(Label = "Select Exercise")]
-    public class SelectExerciseActivity : ListActivity
+    public class SelectExerciseActivity : Activity
     {
-        ExerciseAdapter exercise_adapter;
-
         const int CreateExerciseRequestCode = 3;
         const int ExerciseEditedRequestCode = 4;
 
         Button CreateExerciseLink;
+
+        ViewPager ExercisesViewPager;
+        ExercisesPagerAdapter exercises_pager_adapter;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -37,42 +39,72 @@ namespace POLift
 
             CreateExerciseLink = FindViewById<Button>(Resource.Id.CreateExerciseLink);
 
-            this.ListView.Focusable = true;
-            this.ListView.ItemsCanFocus = true;
+            ExercisesViewPager = FindViewById<ViewPager>(Resource.Id.ExercisesViewPager);
 
             RefreshExerciseList();
 
-            ListView.ItemClick += ListView_ItemClick;
-
             CreateExerciseLink.Click += CreateExerciseLink_Click;
+
+            string routine_name = Intent.GetStringExtra("routine_name");
+
+            if(routine_name != null)
+            {
+                ExercisesViewPager.PostDelayed(delegate
+                {
+                    exercises_pager_adapter.GoToCategory(routine_name, ExercisesViewPager);
+                }, 50);
+            }
+            
+
+        }
+
+        private void Exercises_pager_adapter_ListItemClicked(object sender, ExerciseEventArgs e)
+        {
+            ReturnExercise(e.Exercise);
+        }
+
+        string CurrentCategory()
+        {
+            return exercises_pager_adapter?.GetCurrentCategory(ExercisesViewPager);
         }
 
         void RefreshExerciseList()
         {
-            exercise_adapter = new ExerciseAdapter(this, 
-                POLDatabase.TableWhereUndeleted<Exercise>().ToList());
-            this.ListAdapter = exercise_adapter;
+            string category = CurrentCategory();
 
-            exercise_adapter.DeleteButtonClicked += Exercise_adapter_DeleteButtonClicked;
-            exercise_adapter.EditButtonClicked += Exercise_adapter_EditButtonClicked;
+            exercises_pager_adapter = new ExercisesPagerAdapter(this,
+                ExercisesInCategories());
+            exercises_pager_adapter.ListItemClicked += Exercises_pager_adapter_ListItemClicked;
+            exercises_pager_adapter.EditButtonClicked += Exercises_pager_adapter_EditButtonClicked;
+            exercises_pager_adapter.DeleteButtonClicked += Exercises_pager_adapter_DeleteButtonClicked;
+
+            if(category != null)
+            {
+                ExercisesViewPager.PostDelayed(delegate
+                {
+                    exercises_pager_adapter.GoToCategory(category, ExercisesViewPager);
+                }, 50);
+            }
+
+            ExercisesViewPager.Adapter = exercises_pager_adapter;
         }
 
-        private void Exercise_adapter_EditButtonClicked(object sender, ExerciseEventArgs e)
-        {
-            var intent = new Intent(this, typeof(CreateExerciseActivity));
-            intent.PutExtra("edit_exercise_id", e.Exercise.ID);
-            StartActivityForResult(intent, ExerciseEditedRequestCode);
-        }
-
-        private void Exercise_adapter_DeleteButtonClicked(object sender, ExerciseEventArgs e)
+        private void Exercises_pager_adapter_DeleteButtonClicked(object sender, ExerciseEventArgs e)
         {
             Helpers.DisplayConfirmation(this, "Are you sure you want to remove the \"" +
-                e.Exercise.ToString() + "\" exercise? (this won't have any effect" + 
+                e.Exercise.ToString() + "\" exercise? (this won't have any effect" +
                 " on any routines that use this exercise)", delegate
                 {
                     POLDatabase.HideDeletable(e.Exercise);
                     RefreshExerciseList();
                 });
+        }
+
+        private void Exercises_pager_adapter_EditButtonClicked(object sender, ExerciseEventArgs e)
+        {
+            var intent = new Intent(this, typeof(CreateExerciseActivity));
+            intent.PutExtra("edit_exercise_id", e.Exercise.ID);
+            StartActivityForResult(intent, ExerciseEditedRequestCode);
         }
 
         private void CreateExerciseLink_Click(object sender, EventArgs e)
@@ -113,12 +145,7 @@ namespace POLift
             }
         }
 
-        private void ListView_ItemClick(object sender, AdapterView.ItemClickEventArgs e)
-        {
-            Exercise exercise = exercise_adapter[e.Position];
-
-            ReturnExercise(exercise);
-        }
+        
 
         void ReturnExercise(Exercise exercise)
         {
@@ -135,6 +162,9 @@ namespace POLift
             Finish();
         }
 
+        const string DefaultCategory = "other";
+
+        const string DeletedCategory = "DELETED";
 
         /// <summary>
         /// 
@@ -146,17 +176,28 @@ namespace POLift
 
             foreach (Exercise ex in POLDatabase.Table<Exercise>())
             {
-                if (dict.ContainsKey(ex.Category))
+                string cat = ex.Deleted ? DeletedCategory :
+                    (ex.Category == null ? DefaultCategory : ex.Category);
+                    
+                if (dict.ContainsKey(cat))
                 {
-                    dict[ex.Category].Add(ex);
+                    dict[cat].Add(ex);
                 }
                 else
                 {
-                    dict[ex.Category] = new List<Exercise>() { ex };
+                    dict[cat] = new List<Exercise>() { ex };
                 }
             }
 
-            return dict.OrderBy(kvp => kvp.Value.Count).ToList();
+            //POLDatabase.Table<Exercise>()
+            //    .GroupBy(ex => ex.Category)
+            //    .OrderByDescending(group => group.Count());
+            
+                
+            return dict.OrderByDescending(kvp => 
+                // put deleted category in back
+                kvp.Key == DeletedCategory ? 0 : kvp.Value.Count
+            ).ToList();
         }
     }
 }
