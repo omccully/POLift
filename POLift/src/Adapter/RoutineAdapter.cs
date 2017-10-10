@@ -71,8 +71,8 @@ namespace POLift
             var view = context.LayoutInflater.Inflate(Resource.Layout.ExerciseItem, null);
 
             holder.Title = view.FindViewById<TextView>(Resource.Id.ExerciseItemName);
-            holder.EditButton = view.FindViewById<Button>(Resource.Id.ExerciseEditButton);
-            holder.DeleteButton = view.FindViewById<Button>(Resource.Id.ExerciseDeleteButton);
+            holder.EditButton = view.FindViewById<ImageButton>(Resource.Id.ExerciseEditButton);
+            holder.DeleteButton = view.FindViewById<ImageButton>(Resource.Id.ExerciseDeleteButton);
 
             view.Tag = holder;
 
@@ -116,7 +116,7 @@ namespace POLift
     {
         //Your adapter views to re-use
         public TextView Title { get; set; }
-        public Button EditButton { get; set; }
-        public Button DeleteButton { get; set; }
+        public ImageButton EditButton { get; set; }
+        public ImageButton DeleteButton { get; set; }
     }
 }

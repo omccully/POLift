@@ -16,6 +16,11 @@ namespace POLift.Service
 
     public static class Helpers
     {
+        public static int OneRepMax(int weight, int reps)
+        {
+            return 0;
+        }
+
         public static string UniformString(string name)
         {
             return name.ToLower().Trim();

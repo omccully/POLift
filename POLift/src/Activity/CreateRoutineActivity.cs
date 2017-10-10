@@ -24,15 +24,13 @@ namespace POLift
         Button AddExerciseButton;
         Button CreateRoutineButton;
 
-        //ExerciseAdapter exercise_adapter;
         ExerciseSetsAdapter exercise_sets_adapter;
         
-        //List<Exercise> routine_exercises;
-        //List<ExerciseSets> routine_exercise_sets;
-
         static int SelectExerciseRequestCode = 1;
 
         Routine RoutineToDeleteIfDifferent = null;
+
+        int LockedSetCount = 0;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -45,53 +43,52 @@ namespace POLift
             AddExerciseButton = FindViewById<Button>(Resource.Id.AddExerciseButton);
             CreateRoutineButton = FindViewById<Button>(Resource.Id.CreateRoutineButton);
 
+            int edit_routine_id = Intent.GetIntExtra("edit_routine_id", -1);
 
-            List<ExerciseSets> exercise_sets = null;
-            if(savedInstanceState != null)
+            List<ExerciseSets> exercise_sets = new List<ExerciseSets>();
+            if (savedInstanceState != null)
             {
                 int[] ids = savedInstanceState.GetIntArray(EXERCISE_SETS_IDS_KEY);
                 if(ids != null)
                 {
                     exercise_sets = new List<ExerciseSets>(POLDatabase.ParseIDs<ExerciseSets>(ids));
                 }
+                LockedSetCount = savedInstanceState.GetInt("exercise_sets_locked", 0);
             }
-
-            if(exercise_sets == null)
+            else if (edit_routine_id != -1)
             {
-                exercise_sets = new List<ExerciseSets>();
-            }
-
-            exercise_sets_adapter = new ExerciseSetsAdapter(this, exercise_sets);
-
-
-            int edit_routine_id = Intent.GetIntExtra("edit_routine_id", -1);
-            if (edit_routine_id != -1)
-            { 
                 Routine routine = POLDatabase.ReadByID<Routine>(edit_routine_id);
 
                 RoutineTitleText.Text = routine.Name;
 
-                foreach (ExerciseSets es in routine.ExerciseSets)
-                {
-                    exercise_sets_adapter.Add(es);
-                }
+                // take the exercises list, split it at location exercises_locked
+                // ExerciseSets.Group(Exercise[] exercises)
+                int locked_count = Intent.GetIntExtra("exercises_locked", 0);
 
+                List<Exercise> all_exercises = routine.Exercises;
+
+                List<ExerciseSets> locked_sets = 
+                    ExerciseSets.Group(all_exercises.Take(locked_count));
+                List<ExerciseSets> unlocked_sets = 
+                    ExerciseSets.Group(all_exercises.Skip(locked_count));
+                LockedSetCount = locked_sets.Count();
+                exercise_sets.AddRange(locked_sets);
+                exercise_sets.AddRange(unlocked_sets);
+
+                // TODO: this may need to be persisted
                 RoutineToDeleteIfDifferent = routine;
             }
 
+            exercise_sets_adapter = new ExerciseSetsAdapter(this, 
+                exercise_sets, LockedSetCount);
 
             AddExerciseButton.Click += AddExerciseButton_Click;
 
-            //routine_exercises = new List<Exercise>();
-            // 
-
-           // exercise_adapter = new ExerciseAdapter(this, routine_exercises);
-            
-
-            // ExercisesListView.Adapter = exercise_adapter; 
             ExercisesListView.Adapter = exercise_sets_adapter;
 
             CreateRoutineButton.Click += CreateRoutineButton_Click;
+
+            System.Diagnostics.Debug.WriteLine("create routine oncreate()");
         }
 
         const string EXERCISE_SETS_IDS_KEY = "exercise_sets_ids";
@@ -103,10 +100,13 @@ namespace POLift
             SaveExerciseSets();
             int[] ids = exercise_sets_adapter.ExerciseSetsList.Select(es => es.ID).ToArray();
             outState.PutIntArray(EXERCISE_SETS_IDS_KEY, ids);
+
+            outState.PutInt("exercise_sets_locked", LockedSetCount);
         }
 
         void SaveExerciseSets()
         {
+            // TODO: merge sets that are the same, add set count
             exercise_sets_adapter.RemoveZeroSets();
 
             foreach (ExerciseSets ex_sets in exercise_sets_adapter.ExerciseSetsList)

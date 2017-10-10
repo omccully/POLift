@@ -154,9 +154,8 @@ namespace POLift.Model
 
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine(Name);
-            sb.Append($"up to {MaxRepCount} reps, {RestPeriodSeconds} second rest");
+            StringBuilder sb = new StringBuilder(ShortDetails);
+           
             if(PlateMath != null)
             {
                 sb.AppendLine();
@@ -165,6 +164,17 @@ namespace POLift.Model
             sb.Append($" (ID {ID})");
 
             return sb.ToString();
+        }
+
+        public string ShortDetails
+        {
+            get
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.AppendLine(Name);
+                sb.Append($"up to {MaxRepCount} reps, {RestPeriodSeconds} second rest");
+                return sb.ToString();
+            }
         }
 
         [Ignore]

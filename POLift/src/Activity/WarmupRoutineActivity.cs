@@ -55,40 +55,6 @@ namespace POLift
             }
         }
 
-        void RefreshWarmupInfo()
-        {
-            if (WarmupFinished)
-            {
-                NextExerciseView.Text = "Finished";
-                return;
-            }
-
-            string txt = $"{NextWarmupSet.Reps} reps of {FirstExercise.Name} at a weight of ";
-
-            try
-            {
-                int weight = NextWarmupSet.GetWeight(FirstExercise, WeightInput);
-                txt += weight.ToString();
-
-                if (FirstExercise.PlateMath != null)
-                {
-                    txt += " (" + FirstExercise.PlateMath.PlateCountsToString(weight) + ")";
-                }
-            }
-            catch(FormatException)
-            {
-                txt += "??";
-            }
-            
-
-            if (!String.IsNullOrEmpty(NextWarmupSet.Notes))
-            {
-                txt += $" ({NextWarmupSet.Notes})";
-            }
-
-            NextExerciseView.Text = txt;
-        }
-
         bool WarmupFinished
         {
             get
@@ -99,24 +65,6 @@ namespace POLift
 
         Dialog error_dialog;
         Dialog back_button_dialog;
-
-        public override void OnBackPressed()
-        {
-            back_button_dialog = Helpers.DisplayConfirmation(this, 
-                "Are you sure you want to end this warmup session? " +
-                " You will lose all of your progress in this warmup.",
-                delegate
-                {
-                    base.OnBackPressed();
-                });
-        }
-
-        protected override void WeightEditText_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            // base.WeightEditText_TextChanged(sender, e);
-
-            RefreshWarmupInfo();
-        }
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -143,21 +91,78 @@ namespace POLift
                 return;
             }
 
-            if(savedInstanceState == null)
+            int warmup_set_index_intent = Intent.GetIntExtra("warmup_set_index", 0);
+            if (savedInstanceState == null)
             {
-                WarmupSetIndex = 0;
+                WarmupSetIndex = warmup_set_index_intent;
             }
             else
             {
-                WarmupSetIndex = savedInstanceState.GetInt("warmup_set_index", 0);
+                WarmupSetIndex = savedInstanceState.GetInt("warmup_set_index", warmup_set_index_intent);
             }
             // set index and display the stuff
 
+            RoutineDetails.Visibility = ViewStates.Gone;
             WeightLabel.Text = "Working set weight: ";
             ReportResultButton.Text = "Set completed";
             RepResultLabel.Visibility = ViewStates.Gone;
             RepResultEditText.Visibility = ViewStates.Gone;
+            ModifyRestOfRoutineButton.Visibility = ViewStates.Gone;
+            NextExerciseView.Visibility = ViewStates.Gone;
+            ActionBar.Title = $"{FirstExercise.Name} warmup";
+        }
 
+        public override void OnBackPressed()
+        {
+            back_button_dialog = Helpers.DisplayConfirmation(this,
+                "Are you sure you want to end this warmup session? " +
+                " You will lose all of your progress in this warmup.",
+                delegate
+                {
+                    base.OnBackPressed();
+                });
+        }
+
+        protected override void WeightEditText_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            // base.WeightEditText_TextChanged(sender, e);
+
+            RefreshWarmupInfo();
+        }
+
+        void RefreshWarmupInfo()
+        {
+            if (WarmupFinished)
+            {
+                NextExerciseView.Text = "Finished";
+                return;
+            }
+
+            string txt = $"Warmup exercise {WarmupSetIndex+1}/{WarmupSets.Count()}: ";
+            txt += $"{NextWarmupSet.Reps} reps of {FirstExercise.Name} at a weight of ";
+
+            try
+            {
+                int weight = NextWarmupSet.GetWeight(FirstExercise, WeightInput);
+                txt += weight.ToString();
+
+                if (FirstExercise.PlateMath != null)
+                {
+                    txt += " (" + FirstExercise.PlateMath.PlateCountsToString(weight) + ")";
+                }
+            }
+            catch (FormatException)
+            {
+                txt += "??";
+            }
+
+
+            if (!String.IsNullOrEmpty(NextWarmupSet.Notes))
+            {
+                txt += $" ({NextWarmupSet.Notes})";
+            }
+
+            NextWarmupView.Text = txt;
         }
 
         protected override void ReportResultButton_Click(object sender, EventArgs e)
@@ -192,6 +197,31 @@ namespace POLift
             back_button_dialog?.Dismiss();
 
             base.OnPause();
+        }
+
+        protected override void SaveStateToIntent(Intent intent)
+        {
+            base.SaveStateToIntent(intent);
+
+            intent.PutExtra("exercise_id", FirstExercise.ID);
+
+            try
+            {
+                intent.PutExtra("working_set_weight", WeightInput);
+            }
+            catch (FormatException)
+            {
+            }
+
+            intent.PutExtra("warmup_set_index", WarmupSetIndex);
+        }
+
+        protected override void BuildArtificialTaskStack(Android.Support.V4.App.TaskStackBuilder stackBuilder)
+        {
+            base.BuildArtificialTaskStack(stackBuilder);
+
+            Intent perform_routine_intent = new Intent(this, typeof(PerformRoutineActivity));
+            //perform_routine_intent.PutExtra("routine_id", )
         }
     }
 }

@@ -135,5 +135,33 @@ namespace POLift.Model
         {
             return this.ExerciseID ^ this.SetCount;
         }
+
+        public static List<ExerciseSets> Group(IEnumerable<Exercise> exercises)
+        {
+            List<ExerciseSets> exercise_sets = new List<ExerciseSets>();
+
+            Exercise last_ex = null;
+            int set_count = 1;
+            foreach(Exercise ex in exercises)
+            {
+                if(ex == last_ex)
+                {
+                    set_count++;
+                }
+                else if(last_ex != null)
+                {
+                    exercise_sets.Add(new ExerciseSets(last_ex, set_count));
+                    set_count = 1; // number of sets of ex
+                }
+                last_ex = ex;
+            }
+
+            if(last_ex != null)
+            {
+                exercise_sets.Add(new ExerciseSets(last_ex, set_count));
+            }
+
+            return exercise_sets;
+        }
     }
 }

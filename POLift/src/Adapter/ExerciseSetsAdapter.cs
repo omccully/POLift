@@ -19,11 +19,13 @@ namespace POLift.Adapter
     {
         public List<ExerciseSets> ExerciseSetsList;
         Context context;
+        int locked_sets;
 
-        public ExerciseSetsAdapter(Context context, IEnumerable<ExerciseSets> exercise_sets)
+        public ExerciseSetsAdapter(Context context, IEnumerable<ExerciseSets> exercise_sets, int locked_sets=0)
         {
             this.context = context;
             this.ExerciseSetsList = new List<ExerciseSets>(exercise_sets);
+            this.locked_sets = locked_sets;
         }
 
         public override ExerciseSets this[int position]
@@ -69,22 +71,34 @@ namespace POLift.Adapter
             holder.TextView.Text = " sets of " + es.Exercise.Name;
             //holder.TextView.Text = " sets of " + es.Exercise;
 
-            holder.TextBox.TextChanged += delegate
+
+            if (position < locked_sets)
             {
-                try
+                holder.TextBox.Enabled = false;
+                holder.TextView.Text += " (locked)";
+            }
+            else
+            {
+                holder.TextBox.TextChanged += delegate
                 {
-                    es.SetCount = Int32.Parse(holder.TextBox.Text);
-                    if(es.SetCount == 0)
+                    try
                     {
-                        Helpers.DisplayConfirmation(context, "Would you like to delete this exercise?",
-                            delegate {
-                                ExerciseSetsList.RemoveAt(position);
-                                NotifyDataSetChanged();
-                            });
+                        es.SetCount = Int32.Parse(holder.TextBox.Text);
+                        if (es.SetCount == 0)
+                        {
+                            Helpers.DisplayConfirmation(context, "Would you like to delete this exercise?",
+                                delegate {
+                                    ExerciseSetsList.RemoveAt(position);
+                                    NotifyDataSetChanged();
+                                });
+                        }
                     }
-                }
-                catch (FormatException) { }
-            };
+                    catch (FormatException) { }
+                };
+            }
+            
+
+            
 
 
             return view;

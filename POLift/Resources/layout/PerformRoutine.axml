@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <TextView
-        android:text="Routune"
+        android:text="Routine"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -55,6 +55,12 @@
             android:id="@+id/RepResultEditText"
             android:width="80dip" />
     </LinearLayout>
+    <TextView
+        android:text="Next Warmup"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/NextWarmupView" />
     <Button
         android:text="Report result"
         android:layout_width="match_parent"
@@ -93,4 +99,9 @@
             android:layout_weight="1"
             android:enabled="false" />
     </LinearLayout>
+    <Button
+        android:text="Modify rest of routine"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/ModifyRestOfRoutineButton" />
 </LinearLayout>

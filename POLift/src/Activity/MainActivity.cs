@@ -20,6 +20,7 @@ namespace POLift
     {
         const int CreateRoutineRequestCode = 2;
         const int EditRoutineRequestCode = 3;
+        const int PerformRoutineRequestCode = 4;
 
         ListView RoutinesList;
         Button CreateRoutineLink;
@@ -97,7 +98,7 @@ namespace POLift
 
             intent.PutExtra("routine_id", id);
     
-            StartActivity(intent);
+            StartActivityForResult(intent, PerformRoutineRequestCode);
         }
 
         protected void CreateRoutineButton_Click(object sender, EventArgs e)
@@ -126,7 +127,13 @@ namespace POLift
                 //Routine new_routine = POLDatabase.ReadByID<Routine>(id);
 
                 RefreshRoutineList();
+            }
 
+            if(requestCode == PerformRoutineRequestCode)
+            {
+                // routines may have been edited from perform routine page
+                // regardless of result
+                RefreshRoutineList();
             }
         }
     }

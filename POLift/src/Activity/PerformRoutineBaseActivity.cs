@@ -9,11 +9,13 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
+using Android.Support.Compat;
 
 namespace POLift
 {
     using Service;
     using Model;
+    using Android.Support.V4.App;
 
     //[Activity(Label = "Perform routine")]
     public abstract class PerformRoutineBaseActivity : Activity
@@ -22,23 +24,25 @@ namespace POLift
 
         protected TextView RoutineDetails;
         protected TextView NextExerciseView;
-        protected Button ReportResultButton;
 
         protected TextView WeightLabel;
         protected EditText WeightEditText;
+        protected TextView PlateMathTextView;
 
         protected TextView RepResultLabel;
         protected EditText RepResultEditText;
-        
+
+        protected TextView NextWarmupView;
+
+        protected Button ReportResultButton;
 
         protected TextView CountDownTextView;
-        
-
-        protected TextView PlateMathTextView;
-
         protected Button Sub30SecButton;
         protected Button Add30SecButton;
         protected Button SkipTimerButton;
+        
+
+        protected Button ModifyRestOfRoutineButton;
 
         protected Exercise CurrentExercise;
 
@@ -115,6 +119,8 @@ namespace POLift
             PlateMathTextView = FindViewById<TextView>(Resource.Id.PlateMathTextView);
             RepResultLabel = FindViewById<TextView>(Resource.Id.RepResultLabel);
             WeightLabel = FindViewById<TextView>(Resource.Id.WeightLabel);
+            ModifyRestOfRoutineButton = FindViewById<Button>(Resource.Id.ModifyRestOfRoutineButton);
+            NextWarmupView = FindViewById<TextView>(Resource.Id.NextWarmupView);
 
             RestoreTimerState(savedInstanceState);
 
@@ -159,9 +165,21 @@ namespace POLift
 
         volatile int RestPeriodSecondsRemaining = 0;
 
+
+        Bundle GetTimerState()
+        {
+            Bundle bundle = new Bundle();
+
+            bundle.PutInt(RestPeriodSecondsRemainingKey, RestPeriodSecondsRemaining);
+            return bundle;
+        }
+
         protected virtual void SaveTimerState(Bundle outState)
         {
-            outState.PutInt(RestPeriodSecondsRemainingKey, RestPeriodSecondsRemaining);
+           // outState.PutInt(RestPeriodSecondsRemainingKey, RestPeriodSecondsRemaining);
+
+            outState.PutAll(GetTimerState());
+            int test = outState.GetInt(RestPeriodSecondsRemainingKey, -1);
         }
 
         protected override void OnSaveInstanceState(Bundle outState)
@@ -179,18 +197,21 @@ namespace POLift
             StaticTimer.TickedCallback += Timer_Ticked;
             StaticTimer.ElapsedCallback = Timer_Elapsed;
 
+            int intent_rpsr = Intent.GetIntExtra(RestPeriodSecondsRemainingKey, -1);
+            RestPeriodSecondsRemaining = intent_rpsr;
+
             if (savedInstanceState != null)
             {
                 // screen was rotated... restore the timer textview
                 RestPeriodSecondsRemaining = savedInstanceState.GetInt(
-                    RestPeriodSecondsRemainingKey, -1);
+                    RestPeriodSecondsRemainingKey, RestPeriodSecondsRemaining);
+            }
 
-                if (RestPeriodSecondsRemaining > 0)
-                {
-                    // timer was running last time
+            if (RestPeriodSecondsRemaining > 0)
+            {
+                // timer was running last time
 
-                    SetCountDownText(RestPeriodSecondsRemaining);
-                }
+                SetCountDownText(RestPeriodSecondsRemaining);
             }
 
             // if no RestPeriodSecondsRemaining for whatever reason, 
@@ -222,6 +243,11 @@ namespace POLift
             });
         }
 
+        protected virtual void SaveStateToIntent(Intent intent)
+        {
+            intent.PutExtras(GetTimerState());
+        }
+
         protected virtual void Timer_Elapsed()
         {
             RestPeriodSecondsRemaining = 0;
@@ -241,13 +267,41 @@ namespace POLift
             System.Threading.Thread.Sleep(300);
             vibrator.Vibrate(200);
 
-            // TODO: make notification here
+            // TODO: fix notification here
+           
+
+            Intent result_intent = new Intent(this, this.GetType());
+            SaveStateToIntent(result_intent);
+
+            PendingIntent resultPendingIntent = TaskStackBuilder.Create(this)
+                //.AddParentStack(this)
+                //.AddNextIntent(result_intent)
+                .AddNextIntentWithParentStack(result_intent)
+                .GetPendingIntent(500, (int)PendingIntentFlags.UpdateCurrent);
+
+            NotificationCompat.Builder n_builder = new NotificationCompat.Builder(this)
+               .SetSmallIcon(Resource.Drawable.timer_white)
+               .SetContentTitle("Lifting rest period finished")
+               .SetContentText("Start your next set whenever you are ready")
+               .SetContentIntent(resultPendingIntent);
+
+            NotificationManager mNotificationManager =
+                (NotificationManager)GetSystemService(Context.NotificationService);
+
+            mNotificationManager.Notify(500, n_builder.Build());
+
         }
 
         protected virtual void SetCountDownText(int seconds_left)
         {
             CountDownTextView.Text = "Resting for another " +
                     seconds_left.ToString() + " seconds";
+        }
+
+        protected virtual void BuildArtificialTaskStack(TaskStackBuilder stackBuilder)
+        {
+            Intent main_intent = new Intent(this, typeof(MainActivity));
+
         }
     }
 }

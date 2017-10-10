@@ -12,21 +12,19 @@
         android:paddingBottom="10dip"
         android:paddingTop="10dip"
         android:layout_weight="5" />
-    <Button
-        android:id="@+id/ExerciseEditButton"
+    <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="edit"
-        android:width="50dip"
+        android:id="@+id/ExerciseEditButton"
         android:layout_weight="1"
         android:focusable="false"
-        android:focusableInTouchMode="false" />
-    <Button
-        android:id="@+id/ExerciseDeleteButton"
+        android:focusableInTouchMode="false"
+        android:src="@android:drawable/ic_menu_edit" />
+    <ImageButton
+        android:src="@android:drawable/ic_menu_delete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Delete"
-        android:width="50dip"
+        android:id="@+id/ExerciseDeleteButton"
         android:layout_weight="1"
         android:focusable="false"
         android:focusableInTouchMode="false" />

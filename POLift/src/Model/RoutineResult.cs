@@ -171,31 +171,91 @@ namespace POLift.Model
 
         public override string ToString()
         {
-            //return $"routine #{RoutineID} exercises={this.ExerciseIDs} exerciseresults={this.ExerciseResultsIDs} endtime={this.EndTime}";
-
             StringBuilder builder = new StringBuilder();
-            builder.Append(this.StartTime + " " + Routine.Name);
 
-            Exercise last_exercise = null;
-            foreach(ExerciseResult exr in this.ExerciseResults)
+            if(this.EndTime != null)
             {
-                Exercise this_exercise = exr.Exercise;
-                if(this_exercise != last_exercise)
+                TimeSpan span = (this.EndTime - this.StartTime);
+                builder.Append($"{this.StartTime} ({(int)span.TotalMinutes} mins) ");
+            }
+
+            builder.AppendLine($"{Routine.Name}");
+
+            builder.Append(ShortDetails);
+
+            return builder.ToString();
+        }
+
+        public string ShortDetails
+        {
+            get
+            {
+                StringBuilder builder = new StringBuilder();
+                Exercise last_exercise = null;
+                foreach (ExerciseResult exr in this.ExerciseResults)
                 {
-                    builder.AppendLine();
-                    builder.Append(this_exercise.Name + " "); 
+                    Exercise this_exercise = exr.Exercise;
+                    if (this_exercise != last_exercise)
+                    {
+                        if(last_exercise != null)
+                        {
+                            builder.AppendLine();
+                        }
+                        
+                        builder.Append(this_exercise.Name + " ");
+                    }
+                    else
+                    {
+                        builder.Append(", ");
+                    }
+
+                    builder.Append($"{exr.Weight}x{exr.RepCount}");
+
+                    last_exercise = this_exercise;
+                }
+
+                return builder.ToString();
+            }
+        }
+
+
+
+        public RoutineResult Transform(Routine new_routine)
+        {
+            // 
+
+            if (Routine == new_routine) return this;
+
+            RoutineResult new_rr = new RoutineResult(new_routine);
+
+            int same_count = 0;
+            int old_exercise_count = Exercises.Length;
+            int new_exercise_count = new_rr.Exercises.Length;
+            int max_ex_len = Math.Min(old_exercise_count, new_exercise_count);
+            for(int i = 0; i < max_ex_len; i++)
+            {
+                if(Exercises[i] == new_rr.Exercises[i])
+                {
+                    same_count++;
                 }
                 else
                 {
-                    builder.Append(", ");
+                    break;
                 }
-
-                builder.Append($"{exr.Weight}x{exr.RepCount}");
-
-                last_exercise = this_exercise;
             }
 
-            return builder.ToString();
+            if(same_count < ResultCount)
+            {
+                throw new InvalidOperationException(
+                    "This routine result cannot be transformed into new_routine");
+            }
+
+            foreach(ExerciseResult er in ExerciseResults.Take(same_count))
+            {
+                new_rr.ReportExerciseResult(er);
+            }
+            
+            return new_rr;
         }
 
     }
