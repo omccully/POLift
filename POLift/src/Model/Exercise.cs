@@ -23,7 +23,7 @@ namespace POLift.Model
         public int ID { get; set; }
 
         string _Name;
-        [Indexed(Name = "UniqueGroup", Order =1, Unique = true)]
+        [Indexed(Name = "UniqueGroupExercise", Order =1, Unique = true)]
         public string Name
         {
             get
@@ -41,7 +41,7 @@ namespace POLift.Model
         }
 
         int _MaxRepCount;
-        [Indexed(Name = "UniqueGroup", Order = 2, Unique = true)]
+        [Indexed(Name = "UniqueGroupExercise", Order = 2, Unique = true)]
         public int MaxRepCount
         {
             get
@@ -59,7 +59,7 @@ namespace POLift.Model
         }
 
         int _WeightIncrement;
-        [Indexed(Name = "UniqueGroup", Order = 3, Unique = true)]
+        [Indexed(Name = "UniqueGroupExercise", Order = 3, Unique = true)]
         public int WeightIncrement
         {
             get
@@ -78,7 +78,7 @@ namespace POLift.Model
 
 
         int _RestPeriodSeconds;
-        [Indexed(Name = "UniqueGroup", Order = 4, Unique = true)]
+        [Indexed(Name = "UniqueGroupExercise", Order = 4, Unique = true)]
         public int RestPeriodSeconds
         {
             get

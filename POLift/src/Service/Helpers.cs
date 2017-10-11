@@ -16,9 +16,33 @@ namespace POLift.Service
 
     public static class Helpers
     {
+        static int[] PercentOf1RepMaxFromReps = 
+        {
+            100, 95, 93, 90, 87,
+            85, 83, 80, 77, 75,
+            73, 70, 66, 63, 60
+        };
+
         public static int OneRepMax(int weight, int reps)
         {
-            return 0;
+            int rep_index = reps - 1;
+
+            if(reps < 1)
+            {
+                throw new ArgumentOutOfRangeException("Reps is not in range");
+            }
+
+            int percent;
+            if(rep_index >= PercentOf1RepMaxFromReps.Length)
+            {
+                percent = PercentOf1RepMaxFromReps.Last();
+            }
+            else
+            {
+                percent = PercentOf1RepMaxFromReps[rep_index];
+            }
+
+            return (int)(weight * (100.0 / percent));
         }
 
         public static string UniformString(string name)

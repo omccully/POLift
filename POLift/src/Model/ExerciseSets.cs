@@ -28,7 +28,7 @@ namespace POLift.Model
         public int ID { get; set; }
 
         int _SetCount;
-        [Indexed(Name = "UniqueGroup", Order = 1, Unique = true)]
+        [Indexed(Name = "UniqueGroupExerciseSets", Order = 1, Unique = true)]
         public int SetCount
         {
             get
@@ -49,7 +49,7 @@ namespace POLift.Model
             }
         }
 
-        [Indexed(Name = "UniqueGroup", Order = 2, Unique = true)]
+        [Indexed(Name = "UniqueGroupExerciseSets", Order = 2, Unique = true)]
         public int ExerciseID { get; set; }
         
         [Ignore]

@@ -23,7 +23,7 @@ namespace POLift.Model
         public int ID { get; set; }
 
         string _Name;
-        [Indexed(Name = "UniqueGroup", Order = 1, Unique = true)]
+        [Indexed(Name = "UniqueGroupRoutine", Order = 1, Unique = true)]
         public string Name
         {
             get
@@ -61,7 +61,7 @@ namespace POLift.Model
          }
 
         string _ExerciseSetIDs;
-        [Indexed(Name = "UniqueGroup", Order = 2, Unique = true)]
+        [Indexed(Name = "UniqueGroupRoutine", Order = 2, Unique = true)]
         public string ExerciseSetIDs
         {
             get

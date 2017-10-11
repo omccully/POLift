@@ -269,5 +269,36 @@ namespace POLift.Service
                 }
             }).Where(e => e != 0));
         }
+
+        void ImportDatabase(IPOLDatabase other_database)
+        {
+
+        }
+
+        public static void ImportDatabaseFromFile(string file)
+        {
+            // prune the original db first.
+
+            // loop through all exercises in imported db, add to 
+            // existing DB
+
+
+            // loop through exercisesets
+            // swap the ExerciseIDs with the equivalent for the existing db
+
+
+            // loop through routines
+            // swap the ExerciseSetIDs for equivalent for the existing db
+            
+            // loop through exercise results
+            // swap the ExerciseID for equivalent for the existing db
+            
+            // loop through routine results
+            // swap the Routine ID, and ExerciseResult IDs for the existing db
+
+
+
+
+        }
     }
 }

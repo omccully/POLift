@@ -26,6 +26,8 @@ namespace POLift
         Button CreateRoutineLink;
         Button ViewRecentSessionsLink;
 
+        Button ViewGraphsButton;
+
         RoutineAdapter routine_adapter;
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -41,6 +43,9 @@ namespace POLift
             CreateRoutineLink = FindViewById<Button>(Resource.Id.CreateRoutineLink);
             CreateRoutineLink.Click += CreateRoutineButton_Click;
 
+            ViewGraphsButton = FindViewById<Button>(Resource.Id.ViewGraphsButton);
+            ViewGraphsButton.Click += ViewGraphsButton_Click;
+
             RoutinesList.ItemClick += RoutinesList_ItemClick;
 
             RoutinesList.Focusable = true;
@@ -48,6 +53,12 @@ namespace POLift
             RoutinesList.ItemsCanFocus = true;
 
             RefreshRoutineList();
+        }
+
+        private void ViewGraphsButton_Click(object sender, EventArgs e)
+        {
+            var intent = new Intent(this, typeof(GraphActivity));
+            StartActivity(intent);
         }
 
         private void ViewRecentSessionsLink_Click(object sender, EventArgs e)
