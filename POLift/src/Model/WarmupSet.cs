@@ -14,13 +14,13 @@ namespace POLift.Model
 {
     using Service;
 
-    class WarmupSet
+    class WarmupSet : IWarmupSet
     {
         int PercentOfWeight;
         int PercentOfRestPeriod;
 
-        public readonly int Reps;
-        public readonly string Notes;
+        public int Reps { get; private set; }
+        public int Notes { get; private set; }
 
         public WarmupSet(int reps, int percent_of_weight, int percent_of_rest_period, string notes = "")
         {
@@ -30,14 +30,14 @@ namespace POLift.Model
             Notes = notes;
         }
 
-        public int GetWeight(Exercise ex, int max_weight)
+        public int GetWeight(IExercise ex, int max_weight)
         {
             return Helpers.GetClosestToIncrement((max_weight * PercentOfWeight) / 100,
                 ex.WeightIncrement,
                 max_weight % ex.WeightIncrement);
         }
 
-        public int GetRestPeriod(Exercise ex)
+        public int GetRestPeriod(IExercise ex)
         {
             return (ex.RestPeriodSeconds * PercentOfRestPeriod) / 100;
         }

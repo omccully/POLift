@@ -16,15 +16,18 @@ namespace POLift.Model
 {
     using Service;
 
-    class RoutineResult : IIdentifiable, IDeletable
+    class RoutineResult : IRoutineResult, IIdentifiable, IDeletable
     {
+        [Ignore]
+        public IPOLDatabase Database { get; set; }
+
         [PrimaryKey, AutoIncrement]
         public int ID { get; set; }
 
         public int RoutineID { get; set; }
 
         [Ignore]
-        public Routine Routine
+        public IRoutine Routine
         {
             get
             {
@@ -71,7 +74,7 @@ namespace POLift.Model
         }
 
         [Ignore]
-        public List<ExerciseResult> ExerciseResults { get; set; }
+        public List<IExerciseResult> ExerciseResults { get; set; }
 
         [Ignore]
         Exercise[] Exercises { get; set; }
@@ -127,7 +130,7 @@ namespace POLift.Model
             }
         }
 
-        public void ReportExerciseResult(ExerciseResult ex_result)
+        public void ReportExerciseResult(IExerciseResult ex_result)
         {
             if (Completed)
             {
@@ -220,7 +223,7 @@ namespace POLift.Model
 
 
 
-        public RoutineResult Transform(Routine new_routine)
+        public IRoutineResult Transform(IRoutine new_routine)
         {
             // 
 

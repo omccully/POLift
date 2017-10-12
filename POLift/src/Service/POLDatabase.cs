@@ -30,8 +30,6 @@ namespace POLift.Service
         // use Invoke instead of using Connection publicly
         static SQLiteConnection Connection = new SQLiteConnection(DatabasePath);
 
-        public static string Error = "";
-
         public static void ClearDatabase()
         {
             lock(Locker)

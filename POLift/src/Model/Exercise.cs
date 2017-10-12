@@ -17,8 +17,11 @@ namespace POLift.Model
 {
     using Service;
 
-    public class Exercise : IIdentifiable, IDeletable
+    public class Exercise : IExercise, IIdentifiable, IDeletable
     {
+        [Ignore]
+        public IPOLDatabase Database { get; set; }
+
         [PrimaryKey, AutoIncrement]
         public int ID { get; set; }
 

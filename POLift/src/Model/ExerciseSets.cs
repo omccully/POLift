@@ -20,8 +20,11 @@ namespace POLift.Model
     /// Represents a series of sets of the same exercise.
     /// ex: 3 sets of the exercise "bench, 6 max reps, 120 second rest, 5 weight increment"
     /// </summary>
-    class ExerciseSets : IIdentifiable
+    class ExerciseSets : IExerciseSets, IIdentifiable
     {
+        [Ignore]
+        public IPOLDatabase Database { get; set; }
+
         const int DEFAULT_SET_COUNT = 3;
 
         [PrimaryKey, AutoIncrement]
@@ -136,13 +139,13 @@ namespace POLift.Model
             return this.ExerciseID ^ this.SetCount;
         }
 
-        public static List<ExerciseSets> Group(IEnumerable<Exercise> exercises)
+        public static List<IExerciseSets> Group(IEnumerable<IExercise> exercises)
         {
-            List<ExerciseSets> exercise_sets = new List<ExerciseSets>();
+            List<IExerciseSets> exercise_sets = new List<IExerciseSets>();
 
             Exercise last_ex = null;
             int set_count = 1;
-            foreach(Exercise ex in exercises)
+            foreach(IExercise ex in exercises)
             {
                 if(ex == last_ex)
                 {

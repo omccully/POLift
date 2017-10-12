@@ -17,8 +17,11 @@ namespace POLift.Model
 {
     using Service;
 
-    class Routine : IIdentifiable, IDeletable
+    class Routine : IRoutine, IIdentifiable, IDeletable
     {
+        [Ignore]
+        public IPOLDatabase Database { get; set; }
+
         [PrimaryKey, AutoIncrement]
         public int ID { get; set; }
 
@@ -102,15 +105,15 @@ namespace POLift.Model
         }
 
         [Ignore]
-        public List<Exercise> Exercises
+        public List<IExercise> Exercises
         {
             get
             {
-                List<Exercise> results = new List<Exercise>();
+                List<IExercise> results = new List<IExercise>();
 
-                foreach (ExerciseSets sets in this.ExerciseSets)
+                foreach (IExerciseSets sets in this.ExerciseSets)
                 {
-                    Exercise ex = sets.Exercise;
+                    IExercise ex = sets.Exercise;
 
                     for(int i = 0; i < sets.SetCount; i++)
                     {

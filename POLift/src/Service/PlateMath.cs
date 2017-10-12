@@ -12,7 +12,7 @@ using Android.Widget;
 
 namespace POLift.Service
 {
-    public class PlateMath
+    public class PlateMath : IPlateMath
     {
         static float[] imperial_no35 = { 2.5f, 5, 10, 25, 45 };
         static float[] imperial_35 = { 2.5f, 5, 10, 25, 35, 45 };
@@ -47,8 +47,8 @@ namespace POLift.Service
 
 
         float[] PlateWeights;
-        public readonly int BarWeight;
-        public readonly bool SplitWeights;
+        public int BarWeight { get; private set; }
+        public bool SplitWeights { get; private set; }
 
         public PlateMath(float[] plate_weights, int bar_weight = 0, bool split_weights = true)
         {
