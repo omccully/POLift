@@ -11,6 +11,8 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 
+using Microsoft.Practices.Unity;
+
 namespace POLift
 {
     using Service;
@@ -21,14 +23,14 @@ namespace POLift
     {
         const int WarmUpRoutineRequestCode = 100;
 
-        Routine Routine;
+        IRoutine Routine;
 
         AlertDialog dialog;
 
         bool AskForWarmupRoutine = true;
 
-        RoutineResult _routine_result;
-        RoutineResult RoutineResult
+        IRoutineResult _routine_result;
+        IRoutineResult _RoutineResult
         {
             get
             {
@@ -37,14 +39,18 @@ namespace POLift
             set
             {
                 _routine_result = value;
-
+                _routine_result.Database = Database;
                 GetNextExerciseAndWeight();
             }
         }
 
+        IPOLDatabase Database;
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
+
+            Database = C.ontainer.Resolve<IPOLDatabase>();
 
             /*if (IsTaskRoot)
             {
@@ -59,14 +65,24 @@ namespace POLift
                     .StartActivities();
                 return;
             }*/
-
+            
             NextWarmupView.Visibility = ViewStates.Gone;
 
             ModifyRestOfRoutineButton.Click += ModifyRestOfRoutineButton_Click;
 
-            int routine_id = Intent.GetIntExtra("routine_id", -1);
-            Routine = POLDatabase.ReadByID<Routine>(routine_id);
-            RoutineResult recent_uncompleted = RoutineResult.MostRecentUncompleted(Routine);
+            int routine_id;
+            if(savedInstanceState == null)
+            {
+                routine_id = Intent.GetIntExtra("routine_id", -1);
+            }
+            else
+            {
+                routine_id = savedInstanceState.GetInt("routine_id", Intent.GetIntExtra("routine_id", -1));
+            }
+            
+            
+            Routine = Database.ReadByID<Routine>(routine_id);
+            IRoutineResult recent_uncompleted = RoutineResult.MostRecentUncompleted(Database, Routine);
 
             // do not prompt for warmup if:
             // rrrid >= 0 or user clicked resume
@@ -88,12 +104,12 @@ namespace POLift
             if (resume_routine_result_id == 0)
             {
                 // a routine result was started but has no contents
-                RoutineResult = new RoutineResult(Routine);
+                _RoutineResult = new RoutineResult(Routine);
             }
             else if (recent_uncompleted != null && recent_uncompleted.ID == resume_routine_result_id)
             {
                 // restore saved state
-                RoutineResult = recent_uncompleted;
+                _RoutineResult = recent_uncompleted;
             }
             else
             {
@@ -107,7 +123,7 @@ namespace POLift
                     // if the most recent uncompleted routine result is more than a day ago, 
                     // just start a new one without asking
 
-                    RoutineResult = new RoutineResult(Routine);
+                    _RoutineResult = new RoutineResult(Routine);
                     PromptUserForWarmupRoutine();
                 }
                 else
@@ -123,20 +139,22 @@ namespace POLift
                         delegate
                         {
                             // yes
-                            RoutineResult = recent_uncompleted;
+                            _RoutineResult = recent_uncompleted;
                             //SyncTimerBasedOnLastExerciseResult();
                         },
                         delegate
                         {
                             // no
-                            RoutineResult = new RoutineResult(Routine);
+                            _RoutineResult = new RoutineResult(Routine);
                             PromptUserForWarmupRoutine();
                         }
                     );
                 }
             }
 
-            ActionBar.Title = $"Perform {Routine.Name} routine";
+           // var toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
+            //SetActionBar(toolbar);
+            //ActionBar.Title = $"Perform {Routine.Name} routine";
 
             RefreshGUI();
         }
@@ -147,17 +165,19 @@ namespace POLift
         {
             Intent result_intent = new Intent(this, typeof(CreateRoutineActivity));
             result_intent.PutExtra("edit_routine_id", Routine.ID);
-            result_intent.PutExtra("exercises_locked", RoutineResult.ResultCount);
+            result_intent.PutExtra("exercises_locked", _RoutineResult.ResultCount);
 
             StartActivityForResult(result_intent, ModifyRestOfRoutineResultCode);
         }
 
         protected override void OnSaveInstanceState(Bundle outState)
         {
-            if(RoutineResult != null)
+            if(_RoutineResult != null)
             {
-                outState.PutInt("resume_routine_result_id", RoutineResult.ID);
+                outState.PutInt("resume_routine_result_id", _RoutineResult.ID);
             }
+
+            outState.PutInt("routine_id", Routine.ID);
             
             base.OnSaveInstanceState(outState);
         }
@@ -180,14 +200,16 @@ namespace POLift
                 {
                     int id = data.GetIntExtra("routine_id", -1);
                     if (id == -1) return;
-                    Routine new_routine = POLDatabase.ReadByID<Routine>(id);
+                    Routine new_routine = Database.ReadByID<Routine>(id);
 
                     if (Routine == new_routine) return;
 
-                    RoutineResult old_rr = RoutineResult;
-                    RoutineResult = RoutineResult.Transform(new_routine);
+                    IRoutineResult old_rr = _RoutineResult;
+                    _RoutineResult = _RoutineResult.Transform(new_routine);
+                    
+                    Database.HideDeletable((RoutineResult)old_rr);
 
-                    POLDatabase.HideDeletable(old_rr);
+                    Database.Insert((RoutineResult)_RoutineResult);
 
                     // CreateRoutineActivity removes old routine
                     Routine = new_routine; 
@@ -227,17 +249,18 @@ namespace POLift
             // report the exercise result
             ExerciseResult ex_result =
                 new ExerciseResult(CurrentExercise, weight, reps);
-            POLDatabase.Insert(ex_result);
-            RoutineResult.ReportExerciseResult(ex_result);
+            ex_result.Database = Database;
+            Database.Insert(ex_result);
+            _RoutineResult.ReportExerciseResult(ex_result);
 
             // insert or update the routine result after EVERY new result
             // just in case the app crashes or something
-            POLDatabase.InsertOrUpdateByID(RoutineResult);
+            Database.InsertOrUpdateByID(_RoutineResult);
 
-            if (RoutineResult.Completed)
+            if (_RoutineResult.Completed)
             {
                 // no more exercises
-                ReturnRoutineResult(RoutineResult);
+                ReturnRoutineResult(_RoutineResult);
                 return;
             }
 
@@ -256,9 +279,9 @@ namespace POLift
 
         void RefreshRoutineDetails()
         {
-            if (RoutineResult != null)
+            if (_RoutineResult != null)
             {
-                RoutineDetails.Text = RoutineResult.ShortDetails;
+                RoutineDetails.Text = _RoutineResult.ShortDetails;
             }
             else if (Routine != null)
             {
@@ -274,14 +297,14 @@ namespace POLift
         {
             if (CurrentExercise != null)
             {
-                NextExerciseView.Text = $"Exercise {RoutineResult.ResultCount+1}/"
-                    + $"{ RoutineResult.ExerciseCount}: "
+                NextExerciseView.Text = $"Exercise {_RoutineResult.ResultCount+1}/"
+                    + $"{ _RoutineResult.ExerciseCount}: "
                     + CurrentExercise.ShortDetails;
 
             }
-            else if (RoutineResult != null && RoutineResult.Completed)
+            else if (_RoutineResult != null && _RoutineResult.Completed)
             {
-                NextExerciseView.Text = "Routine completed";
+                NextExerciseView.Text = "Routine completed" + (_RoutineResult == null ? "" : "!");
             }
             else
             {
@@ -298,7 +321,7 @@ namespace POLift
         void GetNextExerciseAndWeight()
         {
             // get next exercise
-            CurrentExercise = RoutineResult.NextExercise;
+            CurrentExercise = _RoutineResult.NextExercise;
 
             if (CurrentExercise != null)
             {
@@ -310,9 +333,9 @@ namespace POLift
 
         void SyncTimerBasedOnLastExerciseResult()
         {
-            if (RoutineResult == null) return;
+            if (_RoutineResult == null) return;
 
-            ExerciseResult last_ex_result = RoutineResult.ExerciseResults.LastOrDefault();
+            IExerciseResult last_ex_result = _RoutineResult.ExerciseResults.LastOrDefault();
             if (last_ex_result == null) return;
 
             int rest_period_seconds = last_ex_result.Exercise.RestPeriodSeconds;
@@ -337,7 +360,7 @@ namespace POLift
                 });
         }
 
-        void ReturnRoutineResult(RoutineResult routine_result)
+        void ReturnRoutineResult(IRoutineResult routine_result)
         {
             ReturnRoutineResult(routine_result.ID);
         }
@@ -356,7 +379,7 @@ namespace POLift
 
             intent.PutExtra("routine_id", Routine.ID);
 
-            int rr_id = (RoutineResult == null ? 0 : RoutineResult.ID);
+            int rr_id = (_RoutineResult == null ? 0 : _RoutineResult.ID);
 
             intent.PutExtra("resume_routine_result_id", rr_id);
         }

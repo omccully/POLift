@@ -3,13 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
-
 using SQLite;
 
 namespace POLift.Model
@@ -27,11 +20,15 @@ namespace POLift.Model
         public int ExerciseID { get; set; }
 
         [Ignore]
-        public Exercise Exercise
+        public IExercise Exercise
         {
             get
             {
-                return POLDatabase.ReadByID<Exercise>(ExerciseID);
+                return Database.ReadByID<Exercise>(ExerciseID);
+            }
+            set
+            {
+                ExerciseID = value.ID;
             }
         }
 
@@ -71,7 +68,9 @@ namespace POLift.Model
 
         public DateTime Time { get; set; }
 
-        public ExerciseResult(Exercise Exercise, int Weight, int RepCount) : 
+        public bool Deleted { get; set; } = false;
+
+        public ExerciseResult(IExercise Exercise, int Weight, int RepCount) : 
             this(Exercise.ID, Weight, RepCount)
         {
         }
@@ -89,11 +88,11 @@ namespace POLift.Model
 
         }
 
-        public static ExerciseResult MostRecentResultOf(Exercise exercise)
+        public static ExerciseResult MostRecentResultOf(IPOLDatabase database, Exercise exercise)
         {
             try
             {
-                return POLDatabase.Table<ExerciseResult>()
+                return database.Table<ExerciseResult>()
                     .Where(er => er.ExerciseID == exercise.ID)
                     .MaxObject(er => er.Time);
             }
@@ -107,6 +106,25 @@ namespace POLift.Model
         public override string ToString()
         {
             return $"exercise #{ExerciseID}, {Weight} weight, {RepCount} reps on {Time}";
+        }
+
+        public static Dictionary<int, int> Import(IEnumerable<ExerciseResult> exercise_results,
+           IPOLDatabase destination, Dictionary<int, int> ExercisesLookup)
+        {
+            Dictionary<int, int> ExerciseResultLookup = new Dictionary<int, int>();
+            // loop through exercise results
+            // swap the ExerciseID for equivalent for the existing db
+            foreach (ExerciseResult exercise_result in exercise_results)
+            {
+                int old_id = exercise_result.ID;
+
+                exercise_result.ExerciseID = ExercisesLookup[exercise_result.ExerciseID];
+                exercise_result.ID = 0;
+                destination.InsertOrUpdateNoID(exercise_result);
+
+                ExerciseResultLookup[old_id] = exercise_result.ID;
+            }
+            return ExerciseResultLookup;
         }
     }
 }

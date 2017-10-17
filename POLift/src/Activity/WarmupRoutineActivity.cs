@@ -10,6 +10,8 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 
+using Microsoft.Practices.Unity;
+
 namespace POLift
 {
     using Android.Text;
@@ -19,11 +21,11 @@ namespace POLift
     [Activity(Label = "Warmup")]
     public class WarmupRoutineActivity : PerformRoutineBaseActivity
     {
-        Exercise FirstExercise = null;
+        IExercise FirstExercise = null;
 
         const string WarmupSetIndexKey = "warmup_set_index";
 
-        WarmupSet[] WarmupSets =
+        IWarmupSet[] WarmupSets =
         {
             new WarmupSet(8, 50, 50),
             new WarmupSet(8, 50, 50),
@@ -32,7 +34,7 @@ namespace POLift
         };
 
 
-        WarmupSet NextWarmupSet
+        IWarmupSet NextWarmupSet
         {
             get
             {
@@ -66,16 +68,20 @@ namespace POLift
         Dialog error_dialog;
         Dialog back_button_dialog;
 
+        IPOLDatabase Database;
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
 
             // Create your application here
 
+            Database = C.ontainer.Resolve<IPOLDatabase>();
+
             int id = Intent.GetIntExtra("exercise_id", -1);
             if (id != -1)
             {
-                FirstExercise = POLDatabase.ReadByID<Exercise>(id);
+                FirstExercise = Database.ReadByID<Exercise>(id);
             }
 
             WeightInput = Intent.GetIntExtra("working_set_weight", 0);
@@ -109,7 +115,10 @@ namespace POLift
             RepResultEditText.Visibility = ViewStates.Gone;
             ModifyRestOfRoutineButton.Visibility = ViewStates.Gone;
             NextExerciseView.Visibility = ViewStates.Gone;
-            ActionBar.Title = $"{FirstExercise.Name} warmup";
+
+            //var toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
+            //SetActionBar(toolbar);
+            //ActionBar.Title = $"{FirstExercise.Name} warmup";
         }
 
         public override void OnBackPressed()

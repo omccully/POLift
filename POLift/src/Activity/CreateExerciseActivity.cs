@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using Android.Content;
 using Android.Runtime;
+using Microsoft.Practices.Unity;
 
 namespace POLift
 {
@@ -23,13 +24,17 @@ namespace POLift
         EditText WeightIncrementText;
         Spinner SelectMathTypeSpinner;
 
+        IPOLDatabase Database;
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
 
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.CreateExercise);
-            
+
+            Database = C.ontainer.Resolve<IPOLDatabase>();
+
             ExerciseNameText = FindViewById<EditText>(Resource.Id.ExerciseNameText);
             RepRangeMaxText = FindViewById<EditText>(Resource.Id.RepRangeMaxText);
             CreateExerciseButton = FindViewById<Button>(Resource.Id.CreateExerciseButton);
@@ -46,7 +51,7 @@ namespace POLift
             }
             else
             {
-                Exercise exercise = POLDatabase.ReadByID<Exercise>(edit_exercise_id);
+                IExercise exercise = Database.ReadByID<Exercise>(edit_exercise_id);
 
                 ExerciseNameText.Text = exercise.Name;
                 RepRangeMaxText.Text = exercise.MaxRepCount.ToString();
@@ -72,7 +77,7 @@ namespace POLift
                 int max_reps = Int32.Parse(RepRangeMaxText.Text);
                 int weight_increment = Int32.Parse(WeightIncrementText.Text);
                 int rest_period_s = Int32.Parse(RestPeriodSecondsText.Text);
-                PlateMath plate_math = null;
+                IPlateMath plate_math = null;
 
                 int pos = SelectMathTypeSpinner.SelectedItemPosition;
                 plate_math = PlateMath.PlateMathTypes[pos];
@@ -81,7 +86,7 @@ namespace POLift
                     rest_period_s, plate_math);
                 
                 // sets ex.ID
-                POLDatabase.InsertOrUndeleteAndUpdate(ex);
+                Database.InsertOrUndeleteAndUpdate(ex);
 
                 SavePreferences();
                 ReturnExercise(ex);
@@ -95,7 +100,7 @@ namespace POLift
             }
         }
 
-        void ReturnExercise(Exercise exercise)
+        void ReturnExercise(IExercise exercise)
         {
             ReturnExercise(exercise.ID);
         }

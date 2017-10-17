@@ -4,13 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
-
 using SQLite;
 
 namespace POLift.Model
@@ -44,24 +37,24 @@ namespace POLift.Model
         }
 
 
-         [Ignore]
-         public IEnumerable<ExerciseSets> ExerciseSets
-         {
-             get
-             {
+        [Ignore]
+        public IEnumerable<IExerciseSets> ExerciseSets
+        {
+            get
+            {
                 // read exercises from DB based on the IDs
-                if(ExerciseSetIDs == null)
+                if (ExerciseSetIDs == null)
                 {
                     return new List<ExerciseSets>();
                 }
 
-                return POLDatabase.ParseIDString<ExerciseSets>(ExerciseSetIDs);
+                return Database.ParseIDString<ExerciseSets>(ExerciseSetIDs);
             }
-             set
-             {
+            set
+            {
                 ExerciseSetIDs = value.Where(ex_set => ex_set.SetCount > 0).ToIDString();
             }
-         }
+        }
 
         string _ExerciseSetIDs;
         [Indexed(Name = "UniqueGroupRoutine", Order = 2, Unique = true)]
@@ -85,7 +78,7 @@ namespace POLift.Model
             ExerciseSetIDs = exercise_set_ids;
         }
 
-        public Routine(string Name, IEnumerable<ExerciseSets> exercise_sets)
+        public Routine(string Name, IEnumerable<IExerciseSets> exercise_sets)
         {
             this.Name = Name;
             ExerciseSets = exercise_sets;
@@ -115,7 +108,7 @@ namespace POLift.Model
                 {
                     IExercise ex = sets.Exercise;
 
-                    for(int i = 0; i < sets.SetCount; i++)
+                    for (int i = 0; i < sets.SetCount; i++)
                     {
                         results.Add(ex);
                     }
@@ -152,7 +145,7 @@ namespace POLift.Model
                 this.Name == r.Name);
         }
 
-        public static bool operator==(Routine a, Routine b)
+        public static bool operator ==(Routine a, Routine b)
         {
             // If both are null, or both are same instance, return true.
             if (System.Object.ReferenceEquals(a, b))
@@ -181,48 +174,27 @@ namespace POLift.Model
         }
 
 
-
-        /*public static Routine FromXml(string xml)
+        public static Dictionary<int, int> Import(IEnumerable<Routine> routines,
+            IPOLDatabase destination, Dictionary<int, int> ExerciseSetsLookup)
         {
-            XmlDocument doc = new XmlDocument();
-            doc.LoadXml(xml);
-            return FromXmlNode(doc.GetElementsByTagName("Routine")[0]);
-        }
-
-        public static Routine FromXmlNode(XmlNode node)
-        {
-            string name = node.Attributes["name"].InnerText;
-            List<Exercise> exercises = new List<Exercise>();
-            foreach (XmlNode exercise_node in node.ChildNodes)
+            Dictionary<int, int> RoutineLookup = new Dictionary<int, int>();
+            // loop through routines
+            // swap the ExerciseSetIDs for equivalent for the existing db
+            foreach (Routine routine in routines)
             {
-                exercises.Add(Exercise.FromXmlNode(exercise_node));
+                int old_id = routine.ID;
+
+                //routine.ExerciseSetIDs = routine.ExerciseSetIDs.ToIDIntegers()
+
+                routine.ExerciseSetIDs = 
+                    Helpers.TranslateIDString(routine.ExerciseSetIDs, ExerciseSetsLookup);
+                routine.ID = 0;
+
+                destination.InsertOrUpdateNoID(routine);
+
+                RoutineLookup[old_id] = routine.ID;
             }
-
-            return new Routine(name, exercises);
+            return RoutineLookup;
         }
-
-        public XmlElement ToXmlElement()
-        {
-            XmlDocument doc = new XmlDocument();
-            XmlElement routine_element = doc.CreateElement("Routine");
-
-            routine_element.SetAttribute("name", Name);
-
-            foreach(Exercise ex in Exercises)
-            {
-                XmlElement xml_element = ex.ToXmlElement();
-
-                routine_element.InnerXml += xml_element.OuterXml;
-            }
-
-            return routine_element;
-            //doc.AppendChild(exercise_element);
-            //return doc.OuterXml;
-        }
-
-        public string ToXml()
-        {
-            return ToXmlElement().OuterXml;
-        }*/
     }
 }

@@ -37,11 +37,11 @@ namespace POLift
         }
 
         Activity context;
-        List<KeyValuePair<string, List<Exercise>>> exercises_in_categories;
+        List<KeyValuePair<string, List<IExercise>>> exercises_in_categories;
         ListView.IOnItemClickListener item_click_listener;
 
         public ExercisesPagerAdapter(Activity context, 
-            List<KeyValuePair<string, List<Exercise>>> exercises_in_categories)
+            List<KeyValuePair<string, List<IExercise>>> exercises_in_categories)
         {
             this.context = context;
             this.exercises_in_categories = exercises_in_categories;
@@ -65,7 +65,7 @@ namespace POLift
         public override Java.Lang.Object InstantiateItem(View container, int position)
         { 
             
-            List<Exercise> exercises = exercises_in_categories[position].Value;
+            List<IExercise> exercises = exercises_in_categories[position].Value;
 
             ListView list_view = new ListView(context);
 

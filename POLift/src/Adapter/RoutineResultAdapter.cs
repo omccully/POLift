@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Collections.ObjectModel;
 
 using Android.App;
 using Android.Content;
@@ -14,24 +15,29 @@ namespace POLift
 {
     using Model;
 
-    class RoutineResultAdapter : BaseAdapter<RoutineResult>
+    class RoutineResultAdapter : BaseAdapter<IRoutineResult>
     {
-        List<RoutineResult> routine_results;
+        public readonly ObservableCollection<IRoutineResult> RoutineResults;
         Context context;
 
-        public RoutineResultAdapter(Context context, IEnumerable<RoutineResult> routine_results)
+        public RoutineResultAdapter(Context context, IEnumerable<IRoutineResult> routine_results)
         {
-            
-            this.routine_results = new List<RoutineResult>(routine_results);
             this.context = context;
+            this.RoutineResults = new ObservableCollection<IRoutineResult>(routine_results);
+
+            this.RoutineResults.CollectionChanged += RoutineResults_CollectionChanged;
         }
 
+        private void RoutineResults_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            NotifyDataSetChanged();
+        }
 
-        public override RoutineResult this[int position]
+        public override IRoutineResult this[int position]
         {
             get
             {
-                return routine_results[position];
+                return RoutineResults[position];
             }
         }
 
@@ -65,7 +71,7 @@ namespace POLift
             }
 
 
-            RoutineResult rr = this[position];
+            IRoutineResult rr = this[position];
 
             //fill in your items
             holder.Text.Text = rr.ToString();
@@ -73,17 +79,12 @@ namespace POLift
             return view;
         }
 
-        public void RemoveIndex(int pos)
-        {
-            routine_results.RemoveAt(pos);
-        }
-
         //Fill in cound here, currently 0
         public override int Count
         {
             get
             {
-                return routine_results.Count;
+                return RoutineResults.Count;
             }
         }
     }

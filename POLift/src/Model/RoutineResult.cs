@@ -3,13 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
-
 using SQLite;
 
 namespace POLift.Model
@@ -31,34 +24,101 @@ namespace POLift.Model
         {
             get
             {
-                return POLDatabase.ReadByID<Routine>(RoutineID);
+                return Database.ReadByID<Routine>(RoutineID);
+            }
+            set
+            {
+                RoutineID = value.ID;
             }
         }
 
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
 
+        string _ExerciseResultsIDs = "";
         public string ExerciseResultsIDs
         {
             get
             {
-                return ExerciseResults.ToIDString();
+                //return ExerciseResults.ToIDString();
+
+                if (_ExerciseResults != null)
+                {
+                    // client requested ExerciseResults, so it may have been changed since 
+                    // the object was 
+
+                    return _ExerciseResults.ToIDString();
+                }
+
+                return _ExerciseResultsIDs;
             }
             set
             {
-                ExerciseResults = POLDatabase.ParseIDString<ExerciseResult>(value).ToList();
+
+                _ExerciseResultsIDs = value;
+
+                if (_ExerciseResults != null)
+                {
+                    // client requested ExerciseResults, so it may have been changed since 
+                    // the object was 
+
+                    // invalidate the cached object
+                    _ExerciseResults = null;
+                }
             }
         }
 
+        List<IExerciseResult> _ExerciseResults = null;
+        [Ignore]
+        public List<IExerciseResult> ExerciseResults
+        {
+            get
+            {
+                if (_ExerciseResults == null)
+                {
+                    // there is no cached version
+                    return (_ExerciseResults = Database.ParseIDString<ExerciseResult>(_ExerciseResultsIDs).ToList<IExerciseResult>());
+                }
+                else
+                {
+                    // there is a cached version of this object
+                    return _ExerciseResults;
+                }
+            }
+            set
+            {
+                _ExerciseResults = value;
+            }
+        }
+
+        string _ExerciseIDs = null;
+        [Ignore]
         public string ExerciseIDs
         {
             get
             {
-                return Exercises.ToIDString();
+                return _ExerciseIDs;
             }
             set
             {
-                Exercises = POLDatabase.ParseIDString<Exercise>(value).ToArray();
+                _ExerciseIDs = value;
+            }
+        }
+
+        [Ignore]
+        IExercise[] Exercises
+        {
+            get
+            {
+                // must get Exercises from Routine if it has not been determined yet (_ExerciseIDs == null)
+                if (ExerciseIDs == null)
+                {
+                    //ExerciseIDs = String.Join(",", Routine.Exercises.Select(e => e.ID.ToString()));
+
+                    ExerciseIDs = Routine.Exercises.ToIDString();
+                }
+
+                return Database.ParseIDString<Exercise>(ExerciseIDs).ToArray();
             }
         }
 
@@ -69,41 +129,39 @@ namespace POLift.Model
             {
                 // idk why ExerciseResults.Count would ever be
                 // GREATER than the exercise length, but just in case
-                return ExerciseResults.Count >= Exercises.Length;
+                int erc = ExerciseResults.Count;
+                int ec = Exercises.Length;
+                return erc >= ec;
             }
         }
 
-        [Ignore]
-        public List<IExerciseResult> ExerciseResults { get; set; }
-
-        [Ignore]
-        Exercise[] Exercises { get; set; }
-        
         public bool Deleted { get; set; }
 
-        public RoutineResult(Routine Routine) : this(Routine.ID)
+        public RoutineResult(IRoutine Routine, IPOLDatabase database = null)
+            : this(Routine.ID, database)
         {
-            
+
         }
 
-        public RoutineResult(int RoutineID)
+        public RoutineResult(int RoutineID, IPOLDatabase database = null)
         {
             this.RoutineID = RoutineID;
-            Exercises = Routine.Exercises.ToArray();
-            ExerciseResults = new List<ExerciseResult>();
+            //Exercises = Routine.Exercises.ToArray();
+            //ExerciseResults = new List<IExerciseResult>();
+            this.Database = database;
         }
 
         public RoutineResult()
         {
-            ExerciseResults = new List<ExerciseResult>();
+            //ExerciseResults = new List<IExerciseResult>();
         }
 
         [Ignore]
-        public Exercise NextExercise
+        public IExercise NextExercise
         {
             get
             {
-                if(Completed)
+                if (Completed)
                 {
                     return null;
                 }
@@ -137,36 +195,36 @@ namespace POLift.Model
                 throw new InvalidOperationException("Too many exercise results reported");
             }
 
-            if(NextExercise != ex_result.Exercise)
+            if (!NextExercise.Equals(ex_result.Exercise))
             {
                 throw new ArgumentException("ExerciseResult is not for the correct exercise. " +
                     "Use NextExercise to retrieve the expected exercise.");
             }
 
             if (ResultCount == 0) StartTime = ex_result.Time;
-            
+
             EndTime = ex_result.Time;
 
             ExerciseResults.Add(ex_result);
         }
 
-        public static RoutineResult MostRecentForRoutine(Routine r)
+        public static IRoutineResult MostRecentForRoutine(IPOLDatabase database, IRoutine r)
         {
             try
             {
-                return POLDatabase.Table<RoutineResult>()
+                return database.Table<RoutineResult>()
                     .Where(rr => rr.RoutineID == r.ID)
                     .MaxObject(rr => rr.EndTime);
             }
-            catch(InvalidOperationException)
+            catch (InvalidOperationException)
             {
                 return null;
             }
         }
 
-        public static RoutineResult MostRecentUncompleted(Routine r)
+        public static IRoutineResult MostRecentUncompleted(IPOLDatabase database, IRoutine r)
         {
-            RoutineResult rr = MostRecentForRoutine(r);
+            IRoutineResult rr = MostRecentForRoutine(database, r);
             if (rr == null) return null;
             if (rr.Completed) return null;
             return rr;
@@ -176,7 +234,7 @@ namespace POLift.Model
         {
             StringBuilder builder = new StringBuilder();
 
-            if(this.EndTime != null)
+            if (this.EndTime != null)
             {
                 TimeSpan span = (this.EndTime - this.StartTime);
                 builder.Append($"{this.StartTime} ({(int)span.TotalMinutes} mins) ");
@@ -194,17 +252,17 @@ namespace POLift.Model
             get
             {
                 StringBuilder builder = new StringBuilder();
-                Exercise last_exercise = null;
-                foreach (ExerciseResult exr in this.ExerciseResults)
+                IExercise last_exercise = null;
+                foreach (IExerciseResult exr in this.ExerciseResults)
                 {
-                    Exercise this_exercise = exr.Exercise;
-                    if (this_exercise != last_exercise)
+                    IExercise this_exercise = exr.Exercise;
+                    if (!this_exercise.Equals(last_exercise))
                     {
-                        if(last_exercise != null)
+                        if (last_exercise != null)
                         {
                             builder.AppendLine();
                         }
-                        
+
                         builder.Append(this_exercise.Name + " ");
                     }
                     else
@@ -229,15 +287,15 @@ namespace POLift.Model
 
             if (Routine == new_routine) return this;
 
-            RoutineResult new_rr = new RoutineResult(new_routine);
+            RoutineResult new_rr = new RoutineResult(new_routine, Database);
 
             int same_count = 0;
             int old_exercise_count = Exercises.Length;
             int new_exercise_count = new_rr.Exercises.Length;
             int max_ex_len = Math.Min(old_exercise_count, new_exercise_count);
-            for(int i = 0; i < max_ex_len; i++)
+            for (int i = 0; i < max_ex_len; i++)
             {
-                if(Exercises[i] == new_rr.Exercises[i])
+                if (Exercises[i].Equals(new_rr.Exercises[i]))
                 {
                     same_count++;
                 }
@@ -247,19 +305,40 @@ namespace POLift.Model
                 }
             }
 
-            if(same_count < ResultCount)
+            if (same_count < ResultCount)
             {
                 throw new InvalidOperationException(
                     "This routine result cannot be transformed into new_routine");
             }
 
-            foreach(ExerciseResult er in ExerciseResults.Take(same_count))
+            foreach (ExerciseResult er in ExerciseResults.Take(same_count))
             {
                 new_rr.ReportExerciseResult(er);
             }
-            
+
             return new_rr;
         }
 
+
+        public static Dictionary<int, int> Import(IEnumerable<RoutineResult> routine_results,
+            IPOLDatabase destination, Dictionary<int, int> RoutineLookup, Dictionary<int, int> ExerciseResultLookup)
+        {
+            // loop through routine results
+            // swap the Routine ID, and ExerciseResult IDs for the existing db
+
+            Dictionary<int, int> RoutineResultLookup = new Dictionary<int, int>();
+
+            foreach (RoutineResult routine_result in routine_results)
+            {
+                routine_result.ExerciseResultsIDs = Helpers.TranslateIDString(
+                    routine_result.ExerciseResultsIDs, ExerciseResultLookup);
+                routine_result.RoutineID = RoutineLookup[routine_result.RoutineID];
+                routine_result.ID = 0;
+
+                destination.InsertOrUpdateNoID(routine_result);
+            }
+
+            return RoutineResultLookup;
+        }
     }
 }

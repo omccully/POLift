@@ -35,33 +35,33 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/WarmupSetFinishedButton" />
-  <TextView
+    <TextView
         android:text=""
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/TimeLeftTextView" />
-  <LinearLayout
-          android:orientation="horizontal"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content">
-    <Button
-        android:text="-30 sec"
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/Sub30SecButton"
-        android:layout_weight="1" />
-    <Button
-        android:text="Skip timer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/SkipTimerButton"
-        android:layout_weight="1" />
-    <Button
-        android:text="+30 sec"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/Add30SecButton"
-        android:layout_weight="1" />
-  </LinearLayout>
+        android:layout_height="wrap_content">
+        <Button
+            android:text="-30 sec"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/Sub30SecButton"
+            android:layout_weight="1" />
+        <Button
+            android:text="Skip timer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/SkipTimerButton"
+            android:layout_weight="1" />
+        <Button
+            android:text="+30 sec"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/Add30SecButton"
+            android:layout_weight="1" />
+    </LinearLayout>
 </LinearLayout>

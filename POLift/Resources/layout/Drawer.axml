@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+<!-- The main content view -->
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+       <include
+            android:id="@+id/toolbar"
+            layout="@layout/toolbar" />
+        <FrameLayout
+            android:id="@+id/content_frame"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+<!-- The navigation drawer -->
+<!-- app:headerLayout="@layout/nav_header_main"
+  <android.support.design.widget.NavigationView
+      android:id="@+id/nav_view"
+      android:layout_width="wrap_content"
+      android:layout_height="match_parent"
+      android:layout_gravity="start"
+      android:fitsSystemWindows="true"
+      app:itemTextColor="@color/white"
+      app:menu="@menu/menu"
+      />-->
+<!---->
+<!--<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+      android:id="@+id/DrawerMenuLinearLayout"
+      android:orientation="vertical"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent">
+  </LinearLayout>
+  -->
+    <ListView
+        android:id="@+id/left_drawer"
+        android:layout_width="240dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:choiceMode="singleChoice"
+        android:divider="@android:color/white"
+        android:dividerHeight="0dp"
+        android:background="#808080"
+        android:paddingTop="10dip"
+        android:paddingLeft="10dip" />
+<!--<TextView
+    android:text="test"/>-->
+</android.support.v4.widget.DrawerLayout>

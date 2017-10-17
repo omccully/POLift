@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 
@@ -15,24 +16,30 @@ namespace POLift.Adapter
     using Model;
     using Service;
 
-    class ExerciseSetsAdapter : BaseAdapter<ExerciseSets>
+    class ExerciseSetsAdapter : BaseAdapter<IExerciseSets>
     {
-        public List<ExerciseSets> ExerciseSetsList;
+        public ObservableCollection<IExerciseSets> ExerciseSets;
         Context context;
         int locked_sets;
 
-        public ExerciseSetsAdapter(Context context, IEnumerable<ExerciseSets> exercise_sets, int locked_sets=0)
+        public ExerciseSetsAdapter(Context context, IEnumerable<IExerciseSets> exercise_sets, int locked_sets=0)
         {
             this.context = context;
-            this.ExerciseSetsList = new List<ExerciseSets>(exercise_sets);
+            this.ExerciseSets = new ObservableCollection<IExerciseSets>(exercise_sets);
             this.locked_sets = locked_sets;
+            ExerciseSets.CollectionChanged += ExerciseSets_CollectionChanged;
         }
 
-        public override ExerciseSets this[int position]
+        void ExerciseSets_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            NotifyDataSetChanged();
+        }
+
+        public override IExerciseSets this[int position]
         {
             get
             {
-                return ExerciseSetsList[position];
+                return ExerciseSets[position];
             }
         }
 
@@ -66,7 +73,7 @@ namespace POLift.Adapter
             
             //fill in your items
             //holder.Title.Text = "new text here";
-            ExerciseSets es = this[position];
+            IExerciseSets es = this[position];
             holder.TextBox.Text = es.SetCount.ToString();
             holder.TextView.Text = " sets of " + es.Exercise.Name;
             //holder.TextView.Text = " sets of " + es.Exercise;
@@ -88,7 +95,7 @@ namespace POLift.Adapter
                         {
                             Helpers.DisplayConfirmation(context, "Would you like to delete this exercise?",
                                 delegate {
-                                    ExerciseSetsList.RemoveAt(position);
+                                    ExerciseSets.RemoveAt(position);
                                     NotifyDataSetChanged();
                                 });
                         }
@@ -104,18 +111,9 @@ namespace POLift.Adapter
             return view;
         }
 
-        public void Add(ExerciseSets es)
-        {
-            ExerciseSetsList.Add(es);
-            NotifyDataSetChanged();
-        }
-
         public void RemoveZeroSets()
         {
-            if(ExerciseSetsList.RemoveAll(ex_sets => ex_sets.SetCount == 0) > 0)
-            {
-                NotifyDataSetChanged();
-            }
+            ExerciseSets.RemoveAll(ex_sets => ex_sets.SetCount == 0);
         }
 
         //Fill in cound here, currently 0
@@ -123,7 +121,7 @@ namespace POLift.Adapter
         {
             get
             {
-                return ExerciseSetsList.Count;
+                return ExerciseSets.Count;
             }
         }
 

@@ -4,67 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Timers;
 
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
-
 namespace POLift.Service
 {
-   /* class RestPeriodTimerEventArgs : EventArgs
-    {
-        public RestPeriodTimerEventArgs(object target)
-        {
-
-        }
-
-
-    }*/
-
-
-    /// <summary>
-    /// 
-    /// </summary>
     static class StaticTimer
     {
-        /// <summary>
-        /// 
-        /// </summary>
-        /// 
-
-        // when you leave activity, reassign these event handlers
-        // to some static 
-
-        /*private EventHandler<ElapsedEventArgs> _Ticked;
-        public event EventHandler<ElapsedEventArgs> Ticked
-        {
-            add
-            {
-                _Ticked = value;
-            }
-            remove
-            {
-                _Ticked -= value;
-            }
-        }
-
-        private EventHandler<ElapsedEventArgs> _Elapsed;
-        public event EventHandler<ElapsedEventArgs> Elapsed
-        {
-            add
-            {
-                _Elapsed = value;
-            }
-            remove
-            {
-                _Elapsed -= value;
-            }
-        }*/
-
-        
-        
         public delegate void TimerTickedCallback(int ticks_until_elapsed);
         public delegate void TimerElapsedCallback();
 
@@ -150,7 +93,5 @@ namespace POLift.Service
                 StopTimer();
             }
         }
-
-
     }
 }

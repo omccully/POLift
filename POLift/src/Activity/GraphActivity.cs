@@ -15,17 +15,21 @@ using OxyPlot.Axes;
 using OxyPlot.Series;
 using OxyPlot.Xamarin.Android;
 
+using Microsoft.Practices.Unity;
+
 namespace POLift
 {
     using Model;
     using Service;
 
-    [Activity(Label = "GraphActivity")]
+    [Activity(Label = "Graph")]
     public class GraphActivity : Activity
     {
         const int SelectExerciseRequestCode = 0;
 
         PlotView plot_view;
+
+        IPOLDatabase Database;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -33,7 +37,9 @@ namespace POLift
 
             // Create your application here
             SetContentView(Resource.Layout.Graph);
-
+            
+            Database = C.ontainer.Resolve<IPOLDatabase>();
+            
             plot_view = new PlotView(this);
             plot_view.Background = Resources.GetDrawable(
                 Resource.Color.white);
@@ -77,13 +83,12 @@ namespace POLift
 
         PlotModel CreatePlotModel(int exercise_id)
         {
-            Exercise ex = POLDatabase.ReadByID<Exercise>(exercise_id);
+            Exercise ex = Database.ReadByID<Exercise>(exercise_id);
 
-            var plotModel = new PlotModel { Title = $"{ex.Name} One-Rep Max" };
+            var plotModel = new PlotModel { Title = $"{ex.Name} one-rep max" };
 
             DateTimeAxis date_axis = new DateTimeAxis { Position = AxisPosition.Bottom };
             plotModel.Axes.Add(date_axis);
-            //plotModel.Axes.Add(new LinearAxis { Position = AxisPosition.Left, Maximum = 10, Minimum = 0,  });
             plotModel.Axes.Add(new LinearAxis { Position = AxisPosition.Left });
 
             var series1 = new LineSeries
@@ -92,17 +97,27 @@ namespace POLift
                 MarkerSize = 4,
                 MarkerStroke = OxyColors.White,
                 Background = OxyColor.FromArgb(255, 255, 255, 255)
-
             };
 
-            var exercise_results = POLDatabase.Table<ExerciseResult>()
-                .Where(ex_result => ex_result.ExerciseID == exercise_id)
+            var exercise_results = Database.Table<ExerciseResult>()
+                .Where(ex_result => ex_result.ExerciseID == exercise_id && !ex_result.Deleted)
                 .OrderBy(ex_result => ex_result.Time);
 
-            date_axis.AbsoluteMinimum = DateTimeAxis.ToDouble(exercise_results.First().Time);
-            date_axis.AbsoluteMaximum = DateTimeAxis.ToDouble(exercise_results.Last().Time);
+            if(exercise_results.Count() > 1)
+            {
+                date_axis.AbsoluteMinimum = DateTimeAxis.ToDouble(exercise_results.First().Time);
+                date_axis.AbsoluteMaximum = DateTimeAxis.ToDouble(exercise_results.Last().Time);
 
+                AddExerciseResultsToSeries(series1, exercise_results);
+            }
 
+            plotModel.Series.Add(series1);
+
+            return plotModel;
+        }
+
+        void AddExerciseResultsToSeries(LineSeries series1, IEnumerable<ExerciseResult> exercise_results)
+        {
             // must average each day's 1RM
             DateTime last_date = DateTime.MinValue;
             int orm_sum = 0;
@@ -119,7 +134,7 @@ namespace POLift
                 }
                 else
                 {
-                    if(orm_count > 0)
+                    if (orm_count > 0)
                     {
                         double last_date_d = DateTimeAxis.ToDouble(last_date);
                         series1.Points.Add(new DataPoint(last_date_d, orm_sum / orm_count));
@@ -131,22 +146,18 @@ namespace POLift
                 }
 
                 //double date_time = DateTimeAxis.ToDouble(ex_result.Time);
-                
+
                 //System.Diagnostics.Debug.WriteLine($"orm({ex_result.Weight},{ex_result.RepCount}) = {orm}");
                 //series1.Points.Add(new DataPoint(date_time, orm));
 
                 last_date = ex_result.Time;
             }
 
-            if(orm_count > 0)
+            if (orm_count > 0)
             {
                 double last_date_d = DateTimeAxis.ToDouble(last_date);
                 series1.Points.Add(new DataPoint(last_date_d, orm_sum / orm_count));
             }
-
-            plotModel.Series.Add(series1);
-
-            return plotModel;
         }
     }
 }

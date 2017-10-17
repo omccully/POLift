@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 
@@ -43,6 +44,21 @@ namespace POLift.Service
             }
 
             return (int)(weight * (100.0 / percent));
+        }
+
+        public static int RemoveAll<T>(this ObservableCollection<T> collection,
+                                                       Func<T, bool> condition)
+        {
+            int removed_count = 0;
+            for (int i = collection.Count - 1; i >= 0; i--)
+            {
+                if (condition(collection[i]))
+                {
+                    collection.RemoveAt(i);
+                    removed_count++;
+                }
+            }
+            return removed_count;
         }
 
         public static string UniformString(string name)
@@ -116,6 +132,11 @@ namespace POLift.Service
             return String.Join(",", obj.Select(e => e.ID).ToArray());
         }
 
+        public static int[] ToIDIntegers(this string str)
+        {
+            return str.Split(',').Select(txt => Int32.Parse(txt)).ToArray();
+        }
+
         public static int GetClosestToIncrement(int value, int increment, int offset = 0, bool prefer_up = false)
         {
             value -= offset;
@@ -136,6 +157,11 @@ namespace POLift.Service
             {
                 return (floor_dif > ceil_dif ? ceil : floor) + offset;
             }
+        }
+
+        public static string TranslateIDString(string old_id_string, Dictionary<int, int> mapping)
+        {
+            return String.Join(",", old_id_string.ToIDIntegers().Select(old => mapping[old]).ToArray());
         }
     }
 }

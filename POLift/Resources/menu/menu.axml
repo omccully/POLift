@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+  <group
+      android:id="@+id/menu_top"
+      android:checkableBehavior="none">
+    <item
+        android:id="@+id/drawer_item_view_recent_sessions"
+        android:icon="@mipmap/ic_today_white_24dp"
+        android:title="View recent sessions"/>
+    <item
+        android:id="@+id/drawer_item_1rm_graphs"
+        android:icon="@mipmap/ic_timeline_white_24dp"
+        android:title="View 1RM graphs"/>
+    <item
+        android:id="@+id/drawer_item_gym_time_graph"
+        android:icon="@mipmap/ic_timeline_white_24dp"
+        android:title="View gym time graph"/>
+  </group>
+
+  <group
+      android:id="@+id/menu_bottom"
+      android:checkableBehavior="none">
+
+    <item
+        android:id="@+id/drawer_item_settings"
+        android:icon="@mipmap/ic_settings_white_24dp"
+        android:title="Settings" />
+    <item
+        android:id="@+id/drawer_item_help_and_feedback"
+        android:icon="@mipmap/ic_help_white_24dp"
+        android:title="Help and feedback" />
+
+
+  </group>
+</menu>

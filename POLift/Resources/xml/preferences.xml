@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+  <CheckBoxPreference
+    android:key="ask_for_warmup"
+    android:title="Ask for warmup routine every time?"
+    android:summary="y or n"
+    android:defaultValue="true"
+      />
+  <CheckBoxPreference
+    android:key="default_warmup"
+    android:title="Perform warmup by default?"
+    android:summary="the above setting must be disabled"
+    android:defaultValue="true"
+      />
+
+</PreferenceScreen>

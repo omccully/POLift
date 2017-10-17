@@ -3,20 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
-
 namespace POLift.Service
 {
-    interface IPlateMath
+    public interface IPlateMath
     {
-        int BarWeight { get; private set; }
+        int BarWeight { get; }
 
-        bool SplitWeights { get; private set; }
+        bool SplitWeights { get; }
 
         Dictionary<float, int> CalculateTotalPlateCounts(int weight);
 

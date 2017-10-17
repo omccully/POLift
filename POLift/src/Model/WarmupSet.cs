@@ -3,13 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
-
 namespace POLift.Model
 {
     using Service;
@@ -20,7 +13,7 @@ namespace POLift.Model
         int PercentOfRestPeriod;
 
         public int Reps { get; private set; }
-        public int Notes { get; private set; }
+        public string Notes { get; private set; }
 
         public WarmupSet(int reps, int percent_of_weight, int percent_of_rest_period, string notes = "")
         {

@@ -10,6 +10,8 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 
+using Microsoft.Practices.Unity;
+
 namespace POLift
 {
     using Model;
@@ -28,15 +30,19 @@ namespace POLift
         
         static int SelectExerciseRequestCode = 1;
 
-        Routine RoutineToDeleteIfDifferent = null;
+        IRoutine RoutineToDeleteIfDifferent = null;
 
         int LockedSetCount = 0;
+
+        IPOLDatabase Database;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
 
             SetContentView(Resource.Layout.CreateRoutine);
+
+            Database = C.ontainer.Resolve<IPOLDatabase>();
 
             RoutineTitleText = FindViewById<EditText>(Resource.Id.RoutineTitleText);
             ExercisesListView = FindViewById<ListView>(Resource.Id.ExercisesListView);
@@ -45,19 +51,19 @@ namespace POLift
 
             int edit_routine_id = Intent.GetIntExtra("edit_routine_id", -1);
 
-            List<ExerciseSets> exercise_sets = new List<ExerciseSets>();
+            List<IExerciseSets> exercise_sets = new List<IExerciseSets>();
             if (savedInstanceState != null)
             {
                 int[] ids = savedInstanceState.GetIntArray(EXERCISE_SETS_IDS_KEY);
                 if(ids != null)
                 {
-                    exercise_sets = new List<ExerciseSets>(POLDatabase.ParseIDs<ExerciseSets>(ids));
+                    exercise_sets = new List<IExerciseSets>(Database.ParseIDs<ExerciseSets>(ids));
                 }
                 LockedSetCount = savedInstanceState.GetInt("exercise_sets_locked", 0);
             }
             else if (edit_routine_id != -1)
             {
-                Routine routine = POLDatabase.ReadByID<Routine>(edit_routine_id);
+                Routine routine = Database.ReadByID<Routine>(edit_routine_id);
 
                 RoutineTitleText.Text = routine.Name;
 
@@ -65,12 +71,12 @@ namespace POLift
                 // ExerciseSets.Group(Exercise[] exercises)
                 int locked_count = Intent.GetIntExtra("exercises_locked", 0);
 
-                List<Exercise> all_exercises = routine.Exercises;
+                IEnumerable<IExercise> all_exercises = routine.Exercises;
 
-                List<ExerciseSets> locked_sets = 
-                    ExerciseSets.Group(all_exercises.Take(locked_count));
-                List<ExerciseSets> unlocked_sets = 
-                    ExerciseSets.Group(all_exercises.Skip(locked_count));
+                IEnumerable<IExerciseSets> locked_sets = 
+                    ExerciseSets.Group(all_exercises.Take(locked_count), Database);
+                IEnumerable<IExerciseSets> unlocked_sets = 
+                    ExerciseSets.Group(all_exercises.Skip(locked_count), Database);
                 LockedSetCount = locked_sets.Count();
                 exercise_sets.AddRange(locked_sets);
                 exercise_sets.AddRange(unlocked_sets);
@@ -98,7 +104,7 @@ namespace POLift
             base.OnSaveInstanceState(outState);
 
             SaveExerciseSets();
-            int[] ids = exercise_sets_adapter.ExerciseSetsList.Select(es => es.ID).ToArray();
+            int[] ids = exercise_sets_adapter.ExerciseSets.Select(es => es.ID).ToArray();
             outState.PutIntArray(EXERCISE_SETS_IDS_KEY, ids);
 
             outState.PutInt("exercise_sets_locked", LockedSetCount);
@@ -109,9 +115,9 @@ namespace POLift
             // TODO: merge sets that are the same, add set count
             exercise_sets_adapter.RemoveZeroSets();
 
-            foreach (ExerciseSets ex_sets in exercise_sets_adapter.ExerciseSetsList)
+            foreach (IExerciseSets ex_sets in exercise_sets_adapter.ExerciseSets)
             {
-                POLDatabase.InsertOrUpdateNoID(ex_sets);
+                Database.InsertOrUpdateNoID<ExerciseSets>((ExerciseSets)ex_sets);
             }
         }
 
@@ -122,22 +128,23 @@ namespace POLift
                 SaveExerciseSets();
 
                 Routine routine = new Routine(RoutineTitleText.Text, 
-                    exercise_sets_adapter.ExerciseSetsList);
-                POLDatabase.Insert(routine);
+                    exercise_sets_adapter.ExerciseSets);
+                routine.Database = Database;
+                Database.Insert(routine);
 
                 // if this routine is being edited, then delete the old one
                 if(RoutineToDeleteIfDifferent != null &&
                     RoutineToDeleteIfDifferent != routine)
                 {
-                    POLDatabase.HideDeletable(RoutineToDeleteIfDifferent);
+                    Database.HideDeletable<Routine>((Routine)RoutineToDeleteIfDifferent);
                 }
 
                 // set the category for all of the exercises in this routine
-                foreach(ExerciseSets ex_sets in exercise_sets_adapter.ExerciseSetsList)
+                foreach(ExerciseSets ex_sets in exercise_sets_adapter.ExerciseSets)
                 {
                     Exercise ex = ex_sets.Exercise;
                     ex.Category = routine.Name;
-                    POLDatabase.Update(ex);
+                    Database.Update(ex);
                 }
 
                 ReturnRoutine(routine);
@@ -148,7 +155,7 @@ namespace POLift
             }
         }
 
-        void ReturnRoutine(Routine routine)
+        void ReturnRoutine(IRoutine routine)
         {
             ReturnRoutine(routine.ID);
         }
@@ -180,7 +187,7 @@ namespace POLift
 
                 int id = data.GetIntExtra("exercise_id", -1);
                 if (id == -1) return;
-                Exercise selected_exercise = POLDatabase.ReadByID<Exercise>(id);
+                Exercise selected_exercise = Database.ReadByID<Exercise>(id);
 
                 //exercise_adapter.Add(selected_exercise);
                 //routine_exercises.Add(selected_exercise);
@@ -192,7 +199,8 @@ namespace POLift
                 }
 
                 ExerciseSets es = new ExerciseSets(selected_exercise, DEFAULT_SET_COUNT);
-                exercise_sets_adapter.Add(es);
+                es.Database = Database;
+                exercise_sets_adapter.ExerciseSets.Add(es);
             }
         }
     }

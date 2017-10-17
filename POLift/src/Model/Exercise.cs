@@ -4,13 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
-
 using SQLite;
 
 namespace POLift.Model
@@ -106,13 +99,13 @@ namespace POLift.Model
         {
             get
             {
-                int index = Array.IndexOf(PlateMath.PlateMathTypes, PlateMath);
+                int index = Array.IndexOf(Service.PlateMath.PlateMathTypes, PlateMath);
                 if (index == -1) return 0;
                 return index;
             }
             set
             {
-                PlateMath = PlateMath.PlateMathTypes[value];
+                PlateMath = Service.PlateMath.PlateMathTypes[value];
             }
         }
 
@@ -138,7 +131,7 @@ namespace POLift.Model
         }
         
         [Ignore]
-        public PlateMath PlateMath { get; set; }
+        public IPlateMath PlateMath { get; set; }
 
         public Exercise() : this("Generic exercise", 6)
         {
@@ -146,7 +139,7 @@ namespace POLift.Model
         }
 
         public Exercise(string Name, int MaxRepCount, int WeightIncrement=5, 
-            int RestPeriodSeconds=120, PlateMath plate_math = null)
+            int RestPeriodSeconds=120, IPlateMath plate_math = null)
         {
             this.Name = Name;
             this.MaxRepCount = MaxRepCount;
@@ -186,7 +179,7 @@ namespace POLift.Model
             get
             {
                 ExerciseResult most_recent_result = 
-                    ExerciseResult.MostRecentResultOf(this);
+                    ExerciseResult.MostRecentResultOf(Database, this);
                 if (most_recent_result == null)
                 {
                     if(PlateMath != null)
@@ -269,36 +262,22 @@ namespace POLift.Model
                 this.WeightIncrement.GetHashCode() ^ this.RestPeriodSeconds.GetHashCode();
         }
 
-
-        /*public static Exercise FromXml(string xml)
+        public static Dictionary<int,int> Import(IEnumerable<Exercise> exercises, IPOLDatabase destination)
         {
-            XmlDocument doc = new XmlDocument();
-            doc.LoadXml(xml);
-            return FromXmlNode(doc.GetElementsByTagName("Exercise")[0]);
+            // loop through all exercises in imported db, add to 
+            // existing DB
+
+            Dictionary<int, int> ExercisesLookup = new Dictionary<int, int>();
+            foreach (Exercise exercise in exercises)
+            {
+                int old_id = exercise.ID;
+                exercise.ID = 0;
+                destination.InsertOrUpdateNoID(exercise);
+
+                ExercisesLookup[old_id] = exercise.ID;
+            }
+
+            return ExercisesLookup;
         }
-
-        public static Exercise FromXmlNode(XmlNode node)
-        {
-            string name = node.Attributes["name"].InnerText;
-            int max_rep = Int32.Parse(node.Attributes["max_rep"].InnerText);
-            int weight_increment = Int32.Parse(node.Attributes["weight_increment"].InnerText);
-            return new Exercise(name, max_rep, weight_increment);
-        }
-
-        public XmlElement ToXmlElement()
-        {
-            XmlDocument doc = new XmlDocument();
-            XmlElement exercise_element = doc.CreateElement("Exercise");
-
-            exercise_element.SetAttribute("name", Name);
-            exercise_element.SetAttribute("max_rep", MaxRepCount.ToString());
-            exercise_element.SetAttribute("weight_increment", WeightIncrement.ToString());
-            return exercise_element;
-        }
-
-        public string ToXml()
-        {
-            return ToXmlElement().OuterXml;
-        }*/
     }
 }

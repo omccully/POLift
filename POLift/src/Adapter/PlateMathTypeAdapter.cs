@@ -14,15 +14,15 @@ namespace POLift
 {
     using Service;
 
-    class PlateMathTypeAdapter : BaseAdapter<PlateMath>
+    class PlateMathTypeAdapter : BaseAdapter<IPlateMath>
     {
-        List<PlateMath> PlateMathTypes;
+        List<IPlateMath> PlateMathTypes;
         Context context;
 
-        public PlateMathTypeAdapter(Context context, IEnumerable<PlateMath> maths)
+        public PlateMathTypeAdapter(Context context, IEnumerable<IPlateMath> maths)
         {
             this.context = context;
-            PlateMathTypes = new List<PlateMath>(maths);
+            PlateMathTypes = new List<IPlateMath>(maths);
         }
 
         public override Java.Lang.Object GetItem(int position)
@@ -35,7 +35,7 @@ namespace POLift
             return position;
         }
 
-        public override PlateMath this[int position]
+        public override IPlateMath this[int position]
         {
             get
             {
@@ -64,7 +64,7 @@ namespace POLift
 
 
             //fill in your items
-            PlateMath pm = this[position];
+            IPlateMath pm = this[position];
             if(pm == null)
             {
                 holder.Title.Text = "None";

@@ -44,9 +44,9 @@ namespace POLift
 
         protected Button ModifyRestOfRoutineButton;
 
-        protected Exercise CurrentExercise;
+        protected IExercise CurrentExercise;
 
-        protected PlateMath CurrentPlateMath
+        protected IPlateMath CurrentPlateMath
         {
             get
             {

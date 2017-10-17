@@ -10,6 +10,8 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 
+using Microsoft.Practices.Unity;
+
 namespace POLift
 {
     using Model;
@@ -20,13 +22,16 @@ namespace POLift
     {
         RoutineResultAdapter RoutineResultAdapter;
 
+        IPOLDatabase Database;
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
 
             // Create your application here
+            Database = C.ontainer.Resolve<IPOLDatabase>();
 
-            RoutineResultAdapter = new RoutineResultAdapter(this, POLDatabase.Table<RoutineResult>()
+            RoutineResultAdapter = new RoutineResultAdapter(this, Database.Table<RoutineResult>()
                 .Where(rr => !rr.Deleted));
             this.ListAdapter = RoutineResultAdapter;
 
@@ -38,12 +43,15 @@ namespace POLift
             Helpers.DisplayConfirmation(this, "Do you want to delete this workout session?",
                 delegate
                 {
-                    RoutineResult to_delete = RoutineResultAdapter[e.Position];
-                    RoutineResultAdapter.RemoveIndex(e.Position);
+                    IRoutineResult to_delete = RoutineResultAdapter[e.Position];
+                    RoutineResultAdapter.RoutineResults.RemoveAt(e.Position);
 
-                    POLDatabase.HideDeletable(to_delete);
+                    Database.HideDeletable((RoutineResult)to_delete);
 
-                    RoutineResultAdapter.NotifyDataSetChanged();
+                    foreach(IExerciseResult ex_r in to_delete.ExerciseResults)
+                    {
+                        Database.HideDeletable((ExerciseResult)ex_r);
+                    }
                 });
         }
     }

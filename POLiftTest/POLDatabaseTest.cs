@@ -21,7 +21,7 @@ namespace POLiftTest
         [SetUp]
         public void Setup()
         {
-            POLDatabase.ClearDatabase();
+            //POLDatabase.ClearDatabase();
         }
 
         [Test]

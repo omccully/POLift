@@ -4,35 +4,33 @@ using System.Linq;
 using System.Text;
 using System.IO;
 
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
-
 using POLift.Model;
 
 using SQLite;
 
 namespace POLift.Service
 {
-    public delegate void DatabaseOperation(SQLiteConnection Connection);
-
-    public static class POLDatabase
+    class POLDatabase : IPOLDatabase
     {
-        static string DatabaseFileName = "database.db3";
-        static string DatabaseDirectory = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
-        static string DatabasePath = Path.Combine(DatabaseDirectory, DatabaseFileName);
+        string FilePath;
 
-        static object Locker = new object();
+        object Locker = new object();
 
-        // use Invoke instead of using Connection publicly
-        static SQLiteConnection Connection = new SQLiteConnection(DatabasePath);
+        SQLiteConnection Connection;
 
-        public static void ClearDatabase()
+        public POLDatabase(string file_path)
         {
-            lock(Locker)
+            this.FilePath = file_path;
+
+            Connection = new SQLiteConnection(file_path);
+
+            InitializeDatabase();
+        }
+
+
+        public void ClearDatabase()
+        {
+            lock (Locker)
             {
                 Connection.DropTable<Exercise>();
                 Connection.DropTable<Routine>();
@@ -42,7 +40,7 @@ namespace POLift.Service
             }
         }
 
-        public static void InitializeDatabase()
+        public void InitializeDatabase()
         {
             CreateTableIfNotExists<Exercise>();
             CreateTableIfNotExists<Routine>();
@@ -51,23 +49,14 @@ namespace POLift.Service
             CreateTableIfNotExists<RoutineResult>();
         }
 
-        public static void ResetDatabase()
+        public void ResetDatabase()
         {
             ClearDatabase();
             InitializeDatabase();
         }
 
-        static POLDatabase()
-        {
-            // comment this out unless testing
-            //ClearDatabase();
 
-           // Connection.DropTable<RoutineResult>();
-
-            InitializeDatabase();
-        }
-
-        public static void Update(IIdentifiable obj)
+        public void Update(IIdentifiable obj)
         {
             lock (Locker)
             {
@@ -75,15 +64,7 @@ namespace POLift.Service
             }
         }
 
-        public static void Invoke(DatabaseOperation operation)
-        {
-            lock(Locker)
-            {
-                operation?.Invoke(Connection);
-            }
-        }
-
-        public static void CreateTableIfNotExists<T>()
+        public void CreateTableIfNotExists<T>()
         {
             try
             {
@@ -92,15 +73,15 @@ namespace POLift.Service
                     Connection.CreateTable<T>();
                 }
             }
-            catch(SQLiteException)
+            catch (SQLiteException)
             {
 
             }
         }
 
-        public static int Insert(IIdentifiable obj)
+        public int Insert(IIdentifiable obj)
         {
-            lock(Locker)
+            lock (Locker)
             {
                 return Connection.Insert(obj);
             }
@@ -112,11 +93,11 @@ namespace POLift.Service
         /// </summary>
         /// <param name="obj"></param>
         /// <returns>True if new row inserted, false is old row was updated</returns>
-        public static bool InsertOrUpdateByID(IIdentifiable obj)
+        public bool InsertOrUpdateByID(IIdentifiable obj)
         {
             lock (Locker)
             {
-                if(obj.ID == 0 || Connection.Update(obj) == 0)
+                if (obj.ID == 0 || Connection.Update(obj) == 0)
                 {
                     Connection.Insert(obj);
                     return true;
@@ -132,7 +113,7 @@ namespace POLift.Service
         /// obj's table should have an index between
         /// all of the properties that make obj unique</param>
         /// <returns>True if new row was inserted, otherwise false</returns>
-        public static bool InsertOrUpdateNoID<T>(T obj) where T : class, IIdentifiable, new()
+        public bool InsertOrUpdateNoID<T>(T obj) where T : class, IIdentifiable, new()
         {
             lock (Locker)
             {
@@ -141,9 +122,9 @@ namespace POLift.Service
                     Connection.Insert(obj);
                     return true;
                 }
-                catch(SQLiteException e)
+                catch (SQLiteException e)
                 {
-                    if(e.Result == SQLite3.Result.Constraint)
+                    if (e.Result == SQLite3.Result.Constraint)
                     {
                         // obj already exists based on constraint
                         // find obj's ID
@@ -151,16 +132,16 @@ namespace POLift.Service
                         var table = Connection.Table<T>();
 
                         T existing = null;
-                        foreach(T ex in table)
+                        foreach (T ex in table)
                         {
-                            if(ex.Equals(obj))
+                            if (ex.Equals(obj))
                             {
                                 existing = ex;
                                 break;
                             }
                         }
 
-                        if(existing == null)
+                        if (existing == null)
                         {
                             throw new InvalidOperationException("This object does not exist in the database table.");
                         }
@@ -179,17 +160,17 @@ namespace POLift.Service
             }
         }
 
-        public static bool InsertOrUndeleteAndUpdate<T>(T obj) where T : class, IDeletable, new()
+        public bool InsertOrUndeleteAndUpdate<T>(T obj) where T : class, IDeletable, new()
         {
             obj.Deleted = false;
             return InsertOrUpdateNoID(obj);
         }
 
 
-        public static bool HideDeletable<T>(T obj) where T : IDeletable, new()
+        public bool HideDeletable<T>(T obj) where T : IDatabaseObject, IDeletable, new()
         {
             obj.Deleted = true;
-            if(obj.ID == 0)
+            if (obj.ID == 0)
             {
                 if (!FillIDValue<T>(obj)) return false;
             }
@@ -199,7 +180,7 @@ namespace POLift.Service
             return true;
         }
 
-        public static bool FillIDValue<T>(T obj) where T : IIdentifiable, new()
+        public bool FillIDValue<T>(T obj) where T : IDatabaseObject, IIdentifiable, new()
         {
             try
             {
@@ -207,21 +188,37 @@ namespace POLift.Service
                 obj.ID = found.ID;
                 return true;
             }
-            catch(InvalidOperationException)
+            catch (InvalidOperationException)
             {
                 return false;
             }
         }
 
-        public static TableQuery<T> Table<T>() where T : new()
+        public IEnumerable<T> Table<T>() where T : IDatabaseObject, new()
         {
-            lock(Locker)
+            lock (Locker)
             {
-                return Connection.Table<T>();
+                var tab = Connection.Table<T>();
+
+                List<T> result = new List<T>();
+                foreach(T item in tab)
+                {
+                    item.Database = this;
+                    result.Add(item);
+                }
+
+                //var list = new List<T>(tab);
+
+                //return list.Select(r => {
+                //    r.Database = this;
+                //    return r;
+                //});
+
+                return result;
             }
         }
 
-        public static List<T> TableWhereUndeleted<T>() where T : IDeletable, new()
+        public IEnumerable<T> TableWhereUndeleted<T>() where T : IDatabaseObject, IDeletable, new()
         {
             lock (Locker)
             {
@@ -229,31 +226,36 @@ namespace POLift.Service
                 var were = tab.Where(e => !e.Deleted);
                 return were.ToList();*/
 
-                List<T> results = new List<T>();
+                /*List<T> results = new List<T>();
 
-                foreach(T item in Connection.Table<T>())
+                foreach (T item in Connection.Table<T>())
                 {
                     if (!item.Deleted) results.Add(item);
                 }
 
-                return results;
+                return results;*/
+
+                return Table<T>().Where(r => !r.Deleted);
             }
         }
 
-        public static T ReadByID<T>(int ID) where T : new()
+        public T ReadByID<T>(int ID) where T : IDatabaseObject, new()
         {
-            lock(Locker)
+             
+            lock (Locker)
             {
-                return Connection.Get<T>(ID);
+                T obj = Connection.Get<T>(ID);
+                obj.Database = this;
+                return obj;
             }
         }
 
-        public static IEnumerable<T> ParseIDs<T>(IEnumerable<int> IDs) where T : class, new()
+        public IEnumerable<T> ParseIDs<T>(IEnumerable<int> IDs) where T : class, IDatabaseObject, new()
         {
-            return IDs.Select(id => POLDatabase.ReadByID<T>(id));
+            return IDs.Select(id => ReadByID<T>(id));
         }
 
-        public static IEnumerable<T> ParseIDString<T>(string IDs) where T : class, new()
+        public IEnumerable<T> ParseIDString<T>(string IDs) where T : class, IDatabaseObject, new()
         {
             return ParseIDs<T>(IDs.Split(',').Select(id_str =>
             {
@@ -268,35 +270,30 @@ namespace POLift.Service
             }).Where(e => e != 0));
         }
 
-        void ImportDatabase(IPOLDatabase other_database)
-        {
-
-        }
-
-        public static void ImportDatabaseFromFile(string file)
+        public void ImportDatabase(IPOLDatabase other_database)
         {
             // prune the original db first.
 
-            // loop through all exercises in imported db, add to 
-            // existing DB
-
-
-            // loop through exercisesets
-            // swap the ExerciseIDs with the equivalent for the existing db
-
-
-            // loop through routines
-            // swap the ExerciseSetIDs for equivalent for the existing db
+            // lookup for old to new IDs
+            Dictionary<int, int> ExerciseLookup = 
+                Exercise.Import(other_database.Table<Exercise>(), this);
             
-            // loop through exercise results
-            // swap the ExerciseID for equivalent for the existing db
+            Dictionary<int, int> ExerciseSetsLookup = ExerciseSets.Import(
+                other_database.Table<ExerciseSets>(), this, ExerciseLookup);
             
-            // loop through routine results
-            // swap the Routine ID, and ExerciseResult IDs for the existing db
+            Dictionary<int, int> RoutineLookup = Routine.Import(
+                other_database.Table<Routine>(), this, ExerciseSetsLookup);
 
+            Dictionary<int, int> ExerciseResultLookup = ExerciseResult.Import(
+                other_database.Table<ExerciseResult>(), this, ExerciseLookup);
 
+            RoutineResult.Import(other_database.Table<RoutineResult>(),
+                this, RoutineLookup, ExerciseResultLookup);
+        }
 
-
+        public void ImportDatabaseFromFile(string file_path)
+        {
+            ImportDatabase(new POLDatabase(file_path));
         }
     }
 }

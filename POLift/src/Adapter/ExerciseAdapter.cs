@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Collections.ObjectModel;
 
 using Android.App;
 using Android.Content;
@@ -17,18 +18,18 @@ namespace POLift
 
     class ExerciseEventArgs
     {
-        public readonly Exercise Exercise;
+        public readonly IExercise Exercise;
 
-        public ExerciseEventArgs(Exercise exercise)
+        public ExerciseEventArgs(IExercise exercise)
         {
             this.Exercise = exercise;
         }
     }
 
 
-    class ExerciseAdapter : BaseAdapter<Exercise>
+    class ExerciseAdapter : BaseAdapter<IExercise>
     {
-        List<Exercise> exercises;
+        public ObservableCollection<IExercise> Exercises { get; private set; }
         Context context;
 
         public event EventHandler<ExerciseEventArgs> DeleteButtonClicked;
@@ -43,17 +44,23 @@ namespace POLift
             EditButtonClicked?.Invoke(this, e);
         }
 
-        public ExerciseAdapter(Context context, IEnumerable<Exercise> exercises)
+        public ExerciseAdapter(Context context, IEnumerable<IExercise> exercises)
         {
             this.context = context;
-            this.exercises = new List<Exercise>(exercises);
+            this.Exercises = new ObservableCollection<IExercise>(exercises);
+            this.Exercises.CollectionChanged += Exercises_CollectionChanged;
         }
 
-        public override Exercise this[int position]
+        private void Exercises_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            NotifyDataSetChanged();
+        }
+
+        public override IExercise this[int position]
         {
             get
             {
-                return exercises[position];
+                return Exercises[position];
             }
         }
     
@@ -111,18 +118,12 @@ namespace POLift
             return view;
         }
 
-        public void Add(Exercise ex)
-        {
-            exercises.Add(ex);
-            NotifyDataSetChanged();
-        }
-
         //Fill in cound here, currently 0
         public override int Count
         {
             get
             {
-                return exercises.Count;
+                return Exercises.Count;
             }
         }
 

@@ -14,6 +14,8 @@ using System.IO;
 using System.Xml;
 using Android.Support.V4.View;
 
+using Microsoft.Practices.Unity;
+
 namespace POLift
 {
     using Model;
@@ -30,9 +32,13 @@ namespace POLift
         ViewPager ExercisesViewPager;
         ExercisesPagerAdapter exercises_pager_adapter;
 
+        IPOLDatabase Database;
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
+
+            Database = C.ontainer.Resolve<IPOLDatabase>();
 
             // Create your application here
             SetContentView(Resource.Layout.SelectExercise);
@@ -95,7 +101,7 @@ namespace POLift
                 e.Exercise.ToString() + "\" exercise? (this won't have any effect" +
                 " on any routines that use this exercise)", delegate
                 {
-                    POLDatabase.HideDeletable(e.Exercise);
+                    Database.HideDeletable((Exercise)e.Exercise);
                     RefreshExerciseList();
                 });
         }
@@ -147,7 +153,7 @@ namespace POLift
 
         
 
-        void ReturnExercise(Exercise exercise)
+        void ReturnExercise(IExercise exercise)
         {
             ReturnExercise(exercise.ID);
         }
@@ -170,11 +176,11 @@ namespace POLift
         /// 
         /// </summary>
         /// <returns>Ordered list of KVP category => list of exercises</returns>
-        List<KeyValuePair<string, List<Exercise>>> ExercisesInCategories()
+        List<KeyValuePair<string, List<IExercise>>> ExercisesInCategories()
         {
-            Dictionary<string, List<Exercise>> dict = new Dictionary<string, List<Exercise>>();
+            Dictionary<string, List<IExercise>> dict = new Dictionary<string, List<IExercise>>();
 
-            foreach (Exercise ex in POLDatabase.Table<Exercise>())
+            foreach (Exercise ex in Database.Table<Exercise>())
             {
                 string cat = ex.Deleted ? DeletedCategory :
                     (ex.Category == null ? DefaultCategory : ex.Category);
@@ -185,7 +191,7 @@ namespace POLift
                 }
                 else
                 {
-                    dict[cat] = new List<Exercise>() { ex };
+                    dict[cat] = new List<IExercise>() { ex };
                 }
             }
 

@@ -3,16 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
-
 namespace POLift.Model
 {
-    interface IRoutineResult : IDatabaseObject
+    public interface IRoutineResult : IDeletable, IDatabaseObject, IIdentifiable
     {
         int RoutineID { get; set; }
 
@@ -24,17 +17,19 @@ namespace POLift.Model
 
         string ExerciseResultsIDs { get; set; }
 
+        List<IExerciseResult> ExerciseResults { get; set; }
+
         string ExerciseIDs { get; set; }
 
-        bool Completed { get; set; }
+        bool Completed { get; }
 
-        IExercise NextExercise { get; set; }
+        IExercise NextExercise { get; }
 
-        int ExerciseCount { get; set; }
+        int ExerciseCount { get; }
 
-        int ResultCount { get; set; }
+        int ResultCount { get; }
 
-        string ShortDetails { get; set; }
+        string ShortDetails { get; }
 
         void ReportExerciseResult(IExerciseResult ex_result);
 

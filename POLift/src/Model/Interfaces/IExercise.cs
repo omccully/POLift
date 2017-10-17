@@ -3,18 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
-
 namespace POLift.Model
 {
     using Service;
 
-    interface IExercise : IIdentifiable, IDeletable, IDatabaseObject
+    public interface IExercise : IIdentifiable, IDeletable, IDatabaseObject
     {
         string Name { get; set; }
 
@@ -28,10 +21,10 @@ namespace POLift.Model
 
         string Category { get; set; }
 
-        PlateMath PlateMath { get; set; }
+        IPlateMath PlateMath { get; set; }
 
-        string ShortDetails { get; set; }
+        string ShortDetails { get; }
 
-        int NextWeight { get; set; }
+        int NextWeight { get; }
     }
 }

@@ -3,6 +3,7 @@ using Android.Views;
 using Android.Widget;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace POLift
 {
@@ -10,17 +11,17 @@ namespace POLift
 
     class RoutineEventArgs
     {
-        public readonly Routine Routine;
+        public readonly IRoutine Routine;
 
-        public RoutineEventArgs(Routine Routine)
+        public RoutineEventArgs(IRoutine Routine)
         {
             this.Routine = Routine;
         }
     }
 
-    class RoutineAdapter : BaseAdapter<Routine>
+    class RoutineAdapter : BaseAdapter<IRoutine>
     {
-        List<Routine> routines;
+        ObservableCollection<IRoutine> Routines;
         Activity context;
 
         public event EventHandler<RoutineEventArgs> DeleteButtonClicked;
@@ -35,17 +36,23 @@ namespace POLift
             EditButtonClicked?.Invoke(this, e);
         }
 
-        public RoutineAdapter(Activity context, IEnumerable<Routine> exercises)
+        public RoutineAdapter(Activity context, IEnumerable<IRoutine> routines)
         {
             this.context = context;
-            this.routines = new List<Routine>(exercises);
+            this.Routines = new ObservableCollection<IRoutine>(routines);
+            Routines.CollectionChanged += Routines_CollectionChanged;
         }
 
-        public override Routine this[int position]
+        void Routines_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            NotifyDataSetChanged();
+        }
+
+        public override IRoutine this[int position]
         {
             get
             {
-                return routines[position];
+                return Routines[position];
             }
         }
 
@@ -95,18 +102,12 @@ namespace POLift
             return view;
         }
 
-        public void Add(Routine r)
-        {
-            routines.Add(r);
-            NotifyDataSetChanged();
-        }
-
         //Fill in cound here, currently 0
         public override int Count
         {
             get
             {
-                return routines.Count;
+                return Routines.Count;
             }
         }
 
