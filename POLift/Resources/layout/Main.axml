@@ -22,15 +22,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/CreateRoutineLink"
-        android:paddingTop="15dip" />
-    <Button
-        android:text="View 1RM Graphs"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/ViewGraphsButton" />
-    <Button
-        android:text="View recent sessions"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/ViewRecentSessionsButton" />
+        android:paddingTop="15dip"
+        android:minHeight="70dip" />
 </LinearLayout>

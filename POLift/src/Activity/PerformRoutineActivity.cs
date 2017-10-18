@@ -10,6 +10,7 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
+using Android.Preferences;
 
 using Microsoft.Practices.Unity;
 
@@ -234,8 +235,9 @@ namespace POLift
             }
             catch (FormatException)
             {
-                Helpers.DisplayError(this,
-                    "You must fill out the weight and rep count with integers");
+                Toast.MakeText(this,
+                        "You must fill out the weight and rep count with integers",
+                    ToastLength.Long).Show();
                 return;
             }
 
@@ -350,14 +352,30 @@ namespace POLift
 
         void PromptUserForWarmupRoutine()
         {
-            dialog = Helpers.DisplayConfirmation(this, "Would you like to do a warmup routine?",
-                delegate
+            ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(this);
+
+            if(prefs.GetBoolean("ask_for_warmup", true))
+            {
+                dialog = Helpers.DisplayConfirmation(this, 
+                    "Would you like to do a warmup routine?",
+                    delegate { StartWarmupActivity(); });
+            }
+            else
+            {
+                if(prefs.GetBoolean("default_warmup", false))
                 {
-                    var intent = new Intent(this, typeof(WarmupRoutineActivity));
-                    intent.PutExtra("exercise_id", CurrentExercise.ID);
-                    intent.PutExtra("working_set_weight", WeightInput);
-                    StartActivityForResult(intent, WarmUpRoutineRequestCode);
-                });
+                    StartWarmupActivity();
+                }
+            }
+
+        }
+
+        void StartWarmupActivity()
+        {
+            var intent = new Intent(this, typeof(WarmupRoutineActivity));
+            intent.PutExtra("exercise_id", CurrentExercise.ID);
+            intent.PutExtra("working_set_weight", WeightInput);
+            StartActivityForResult(intent, WarmUpRoutineRequestCode);
         }
 
         void ReturnRoutineResult(IRoutineResult routine_result)

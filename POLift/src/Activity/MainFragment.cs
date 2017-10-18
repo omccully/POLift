@@ -26,10 +26,6 @@ namespace POLift
 
         ListView RoutinesList;
         Button CreateRoutineLink;
-        Button ViewRecentSessionsLink;
-
-        Button ViewGraphsButton;
-
         RoutineAdapter routine_adapter;
 
         IPOLDatabase Database;
@@ -54,14 +50,9 @@ namespace POLift
             Database = C.ontainer.Resolve<IPOLDatabase>();
 
             RoutinesList = view.FindViewById<ListView>(Resource.Id.RoutinesList);
-            ViewRecentSessionsLink = view.FindViewById<Button>(Resource.Id.ViewRecentSessionsButton);
-            ViewRecentSessionsLink.Click += ViewRecentSessionsLink_Click;
 
             CreateRoutineLink = view.FindViewById<Button>(Resource.Id.CreateRoutineLink);
             CreateRoutineLink.Click += CreateRoutineButton_Click;
-
-            ViewGraphsButton = view.FindViewById<Button>(Resource.Id.ViewGraphsButton);
-            ViewGraphsButton.Click += ViewGraphsButton_Click;
 
             RoutinesList.ItemClick += RoutinesList_ItemClick;
 
@@ -75,20 +66,6 @@ namespace POLift
             //toolbar.ShowOverflowMenu();
 
             RefreshRoutineList();
-        }
-
-        
-
-        private void ViewGraphsButton_Click(object sender, EventArgs e)
-        {
-            var intent = new Intent(Activity, typeof(GraphActivity));
-            StartActivity(intent);
-        }
-
-        private void ViewRecentSessionsLink_Click(object sender, EventArgs e)
-        {
-            var intent = new Intent(Activity, typeof(ViewRoutineResultsActivity));
-            StartActivity(intent);
         }
 
         void RefreshRoutineList()

@@ -23,23 +23,9 @@ namespace POLift
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-
            
             FragmentManager.BeginTransaction().Replace(Resource.Id.content_frame,
                 new MainFragment()).Commit();
-
-            //SetContentView(Resource.Layout.Main);
-
-
-            // var toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
-            // SetActionBar(toolbar);
-
-
-           // SupportActionBar.Title = "Progressive Overload Lifting";
-
-            
-            //toolbar.ShowOverflowMenu();
-
         }
     }
 }

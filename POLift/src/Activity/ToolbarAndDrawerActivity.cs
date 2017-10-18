@@ -13,6 +13,9 @@ using Android.Support.V4.Widget;
 using Android.Support.V4.App;
 using Android.Support.Design.Widget;
 using Android.Support.V7.App;
+using Fragment = Android.App.Fragment;
+using Toolbar = Android.Support.V7.Widget.Toolbar;
+using ActionBarDrawerToggle = Android.Support.V7.App.ActionBarDrawerToggle;
 
 namespace POLift
 {
@@ -21,8 +24,6 @@ namespace POLift
     [Activity(Label = "ToolbarAndDrawerActivity")]
     public class ToolbarAndDrawerActivity : AppCompatActivity
     {
-        //NavigationView nav_view;
-        // ActionBarDrawerToggle DrawerToggle;
         DrawerLayout _DrawerLayout;
         ListView DrawerListView;
         List<INavigation> Navigations;
@@ -30,26 +31,15 @@ namespace POLift
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            //Android.Support.V7.Widget.Toolbar
+
             // Create your application here
             SetContentView(Resource.Layout.Drawer);
 
             _DrawerLayout = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
             DrawerListView = FindViewById<ListView>(Resource.Id.left_drawer);
-            Android.Support.V7.Widget.Toolbar toolbar = 
-                FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
+            Toolbar toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
 
-            //SetActionBar();
             SetSupportActionBar(toolbar);
-            //SupportActionBar.Title = "test";
-            //SupportActionBar.
-
-            /* string[] test = { "View recent sessions",
-             "View 1RM graphs", "View gym time graph",
-             "Settings", "Help & feedback"};
-
-             DrawerListView.Adapter = new ArrayAdapter<string>(this, 
-                 Resource.Layout.DrawerListItem, test);*/
 
             Navigations = new List<INavigation>()
             {
@@ -67,20 +57,12 @@ namespace POLift
 
             DrawerListView.Adapter = new NavigationAdapter(this, Navigations);
 
-            //DrawerListView.ItemClick += DrawerListView_ItemClick;
-            //LinearLayout layout = FindViewById<LinearLayout>(Resource.Id.DrawerMenuLinearLayout);
-            //layout.AddView()
-
-            //ActionBar.
-
-            //nav_view.Menu
-
-
-            /*ActionBarDrawerToggle drawer_toggle = new ActionBarDrawerToggle(this, _DrawerLayout,
-                Resource.Mipmap.ic_menu_white_24dp, Resource.String.drawer_opened, 
+            ActionBarDrawerToggle drawer_toggle = new ActionBarDrawerToggle(this, _DrawerLayout, toolbar,
+                Resource.String.drawer_opened,
                  Resource.String.drawer_closed);
+            
             _DrawerLayout.SetDrawerListener(drawer_toggle);
-            _DrawerLayout.Post(() => drawer_toggle.SyncState());*/
+            _DrawerLayout.Post(() => drawer_toggle.SyncState());
 
             DrawerListView.ItemClick += DrawerListView_ItemClick;
         }
@@ -92,22 +74,30 @@ namespace POLift
             _DrawerLayout.CloseDrawers();
         }
 
+        protected void SwitchToFragment(Fragment fragment)
+        {
+            // Replace(Resource.Id.content_frame, fragment)
+
+            FragmentManager.BeginTransaction()
+                //.Add(Resource.Id.content_frame, fragment)
+                .Replace(Resource.Id.content_frame, fragment)
+                .AddToBackStack(null)
+                .Commit();
+        }
+
         private void ViewRecentSessions_Click(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
-            //FragmentManager.BeginTransaction().Replace(Resource.Id.content_frame,
-            //    new MainFragment()).Commit();
+            SwitchToFragment(new ViewRoutineResultsFragment());
         }
 
         private void Settings_Click(object sender, EventArgs e)
         {
-            FragmentManager.BeginTransaction().Replace(Resource.Id.content_frame,
-                new SettingsFragment()).Commit();
+            SwitchToFragment(new SettingsFragment());
         }
 
         private void View1RMGraphs_Click(object sender, EventArgs e)
         {
-
+            SwitchToFragment(new GraphFragment());
         }
 
         private void ViewGymTimeGraphs_Click(object sender, EventArgs e)
@@ -122,11 +112,16 @@ namespace POLift
             StartActivity(intent);
         }
         
-
         public override bool OnCreateOptionsMenu(IMenu menu)
         {
             // MenuInflater.Inflate(Resource.Menu.menu, menu);
             return base.OnPrepareOptionsMenu(menu);
+        }
+
+        public override void OnBackPressed()
+        {
+
+            base.OnBackPressed();
         }
     }
 }

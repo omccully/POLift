@@ -20,6 +20,7 @@ namespace POLift
     //[Activity(Label = "Perform routine")]
     public abstract class PerformRoutineBaseActivity : Activity
     {
+        const int TimerNotificationID = 500;
         const string RestPeriodSecondsRemainingKey = "rest_period_seconds_remaining";
 
         protected TextView RoutineDetails;
@@ -139,6 +140,10 @@ namespace POLift
             StaticTimer.StartTimer(1000, seconds_left, Timer_Ticked, Timer_Elapsed);
             SetCountDownText(seconds_left);
 
+            NotificationManager mNotificationManager =
+               (NotificationManager)GetSystemService(Context.NotificationService);
+
+            mNotificationManager.Cancel(TimerNotificationID);
         }
 
         protected abstract void ReportResultButton_Click(object sender, EventArgs e);
@@ -288,9 +293,11 @@ namespace POLift
             NotificationManager mNotificationManager =
                 (NotificationManager)GetSystemService(Context.NotificationService);
 
-            mNotificationManager.Notify(500, n_builder.Build());
+            mNotificationManager.Notify(TimerNotificationID, n_builder.Build());
 
         }
+
+        
 
         protected virtual void SetCountDownText(int seconds_left)
         {

@@ -93,8 +93,6 @@ namespace POLift
             ExercisesListView.Adapter = exercise_sets_adapter;
 
             CreateRoutineButton.Click += CreateRoutineButton_Click;
-
-            System.Diagnostics.Debug.WriteLine("create routine oncreate()");
         }
 
         const string EXERCISE_SETS_IDS_KEY = "exercise_sets_ids";
@@ -127,6 +125,14 @@ namespace POLift
             {
                 SaveExerciseSets();
 
+                if(exercise_sets_adapter.Count == 0)
+                {
+                    Toast.MakeText(this, 
+                        "You must have exercises in your routine. ",
+                        ToastLength.Long).Show();
+                    return;
+                }
+
                 Routine routine = new Routine(RoutineTitleText.Text, 
                     exercise_sets_adapter.ExerciseSets);
                 routine.Database = Database;
@@ -151,7 +157,9 @@ namespace POLift
             }
             catch(ArgumentException ae)
             {
-                Helpers.DisplayError(this, ae.Message);
+                Toast.MakeText(this,
+                         ae.Message,
+                        ToastLength.Long).Show();
             }
         }
 
@@ -193,8 +201,13 @@ namespace POLift
                 //routine_exercises.Add(selected_exercise);
 
                 // set the routine name from the category if user hasn't specified one yet
-                if(String.IsNullOrWhiteSpace(RoutineTitleText.Text))
+                if(String.IsNullOrWhiteSpace(RoutineTitleText.Text)
+                    && !String.IsNullOrWhiteSpace(selected_exercise.Category))
                 {
+                    Toast.MakeText(this, "Routine title set to \"" + selected_exercise.Category +
+                        "\" based on the added exercise's category", 
+                        
+                        ToastLength.Long).Show();
                     RoutineTitleText.Text = selected_exercise.Category;
                 }
 

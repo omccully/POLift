@@ -7,6 +7,7 @@ using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Runtime;
+using Android.Util;
 using Android.Views;
 using Android.Widget;
 
@@ -22,8 +23,7 @@ namespace POLift
     using Model;
     using Service;
 
-    [Activity(Label = "Graph")]
-    public class GraphActivity : Activity
+    public class GraphFragment : Fragment
     {
         const int SelectExerciseRequestCode = 0;
 
@@ -31,22 +31,20 @@ namespace POLift
 
         IPOLDatabase Database;
 
-        protected override void OnCreate(Bundle savedInstanceState)
+        public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
 
-            // Create your application here
-            SetContentView(Resource.Layout.Graph);
-            
+            // Create your fragment here
             Database = C.ontainer.Resolve<IPOLDatabase>();
-            
-            plot_view = new PlotView(this);
+
+            plot_view = new PlotView(this.Activity);
             plot_view.Background = Resources.GetDrawable(
                 Resource.Color.white);
 
-            if(savedInstanceState == null)
+            if (savedInstanceState == null)
             {
-                Intent result_intent = new Intent(this, typeof(SelectExerciseActivity));
+                Intent result_intent = new Intent(this.Activity, typeof(SelectExerciseActivity));
                 StartActivityForResult(result_intent, SelectExerciseRequestCode);
             }
             else
@@ -57,28 +55,42 @@ namespace POLift
             }
         }
 
-        protected override void OnActivityResult(int requestCode, [GeneratedEnum] Result resultCode, Intent data)
+
+        ViewGroup Container;
+        public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            base.OnActivityResult(requestCode, resultCode, data);
+            this.Container = container;
 
-            if(resultCode == Result.Ok && requestCode == SelectExerciseRequestCode)
-            {
-                int exercise_id = data.Extras.GetInt("exercise_id");
+            // Use this to return your custom view for this Fragment
+             return inflater.Inflate(Resource.Layout.Graph, container, false);
 
-                if(exercise_id != 0)
-                {
-                    InitializePlot(exercise_id);
-                }
-            }
+            //return base.OnCreateView(inflater, container, savedInstanceState);
         }
 
         void InitializePlot(int exercise_id)
         {
             plot_view.Model = CreatePlotModel(exercise_id);
+            this.Container.AddView(plot_view, 
+                new ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MatchParent,
+                    ViewGroup.LayoutParams.MatchParent
+                )
+           );
+        }
 
-            this.AddContentView(plot_view,
-                new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MatchParent,
-                ViewGroup.LayoutParams.MatchParent));
+        public override void OnActivityResult(int requestCode, [GeneratedEnum] Result resultCode, Intent data)
+        {
+            base.OnActivityResult(requestCode, resultCode, data);
+
+            if (resultCode == Result.Ok && requestCode == SelectExerciseRequestCode)
+            {
+                int exercise_id = data.Extras.GetInt("exercise_id");
+
+                if (exercise_id != 0)
+                {
+                    InitializePlot(exercise_id);
+                }
+            }
         }
 
         PlotModel CreatePlotModel(int exercise_id)
@@ -103,7 +115,7 @@ namespace POLift
                 .Where(ex_result => ex_result.ExerciseID == exercise_id && !ex_result.Deleted)
                 .OrderBy(ex_result => ex_result.Time);
 
-            if(exercise_results.Count() > 1)
+            if (exercise_results.Count() > 1)
             {
                 date_axis.AbsoluteMinimum = DateTimeAxis.ToDouble(exercise_results.First().Time);
                 date_axis.AbsoluteMaximum = DateTimeAxis.ToDouble(exercise_results.Last().Time);

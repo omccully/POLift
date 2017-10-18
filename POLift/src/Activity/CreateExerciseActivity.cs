@@ -6,11 +6,12 @@ using System.Collections.Generic;
 using Android.Content;
 using Android.Runtime;
 using Microsoft.Practices.Unity;
+using Android.Preferences;
+using Android.Views.InputMethods;
 
 namespace POLift
 {
-    using Android.Preferences;
-    using Android.Views.InputMethods;
+   
     using Model;
     using Service;
 
