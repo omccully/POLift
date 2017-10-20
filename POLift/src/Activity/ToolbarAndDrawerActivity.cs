@@ -16,6 +16,8 @@ using Android.Support.V7.App;
 using Fragment = Android.App.Fragment;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
 using ActionBarDrawerToggle = Android.Support.V7.App.ActionBarDrawerToggle;
+using FragmentManager = Android.App.FragmentManager;
+using FragmentTransaction = Android.App.FragmentTransaction;
 
 namespace POLift
 {
@@ -60,11 +62,18 @@ namespace POLift
             ActionBarDrawerToggle drawer_toggle = new ActionBarDrawerToggle(this, _DrawerLayout, toolbar,
                 Resource.String.drawer_opened,
                  Resource.String.drawer_closed);
-            
+
             _DrawerLayout.SetDrawerListener(drawer_toggle);
             _DrawerLayout.Post(() => drawer_toggle.SyncState());
 
             DrawerListView.ItemClick += DrawerListView_ItemClick;
+        }
+
+        protected void RestoreLastFragment()
+        {
+            Fragment fragment = FragmentManager.FindFragmentById(Resource.Id.content_frame);
+
+            SwitchToFragment(fragment, false);
         }
 
         private void DrawerListView_ItemClick(object sender, AdapterView.ItemClickEventArgs e)
@@ -74,15 +83,17 @@ namespace POLift
             _DrawerLayout.CloseDrawers();
         }
 
-        protected void SwitchToFragment(Fragment fragment)
+        protected void SwitchToFragment(Fragment fragment, bool add_to_backstack = true)
         {
-            // Replace(Resource.Id.content_frame, fragment)
+            FragmentTransaction transaction = FragmentManager.BeginTransaction()
+                .Replace(Resource.Id.content_frame, fragment);
 
-            FragmentManager.BeginTransaction()
-                //.Add(Resource.Id.content_frame, fragment)
-                .Replace(Resource.Id.content_frame, fragment)
-                .AddToBackStack(null)
-                .Commit();
+            if (add_to_backstack)
+            {
+                transaction.AddToBackStack(fragment.GetType().ToString());
+            }
+
+            transaction.Commit();
         }
 
         private void ViewRecentSessions_Click(object sender, EventArgs e)
@@ -111,7 +122,7 @@ namespace POLift
             intent.SetData(Android.Net.Uri.Parse("https://reddit.com/r/CrystalMathLabs"));
             StartActivity(intent);
         }
-        
+
         public override bool OnCreateOptionsMenu(IMenu menu)
         {
             // MenuInflater.Inflate(Resource.Menu.menu, menu);

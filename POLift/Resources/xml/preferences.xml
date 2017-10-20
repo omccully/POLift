@@ -2,15 +2,23 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
   <CheckBoxPreference
     android:key="ask_for_warmup"
-    android:title="Ask for warmup routine every time?"
-    android:summary="y or n"
+    android:title="Ask for warmup routine"
+    android:summary=""
     android:defaultValue="true"
       />
   <CheckBoxPreference
     android:key="default_warmup"
-    android:title="Perform warmup by default?"
+    android:title="Perform warmup by default"
     android:summary="the above setting must be disabled"
     android:defaultValue="false"
       />
+  <!--
+  <CheckBoxPreference
+      android:key="ask_for_more_exercises"
+      android:title="Ask to add more exercises"
+      android:summary="when you complete a routine"
+      android:defaultValue="false"
+      />
+  -->
 
 </PreferenceScreen>

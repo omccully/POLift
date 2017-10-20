@@ -66,7 +66,9 @@ namespace POLift
                     .StartActivities();
                 return;
             }*/
-            
+
+            IMadeAMistakeButton.Click += IMadeAMistakeButton_Click;
+
             NextWarmupView.Visibility = ViewStates.Gone;
 
             ModifyRestOfRoutineButton.Click += ModifyRestOfRoutineButton_Click;
@@ -158,6 +160,26 @@ namespace POLift
             //ActionBar.Title = $"Perform {Routine.Name} routine";
 
             RefreshGUI();
+        }
+
+        private void IMadeAMistakeButton_Click(object sender, EventArgs e)
+        {
+            if (_RoutineResult == null)
+            {
+                Toast.MakeText(this, "Error :/",
+                    ToastLength.Long).Show();
+                return;
+            }
+            if (_RoutineResult.ResultCount == 0)
+            {
+                Toast.MakeText(this, "You have not started this routine yet",
+                    ToastLength.Long).Show();
+                return;
+            }
+
+            Intent intent = new Intent(this, typeof(EditRoutineResultActivity));
+            intent.PutExtra("routine_result_id", _RoutineResult.ID);
+            StartActivity(intent);
         }
 
         const int ModifyRestOfRoutineResultCode = 6000;
@@ -367,7 +389,6 @@ namespace POLift
                     StartWarmupActivity();
                 }
             }
-
         }
 
         void StartWarmupActivity()

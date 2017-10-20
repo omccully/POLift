@@ -42,40 +42,51 @@ namespace POLift
             plot_view.Background = Resources.GetDrawable(
                 Resource.Color.white);
 
-            if (savedInstanceState == null)
+            int exercise_id = (savedInstanceState == null ? 0 : 
+                savedInstanceState.GetInt("exercise_id"));
+
+            if (exercise_id == 0)
             {
                 Intent result_intent = new Intent(this.Activity, typeof(SelectExerciseActivity));
                 StartActivityForResult(result_intent, SelectExerciseRequestCode);
             }
             else
             {
-                int exercise_id = savedInstanceState.GetInt("exercise_id");
-
-                if (exercise_id != 0) InitializePlot(exercise_id);
+                InitializePlot(exercise_id);
             }
         }
 
+        public override void OnSaveInstanceState(Bundle outState)
+        {
+            if (ExerciseID != 0)
+            {
+                outState.PutInt("exercise_id", ExerciseID);
+            }
 
-        ViewGroup Container;
+            base.OnSaveInstanceState(outState);
+        }
+
+
+        FrameLayout frame_layout;
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            this.Container = container;
+            if (this.View != null) return this.View;
+
+            View result = inflater.Inflate(Resource.Layout.Graph, container, false);
+            frame_layout = result.FindViewById<FrameLayout>(Resource.Id.graph_frame);
 
             // Use this to return your custom view for this Fragment
-             return inflater.Inflate(Resource.Layout.Graph, container, false);
+            return result;
 
             //return base.OnCreateView(inflater, container, savedInstanceState);
         }
 
+        int ExerciseID = 0;
         void InitializePlot(int exercise_id)
         {
+            ExerciseID = exercise_id;
             plot_view.Model = CreatePlotModel(exercise_id);
-            this.Container.AddView(plot_view, 
-                new ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.MatchParent,
-                    ViewGroup.LayoutParams.MatchParent
-                )
-           );
+            frame_layout.AddView(plot_view);
         }
 
         public override void OnActivityResult(int requestCode, [GeneratedEnum] Result resultCode, Intent data)

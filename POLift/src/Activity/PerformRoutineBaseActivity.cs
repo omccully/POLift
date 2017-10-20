@@ -42,8 +42,9 @@ namespace POLift
         protected Button Add30SecButton;
         protected Button SkipTimerButton;
         
-
         protected Button ModifyRestOfRoutineButton;
+
+        protected Button IMadeAMistakeButton;
 
         protected IExercise CurrentExercise;
 
@@ -122,6 +123,7 @@ namespace POLift
             WeightLabel = FindViewById<TextView>(Resource.Id.WeightLabel);
             ModifyRestOfRoutineButton = FindViewById<Button>(Resource.Id.ModifyRestOfRoutineButton);
             NextWarmupView = FindViewById<TextView>(Resource.Id.NextWarmupView);
+            IMadeAMistakeButton = FindViewById<Button>(Resource.Id.IMadeAMistakeButton);
 
             RestoreTimerState(savedInstanceState);
 

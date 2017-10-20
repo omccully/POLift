@@ -16,7 +16,7 @@ namespace POLift
     using Model;
     using Service;
 
-    class ExerciseEventArgs
+    class ExerciseEventArgs : EventArgs
     {
         public readonly IExercise Exercise;
 

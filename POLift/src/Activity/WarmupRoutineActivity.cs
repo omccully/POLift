@@ -115,6 +115,7 @@ namespace POLift
             RepResultEditText.Visibility = ViewStates.Gone;
             ModifyRestOfRoutineButton.Visibility = ViewStates.Gone;
             NextExerciseView.Visibility = ViewStates.Gone;
+            IMadeAMistakeButton.Visibility = ViewStates.Gone;
 
             //var toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
             //SetActionBar(toolbar);

@@ -24,8 +24,14 @@ namespace POLift
         {
             base.OnCreate(savedInstanceState);
            
-            FragmentManager.BeginTransaction().Replace(Resource.Id.content_frame,
-                new MainFragment()).Commit();
+            if(savedInstanceState == null)
+            {
+                SwitchToFragment(new MainFragment(), false);
+            }
+            else
+            {
+                RestoreLastFragment();
+            }
         }
     }
 }

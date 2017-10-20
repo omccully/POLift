@@ -104,4 +104,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/ModifyRestOfRoutineButton" />
+    <Button
+        android:text="I made a mistake!"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/IMadeAMistakeButton" />
 </LinearLayout>

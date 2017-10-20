@@ -20,6 +20,18 @@ namespace POLift
         public readonly ObservableCollection<IRoutineResult> RoutineResults;
         Context context;
 
+        public event EventHandler<ContainerEventArgs<IRoutineResult>> DeleteButtonClicked;
+        protected virtual void OnDeleteButtonClicked(ContainerEventArgs<IRoutineResult> e)
+        {
+            DeleteButtonClicked?.Invoke(this, e);
+        }
+
+        public event EventHandler<ContainerEventArgs<IRoutineResult>> EditButtonClicked;
+        protected virtual void OnEditButtonClicked(ContainerEventArgs<IRoutineResult> e)
+        {
+            EditButtonClicked?.Invoke(this, e);
+        }
+
         public RoutineResultAdapter(Context context, IEnumerable<IRoutineResult> routine_results)
         {
             this.context = context;
@@ -53,7 +65,7 @@ namespace POLift
 
         public override View GetView(int position, View convertView, ViewGroup parent)
         {
-            var view = convertView;
+            /*var view = convertView;
             RoutineResultAdapterViewHolder holder = null;
 
             if (view != null)
@@ -67,14 +79,42 @@ namespace POLift
                 //comment back in
                 view = inflater.Inflate(Resource.Layout.RoutineResult, parent, false);
                 holder.Text = view.FindViewById<TextView>(Resource.Id.RoutineResultTextView);
-                view.Tag = holder;
-            }
+                holder.EditButton = view.FindViewById<ImageButton>(
+                    Resource.Id.RoutineResultEditButton);
+                holder.DeleteButton = view.FindViewById<ImageButton>(
+                    Resource.Id.RoutineResultDeleteButton);
 
+                view.Tag = holder;
+            }*/
+
+            // TODO: recycle these views. the problem is that multiple event handlers
+            // end up getting hooked up to the same event. might be able to remedy this
+            // by only hooking up new event handlers when new holders are created
+            // the holder can hold a reference to the object in question (IRoutineResult)
+            // so the delegate can obtain the most accurate value for that from the holder object.
+
+            RoutineResultAdapterViewHolder holder = new RoutineResultAdapterViewHolder();
+            var inflater = context.GetSystemService(Context.LayoutInflaterService).JavaCast<LayoutInflater>();
+            View view = inflater.Inflate(Resource.Layout.RoutineResult, null);
+            holder.Text = view.FindViewById<TextView>(Resource.Id.RoutineResultTextView);
+            holder.EditButton = view.FindViewById<ImageButton>(
+                Resource.Id.RoutineResultEditButton);
+            holder.DeleteButton = view.FindViewById<ImageButton>(
+                Resource.Id.RoutineResultDeleteButton);
 
             IRoutineResult rr = this[position];
 
             //fill in your items
             holder.Text.Text = rr.ToString();
+            holder.EditButton.Click += delegate
+            {
+                OnEditButtonClicked(new ContainerEventArgs<IRoutineResult>(rr));
+            };
+
+            holder.DeleteButton.Click += delegate
+            {
+                OnDeleteButtonClicked(new ContainerEventArgs<IRoutineResult>(rr));
+            };
 
             return view;
         }
@@ -93,5 +133,7 @@ namespace POLift
     {
         //Your adapter views to re-use
         public TextView Text { get; set; }
+        public ImageButton EditButton { get; set; }
+        public ImageButton DeleteButton { get; set; }
     }
 }

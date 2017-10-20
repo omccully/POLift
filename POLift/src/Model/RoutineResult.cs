@@ -234,10 +234,10 @@ namespace POLift.Model
         {
             StringBuilder builder = new StringBuilder();
 
-            if (this.EndTime != null)
+            string td = TimeDetails;
+            if(td != null)
             {
-                TimeSpan span = (this.EndTime - this.StartTime);
-                builder.Append($"{this.StartTime} ({(int)span.TotalMinutes} mins) ");
+                builder.Append(td);
             }
 
             builder.AppendLine($"{Routine.Name}");
@@ -245,6 +245,19 @@ namespace POLift.Model
             builder.Append(ShortDetails);
 
             return builder.ToString();
+        }
+
+        public string TimeDetails
+        {
+            get
+            {
+                if (this.EndTime != null)
+                {
+                    TimeSpan span = (this.EndTime - this.StartTime);
+                    return $"{this.StartTime} ({(int)span.TotalMinutes} mins) ";
+                }
+                return null;
+            }
         }
 
         public string ShortDetails
