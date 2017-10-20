@@ -1,5 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:descendantFocusability="blocksDescendants">
+  <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" />
+    android:layout_height="wrap_content"
+    android:layout_weight="5"
+    android:paddingBottom="10dip"
+    android:paddingTop="10dip">
+    <TextView
+       android:id="@+id/RoutineItemName"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:textSize="20dip"
+        />
+    <TextView
+       android:id="@+id/RoutineMoreDetails"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:textSize="15dip"
+       />
+  </LinearLayout>
+
+  <ImageButton
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:id="@+id/RoutineEditButton"
+      android:layout_weight="1"
+      android:focusable="false"
+      android:focusableInTouchMode="false"
+      android:src="@android:drawable/ic_menu_edit" />
+  <ImageButton
+      android:src="@android:drawable/ic_menu_delete"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:id="@+id/RoutineDeleteButton"
+      android:layout_weight="1"
+      android:focusable="false"
+      android:focusableInTouchMode="false" />
+</LinearLayout>

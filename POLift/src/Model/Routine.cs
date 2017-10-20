@@ -118,6 +118,46 @@ namespace POLift.Model
             }
         }
 
+        public string RecentResultDetails
+        {
+            get
+            {
+                IRoutineResult rr = RoutineResult.MostRecentForRoutine(Database, this);
+
+                if (rr == null) return "Never performed";
+
+                if (rr.Completed)
+                {
+                    // TODO: change this to days/hours/minutes ago
+                    TimeSpan time_since_end = DateTime.Now - rr.EndTime;
+
+                    return $"Last completed {time_since_end.ToRoundedString()} ago";
+                }
+
+                TimeSpan time_since_start = DateTime.Now - rr.StartTime;
+
+                return $"Uncompleted {time_since_start.ToRoundedString()} ago";
+            }
+        }
+
+        public string ExtendedDetails
+        {
+            get
+            {
+                StringBuilder result = new StringBuilder();
+                result.AppendLine(this.ToString());
+                result.AppendLine();
+
+                foreach (IExerciseSets ex_sets in this.ExerciseSets)
+                {
+                    result.AppendLine($"{ex_sets.SetCount} x {ex_sets.Exercise.ToString()}");
+                    result.AppendLine();
+
+                }
+
+                return result.ToString();
+            }
+        }
 
         public override bool Equals(object obj)
         {

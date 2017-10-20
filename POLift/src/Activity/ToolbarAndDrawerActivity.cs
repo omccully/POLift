@@ -45,12 +45,14 @@ namespace POLift
 
             Navigations = new List<INavigation>()
             {
+                new Navigation("Select routine", SelectRoutine_Click,
+                    Resource.Mipmap.ic_fitness_center_white_24dp),
                 new Navigation("View recent sessions", ViewRecentSessions_Click,
                     Resource.Mipmap.ic_today_white_24dp),
                 new Navigation("View 1RM graphs", View1RMGraphs_Click,
                     Resource.Mipmap.ic_timeline_white_24dp),
-                new Navigation("View gym time graph", ViewGymTimeGraphs_Click,
-                    Resource.Mipmap.ic_timeline_white_24dp),
+                //new Navigation("View gym time graph", ViewGymTimeGraphs_Click,
+                //    Resource.Mipmap.ic_timeline_white_24dp),
                 new Navigation("Settings", Settings_Click,
                     Resource.Mipmap.ic_settings_white_24dp),
                 new Navigation("Help & feedback", HelpAndFeedback_Click,
@@ -114,6 +116,11 @@ namespace POLift
         private void ViewGymTimeGraphs_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void SelectRoutine_Click(object sender, EventArgs e)
+        {
+            SwitchToFragment(new MainFragment());
         }
 
         private void HelpAndFeedback_Click(object sender, EventArgs e)

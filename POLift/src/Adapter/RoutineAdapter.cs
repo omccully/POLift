@@ -21,7 +21,7 @@ namespace POLift
 
     class RoutineAdapter : BaseAdapter<IRoutine>
     {
-        ObservableCollection<IRoutine> Routines;
+        public ObservableCollection<IRoutine> Routines;
         Activity context;
 
         public event EventHandler<RoutineEventArgs> DeleteButtonClicked;
@@ -65,21 +65,19 @@ namespace POLift
 
         public override long GetItemId(int position)
         {
-            //throw new NotImplementedException();
             return position;
         }
-
-        System.Runtime.Serialization.ObjectIDGenerator idg = new System.Runtime.Serialization.ObjectIDGenerator();
 
         public override View GetView(int position, View convertView, ViewGroup parent)
         {
             RoutineAdapterViewHolder holder = new RoutineAdapterViewHolder();
 
-            var view = context.LayoutInflater.Inflate(Resource.Layout.ExerciseItem, null);
+            var view = context.LayoutInflater.Inflate(Resource.Layout.RoutineItem, null);
 
-            holder.Title = view.FindViewById<TextView>(Resource.Id.ExerciseItemName);
-            holder.EditButton = view.FindViewById<ImageButton>(Resource.Id.ExerciseEditButton);
-            holder.DeleteButton = view.FindViewById<ImageButton>(Resource.Id.ExerciseDeleteButton);
+            holder.Title = view.FindViewById<TextView>(Resource.Id.RoutineItemName);
+            holder.Subtext = view.FindViewById<TextView>(Resource.Id.RoutineMoreDetails);
+            holder.EditButton = view.FindViewById<ImageButton>(Resource.Id.RoutineEditButton);
+            holder.DeleteButton = view.FindViewById<ImageButton>(Resource.Id.RoutineDeleteButton);
 
             view.Tag = holder;
 
@@ -98,6 +96,18 @@ namespace POLift
             //fill in your items
             //holder.Title.Text = "new text here";
             holder.Title.Text = this[position].ToString();
+            holder.Subtext.Text = this[position].RecentResultDetails;
+            if(holder.Subtext.Text.Contains("Uncompleted") &&
+                !holder.Subtext.Text.Contains("day"))
+            {
+
+                holder.Subtext.SetTextColor(Android.Graphics.Color.Red);
+            }
+            else
+            {
+                holder.Subtext.SetTextColor(Android.Graphics.Color.White);
+            }
+
 
             return view;
         }
@@ -117,6 +127,7 @@ namespace POLift
     {
         //Your adapter views to re-use
         public TextView Title { get; set; }
+        public TextView Subtext { get; set; }
         public ImageButton EditButton { get; set; }
         public ImageButton DeleteButton { get; set; }
     }

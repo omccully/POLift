@@ -55,17 +55,20 @@ namespace POLift
             CreateRoutineLink.Click += CreateRoutineButton_Click;
 
             RoutinesList.ItemClick += RoutinesList_ItemClick;
+            RoutinesList.ItemLongClick += RoutinesList_ItemLongClick;
 
             RoutinesList.Focusable = true;
             RoutinesList.Clickable = true;
             RoutinesList.ItemsCanFocus = true;
 
-            //var toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
-            //SetActionBar(toolbar);
-            //ActionBar.Title = "Progressive Overload Lifting";
-            //toolbar.ShowOverflowMenu();
-
             RefreshRoutineList();
+        }
+
+        private void RoutinesList_ItemLongClick(object sender, AdapterView.ItemLongClickEventArgs e)
+        {
+            Intent intent = new Intent(this.Activity, typeof(RoutineDetailsActivity));
+            intent.PutExtra("routine_id", routine_adapter.Routines[e.Position].ID);
+            StartActivity(intent);
         }
 
         void RefreshRoutineList()

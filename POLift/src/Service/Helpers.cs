@@ -163,5 +163,36 @@ namespace POLift.Service
         {
             return String.Join(",", old_id_string.ToIDIntegers().Select(old => mapping[old]).ToArray());
         }
+
+        public static string ToRoundedString(this TimeSpan ts)
+        {
+            const int SecondsInMinute = 60;
+            const int SecondsInHour = 60 * SecondsInMinute;
+            const int SecondsInDay = 24 * SecondsInHour;
+
+            List<Tuple<int, string>> TimePeriods = new List<Tuple<int, string>>();
+            TimePeriods.Add(new Tuple<int, string>(SecondsInDay, "day"));
+            TimePeriods.Add(new Tuple<int, string>(SecondsInHour, "hour"));
+            TimePeriods.Add(new Tuple<int, string>(SecondsInMinute, "minute"));
+            TimePeriods.Add(new Tuple<int, string>(1, "second"));
+
+            foreach(Tuple<int,string> time_period in TimePeriods)
+            {
+                if (ts.TotalSeconds >= time_period.Item1)
+                {
+                    int days = (int)ts.TotalSeconds / time_period.Item1;
+                    string result = $"{days} {time_period.Item2}";
+
+                    if(days > 1)
+                    {
+                        result += "s";
+                    }
+
+                    return result;
+                }
+            }
+
+            return "0 seconds"; 
+        }
     }
 }

@@ -14,5 +14,8 @@ namespace POLift.Model
         string ExerciseSetIDs { get; set; }
 
         List<IExercise> Exercises { get; }
+
+        string RecentResultDetails { get; }
+       
     }
 }
