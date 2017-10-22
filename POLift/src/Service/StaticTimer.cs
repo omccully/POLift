@@ -36,6 +36,17 @@ namespace POLift.Service
             }
         }
 
+        public static bool IsRunningPositive
+        {
+            get
+            {
+                lock (ticks_until_elapsed_locker)
+                {
+                    return IsRunning && ticks_until_elapsed > 0;
+                }
+            }
+        }
+
         public static void StopTimer()
         {
             if(timer != null)
@@ -78,20 +89,25 @@ namespace POLift.Service
                 tue = ticks_until_elapsed;
             }
 
-            
-            if(tue > 0)
-            {
+
+            TickedCallback?.Invoke(tue);
+           // if (tue > 0)
+            //{
                 // timer has not elapsed yet
 
-                TickedCallback?.Invoke(tue);
-            }
-            else
+                
+            //}
+            
+            
+            if(tue == 0)
             {
                 // timer elapsed
                 ElapsedCallback?.Invoke();
 
-                StopTimer();
+                //StopTimer();
             }
+                
+            
         }
     }
 }

@@ -1,27 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/ExerciseSetsLayout">
+    <EditText
+        android:inputType="number"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/ExerciseSetsLayout">
-        <EditText
-            android:inputType="number"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/SetCountText"
-            android:text="3"
-            android:textSize="20dip"
-            android:paddingLeft="15dip"
-            android:paddingRight="15dip" />
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Exercise name"
-            android:textSize="22dip"
-            android:id="@+id/ExerciseSetsName" />
-    </LinearLayout>
+        android:id="@+id/SetCountText"
+        android:text="3"
+        android:textSize="20dip"
+        android:paddingLeft="15dip"
+        android:paddingRight="15dip" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Exercise name"
+        android:textSize="22dip"
+        android:layout_weight="5"
+        android:id="@+id/ExerciseSetsName" />
+    <ImageButton
+        android:src="@mipmap/ic_arrow_upward_white_24dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/ExerciseSetsMoveUpButton"
+        android:layout_weight="1"
+        android:minWidth="30dip"
+        android:maxWidth="30dip"
+        android:focusable="false"
+        android:focusableInTouchMode="false" />
 </LinearLayout>

@@ -161,7 +161,9 @@ namespace POLift.Service
 
         public static string TranslateIDString(string old_id_string, Dictionary<int, int> mapping)
         {
-            return String.Join(",", old_id_string.ToIDIntegers().Select(old => mapping[old]).ToArray());
+            return String.Join(",", old_id_string.ToIDIntegers().Select(old =>
+                mapping.ContainsKey(old) ? mapping[old] : old)
+            .ToArray());
         }
 
         public static string ToRoundedString(this TimeSpan ts)

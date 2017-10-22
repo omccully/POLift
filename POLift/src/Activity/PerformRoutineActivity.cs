@@ -285,6 +285,7 @@ namespace POLift
             {
                 // no more exercises
                 ReturnRoutineResult(_RoutineResult);
+                StaticTimer.StopTimer();
                 return;
             }
 

@@ -77,28 +77,17 @@ namespace POLift
 
         public override View GetView(int position, View convertView, ViewGroup parent)
         {
-            var view = convertView;
-            ExerciseAdapterViewHolder holder = null;
 
-            if (view != null)
-                holder = view.Tag as ExerciseAdapterViewHolder;
+            ExerciseAdapterViewHolder holder = new ExerciseAdapterViewHolder();
+            var inflater = context.GetSystemService(Context.LayoutInflaterService).JavaCast<LayoutInflater>();
 
-            if (holder == null)
-            {
-                holder = new ExerciseAdapterViewHolder();
-                var inflater = context.GetSystemService(Context.LayoutInflaterService).JavaCast<LayoutInflater>();
-                //replace with your item and your holder items
-                //comment back in
-                view = inflater.Inflate(Resource.Layout.ExerciseItem, parent, false);
-                holder.Title = view.FindViewById<TextView>(Resource.Id.ExerciseItemName);
-                holder.EditButton = view.FindViewById<ImageButton>(Resource.Id.ExerciseEditButton);
-                holder.DeleteButton = view.FindViewById<ImageButton>(Resource.Id.ExerciseDeleteButton);
+            View view = inflater.Inflate(Resource.Layout.ExerciseItem, parent, false);
+            holder.Title = view.FindViewById<TextView>(Resource.Id.ExerciseItemName);
+            holder.EditButton = view.FindViewById<ImageButton>(Resource.Id.ExerciseEditButton);
+            holder.DeleteButton = view.FindViewById<ImageButton>(Resource.Id.ExerciseDeleteButton);
 
-                view.Tag = holder;
-            }
-
-            //view.Clickable = true;
-
+            view.Tag = holder;
+            
             holder.EditButton.Click += delegate 
             {
                 OnEditButtonClicked(new ExerciseEventArgs(this[position]));

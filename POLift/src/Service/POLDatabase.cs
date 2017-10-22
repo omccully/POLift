@@ -25,8 +25,10 @@ namespace POLift.Service
             Connection = new SQLiteConnection(file_path);
 
             InitializeDatabase();
-        }
+            //ResetDatabase();
+            
 
+        }
 
         public void ClearDatabase()
         {
@@ -48,6 +50,14 @@ namespace POLift.Service
             CreateTableIfNotExists<ExerciseResult>();
             CreateTableIfNotExists<RoutineResult>();
         }
+
+        public void ApplyConstaints()
+        {
+            Connection.Execute("CREATE UNIQUE INDEX \"UniqueGroupExercise\" on \"Exercise\"(\"Name\", \"MaxRepCount\", \"WeightIncrement\", \"RestPeriodSeconds\")");
+            Connection.Execute("CREATE UNIQUE INDEX \"UniqueGroupExerciseSets\" on \"ExerciseSets\"(\"SetCount\", \"ExerciseID\")");
+            Connection.Execute("CREATE UNIQUE INDEX \"UniqueGroupRoutine\" on \"Routine\"(\"Name\", \"ExerciseSetIDs\")");
+        }
+
 
         public void ResetDatabase()
         {
@@ -250,6 +260,14 @@ namespace POLift.Service
             }
         }
 
+        public bool Delete<T>(int ID)
+        {
+            lock (Locker)
+            {
+                return Connection.Delete<T>(ID) > 0;
+            }
+        }
+
         public IEnumerable<T> ParseIDs<T>(IEnumerable<int> IDs) where T : class, IDatabaseObject, new()
         {
             return IDs.Select(id => ReadByID<T>(id));
@@ -294,6 +312,22 @@ namespace POLift.Service
         public void ImportDatabaseFromFile(string file_path)
         {
             ImportDatabase(new POLDatabase(file_path));
+        }
+
+        public void PruneByConstaints()
+        {
+            Dictionary<int, int> exercise_lookup = 
+                Exercise.PruneByConstaints(this);
+
+            Dictionary<int, int> exercise_sets_lookup =
+                 ExerciseSets.PruneByConstaints(this, exercise_lookup);
+
+            Dictionary<int, int> routine_lookup =
+                Routine.PruneByConstaints(this, exercise_sets_lookup);
+
+            RoutineResult.TranslateRoutineIDs(this, routine_lookup);
+
+            ExerciseResult.TranslateExerciseIDs(this, exercise_lookup);
         }
     }
 }

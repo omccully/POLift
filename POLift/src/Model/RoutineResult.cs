@@ -235,7 +235,7 @@ namespace POLift.Model
             StringBuilder builder = new StringBuilder();
 
             string td = TimeDetails;
-            if(td != null)
+            if (td != null)
             {
                 builder.Append(td);
             }
@@ -352,6 +352,23 @@ namespace POLift.Model
             }
 
             return RoutineResultLookup;
+        }
+
+        public static int TranslateRoutineIDs(IPOLDatabase dab,
+            Dictionary<int, int> RoutineLookup)
+        {
+            int count = 0;
+            foreach(RoutineResult rr in dab.Table<RoutineResult>())
+            {
+                if(RoutineLookup.ContainsKey(rr.RoutineID))
+                {
+                    rr.RoutineID = RoutineLookup[rr.RoutineID];
+                    dab.Update((RoutineResult)rr);
+                    count++;
+                }
+            }
+
+            return count;
         }
     }
 }

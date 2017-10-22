@@ -126,5 +126,21 @@ namespace POLift.Model
             }
             return ExerciseResultLookup;
         }
+
+        public static int TranslateExerciseIDs(IPOLDatabase dab,
+            Dictionary<int, int> ExerciseLookup)
+        {
+            int count = 0;
+            foreach (ExerciseResult rr in dab.Table<ExerciseResult>())
+            {
+                if (ExerciseLookup.ContainsKey(rr.ExerciseID))
+                {
+                    rr.ExerciseID = ExerciseLookup[rr.ExerciseID];
+                    dab.Update((ExerciseResult)rr);
+                    count++;
+                }
+            }
+            return count;
+        }
     }
 }

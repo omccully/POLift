@@ -93,6 +93,22 @@ namespace POLift
             ExercisesListView.Adapter = exercise_sets_adapter;
 
             CreateRoutineButton.Click += CreateRoutineButton_Click;
+
+            ExercisesListView.ItemLongClick += ExercisesListView_ItemLongClick;
+            ExercisesListView.Drag += ExercisesListView_Drag;
+        }
+
+        private void ExercisesListView_ItemLongClick(object sender, AdapterView.ItemLongClickEventArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine("item long click");
+            //ExercisesListView.StartDragAndDrop()
+        }
+
+        private void ExercisesListView_Drag(object sender, View.DragEventArgs e)
+        {
+            //To continue to receive drag events, including a possible drop event, a drag event listener must return true
+            System.Diagnostics.Debug.WriteLine(e.Event.ToString());
+
         }
 
         const string EXERCISE_SETS_IDS_KEY = "exercise_sets_ids";
@@ -136,11 +152,12 @@ namespace POLift
                 Routine routine = new Routine(RoutineTitleText.Text, 
                     exercise_sets_adapter.ExerciseSets);
                 routine.Database = Database;
-                Database.Insert(routine);
+                //Database.Insert(routine);
+                Database.InsertOrUndeleteAndUpdate(routine);
 
                 // if this routine is being edited, then delete the old one
                 if(RoutineToDeleteIfDifferent != null &&
-                    RoutineToDeleteIfDifferent != routine)
+                    !RoutineToDeleteIfDifferent.Equals(routine))
                 {
                     Database.HideDeletable<Routine>((Routine)RoutineToDeleteIfDifferent);
                 }

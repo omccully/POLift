@@ -279,5 +279,44 @@ namespace POLift.Model
 
             return ExercisesLookup;
         }
+
+        public static Dictionary<int, int> PruneByConstaints(IPOLDatabase dab)
+        {
+            Dictionary<int, int> ExerciseMapping = new Dictionary<int, int>();
+            HashSet<Exercise> existing_exercises = new HashSet<Exercise>();
+
+            foreach (Exercise exercise in dab.Table<Exercise>())
+            {
+                if (existing_exercises.Contains(exercise))
+                {
+                    Exercise original;
+                    if (existing_exercises.TryGetValue(exercise, out original))
+                    {
+                        // is a duplicate.
+                        if (!exercise.Deleted)
+                        {
+                            // undelete original if the duplicate was undeleted
+
+                            if (original.Deleted)
+                            {
+                                original.Deleted = false;
+                                dab.Update((Exercise)original);
+                            }
+                        }
+
+                        ExerciseMapping[exercise.ID] = original.ID;
+
+                        // delete the duplicate
+                        dab.Delete<Exercise>(exercise.ID);
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.Fail("Prune error");
+                    }
+                }
+            }
+
+            return ExerciseMapping;
+        }
     }
 }

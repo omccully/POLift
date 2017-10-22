@@ -56,7 +56,7 @@ namespace POLift.Adapter
 
         public override View GetView(int position, View convertView, ViewGroup parent)
         {
-            var view = convertView;
+            //var view = convertView;
             ExerciseSetsAdapterViewHolder holder = new ExerciseSetsAdapterViewHolder();
             var inflater = context.GetSystemService(Context.LayoutInflaterService).JavaCast<LayoutInflater>();
             //replace with your item and your holder items
@@ -64,10 +64,11 @@ namespace POLift.Adapter
             //view = inflater.Inflate(Resource.Layout.item, parent, false);
             //holder.Title = view.FindViewById<TextView>(Resource.Id.text);
 
-            view = inflater.Inflate(Resource.Layout.ExerciseSetsItem, parent, false);
+            View view = inflater.Inflate(Resource.Layout.ExerciseSetsItem, parent, false);
             holder.Layout = view.FindViewById<LinearLayout>(Resource.Id.ExerciseSetsLayout);
             holder.TextBox = view.FindViewById<EditText>(Resource.Id.SetCountText);
             holder.TextView = view.FindViewById<TextView>(Resource.Id.ExerciseSetsName);
+            holder.MoveUpButton = view.FindViewById<ImageButton>(Resource.Id.ExerciseSetsMoveUpButton);
 
             view.Tag = holder;
             
@@ -78,6 +79,23 @@ namespace POLift.Adapter
             holder.TextView.Text = " sets of " + es.Exercise.Name;
             //holder.TextView.Text = " sets of " + es.Exercise;
 
+            if(position <= locked_sets)
+            {
+                holder.MoveUpButton.Enabled = false;
+            }
+            else
+            {
+                holder.MoveUpButton.Click += delegate
+                {
+                    if (position > 0)
+                    {
+                        // swap elements at position and position-1
+                        IExerciseSets temp = this[position];
+                        this.ExerciseSets[position] = this[position - 1];
+                        this.ExerciseSets[position - 1] = temp;
+                    }
+                };
+            }
 
             if (position < locked_sets)
             {
@@ -104,10 +122,6 @@ namespace POLift.Adapter
                 };
             }
             
-
-            
-
-
             return view;
         }
 
@@ -133,5 +147,6 @@ namespace POLift.Adapter
         public LinearLayout Layout { get; set; }
         public EditText TextBox { get; set; }
         public TextView TextView { get; set; }
+        public ImageButton MoveUpButton { get; set; }
     }
 }

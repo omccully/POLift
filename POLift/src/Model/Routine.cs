@@ -1,10 +1,9 @@
-﻿using System;
+﻿using SQLite;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml;
-
-using SQLite;
 
 namespace POLift.Model
 {
@@ -235,6 +234,52 @@ namespace POLift.Model
                 RoutineLookup[old_id] = routine.ID;
             }
             return RoutineLookup;
+        }
+
+        public static Dictionary<int, int> PruneByConstaints(IPOLDatabase dab,
+            Dictionary<int,int> ExerciseSetsLookup)
+        {
+            Dictionary<int, int> RoutineMapping = new Dictionary<int, int>();
+            HashSet<Routine> existing_routines = new HashSet<Routine>();
+
+            foreach (Routine routine in dab.Table<Routine>())
+            {
+                if (existing_routines.Contains(routine))
+                {
+                    Routine original;
+                    if (existing_routines.TryGetValue(routine, out original))
+                    {
+                        // is a duplicate.
+                        if (!routine.Deleted)
+                        {
+                            // undelete original if the duplicate was undeleted
+
+                            if (original.Deleted)
+                            {
+                                original.Deleted = false;
+                                dab.Update((Routine)original);
+                            }
+                        }
+
+                        RoutineMapping[routine.ID] = original.ID;
+
+                        // delete the duplicate
+                        dab.Delete<Routine>(routine.ID);
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.Fail("Prune error");
+                    }
+                }
+                else
+                {
+                    routine.ExerciseSetIDs = Helpers.TranslateIDString(
+                        routine.ExerciseSetIDs, ExerciseSetsLookup);
+                    dab.Update((Routine)routine);
+                }
+            }
+
+            return RoutineMapping;
         }
     }
 }

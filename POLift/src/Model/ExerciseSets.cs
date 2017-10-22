@@ -183,5 +183,31 @@ namespace POLift.Model
 
             return ExerciseSetsLookup;
         }
+
+        public static Dictionary<int, int> PruneByConstaints(IPOLDatabase dab,
+            Dictionary<int, int> ExerciseLookup)
+        {
+            Dictionary<int, int> ExerciseSetsMapping = new Dictionary<int, int>();
+            HashSet<ExerciseSets> existing_exercise_sets = new HashSet<ExerciseSets>();
+
+            foreach (ExerciseSets exercise_sets in dab.Table<ExerciseSets>())
+            {
+                if (existing_exercise_sets.Contains(exercise_sets))
+                {
+                    dab.Delete<ExerciseSets>(exercise_sets.ID);
+                }
+                else
+                {
+                    if(ExerciseLookup.ContainsKey(exercise_sets.ExerciseID))
+                    {
+                        exercise_sets.ExerciseID = 
+                            ExerciseLookup[exercise_sets.ExerciseID];
+                        dab.Update((ExerciseSets)exercise_sets);
+                    }
+                }
+            }
+
+            return ExerciseSetsMapping;
+        }
     }
 }

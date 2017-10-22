@@ -39,6 +39,8 @@ namespace POLift.Service
 
         T ReadByID<T>(int ID) where T : IDatabaseObject, new();
 
+        bool Delete<T>(int ID);
+
         IEnumerable<T> ParseIDs<T>(IEnumerable<int> IDs) where T : class, IDatabaseObject, new();
 
         IEnumerable<T> ParseIDString<T>(string IDs) where T : class, IDatabaseObject, new();

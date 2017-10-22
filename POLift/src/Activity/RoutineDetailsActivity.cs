@@ -46,7 +46,6 @@ namespace POLift
             {
                 DetailsTextView.Text = routine.ExtendedDetails;
             }
-
         }
     }
 }

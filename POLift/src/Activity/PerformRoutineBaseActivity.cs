@@ -69,7 +69,7 @@ namespace POLift
             }
         }
 
-        bool _TimerRunning = false;
+        /*bool _TimerRunning = false;
         protected bool TimerRunning
         {
             get
@@ -80,24 +80,29 @@ namespace POLift
             {
                 _TimerRunning = value;
 
-                if (value)
-                {
-                    Sub30SecButton.Enabled = true;
-                    Add30SecButton.Enabled = true;
-                    SkipTimerButton.Enabled = true;
+                UpdateGUIByTimerState();
+            }
+        }*/
 
-                    ReportResultButton.Enabled = false;
-                    RepResultEditText.Enabled = false;
-                }
-                else
-                {
-                    Sub30SecButton.Enabled = false;
-                    Add30SecButton.Enabled = false;
-                    SkipTimerButton.Enabled = false;
+        void UpdateGUIByTimerState()
+        {
+            if(StaticTimer.IsRunningPositive)
+            {
+                Sub30SecButton.Enabled = true;
+                Add30SecButton.Enabled = true;
+                SkipTimerButton.Enabled = true;
 
-                    ReportResultButton.Enabled = true;
-                    RepResultEditText.Enabled = true;
-                }
+                ReportResultButton.Enabled = false;
+                RepResultEditText.Enabled = false;
+            }
+            else
+            {
+                Sub30SecButton.Enabled = false;
+                Add30SecButton.Enabled = false;
+                SkipTimerButton.Enabled = false;
+
+                ReportResultButton.Enabled = true;
+                RepResultEditText.Enabled = true;
             }
         }
 
@@ -138,14 +143,19 @@ namespace POLift
 
         protected void StartTimer(int seconds_left)
         {
-            TimerRunning = true;
+            //TimerRunning = true;
             StaticTimer.StartTimer(1000, seconds_left, Timer_Ticked, Timer_Elapsed);
             SetCountDownText(seconds_left);
+
+            UpdateGUIByTimerState();
 
             NotificationManager mNotificationManager =
                (NotificationManager)GetSystemService(Context.NotificationService);
 
             mNotificationManager.Cancel(TimerNotificationID);
+
+            AddSecCount = 0;
+            SubSecCount = 0;
         }
 
         protected abstract void ReportResultButton_Click(object sender, EventArgs e);
@@ -197,9 +207,10 @@ namespace POLift
 
         protected virtual void RestoreTimerState(Bundle savedInstanceState)
         {
-            TimerRunning = StaticTimer.IsRunning;
+            //TimerRunning = StaticTimer.IsRunning;
+            //TimerRunning = StaticTimer.IsRunningPositive;
 
-            if (!TimerRunning) return;
+            if (!StaticTimer.IsRunning) return;
 
             StaticTimer.TickedCallback += Timer_Ticked;
             StaticTimer.ElapsedCallback = Timer_Elapsed;
@@ -227,18 +238,91 @@ namespace POLift
 
         protected virtual void SkipTimerButton_Click(object sender, EventArgs e)
         {
+            RestPeriodSecondsRemaining = 0;
+
             StaticTimer.StopTimer();
-            Timer_Elapsed();
+
+            CountDownTextView.Text = "Timer skipped. " + System.Environment.NewLine +
+                 "Start your next set whenever you're ready";
+            CountDownTextView.SetTextColor(Android.Graphics.Color.White);
+
+            UpdateGUIByTimerState();
+            Vibrate();
+            
+            //Timer_Elapsed();
+        }
+
+        void CancelTheTimerControlCounts()
+        {
+            int min = Math.Min(AddSecCount, SubSecCount);
+            if(min > 0)
+            {
+                AddSecCount -= min;
+                SubSecCount -= min;
+            }
+        }
+
+        int _add_sec_count = 0;
+        int AddSecCount
+        {
+            get
+            {
+                return _add_sec_count;
+            }
+            set
+            {
+                _add_sec_count = value;
+
+                // this may modify _add_sec_count
+                CancelTheTimerControlCounts();
+
+                if (_add_sec_count == 0)
+                {
+                    Add30SecButton.Text = "+30 sec";
+                }
+                else
+                {
+                    Add30SecButton.Text = $"+30 sec (x{_add_sec_count})";
+                }
+                 
+            }
+        }
+
+        int _sub_sec_count = 0;
+        int SubSecCount
+        {
+            get
+            {
+                return _sub_sec_count;
+            }
+            set
+            {
+                _sub_sec_count = value;
+
+                // this may modify _add_sec_count
+                CancelTheTimerControlCounts();
+
+                if (_sub_sec_count == 0)
+                {
+                    Sub30SecButton.Text = "-30 sec";
+                }
+                else
+                {
+                    Sub30SecButton.Text = $"-30 sec (x{_sub_sec_count})";
+                }
+            }
         }
 
         protected virtual void Add30SecButton_Click(object sender, EventArgs e)
         {
             StaticTimer.AddTicks(30);
+            AddSecCount++;
         }
 
         protected virtual void Sub30SecButton_Click(object sender, EventArgs e)
         {
             StaticTimer.SubtractTicks(30);
+            SubSecCount++;
         }
 
         protected virtual void Timer_Ticked(int ticks_until_elapsed)
@@ -257,26 +341,24 @@ namespace POLift
 
         protected virtual void Timer_Elapsed()
         {
-            RestPeriodSecondsRemaining = 0;
+            //RestPeriodSecondsRemaining = 0;
             RunOnUiThread(delegate
             {
-                CountDownTextView.Text = "TIME IS UP!!! *vibrate*" +
+                /*CountDownTextView.Text = "TIME IS UP!!! *vibrate*" +
                     System.Environment.NewLine +
-                    "Start your next set whenever you're ready";
+                    "Start your next set whenever you're ready";*/
 
-                TimerRunning = false;
+                UpdateGUIByTimerState();
             });
 
-            Vibrator vibrator = (Vibrator)GetSystemService(Context.VibratorService);
-            vibrator.Vibrate(200);
-            System.Threading.Thread.Sleep(300);
-            vibrator.Vibrate(200);
-            System.Threading.Thread.Sleep(300);
-            vibrator.Vibrate(200);
+            Vibrate();
 
             // TODO: fix notification here
-           
+            StartTimerNotification();
+        }
 
+        void StartTimerNotification()
+        {
             Intent result_intent = new Intent(this, this.GetType());
             SaveStateToIntent(result_intent);
 
@@ -296,15 +378,35 @@ namespace POLift
                 (NotificationManager)GetSystemService(Context.NotificationService);
 
             mNotificationManager.Notify(TimerNotificationID, n_builder.Build());
-
         }
 
-        
+        void Vibrate()
+        {
+            Vibrator vibrator = (Vibrator)GetSystemService(Context.VibratorService);
+            vibrator.Vibrate(200);
+            System.Threading.Thread.Sleep(300);
+            vibrator.Vibrate(200);
+            System.Threading.Thread.Sleep(300);
+            vibrator.Vibrate(200);
+        }
 
         protected virtual void SetCountDownText(int seconds_left)
         {
-            CountDownTextView.Text = "Resting for another " +
-                    seconds_left.ToString() + " seconds";
+            if(seconds_left > 0)
+            {
+                CountDownTextView.Text = "Resting for another " +
+                   seconds_left + " seconds.";
+                CountDownTextView.SetTextColor(Android.Graphics.Color.Orange);
+            }
+            else
+            {
+
+                CountDownTextView.Text = "The timer has been done for " + 
+                    Math.Abs(seconds_left) + " seconds." + System.Environment.NewLine +
+                    "Start your next set whenever you're ready";
+                CountDownTextView.SetTextColor(Android.Graphics.Color.Green);
+            }
+            
         }
 
         protected virtual void BuildArtificialTaskStack(TaskStackBuilder stackBuilder)
