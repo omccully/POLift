@@ -281,11 +281,17 @@ namespace POLift
             // just in case the app crashes or something
             Database.InsertOrUpdateByID(_RoutineResult);
 
+            if(reps >= CurrentExercise.MaxRepCount)
+            {
+                Toast.MakeText(this, "Weight increase!", ToastLength.Long).Show();
+            }
+
             if (_RoutineResult.Completed)
             {
                 // no more exercises
                 ReturnRoutineResult(_RoutineResult);
                 StaticTimer.StopTimer();
+                CancelTimerNotification();
                 return;
             }
 

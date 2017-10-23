@@ -26,8 +26,8 @@ namespace POLift.Service
 
             InitializeDatabase();
             //ResetDatabase();
-            
 
+            
         }
 
         public void ClearDatabase()
@@ -51,11 +51,11 @@ namespace POLift.Service
             CreateTableIfNotExists<RoutineResult>();
         }
 
-        public void ApplyConstaints()
+        public void ApplyConstraints()
         {
-            Connection.Execute("CREATE UNIQUE INDEX \"UniqueGroupExercise\" on \"Exercise\"(\"Name\", \"MaxRepCount\", \"WeightIncrement\", \"RestPeriodSeconds\")");
-            Connection.Execute("CREATE UNIQUE INDEX \"UniqueGroupExerciseSets\" on \"ExerciseSets\"(\"SetCount\", \"ExerciseID\")");
-            Connection.Execute("CREATE UNIQUE INDEX \"UniqueGroupRoutine\" on \"Routine\"(\"Name\", \"ExerciseSetIDs\")");
+            TryExecute("CREATE UNIQUE INDEX \"UniqueGroupExercise\" on \"Exercise\"(\"Name\", \"MaxRepCount\", \"WeightIncrement\", \"RestPeriodSeconds\")");
+            TryExecute("CREATE UNIQUE INDEX \"UniqueGroupExerciseSets\" on \"ExerciseSets\"(\"SetCount\", \"ExerciseID\")");
+            TryExecute("CREATE UNIQUE INDEX \"UniqueGroupRoutine\" on \"Routine\"(\"Name\", \"ExerciseSetIDs\")");
         }
 
 
@@ -71,6 +71,20 @@ namespace POLift.Service
             lock (Locker)
             {
                 Connection.Update(obj);
+            }
+        }
+
+        void TryExecute(string s)
+        {
+            try
+            {
+                lock (Locker)
+                {
+                    Connection.Execute("CREATE UNIQUE INDEX \"UniqueGroupExercise\" on \"Exercise\"(\"Name\", \"MaxRepCount\", \"WeightIncrement\", \"RestPeriodSeconds\")");
+                }
+            }
+            catch(Exception e)
+            {
             }
         }
 
@@ -316,18 +330,25 @@ namespace POLift.Service
 
         public void PruneByConstaints()
         {
+            throw new NotSupportedException("not tested");
+
             Dictionary<int, int> exercise_lookup = 
                 Exercise.PruneByConstaints(this);
+            System.Diagnostics.Debug.WriteLine(exercise_lookup.Count());
 
             Dictionary<int, int> exercise_sets_lookup =
                  ExerciseSets.PruneByConstaints(this, exercise_lookup);
+            System.Diagnostics.Debug.WriteLine(exercise_sets_lookup.Count());
 
             Dictionary<int, int> routine_lookup =
                 Routine.PruneByConstaints(this, exercise_sets_lookup);
+            System.Diagnostics.Debug.WriteLine(routine_lookup.Count());
 
             RoutineResult.TranslateRoutineIDs(this, routine_lookup);
 
             ExerciseResult.TranslateExerciseIDs(this, exercise_lookup);
+            System.Diagnostics.Debug.WriteLine("apply:");
+            ApplyConstraints();
         }
     }
 }

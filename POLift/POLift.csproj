@@ -217,7 +217,6 @@
     <Compile Include="src\Service\Interfaces\IPOLDatabase.cs" />
     <Compile Include="src\Service\PlateMath.cs" />
     <Compile Include="src\Service\POLDatabase.cs" />
-    <Compile Include="src\Service\POLDatabaseProvider.cs" />
     <Compile Include="src\Service\StaticTimer.cs" />
   </ItemGroup>
   <ItemGroup>

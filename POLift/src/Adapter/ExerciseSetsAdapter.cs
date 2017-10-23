@@ -130,6 +130,20 @@ namespace POLift.Adapter
             ExerciseSets.RemoveAll(ex_sets => ex_sets.SetCount == 0);
         }
 
+        public void Regroup(IPOLDatabase database)
+        {
+            List<IExerciseSets> new_exercise_sets =
+                POLift.Model.ExerciseSets.Regroup(
+                    this.ExerciseSets,
+                    database);
+
+            this.ExerciseSets.Clear();
+            foreach (IExerciseSets es in new_exercise_sets)
+            {
+                this.ExerciseSets.Add(es);
+            }
+        }
+
         //Fill in cound here, currently 0
         public override int Count
         {
@@ -138,7 +152,6 @@ namespace POLift.Adapter
                 return ExerciseSets.Count;
             }
         }
-
     }
 
     class ExerciseSetsAdapterViewHolder : Java.Lang.Object

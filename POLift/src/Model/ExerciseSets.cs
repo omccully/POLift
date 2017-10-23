@@ -79,6 +79,10 @@ namespace POLift.Model
 
         }
 
+        public override string ToString()
+        {
+            return $"{this.SetCount} sets of {this.Exercise.Name}";
+        }
 
         public override bool Equals(object obj)
         {
@@ -134,6 +138,23 @@ namespace POLift.Model
             return this.ExerciseID ^ this.SetCount;
         }
 
+        public static List<IExercise> Expand(IEnumerable<IExerciseSets> exercise_sets)
+        {
+            List<IExercise> results = new List<IExercise>();
+
+            foreach (IExerciseSets sets in exercise_sets)
+            {
+                IExercise ex = sets.Exercise;
+
+                for (int i = 0; i < sets.SetCount; i++)
+                {
+                    results.Add(ex);
+                }
+            }
+
+            return results;
+        }
+    
         public static List<IExerciseSets> Group(IEnumerable<IExercise> exercises, IPOLDatabase database)
         {
             List<IExerciseSets> exercise_sets = new List<IExerciseSets>();
@@ -142,7 +163,7 @@ namespace POLift.Model
             int set_count = 1;
             foreach (IExercise ex in exercises)
             {
-                if (ex == last_ex)
+                if (ex.Equals(last_ex))
                 {
                     set_count++;
                 }
@@ -160,6 +181,11 @@ namespace POLift.Model
             }
 
             return exercise_sets;
+        }
+
+        public static List<IExerciseSets> Regroup(IEnumerable<IExerciseSets> exercise_sets, IPOLDatabase database)
+        {
+            return Group(Expand(exercise_sets), database);
         }
 
         public static Dictionary<int, int> Import(IEnumerable<ExerciseSets> exercise_setss, 

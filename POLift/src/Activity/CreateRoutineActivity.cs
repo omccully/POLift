@@ -27,7 +27,8 @@ namespace POLift
         Button CreateRoutineButton;
 
         ExerciseSetsAdapter exercise_sets_adapter;
-        
+
+        const string RoutineIDToDeleteIfDifferentKey = "routine_id_to_delete_if_different";
         static int SelectExerciseRequestCode = 1;
 
         IRoutine RoutineToDeleteIfDifferent = null;
@@ -60,9 +61,18 @@ namespace POLift
                     exercise_sets = new List<IExerciseSets>(Database.ParseIDs<ExerciseSets>(ids));
                 }
                 LockedSetCount = savedInstanceState.GetInt("exercise_sets_locked", 0);
+
+                int RoutineIDToDeleteIfDifferent = savedInstanceState
+                    .GetInt(RoutineIDToDeleteIfDifferentKey, 0);
+                if (RoutineIDToDeleteIfDifferent > 0)
+                {
+                    RoutineToDeleteIfDifferent = 
+                        Database.ReadByID<Routine>(RoutineIDToDeleteIfDifferent);
+                }
             }
             else if (edit_routine_id != -1)
             {
+                // edit routine
                 Routine routine = Database.ReadByID<Routine>(edit_routine_id);
 
                 RoutineTitleText.Text = routine.Name;
@@ -81,9 +91,9 @@ namespace POLift
                 exercise_sets.AddRange(locked_sets);
                 exercise_sets.AddRange(unlocked_sets);
 
-                // TODO: this may need to be persisted
                 RoutineToDeleteIfDifferent = routine;
             }
+            // else, start new routine
 
             exercise_sets_adapter = new ExerciseSetsAdapter(this, 
                 exercise_sets, LockedSetCount);
@@ -93,22 +103,6 @@ namespace POLift
             ExercisesListView.Adapter = exercise_sets_adapter;
 
             CreateRoutineButton.Click += CreateRoutineButton_Click;
-
-            ExercisesListView.ItemLongClick += ExercisesListView_ItemLongClick;
-            ExercisesListView.Drag += ExercisesListView_Drag;
-        }
-
-        private void ExercisesListView_ItemLongClick(object sender, AdapterView.ItemLongClickEventArgs e)
-        {
-            System.Diagnostics.Debug.WriteLine("item long click");
-            //ExercisesListView.StartDragAndDrop()
-        }
-
-        private void ExercisesListView_Drag(object sender, View.DragEventArgs e)
-        {
-            //To continue to receive drag events, including a possible drop event, a drag event listener must return true
-            System.Diagnostics.Debug.WriteLine(e.Event.ToString());
-
         }
 
         const string EXERCISE_SETS_IDS_KEY = "exercise_sets_ids";
@@ -122,12 +116,18 @@ namespace POLift
             outState.PutIntArray(EXERCISE_SETS_IDS_KEY, ids);
 
             outState.PutInt("exercise_sets_locked", LockedSetCount);
+
+            if(RoutineToDeleteIfDifferent != null)
+            {
+                outState.PutInt(RoutineIDToDeleteIfDifferentKey,
+                    RoutineToDeleteIfDifferent.ID);
+            }
         }
 
         void SaveExerciseSets()
         {
-            // TODO: merge sets that are the same, add set count
             exercise_sets_adapter.RemoveZeroSets();
+            exercise_sets_adapter.Regroup(Database);
 
             foreach (IExerciseSets ex_sets in exercise_sets_adapter.ExerciseSets)
             {

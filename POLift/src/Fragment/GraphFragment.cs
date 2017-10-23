@@ -31,6 +31,8 @@ namespace POLift
 
         IPOLDatabase Database;
 
+        int ExerciseID = 0;
+
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -42,17 +44,13 @@ namespace POLift
             plot_view.Background = Resources.GetDrawable(
                 Resource.Color.white);
 
-            int exercise_id = (savedInstanceState == null ? 0 : 
+            ExerciseID = (savedInstanceState == null ? 0 : 
                 savedInstanceState.GetInt("exercise_id"));
 
-            if (exercise_id == 0)
+            if (ExerciseID == 0)
             {
                 Intent result_intent = new Intent(this.Activity, typeof(SelectExerciseActivity));
                 StartActivityForResult(result_intent, SelectExerciseRequestCode);
-            }
-            else
-            {
-                InitializePlot(exercise_id);
             }
         }
 
@@ -67,7 +65,7 @@ namespace POLift
         }
 
 
-        FrameLayout frame_layout;
+        FrameLayout frame_layout = null;
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             if (this.View != null) return this.View;
@@ -75,18 +73,20 @@ namespace POLift
             View result = inflater.Inflate(Resource.Layout.Graph, container, false);
             frame_layout = result.FindViewById<FrameLayout>(Resource.Id.graph_frame);
 
-            // Use this to return your custom view for this Fragment
-            return result;
+            InitializePlot();
 
-            //return base.OnCreateView(inflater, container, savedInstanceState);
+            return result;
         }
 
-        int ExerciseID = 0;
-        void InitializePlot(int exercise_id)
+
+        void InitializePlot()
         {
-            ExerciseID = exercise_id;
-            plot_view.Model = CreatePlotModel(exercise_id);
-            frame_layout.AddView(plot_view);
+            if (ExerciseID > 0 && frame_layout != null)
+            {
+                plot_view.Model = CreatePlotModel(ExerciseID);
+                frame_layout.RemoveAllViews();
+                frame_layout.AddView(plot_view);
+            }
         }
 
         public override void OnActivityResult(int requestCode, [GeneratedEnum] Result resultCode, Intent data)
@@ -97,9 +97,12 @@ namespace POLift
             {
                 int exercise_id = data.Extras.GetInt("exercise_id");
 
-                if (exercise_id != 0)
+                if (exercise_id > 0)
                 {
-                    InitializePlot(exercise_id);
+                    ExerciseID = exercise_id;
+                    InitializePlot();
+                    // OnCreateView should be called after OnActivityResult
+                    // thus creating the correct view based on ExerciseID
                 }
             }
         }

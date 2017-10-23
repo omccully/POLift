@@ -134,6 +134,7 @@ namespace POLift.Service
 
         public static int[] ToIDIntegers(this string str)
         {
+            if (String.IsNullOrEmpty(str)) return new int[] { };
             return str.Split(',').Select(txt => Int32.Parse(txt)).ToArray();
         }
 

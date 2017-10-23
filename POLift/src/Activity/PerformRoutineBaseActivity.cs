@@ -69,21 +69,6 @@ namespace POLift
             }
         }
 
-        /*bool _TimerRunning = false;
-        protected bool TimerRunning
-        {
-            get
-            {
-                return _TimerRunning;
-            }
-            set
-            {
-                _TimerRunning = value;
-
-                UpdateGUIByTimerState();
-            }
-        }*/
-
         void UpdateGUIByTimerState()
         {
             if(StaticTimer.IsRunningPositive)
@@ -149,10 +134,7 @@ namespace POLift
 
             UpdateGUIByTimerState();
 
-            NotificationManager mNotificationManager =
-               (NotificationManager)GetSystemService(Context.NotificationService);
-
-            mNotificationManager.Cancel(TimerNotificationID);
+            CancelTimerNotification();
 
             AddSecCount = 0;
             SubSecCount = 0;
@@ -205,12 +187,14 @@ namespace POLift
             base.OnSaveInstanceState(outState);
         }
 
+        const string Add30SecCountKey = "add_30_sec_count";
+        const string Sub30SecCountKey = "sub_30_sec_count";
+        
         protected virtual void RestoreTimerState(Bundle savedInstanceState)
         {
-            //TimerRunning = StaticTimer.IsRunning;
-            //TimerRunning = StaticTimer.IsRunningPositive;
-
             if (!StaticTimer.IsRunning) return;
+
+            UpdateGUIByTimerState();
 
             StaticTimer.TickedCallback += Timer_Ticked;
             StaticTimer.ElapsedCallback = Timer_Elapsed;
@@ -223,6 +207,11 @@ namespace POLift
                 // screen was rotated... restore the timer textview
                 RestPeriodSecondsRemaining = savedInstanceState.GetInt(
                     RestPeriodSecondsRemainingKey, RestPeriodSecondsRemaining);
+
+                this.AddSecCount = savedInstanceState.GetInt(
+                    Add30SecCountKey, 0);
+                this.SubSecCount = savedInstanceState.GetInt(
+                    Sub30SecCountKey, 0);
             }
 
             if (RestPeriodSecondsRemaining > 0)
@@ -378,6 +367,14 @@ namespace POLift
                 (NotificationManager)GetSystemService(Context.NotificationService);
 
             mNotificationManager.Notify(TimerNotificationID, n_builder.Build());
+        }
+
+        protected void CancelTimerNotification()
+        {
+            NotificationManager mNotificationManager =
+               (NotificationManager)GetSystemService(Context.NotificationService);
+
+            mNotificationManager.Cancel(TimerNotificationID);
         }
 
         void Vibrate()

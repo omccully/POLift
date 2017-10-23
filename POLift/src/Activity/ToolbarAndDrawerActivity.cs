@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
 
 using Android.App;
 using Android.Content;
@@ -21,9 +22,12 @@ using ActionBarDrawerToggle = Android.Support.V7.App.ActionBarDrawerToggle;
 using FragmentManager = Android.App.FragmentManager;
 using FragmentTransaction = Android.App.FragmentTransaction;
 
+using Microsoft.Practices.Unity;
+
 namespace POLift
 {
     using Model;
+    using Service;
 
     [Activity(Label = "ToolbarAndDrawerActivity")]
     public class ToolbarAndDrawerActivity : AppCompatActivity
@@ -32,12 +36,16 @@ namespace POLift
         ListView DrawerListView;
         List<INavigation> Navigations;
 
+        protected IPOLDatabase Database;
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
 
             // Create your application here
             SetContentView(Resource.Layout.Drawer);
+
+            Database = C.ontainer.Resolve<IPOLDatabase>();
 
             _DrawerLayout = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
             DrawerListView = FindViewById<ListView>(Resource.Id.left_drawer);
@@ -62,8 +70,13 @@ namespace POLift
 
                 new Navigation("Backup data", BackupData_Click,
                     Resource.Mipmap.ic_backup_white_24dp),
-                new Navigation("Restore data from backup", RestoreData_Click,
+                new Navigation("Import data from backup", RestoreData_Click,
                     Resource.Mipmap.ic_cloud_download_white_24dp)
+                    
+                    /*,
+                     * TODO: export data as text
+                new Navigation("Export data as text", ExportAsText_Click,
+                    Resource.Mipmap.ic_backup_white_24dp)*/
             };
 
             DrawerListView.Adapter = new NavigationAdapter(this, Navigations);
@@ -139,21 +152,24 @@ namespace POLift
 
         private void BackupData_Click(object sender, EventArgs e)
         {
-            Intent intent = new Intent(Intent.ActionSend);
-
-            intent.SetType("application/octet-stream");
-
-            //intent.SetType("*/*");
-
             Java.IO.File export_file = new Java.IO.File(C.DatabasePath);
             Android.Net.Uri uri = FileProvider.GetUriForFile(this,
                 "POLift.poliftdatabaseprovider", export_file);
 
-            System.Diagnostics.Debug.WriteLine(export_file.ToString());
+            Intent share_intent = ShareCompat.IntentBuilder.From(this)
+                .SetType("application/octet-stream")
+                .SetStream(uri)
+                .Intent;
 
-            System.Diagnostics.Debug.WriteLine(uri.ToString());
+            share_intent.SetData(uri);
+            share_intent.AddFlags(ActivityFlags.GrantReadUriPermission);
+            StartActivity(share_intent);
 
-            
+
+            /*Intent intent = new Intent(Intent.ActionSend);
+
+            intent.SetType("application/octet-stream");
+
             intent.PutExtra(Intent.ExtraStream, uri);
 
             //intent.SetData(uri);
@@ -169,39 +185,7 @@ namespace POLift
                 GrantUriPermission(package_name, uri, ActivityFlags.GrantReadUriPermission);
             }
 
-            // System.Diagnostics.Debug.WriteLine("giving permission for " + chosen.Package);
-
-            // GrantUriPermission(chosen.Package, uri, ActivityFlags.GrantReadUriPermission);
-
-            System.Diagnostics.Debug.WriteLine(intent.Extras.ToString());
-            System.Diagnostics.Debug.WriteLine(intent.DataString);
-            Intent chosen = Intent.CreateChooser(intent, "Backup via: ");
-
-            System.Diagnostics.Debug.WriteLine(chosen.Extras.ToString());
-            intent.PutExtra(Intent.ExtraStream, uri);
-            System.Diagnostics.Debug.WriteLine(chosen.Extras.ToString());
-            StartActivity(chosen);
-
-
-            /*//Android.OS.Environment.ExternalStorageDirectory.AbsolutePath
-            string dest_path_no_file = this.Activity.GetExternalFilesDir("database").AbsolutePath;
-            Android.Net.Uri uri = new POLDatabaseProvider().GetDatabaseURI(this);
-
-            string file_name = Path.GetFileName(C.DatabasePath);
-            string dest_path = Path.Combine(dest_path_no_file, file_name);
-
-            System.Diagnostics.Debug.WriteLine(C.DatabasePath);
-            System.Diagnostics.Debug.WriteLine(dest_path);
-            System.Diagnostics.Debug.WriteLine("***************");
-            try
-            {
-                File.Copy(C.DatabasePath, dest_path);
-                System.Diagnostics.Debug.WriteLine("copied");
-            }
-            catch (Exception e)
-            {
-                System.Diagnostics.Debug.WriteLine(e.ToString());
-            }*/
+            StartActivity(Intent.CreateChooser(intent, "Backup via: "));*/
         }
 
 
@@ -219,11 +203,30 @@ namespace POLift
 
         protected override void OnActivityResult(int requestCode, [GeneratedEnum] Result resultCode, Intent data)
         {
+            const string ImportFile = "database-import.db3";
+            string ImportFilePath = Path.Combine(FilesDir.Path, ImportFile);
             base.OnActivityResult(requestCode, resultCode, data);
 
             if(resultCode == Result.Ok && requestCode == PickFileRequestCode)
-            {
-                System.Diagnostics.Debug.WriteLine(data.Data);
+            { 
+                Helpers.DisplayConfirmation(this, 
+                    "Are you sure you want to import this file (" + 
+                    Path.GetFileName(data.Data.Path) + ")? " + 
+                    "You may want to perform a backup of your current" +
+                    "data in case something unintended happens.", delegate
+                    {
+                        using (Stream read_stream = ContentResolver.OpenInputStream(data.Data))
+                        {
+                            FileStream file_write_stream =
+                                File.Create(ImportFilePath);
+                            read_stream.CopyTo(file_write_stream);
+                        }
+
+                        POLDatabase imported = new POLDatabase(ImportFilePath);
+
+                        Database.ImportDatabase(imported);
+                        File.Delete(ImportFilePath);
+                    });
             }
         }
 

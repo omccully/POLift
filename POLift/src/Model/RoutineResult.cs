@@ -266,7 +266,39 @@ namespace POLift.Model
             {
                 StringBuilder builder = new StringBuilder();
                 IExercise last_exercise = null;
-                foreach (IExerciseResult exr in this.ExerciseResults)
+                IExercise[] exercises = this.Exercises;
+                for(int i = 0; i < exercises.Length; i++)
+                {
+                    if(exercises[i].Equals(last_exercise))
+                    {
+                        builder.Append(", ");
+                    }
+                    else
+                    {
+                        if(last_exercise != null)
+                        {
+                            builder.AppendLine();
+                        }
+                        builder.Append(exercises[i].Name + " ");
+                    }
+
+                    if(i < ResultCount)
+                    {
+                        IExerciseResult exr = ExerciseResults[i];
+                        builder.Append($"{exr.Weight}x{exr.RepCount}");
+                    }else
+                    {
+                        builder.Append("__x__");
+                    }
+                    
+
+                    last_exercise = exercises[i];
+                }
+
+
+
+
+                /*foreach (IExerciseResult exr in this.ExerciseResults)
                 {
                     IExercise this_exercise = exr.Exercise;
                     if (!this_exercise.Equals(last_exercise))
@@ -286,7 +318,7 @@ namespace POLift.Model
                     builder.Append($"{exr.Weight}x{exr.RepCount}");
 
                     last_exercise = this_exercise;
-                }
+                }*/
 
                 return builder.ToString();
             }

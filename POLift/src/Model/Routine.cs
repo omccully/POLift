@@ -101,7 +101,7 @@ namespace POLift.Model
         {
             get
             {
-                List<IExercise> results = new List<IExercise>();
+                /*List<IExercise> results = new List<IExercise>();
 
                 foreach (IExerciseSets sets in this.ExerciseSets)
                 {
@@ -111,9 +111,10 @@ namespace POLift.Model
                     {
                         results.Add(ex);
                     }
-                }
-
-                return results;
+                }*/
+               
+                return POLift.Model.ExerciseSets.Expand(
+                    this.ExerciseSets);
             }
         }
 
@@ -127,7 +128,6 @@ namespace POLift.Model
 
                 if (rr.Completed)
                 {
-                    // TODO: change this to days/hours/minutes ago
                     TimeSpan time_since_end = DateTime.Now - rr.EndTime;
 
                     return $"Last completed {time_since_end.ToRoundedString()} ago";
