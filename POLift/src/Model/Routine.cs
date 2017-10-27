@@ -31,10 +31,9 @@ namespace POLift.Model
                 {
                     throw new ArgumentException("The routine must have a name");
                 }
-                this._Name = value;
+                this._Name = value.ToLower();
             }
         }
-
 
         [Ignore]
         public IEnumerable<IExerciseSets> ExerciseSets
@@ -92,8 +91,13 @@ namespace POLift.Model
         {
             int exercises = ExerciseSets.Count();
             int total_sets = ExerciseSets.Sum(e => e.SetCount);
+            string result = $"{Name} ({exercises} exercises, {total_sets} sets)";
 
-            return $"{Name}, {exercises} exercises, {total_sets} sets (ID {ID})";
+            //result += $"(ID {ID})";
+
+            
+            return result;
+
         }
 
         [Ignore]

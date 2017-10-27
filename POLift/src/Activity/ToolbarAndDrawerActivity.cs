@@ -72,12 +72,16 @@ namespace POLift
                     Resource.Mipmap.ic_backup_white_24dp),
                 new Navigation("Import data from backup", RestoreData_Click,
                     Resource.Mipmap.ic_cloud_download_white_24dp)
+
                     
                     /*,
                      * TODO: export data as text
                 new Navigation("Export data as text", ExportAsText_Click,
                     Resource.Mipmap.ic_backup_white_24dp)*/
             };
+
+            Navigations.Add(new Navigation("Purchase lifetime license",
+                PurchaseLicense_Click, Resource.Mipmap.ic_shopping_basket_white_24dp));
 
             DrawerListView.Adapter = new NavigationAdapter(this, Navigations);
 
@@ -154,7 +158,7 @@ namespace POLift
         {
             Java.IO.File export_file = new Java.IO.File(C.DatabasePath);
             Android.Net.Uri uri = FileProvider.GetUriForFile(this,
-                "POLift.poliftdatabaseprovider", export_file);
+                "com.cml.poliftprovider", export_file);
 
             Intent share_intent = ShareCompat.IntentBuilder.From(this)
                 .SetType("application/octet-stream")
@@ -200,6 +204,18 @@ namespace POLift
 
         }
 
+        private void PurchaseLicense_Click(object sender, EventArgs e)
+        {
+            PurchaseLicense();
+        }
+
+        async void PurchaseLicense()
+        {
+            bool bought = await LicenseManager.PromptToBuyLicense();
+
+            System.Diagnostics.Debug.WriteLine($"bought = {bought}");
+        }
+
 
         protected override void OnActivityResult(int requestCode, [GeneratedEnum] Result resultCode, Intent data)
         {
@@ -217,9 +233,10 @@ namespace POLift
                     {
                         using (Stream read_stream = ContentResolver.OpenInputStream(data.Data))
                         {
-                            FileStream file_write_stream =
-                                File.Create(ImportFilePath);
-                            read_stream.CopyTo(file_write_stream);
+                            using (FileStream file_write_stream = File.Create(ImportFilePath))
+                            {
+                                read_stream.CopyTo(file_write_stream);
+                            }
                         }
 
                         POLDatabase imported = new POLDatabase(ImportFilePath);

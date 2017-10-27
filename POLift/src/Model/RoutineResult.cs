@@ -288,7 +288,7 @@ namespace POLift.Model
                         builder.Append($"{exr.Weight}x{exr.RepCount}");
                     }else
                     {
-                        builder.Append("__x__");
+                        builder.Append("___");
                     }
                     
 

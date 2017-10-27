@@ -32,7 +32,7 @@ namespace POLift.Model
                 {
                     throw new ArgumentException("The exercise must have a name");
                 }
-                this._Name = value;
+                this._Name = value.ToLower();
             }
         }
 
@@ -157,7 +157,7 @@ namespace POLift.Model
                 sb.AppendLine();
                 sb.Append(PlateMath);
             }
-            sb.Append($" (ID {ID})");
+            //sb.Append($" (ID {ID})");
 
             return sb.ToString();
         }

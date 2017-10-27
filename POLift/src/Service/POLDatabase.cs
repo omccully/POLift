@@ -350,5 +350,22 @@ namespace POLift.Service
             System.Diagnostics.Debug.WriteLine("apply:");
             ApplyConstraints();
         }
+
+        public void LowerCaseAllExercisesAndRoutines()
+        {
+            foreach(Exercise ex in this.Table<Exercise>())
+            {
+                ex.Name = ex.Name.ToLower();
+
+                this.Update<Exercise>(ex);
+            }
+
+            foreach (Routine ex in this.Table<Routine>())
+            {
+                r.Name = r.Name.ToLower();
+
+                this.Update<Routine>(r);
+            }
+        }
     }
 }

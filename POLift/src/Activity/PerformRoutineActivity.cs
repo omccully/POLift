@@ -28,8 +28,6 @@ namespace POLift
 
         AlertDialog dialog;
 
-        bool AskForWarmupRoutine = true;
-
         IRoutineResult _routine_result;
         IRoutineResult _RoutineResult
         {
@@ -131,27 +129,10 @@ namespace POLift
                 }
                 else
                 {
-                    // TODO: set default value for RoutineResult here?
-                    // to prevent null
-
                     // there is a uncompleted routine result within the last 1 day for this routine
                     // so ask user if they want to resume it
-
-                    Helpers.DisplayConfirmation(this, "You did not finish this routine on " +
-                        recent_uncompleted.EndTime.ToString() + ". Would you like to resume it?",
-                        delegate
-                        {
-                            // yes
-                            _RoutineResult = recent_uncompleted;
-                            //SyncTimerBasedOnLastExerciseResult();
-                        },
-                        delegate
-                        {
-                            // no
-                            _RoutineResult = new RoutineResult(Routine);
-                            PromptUserForWarmupRoutine();
-                        }
-                    );
+                
+                    PromptUserToResumeRoutine(recent_uncompleted);
                 }
             }
 
@@ -379,23 +360,132 @@ namespace POLift
             }
         }
 
-        void PromptUserForWarmupRoutine()
+        const string AskForRoutineResumePreferenceKey = "ask_for_routine_resume";
+        void PromptUserToResumeRoutine(IRoutineResult recent_uncompleted)
         {
             ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(this);
+            bool AskForRoutineResume = 
+                prefs.GetBoolean(AskForRoutineResumePreferenceKey, true);
 
-            if(prefs.GetBoolean("ask_for_warmup", true))
+            if (AskForRoutineResume)
             {
-                dialog = Helpers.DisplayConfirmation(this, 
-                    "Would you like to do a warmup routine?",
-                    delegate { StartWarmupActivity(); });
+                _RoutineResult = new RoutineResult(Routine);
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.SetMessage("You did not finish this routine on " +
+                    recent_uncompleted.EndTime.ToString() + ". Would you like to resume it?");
+                builder.SetNeutralButton("Yes", delegate
+                {
+                    // yes
+                    _RoutineResult = recent_uncompleted;
+                    //SyncTimerBasedOnLastExerciseResult();
+                });
+
+                builder.SetNegativeButton("No", delegate
+                {
+                    // no
+                    _RoutineResult = new RoutineResult(Routine);
+                    PromptUserForWarmupRoutine();
+                });
+
+                builder.SetPositiveButton("Yes, never show again", delegate
+                {
+                    _RoutineResult = recent_uncompleted;
+
+                    ISharedPreferencesEditor editor = prefs.Edit();
+                    editor.PutBoolean(AskForRoutineResumePreferenceKey, false);
+                    editor.Apply();
+                });
+
+              
+                AlertDialog ad = builder.Create();
+                ad.Show();
+                builder.Dispose();
+                ad.Show();
+
             }
             else
             {
-                if(prefs.GetBoolean("default_warmup", false))
+                // if don't ask, then assume yes
+                _RoutineResult = recent_uncompleted;
+            }
+            
+        }
+
+
+        const string AskForWarmupPreferenceKey = "ask_for_warmup";
+        const string DefaultWarmupPreferenceKey = "default_warmup";
+        void PromptUserForWarmupRoutine()
+        {
+            ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(this);
+            
+            bool AskForWarmup = prefs.GetBoolean(AskForWarmupPreferenceKey, true);
+            bool DefaultWarmup = prefs.GetBoolean(DefaultWarmupPreferenceKey, false);
+
+            if (AskForWarmup)
+            {
+                string exercise_name;
+                if(CurrentExercise == null)
+                {
+                    exercise_name = "";
+                }
+                else
+                {
+                    string en = CurrentExercise.Name.ToLower();
+
+                    bool is_vowel = "aeiouAEIOU".IndexOf(en[0]) >= 0;
+
+                    exercise_name = (is_vowel ? "n " : " ") + en;
+                }
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.SetMessage($"Would you like to do a{exercise_name} warmup routine?");
+                
+                View CheckBoxLayout = LayoutInflater.Inflate(Resource.Layout.NeverShowAgainCheckBox, null);
+                CheckBox NeverShowAgainCheckBox = CheckBoxLayout.FindViewById<CheckBox>(
+                    Resource.Id.NeverShowAgainCheckBox);
+
+                builder.SetView(CheckBoxLayout);
+
+                builder.SetPositiveButton("Yes", delegate
+                {
+                    System.Diagnostics.Debug.WriteLine("yes: " + NeverShowAgainCheckBox.Checked);
+                    if (NeverShowAgainCheckBox.Checked)
+                    {
+                        DefaultWarmupTo(prefs, true);
+                    }
+
+                    StartWarmupActivity();
+                });
+
+                builder.SetNegativeButton("No", delegate 
+                {
+                    System.Diagnostics.Debug.WriteLine("no: " + NeverShowAgainCheckBox.Checked);
+                    if (NeverShowAgainCheckBox.Checked)
+                    {
+                        DefaultWarmupTo(prefs, false);
+                    }
+                });
+
+                dialog = builder.Create();
+                builder.Dispose();
+                dialog.Show();
+            }
+            else
+            {
+                if(DefaultWarmup)
                 {
                     StartWarmupActivity();
                 }
             }
+        }
+
+        void DefaultWarmupTo(ISharedPreferences prefs, bool default_warmup)
+        {
+            ISharedPreferencesEditor editor = prefs.Edit();
+            editor.PutBoolean(AskForWarmupPreferenceKey, false);
+            editor.PutBoolean(DefaultWarmupPreferenceKey, default_warmup);
+            editor.Apply();
         }
 
         void StartWarmupActivity()

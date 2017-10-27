@@ -9,7 +9,7 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-       <include
+        <include
             android:id="@+id/toolbar"
             layout="@layout/toolbar" />
         <FrameLayout
@@ -17,25 +17,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
     </LinearLayout>
-<!-- The navigation drawer -->
-<!-- app:headerLayout="@layout/nav_header_main"
-  <android.support.design.widget.NavigationView
-      android:id="@+id/nav_view"
-      android:layout_width="wrap_content"
-      android:layout_height="match_parent"
-      android:layout_gravity="start"
-      android:fitsSystemWindows="true"
-      app:itemTextColor="@color/white"
-      app:menu="@menu/menu"
-      />-->
-<!---->
-<!--<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-      android:id="@+id/DrawerMenuLinearLayout"
-      android:orientation="vertical"
-      android:layout_width="match_parent"
-      android:layout_height="match_parent">
-  </LinearLayout>
-  -->
     <ListView
         android:id="@+id/left_drawer"
         android:layout_width="240dp"
@@ -44,9 +25,7 @@
         android:choiceMode="singleChoice"
         android:divider="@android:color/white"
         android:dividerHeight="0dp"
-        android:background="#808080"
+        android:background="#202020"
         android:paddingTop="10dip"
         android:paddingLeft="10dip" />
-<!--<TextView
-    android:text="test"/>-->
 </android.support.v4.widget.DrawerLayout>

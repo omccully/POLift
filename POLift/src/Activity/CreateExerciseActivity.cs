@@ -92,7 +92,7 @@ namespace POLift
                 SavePreferences();
                 ReturnExercise(ex);
             }
-            catch (ArgumentException ae)
+            catch (FormatException ae)
             {
                 AlertDialog.Builder dialog = new AlertDialog.Builder(this);
                 dialog.SetMessage(ae.Message);
@@ -127,7 +127,7 @@ namespace POLift
         void LoadPreferences()
         {
             ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(this);
-            RepRangeMaxText.Text = prefs.GetString("create_exercise_max_reps", "");
+            RepRangeMaxText.Text = prefs.GetString("create_exercise_max_reps", "8");
             WeightIncrementText.Text = prefs.GetString("create_exercise_weight_increment", "5");
             RestPeriodSecondsText.Text = prefs.GetString("create_exercise_rest_period_seconds", "120");
         }

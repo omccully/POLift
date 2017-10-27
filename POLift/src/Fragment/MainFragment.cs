@@ -150,6 +150,12 @@ namespace POLift
                 // routines may have been edited from perform routine page
                 // regardless of result
                 RefreshRoutineList();
+
+                if(resultCode == Result.Ok)
+                {
+                    Toast.MakeText(this.Activity, "Routine completed",
+                        ToastLength.Long).Show();
+                }
             }
         }
     }

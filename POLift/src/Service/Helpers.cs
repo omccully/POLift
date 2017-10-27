@@ -91,6 +91,7 @@ namespace POLift.Service
             builder.SetMessage(message);
             builder.SetPositiveButton("Yes", action_if_yes);
             builder.SetNegativeButton("No", action_if_no);
+
             //dialog.Show();
             AlertDialog ad = builder.Create();
             ad.Show();
