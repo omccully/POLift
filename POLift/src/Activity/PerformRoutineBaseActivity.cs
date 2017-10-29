@@ -9,6 +9,7 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
+using Android.Gms.Ads;
 using Android.Support.Compat;
 
 namespace POLift
@@ -69,28 +70,6 @@ namespace POLift
             }
         }
 
-        void UpdateGUIByTimerState()
-        {
-            if(StaticTimer.IsRunningPositive)
-            {
-                Sub30SecButton.Enabled = true;
-                Add30SecButton.Enabled = true;
-                SkipTimerButton.Enabled = true;
-
-                ReportResultButton.Enabled = false;
-                RepResultEditText.Enabled = false;
-            }
-            else
-            {
-                Sub30SecButton.Enabled = false;
-                Add30SecButton.Enabled = false;
-                SkipTimerButton.Enabled = false;
-
-                ReportResultButton.Enabled = true;
-                RepResultEditText.Enabled = true;
-            }
-        }
-
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -124,6 +103,54 @@ namespace POLift
             Sub30SecButton.Click += Sub30SecButton_Click;
             Add30SecButton.Click += Add30SecButton_Click;
             SkipTimerButton.Click += SkipTimerButton_Click;
+
+            if (LicenseManager.ShowAds)
+            {
+                AdView ad_view = FindViewById<AdView>(Resource.Id.adView);
+                var adRequest = new AdRequest.Builder().Build();
+                ad_view.LoadAd(adRequest);
+
+                EventDrivenAdListener ad_listener = new EventDrivenAdListener();
+                ad_listener.AdLoaded += Ad_listener_AdLoaded;
+                ad_listener.AdClosed += Ad_listener_AdClosed;
+
+                mInterstitialAd = new InterstitialAd(this);
+                mInterstitialAd.AdListener = ad_listener;
+                mInterstitialAd.AdUnitId = "ca-app-pub-1015422455885077/5168885337";
+            }
+        }
+
+        private void Ad_listener_AdClosed(object sender, EventArgs e)
+        {
+            Toast.MakeText(this, "Please consider purchasing a lifetime" +
+                " license to remove ads.", ToastLength.Long).Show();
+        }
+
+        private void Ad_listener_AdLoaded(object sender, EventArgs e)
+        {
+            mInterstitialAd.Show();
+        }
+
+        void UpdateGUIByTimerState()
+        {
+            if (StaticTimer.IsRunningPositive)
+            {
+                Sub30SecButton.Enabled = true;
+                Add30SecButton.Enabled = true;
+                SkipTimerButton.Enabled = true;
+
+                ReportResultButton.Enabled = false;
+                RepResultEditText.Enabled = false;
+            }
+            else
+            {
+                Sub30SecButton.Enabled = false;
+                Add30SecButton.Enabled = false;
+                SkipTimerButton.Enabled = false;
+
+                ReportResultButton.Enabled = true;
+                RepResultEditText.Enabled = true;
+            }
         }
 
         protected void StartTimer(int seconds_left)
@@ -138,6 +165,15 @@ namespace POLift
 
             AddSecCount = 0;
             SubSecCount = 0;
+        }
+
+        InterstitialAd mInterstitialAd;
+        protected void TryShowFullScreenAd()
+        {
+            if (LicenseManager.ShowAds)
+            {
+                mInterstitialAd.LoadAd(new AdRequest.Builder().Build());
+            }
         }
 
         protected abstract void ReportResultButton_Click(object sender, EventArgs e);
@@ -244,10 +280,12 @@ namespace POLift
         void CancelTheTimerControlCounts()
         {
             int min = Math.Min(AddSecCount, SubSecCount);
-            if(min > 0)
+            System.Diagnostics.Debug.WriteLine($"{min} = Math.Min({AddSecCount}, {SubSecCount})");
+            if (min > 0)
             {
-                AddSecCount -= min;
-                SubSecCount -= min;
+                _add_sec_count -= min;
+                _sub_sec_count -= min;
+                UpdateAdd30SecButtonCountsGUI();
             }
         }
 
@@ -265,16 +303,38 @@ namespace POLift
                 // this may modify _add_sec_count
                 CancelTheTimerControlCounts();
 
-                if (_add_sec_count == 0)
-                {
-                    Add30SecButton.Text = "+30 sec";
-                }
-                else
-                {
-                    Add30SecButton.Text = $"+30 sec (x{_add_sec_count})";
-                }
-                 
+                UpdateTimerControlButtonCountsGUI();
             }
+        }
+
+        void UpdateAdd30SecButtonCountsGUI()
+        {
+            if (_add_sec_count == 0)
+            {
+                Add30SecButton.Text = "+30 sec";
+            }
+            else
+            {
+                Add30SecButton.Text = $"+30 sec (x{_add_sec_count})";
+            }
+        }
+
+        void UpdateSub30SecButtonCountsGUI()
+        {
+            if (_sub_sec_count == 0)
+            {
+                Sub30SecButton.Text = "-30 sec";
+            }
+            else
+            {
+                Sub30SecButton.Text = $"-30 sec (x{_sub_sec_count})";
+            }
+        }
+
+        void UpdateTimerControlButtonCountsGUI()
+        {
+            UpdateAdd30SecButtonCountsGUI();
+            UpdateSub30SecButtonCountsGUI();
         }
 
         int _sub_sec_count = 0;
@@ -291,31 +351,37 @@ namespace POLift
                 // this may modify _add_sec_count
                 CancelTheTimerControlCounts();
 
-                if (_sub_sec_count == 0)
-                {
-                    Sub30SecButton.Text = "-30 sec";
-                }
-                else
-                {
-                    Sub30SecButton.Text = $"-30 sec (x{_sub_sec_count})";
-                }
+                UpdateSub30SecButtonCountsGUI();
             }
         }
 
         protected virtual void Add30SecButton_Click(object sender, EventArgs e)
         {
             StaticTimer.AddTicks(30);
+            if(StaticTimer.TicksRemaining <= 0)
+            {
+                UpdateGUIByTimerState();
+                Vibrate();
+            }
+            
             AddSecCount++;
         }
 
         protected virtual void Sub30SecButton_Click(object sender, EventArgs e)
         {
             StaticTimer.SubtractTicks(30);
+            if (StaticTimer.TicksRemaining <= 0)
+            {
+                UpdateGUIByTimerState();
+                Vibrate();
+            }
+
             SubSecCount++;
         }
 
         protected virtual void Timer_Ticked(int ticks_until_elapsed)
         {
+            System.Diagnostics.Debug.WriteLine("PerformRoutineBaseActivity.Timer_Ticked(int ticks_until_elapsed)");
             RestPeriodSecondsRemaining = ticks_until_elapsed;
             RunOnUiThread(delegate
             {
@@ -330,6 +396,7 @@ namespace POLift
 
         protected virtual void Timer_Elapsed()
         {
+            System.Diagnostics.Debug.WriteLine("PerformRoutineBaseActivity.Timer_Elapsed()");
             //RestPeriodSecondsRemaining = 0;
             RunOnUiThread(delegate
             {

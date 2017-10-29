@@ -208,13 +208,21 @@ namespace POLift
 
                     if (Routine == new_routine) return;
 
-                    IRoutineResult old_rr = _RoutineResult;
-                    _RoutineResult = _RoutineResult.Transform(new_routine);
+                    if(_RoutineResult.ResultCount == 0)
+                    {
+                        // routine wasn't started
+                        _RoutineResult = new RoutineResult(new_routine, Database);
+                    }
+                    else
+                    {
+                        IRoutineResult old_rr = _RoutineResult;
+                        _RoutineResult = _RoutineResult.Transform(new_routine);
+
+                        Database.HideDeletable((RoutineResult)old_rr);
+
+                        Database.Insert((RoutineResult)_RoutineResult);
+                    }
                     
-                    Database.HideDeletable((RoutineResult)old_rr);
-
-                    Database.Insert((RoutineResult)_RoutineResult);
-
                     // CreateRoutineActivity removes old routine
                     Routine = new_routine; 
 
@@ -246,10 +254,14 @@ namespace POLift
 
             RepResultEditText.Text = "";
 
-            ReportExerciseResult(weight, reps);
+            if(ReportExerciseResult(weight, reps))
+            {
+                // if there's more exercises, try to show an ad
+                TryShowFullScreenAd();
+            }
         }
 
-        void ReportExerciseResult(int weight, int reps)
+        bool ReportExerciseResult(int weight, int reps)
         {
             // report the exercise result
             ExerciseResult ex_result =
@@ -273,7 +285,7 @@ namespace POLift
                 ReturnRoutineResult(_RoutineResult);
                 StaticTimer.StopTimer();
                 CancelTimerNotification();
-                return;
+                return false;
             }
 
             // update Weight and CurrentExercise
@@ -281,6 +293,7 @@ namespace POLift
             // rest period is based on the NEXT exercise's rest period
 
             StartRestPeriod();
+            return true;
         }
 
         void StartRestPeriod()

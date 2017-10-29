@@ -115,11 +115,20 @@ namespace POLift
             RepResultEditText.Visibility = ViewStates.Gone;
             ModifyRestOfRoutineButton.Visibility = ViewStates.Gone;
             NextExerciseView.Visibility = ViewStates.Gone;
-            IMadeAMistakeButton.Visibility = ViewStates.Gone;
+
+            //IMadeAMistakeButton.Visibility = ViewStates.Gone;
+            IMadeAMistakeButton.Text = "Skip warmup routine";
+            IMadeAMistakeButton.Click += IMadeAMistakeButton_Click;
 
             //var toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
             //SetActionBar(toolbar);
             //ActionBar.Title = $"{FirstExercise.Name} warmup";
+        }
+
+        private void IMadeAMistakeButton_Click(object sender, EventArgs e)
+        {
+            SetResult(Result.Canceled);
+            Finish();
         }
 
         public override void OnBackPressed()
@@ -188,8 +197,9 @@ namespace POLift
             }
 
             StartTimer(NextWarmupSet.GetRestPeriod(FirstExercise));
-        }
 
+            TryShowFullScreenAd();
+        }
 
         protected override void OnSaveInstanceState(Bundle outState)
         {

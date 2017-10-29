@@ -10,7 +10,7 @@ using SQLite;
 
 namespace POLift.Service
 {
-    class POLDatabase : IPOLDatabase
+    public class POLDatabase : IPOLDatabase
     {
         string FilePath;
 
@@ -357,14 +357,14 @@ namespace POLift.Service
             {
                 ex.Name = ex.Name.ToLower();
 
-                this.Update<Exercise>(ex);
+                this.Update(ex);
             }
 
-            foreach (Routine ex in this.Table<Routine>())
+            foreach (Routine r in this.Table<Routine>())
             {
                 r.Name = r.Name.ToLower();
 
-                this.Update<Routine>(r);
+                this.Update(r);
             }
         }
     }

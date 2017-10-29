@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 using Android.App;
 using Android.OS;
 using Android.Runtime;
+using Android.Widget;
 using Android.Provider;
+using Android.Gms.Ads;
 using Plugin.CurrentActivity;
 using Plugin.InAppBilling;
 using Plugin.InAppBilling.Abstractions;
@@ -36,11 +38,16 @@ namespace POLift
             RegisterActivityLifecycleCallbacks(this);
             //A great place to initialize Xamarin.Insights and Dependency Services!
 
-            
+            string id = "pub-1015422455885077";
+            MobileAds.Initialize(ApplicationContext, id);
         }
 
         async Task CheckLicense()
         {
+            const int TimeDay = 86400;
+            const int TimeWeek = 7 * TimeDay;
+            const int WarningPeriod = 7 * TimeDay;
+
             string device_id = Settings.Secure.GetString(
                    ApplicationContext.ContentResolver,
                    Settings.Secure.AndroidId);
@@ -49,42 +56,35 @@ namespace POLift
             System.Diagnostics.Debug.WriteLine($"has_license = {has_license}");
             if (!has_license)
             {
-                bool is_in_trial = await LicenseManager.IsInTrialPeriod(device_id);
-                System.Diagnostics.Debug.WriteLine($"is_in_trial = {is_in_trial}");
+                int seconds_left_in_trial = await LicenseManager.SecondsRemainingInTrial(device_id);
+                bool is_in_trial = seconds_left_in_trial > 0;
+
+                System.Diagnostics.Debug.WriteLine
+                    ($"is_in_trial = {is_in_trial}, {seconds_left_in_trial} seconds left");
+
                 if (!is_in_trial)
                 {
                     bool bought = await LicenseManager.PromptToBuyLicense();
-
+                    if(!bought)
+                    {
+                        /*typeof(NoLicenseActivity)
+                        StartActivity(CrossCurrentActivity.Current.Activity,
+                            );*/
+                    }
                     System.Diagnostics.Debug.WriteLine($"bought = {bought}");
+                }
+                else if(seconds_left_in_trial < WarningPeriod)
+                {
+                    int days_left = seconds_left_in_trial / TimeDay;
+                    new Handler(this.MainLooper).Post(delegate
+                    {
+                        Toast.MakeText(CrossCurrentActivity.Current.Activity,
+                            $"You have {days_left} days left in your free trial. ", 
+                            ToastLength.Long).Show();
+                    });
                 }
             }
         }
-
-
-        /*void FinishWebRequest(IAsyncResult result)
-        {
-            try
-            {
-                WebResponse web_response = WebRequest.EndGetResponse(result);
-
-                string str_response;
-                using (StreamReader reponse_reader = new StreamReader(web_response.GetResponseStream()))
-                {
-                    str_response = reponse_reader.ReadToEnd();
-                }
-                
-                new Handler(this.MainLooper).Post(delegate
-                {
-                    Helpers.DisplayError(CrossCurrentActivity.Current.Activity, str_response);
-                });
-
-            }
-            catch
-            {
-            }
-        }*/
-
-        
 
         public override void OnTerminate()
         {

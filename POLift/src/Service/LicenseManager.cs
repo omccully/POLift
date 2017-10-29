@@ -24,6 +24,8 @@ namespace POLift.Service
     {
         public static readonly string ProductID = "polift_license";
 
+        public static bool ShowAds = true;
+
         public static async Task<bool> IsInTrialPeriod(string device_id)
         {
             return (await SecondsRemainingInTrial(device_id)) > 0;
@@ -50,7 +52,13 @@ namespace POLift.Service
                 }
             }
 
-            return Int32.Parse(str_response);
+            int sec_remaining = Int32.Parse(str_response);
+
+            if(sec_remaining <= 0)
+            {
+                ShowAds = true;
+            }
+            return sec_remaining;
             /*new Handler(this.MainLooper).Post(delegate
             {
                 Helpers.DisplayError(CrossCurrentActivity.Current.Activity, str_response);

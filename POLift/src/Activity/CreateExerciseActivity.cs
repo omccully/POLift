@@ -92,12 +92,16 @@ namespace POLift
                 SavePreferences();
                 ReturnExercise(ex);
             }
-            catch (FormatException ae)
+            catch(FormatException)
             {
-                AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-                dialog.SetMessage(ae.Message);
-                dialog.SetNegativeButton("Ok", delegate { });
-                dialog.Show();
+                // FormatException for int parsing
+                Toast.MakeText(this, "Numerical fields must be integers", 
+                    ToastLength.Long).Show();
+            }
+            catch (ArgumentException ae)
+            {
+                // ArgumentException for Exercise constructor
+                Toast.MakeText(this, ae.Message, ToastLength.Long).Show();
             }
         }
 

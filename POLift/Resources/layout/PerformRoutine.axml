@@ -1,112 +1,131 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <TextView
-        android:text="Routine"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:layout_width="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:id="@+id/PerformRoutineLinearLayout">
+    <com.google.android.gms.ads.AdView
+        android:layout_alignParentBottom="true"
+        android:id="@+id/adView"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/RoutineDetails"
-        android:paddingBottom="20dip" />
-    <TextView
-        android:text="Exercise"
-        android:textAppearance="?android:attr/textAppearanceMedium"
+        ads:adSize="SMART_BANNER"
+        ads:adUnitId="@string/banner_ad_unit_id" />
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/NextExerciseView" />
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <TextView
-            android:text="Weight:"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/WeightLabel" />
-        <EditText
-            android:inputType="number"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/WeightEditText"
-            android:width="80dip" />
-        <TextView
-            android:id="@+id/PlateMathTextView"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <TextView
-            android:text="Reps:"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/RepResultLabel" />
-        <EditText
-            android:inputType="number"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/RepResultEditText"
-            android:width="80dip" />
-    </LinearLayout>
-    <TextView
-        android:text="Next Warmup"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/NextWarmupView" />
-    <Button
-        android:text="Report result"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/ReportResultButton"
-        android:paddingTop="15dip" />
-    <TextView
-        android:text="Start your set whenever you're ready"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/CountDownTextView" />
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <Button
-            android:text="-30 sec"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_above="@id/adView">
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/Sub30SecButton"
-            android:layout_weight="1"
-            android:enabled="false" />
-        <Button
-            android:text="Skip timer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/SkipTimerButton"
-            android:layout_weight="1"
-            android:enabled="false" />
-        <Button
-            android:text="+30 sec"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/Add30SecButton"
-            android:layout_weight="1"
-            android:enabled="false" />
-    </LinearLayout>
-    <Button
-        android:text="Modify rest of routine"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/ModifyRestOfRoutineButton" />
-    <Button
-        android:text="I made a mistake!"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/IMadeAMistakeButton" />
-</LinearLayout>
+            android:layout_height="match_parent">
+            <TextView
+                android:text="Routine"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/RoutineDetails"
+                android:paddingBottom="20dip" />
+            <TextView
+                android:text="Exercise"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/NextExerciseView" />
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:text="Weight:"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/WeightLabel" />
+                <EditText
+                    android:inputType="number"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/WeightEditText"
+                    android:width="80dip" />
+                <TextView
+                    android:id="@+id/PlateMathTextView"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:text="Reps:"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/RepResultLabel" />
+                <EditText
+                    android:inputType="number"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/RepResultEditText"
+                    android:width="80dip" />
+            </LinearLayout>
+            <TextView
+                android:text="Next Warmup"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/NextWarmupView" />
+            <Button
+                android:text="Report result"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/ReportResultButton"
+                android:paddingTop="15dip" />
+            <TextView
+                android:text="Start your set whenever you're ready"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/CountDownTextView" />
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <Button
+                    android:text="-30 sec"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/Sub30SecButton"
+                    android:layout_weight="1"
+                    android:enabled="false" />
+                <Button
+                    android:text="Skip timer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/SkipTimerButton"
+                    android:layout_weight="1"
+                    android:enabled="false" />
+                <Button
+                    android:text="+30 sec"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/Add30SecButton"
+                    android:layout_weight="1"
+                    android:enabled="false" />
+            </LinearLayout>
+            <Button
+                android:text="Modify rest of routine"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/ModifyRestOfRoutineButton" />
+            <Button
+                android:text="I made a mistake!"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/IMadeAMistakeButton" />
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>

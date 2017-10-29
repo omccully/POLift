@@ -3,4 +3,8 @@
   <string name="app_name">POLift</string>
   <string name="drawer_opened">Drawer opened</string>
   <string name="drawer_closed">Drawer closed</string>
+  <string name="banner_ad_unit_id">ca-app-pub-1015422455885077/4650188193</string>
+  <string name="interstitial_ad_unit_id">ca-app-pub-1015422455885077/5168885337</string>
+
+ 
 </resources>
