@@ -203,7 +203,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="src\Activity\FullScreenAdActivity.cs" />
-    <Compile Include="src\Activity\NoLicenseActivity.cs" />
     <Compile Include="src\MainApplication.cs" />
     <Compile Include="src\Activity\EditRoutineResultActivity.cs" />
     <Compile Include="src\Activity\RoutineDetailsActivity.cs" />
@@ -325,13 +324,7 @@
     <AndroidResource Include="Resources\layout\NeverShowAgainCheckBox.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
-    <AndroidResource Include="Resources\layout\NoLicense.axml">
-      <SubType>Designer</SubType>
-    </AndroidResource>
     <AndroidResource Include="Resources\layout\BannerAd.axml">
-      <SubType>Designer</SubType>
-    </AndroidResource>
-    <AndroidResource Include="Resources\layout\FullScreenAd.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
