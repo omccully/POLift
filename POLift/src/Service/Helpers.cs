@@ -24,6 +24,11 @@ namespace POLift.Service
             73, 70, 66, 63, 60
         };
 
+        public static long UnixTimeStamp()
+        {
+            return (long)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+        }
+
         public static int OneRepMax(int weight, int reps)
         {
             int rep_index = reps - 1;

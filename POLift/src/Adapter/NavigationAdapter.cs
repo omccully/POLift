@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 
@@ -16,14 +17,22 @@ namespace POLift
 
     class NavigationAdapter : BaseAdapter<INavigation>
     {
-        List<INavigation> Navigations;
+        public ObservableCollection<INavigation> Navigations
+            { get; private set; }
         Context context;
 
         public NavigationAdapter(Context context, 
             IEnumerable<INavigation> navigations)
         {
             this.context = context;
-            this.Navigations = new List<INavigation>(navigations);
+            this.Navigations = 
+                new ObservableCollection<INavigation>(navigations);
+            this.Navigations.CollectionChanged += Navigations_CollectionChanged;
+        }
+
+        private void Navigations_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            NotifyDataSetChanged();
         }
 
         public override INavigation this[int position]

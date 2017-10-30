@@ -10,6 +10,7 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
+using Android.Provider;
 
 using Microsoft.Practices.Unity;
 
@@ -25,13 +26,27 @@ namespace POLift
         static string DatabaseDirectory = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
         public static string DatabasePath = Path.Combine(DatabaseDirectory, DatabaseFileName);
 
+        static string _DeviceID;
+        public static string DeviceID
+        {
+            get
+            {
+                return _DeviceID;
+            }
+            set
+            {
+                _DeviceID = value;
+                ontainer.RegisterInstance<ILicenseManager>(
+                    new LicenseManager(value));
+            }
+        }
+
         static C()
         {
             ontainer = new UnityContainer();
 
-           
-
-            ontainer.RegisterInstance<IPOLDatabase>(new POLDatabase(DatabasePath));
+            ontainer.RegisterInstance<IPOLDatabase>(
+                new POLDatabase(C.DatabasePath));
         }
     }
 }

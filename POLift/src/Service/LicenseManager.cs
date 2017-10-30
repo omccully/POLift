@@ -20,94 +20,180 @@ using Plugin.InAppBilling.Abstractions;
 
 namespace POLift.Service
 {
-    public static class LicenseManager
+    public class LicenseManager : ILicenseManager
     {
         public static readonly string ProductID = "polift_license";
+        public const int TrialPeriodSeconds = 30 * 86400;
 
-        public static bool ShowAds = true;
+        const string HasLicenseConfirmedKey = "license_manager.has_licence_confirmed";
+        const string TimeOfFirstLaunchKey = "license_manager.first_launch_time";
 
-        public static async Task<bool> IsInTrialPeriod(string device_id)
+        public readonly string DeviceID;
+
+        public bool ShowAds { get; set; } = false;
+
+        string LicenseLookupURL
         {
-            return (await SecondsRemainingInTrial(device_id)) > 0;
+            get
+            {
+                string device_id_encoded = WebUtility.UrlEncode(DeviceID);
+                string domain = "crystalmathlabs.com";
+                string path = $"polift/check_license.php?device_id={device_id_encoded}";
+                return $"http://{domain}/{path}";
+            }
         }
 
-        public static async Task<int> SecondsRemainingInTrial(string device_id)
+        ISharedPreferences _BackupPreferences;
+        public ISharedPreferences BackupPreferences
         {
-            
-            string device_id_encoded = WebUtility.UrlEncode(device_id);
-            string domain = "crystalmathlabs.com";
-            string path = $"polift/check_license.php?device_id={device_id_encoded}";
-            string url = $"http://{domain}/{path}";
-            WebRequest web_request = HttpWebRequest.Create(url);
+            get
+            {
+                return _BackupPreferences;
+            }
+            set
+            {
+                _BackupPreferences = value;
+                if(value != null && !value.Contains(TimeOfFirstLaunchKey))
+                {
+                    value.Edit().PutLong(TimeOfFirstLaunchKey, Helpers.UnixTimeStamp()).Apply();
+                }
+            }
+        }
 
-            WebResponse web_response = await web_request.GetResponseAsync();
+        public LicenseManager(string device_id, ISharedPreferences backup_preferences = null)
+        {
+            this.DeviceID = device_id;
 
-            string str_response;
+            lazy_SecondsRemainingInTrial = new Lazy<Task<int>>(
+                SecondsRemainingInTrialFromServer_NotCached);
+
+            lazy_CheckLicense = new Lazy<Task<bool>>(
+                CheckLicenseStrict_NotCached);
+        }
+
+        public async Task<bool> IsInTrialPeriod()
+        {
+            return (await SecondsRemainingInTrial()) > 0;
+        }
+
+        Lazy<Task<int>> lazy_SecondsRemainingInTrial;
+        private async Task<int> SecondsRemainingInTrialFromServer_NotCached()
+        {
+            WebRequest web_request = HttpWebRequest.Create(LicenseLookupURL);
+            web_request.Timeout = 3000;
+            web_request.Proxy = null;
+
+            System.Diagnostics.Debug.WriteLine("Querying license server");
+            Task<WebResponse> response_task = web_request.GetResponseAsync();
+
+            // force a 4000 ms timeout because something weird was happening
+            if (await Task.WhenAny(response_task, Task.Delay(4000)) != response_task)
+            {
+                // timeout
+                System.Diagnostics.Debug.WriteLine("await timeout");
+                throw new TimeoutException();
+            }
+            System.Diagnostics.Debug.WriteLine("Received response from license server");
+
+            WebResponse web_response = await response_task;
 
             using (Stream response_stream = web_response.GetResponseStream())
             {
                 using (StreamReader reponse_reader = new StreamReader(response_stream))
                 {
-                    str_response = reponse_reader.ReadToEnd();
+                    return Int32.Parse(reponse_reader.ReadToEnd());
                 }
             }
+        }
 
-            int sec_remaining = Int32.Parse(str_response);
+        public async Task<int> SecondsRemainingInTrialInner()
+        {
+            try
+            {
+                return await lazy_SecondsRemainingInTrial.Value;
+            }
+            catch (Exception e)
+            {
+                if (BackupPreferences != null)
+                {
+                    long first_launch = BackupPreferences.GetLong(TimeOfFirstLaunchKey, 0);
 
-            if(sec_remaining <= 0)
+                    if (first_launch != 0)
+                    {
+                        long trial_end_time = first_launch + TrialPeriodSeconds;
+                        int sec_left = (int)(trial_end_time - Helpers.UnixTimeStamp());
+
+                        return sec_left;
+                    }    
+                }
+
+                throw e;
+            }
+        }
+
+        public async Task<int> SecondsRemainingInTrial()
+        {
+            int result = await SecondsRemainingInTrialInner();
+            if (result <= 0)
             {
                 ShowAds = true;
             }
-            return sec_remaining;
-            /*new Handler(this.MainLooper).Post(delegate
-            {
-                Helpers.DisplayError(CrossCurrentActivity.Current.Activity, str_response);
-            });*/
+            return result;
         }
 
+        Lazy<Task<bool>> lazy_CheckLicense;
         /// <summary>
         /// If fails, it gives the user the benefit of the doubt (returns true)
         /// </summary>
         /// <returns></returns>
-        public static async Task<bool> CheckLicense()
+        public async Task<bool> CheckLicense(bool default_result = true)
         {
-            // TODO: can't JUST give the user the benefit of the doubt because 
-            // of connection failures. users can just turn off their wifi/shit 
-            // to use the app. but maybe, if users do that, they're probably
-            // kind of users who wouldn't want to buy the app anyway.
-
             try
             {
-                
-                CrossInAppBilling.Current.InTestingMode = true;
+                return await lazy_CheckLicense.Value;
+            }
+            catch
+            {
+                return BackupPreferences.GetBoolean(HasLicenseConfirmedKey, default_result);
+            }
+        }
+
+        async Task<bool> CheckLicenseStrict_NotCached()
+        {
+            try
+            {
                 var connected = await CrossInAppBilling.Current.ConnectAsync();
                 if (!connected)
                 {
                     System.Diagnostics.Debug.WriteLine("(c)FAILED TO CONNECT TO BILLING");
-                    return true;
+                    throw new FailedToConnectToBillingException();
                 }
                 System.Diagnostics.Debug.WriteLine("(C)CONNECTED");
 
                 IEnumerable<InAppBillingPurchase> purchases =
                     await CrossInAppBilling.Current.GetPurchasesAsync(
                         ItemType.InAppPurchase);
+
                 System.Diagnostics.Debug.WriteLine("purchase count = " + purchases.Count());
+
                 foreach (InAppBillingPurchase purchase in purchases)
                 {
                     System.Diagnostics.Debug.WriteLine($"{purchase.ProductId} purchase = " + purchase);
                     if (purchase.ProductId == ProductID)
                     {
+                        if(BackupPreferences != null)
+                        {
+                            BackupPreferences.Edit().PutBoolean(HasLicenseConfirmedKey, true).Apply();
+                        }
+                        
                         return true;
                     }
                 }
-
+                if (BackupPreferences != null)
+                {
+                    BackupPreferences.Edit().PutBoolean(HasLicenseConfirmedKey, false).Apply();
+                }
                 return false;
-            }
-            catch (Exception e)
-            {
-                System.Diagnostics.Debug.WriteLine(e.ToString());
-                // assume true for user's convenience
-                return true;
             }
             finally
             {
@@ -119,11 +205,11 @@ namespace POLift.Service
         /// 
         /// </summary>
         /// <returns>True if user bought the license</returns>
-        public static async Task<bool> PromptToBuyLicense()
+        public async Task<bool> PromptToBuyLicense()
         {
             try
             {
-                CrossInAppBilling.Current.InTestingMode = true;
+                //CrossInAppBilling.Current.InTestingMode = true;
                 var connected = await CrossInAppBilling.Current.ConnectAsync();
                 if (!connected)
                 {
@@ -136,10 +222,14 @@ namespace POLift.Service
 
                 if (purchase != null)
                 {
+                    if (BackupPreferences != null)
+                    {
+                        BackupPreferences.Edit().PutBoolean(HasLicenseConfirmedKey, true).Apply();
+                    }
                     return true;
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 System.Diagnostics.Debug.WriteLine(e.ToString());
             }

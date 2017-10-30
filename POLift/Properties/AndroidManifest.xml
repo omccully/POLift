@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.cml.polift" android:versionCode="3" android:versionName="1.2" android:installLocation="auto">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.cml.polift" android:versionCode="6" android:versionName="1.6" android:installLocation="preferExternal">
 	<!-- com.cml.polift -->
-	<uses-sdk android:minSdkVersion="19" android:targetSdkVersion="25" />
+	<uses-sdk android:minSdkVersion="14" android:targetSdkVersion="24" />
 	<uses-permission android:name="android.permission.VIBRATE" />
 	<uses-permission android:name="com.android.vending.BILLING" />
 	<uses-permission android:name="android.permission.INTERNET" />
@@ -23,8 +23,5 @@
 	<activity android:name=".WarmupRoutineActivity" android:parentActivityName=".PerformRoutineActivity" android:launchMode="singleTask">
 		<meta-data android:name="android.support.PARENT_ACTIVITY" android:value=".PerformRoutineActivity" />
 	</activity>
-  
-  <activity android:name="com.google.android.gms.ads.AdActivity"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
-            android:theme="@android:style/Theme.Translucent" />
+	<activity android:name="com.google.android.gms.ads.AdActivity" android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize" android:theme="@android:style/Theme.Translucent" />
 </manifest>

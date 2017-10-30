@@ -202,7 +202,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="src\Activity\FullScreenAdActivity.cs" />
     <Compile Include="src\MainApplication.cs" />
     <Compile Include="src\Activity\EditRoutineResultActivity.cs" />
     <Compile Include="src\Activity\RoutineDetailsActivity.cs" />
@@ -248,7 +247,9 @@
     <Compile Include="src\Model\WarmupSet.cs" />
     <Compile Include="src\Service\AdListener\AdFailedToLoadEventArgs.cs" />
     <Compile Include="src\Service\AdListener\EventDrivenAdListener.cs" />
+    <Compile Include="src\Service\FailedToConnectToBillingException.cs" />
     <Compile Include="src\Service\Helpers.cs" />
+    <Compile Include="src\Service\Interfaces\ILicenseManager.cs" />
     <Compile Include="src\Service\Interfaces\IPlateMath.cs" />
     <Compile Include="src\Service\Interfaces\IPOLDatabase.cs" />
     <Compile Include="src\Service\PlateMath.cs" />
@@ -322,9 +323,6 @@
       <SubType>Designer</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\NeverShowAgainCheckBox.axml">
-      <SubType>Designer</SubType>
-    </AndroidResource>
-    <AndroidResource Include="Resources\layout\BannerAd.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>

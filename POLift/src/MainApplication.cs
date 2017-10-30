@@ -9,9 +9,12 @@ using Android.Runtime;
 using Android.Widget;
 using Android.Provider;
 using Android.Gms.Ads;
+using Android.Preferences;
 using Plugin.CurrentActivity;
 using Plugin.InAppBilling;
 using Plugin.InAppBilling.Abstractions;
+
+using Microsoft.Practices.Unity;
 
 
 namespace POLift
@@ -26,10 +29,12 @@ namespace POLift
 #endif
     public class MainApplication : Application, Application.IActivityLifecycleCallbacks
     {
+        Handler handler;
+        ILicenseManager license_manager;
+
         public MainApplication(IntPtr handle, JniHandleOwnership transer)
           :base(handle, transer)
         {
-
         }
 
         public override void OnCreate()
@@ -38,8 +43,24 @@ namespace POLift
             RegisterActivityLifecycleCallbacks(this);
             //A great place to initialize Xamarin.Insights and Dependency Services!
 
+            handler = new Handler(this.MainLooper);
+
+            C.DeviceID = Settings.Secure.GetString(
+                    ApplicationContext.ContentResolver,
+                    Settings.Secure.AndroidId);
+            license_manager = C.ontainer.Resolve<ILicenseManager>();
+
+
+            license_manager.BackupPreferences = 
+                PreferenceManager.GetDefaultSharedPreferences(this);
+
             string id = "pub-1015422455885077";
             MobileAds.Initialize(ApplicationContext, id);
+        }
+
+        void RunOnMainThread(Action action)
+        {
+            handler.Post(action);
         }
 
         async Task CheckLicense()
@@ -48,15 +69,11 @@ namespace POLift
             const int TimeWeek = 7 * TimeDay;
             const int WarningPeriod = 7 * TimeDay;
 
-            string device_id = Settings.Secure.GetString(
-                   ApplicationContext.ContentResolver,
-                   Settings.Secure.AndroidId);
-
-            bool has_license = await LicenseManager.CheckLicense();
+            bool has_license = await license_manager.CheckLicense();
             System.Diagnostics.Debug.WriteLine($"has_license = {has_license}");
             if (!has_license)
             {
-                int seconds_left_in_trial = await LicenseManager.SecondsRemainingInTrial(device_id);
+                int seconds_left_in_trial = await license_manager.SecondsRemainingInTrial();
                 bool is_in_trial = seconds_left_in_trial > 0;
 
                 System.Diagnostics.Debug.WriteLine
@@ -64,24 +81,27 @@ namespace POLift
 
                 if (!is_in_trial)
                 {
-                    bool bought = await LicenseManager.PromptToBuyLicense();
+                    bool bought = await license_manager.PromptToBuyLicense();
                     if(!bought)
                     {
-                        /*typeof(NoLicenseActivity)
-                        StartActivity(CrossCurrentActivity.Current.Activity,
-                            );*/
+                        RunOnMainThread(delegate
+                        {
+                            Toast.MakeText(CrossCurrentActivity.Current.Activity,
+                                Resource.String.consider_purchase, ToastLength.Long).Show();
+                        });
                     }
                     System.Diagnostics.Debug.WriteLine($"bought = {bought}");
                 }
                 else if(seconds_left_in_trial < WarningPeriod)
                 {
                     int days_left = seconds_left_in_trial / TimeDay;
-                    new Handler(this.MainLooper).Post(delegate
+                    RunOnMainThread(delegate
                     {
                         Toast.MakeText(CrossCurrentActivity.Current.Activity,
                             $"You have {days_left} days left in your free trial. ", 
                             ToastLength.Long).Show();
                     });
+                    System.Diagnostics.Debug.WriteLine($"You have {days_left} days left in your free trial. ");
                 }
             }
         }
@@ -101,9 +121,15 @@ namespace POLift
             {
                 seen_activity = true;
                 // first activity was created
-                CheckLicense();
+                try
+                {
+                    CheckLicense();
+                }
+                catch
+                {
+
+                }
             }
-           
         }
 
         public void OnActivityDestroyed(Activity activity)

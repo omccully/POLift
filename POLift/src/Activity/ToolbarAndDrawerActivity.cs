@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using System.Threading.Tasks;
 
 using Android.App;
 using Android.Content;
@@ -34,9 +35,10 @@ namespace POLift
     {
         DrawerLayout _DrawerLayout;
         ListView DrawerListView;
-        List<INavigation> Navigations;
+        NavigationAdapter _NavigationAdapter;
 
         protected IPOLDatabase Database;
+        protected ILicenseManager LicenseManager;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -46,6 +48,7 @@ namespace POLift
             SetContentView(Resource.Layout.Drawer);
 
             Database = C.ontainer.Resolve<IPOLDatabase>();
+            LicenseManager = C.ontainer.Resolve<ILicenseManager>();
 
             _DrawerLayout = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
             DrawerListView = FindViewById<ListView>(Resource.Id.left_drawer);
@@ -53,7 +56,7 @@ namespace POLift
 
             SetSupportActionBar(toolbar);
 
-            Navigations = new List<INavigation>()
+            List<INavigation> Navigations = new List<INavigation>()
             {
                 new Navigation("Select routine", SelectRoutine_Click,
                     Resource.Mipmap.ic_fitness_center_white_24dp),
@@ -73,17 +76,15 @@ namespace POLift
                 new Navigation("Import data from backup", RestoreData_Click,
                     Resource.Mipmap.ic_cloud_download_white_24dp)
 
-                    
                     /*,
                      * TODO: export data as text
                 new Navigation("Export data as text", ExportAsText_Click,
                     Resource.Mipmap.ic_backup_white_24dp)*/
             };
 
-            Navigations.Add(new Navigation("Purchase lifetime license",
-                PurchaseLicense_Click, Resource.Mipmap.ic_shopping_basket_white_24dp));
+            _NavigationAdapter = new NavigationAdapter(this, Navigations);
 
-            DrawerListView.Adapter = new NavigationAdapter(this, Navigations);
+            DrawerListView.Adapter = _NavigationAdapter;
 
             ActionBarDrawerToggle drawer_toggle = new ActionBarDrawerToggle(this, _DrawerLayout, toolbar,
                 Resource.String.drawer_opened,
@@ -93,6 +94,50 @@ namespace POLift
             _DrawerLayout.Post(() => drawer_toggle.SyncState());
 
             DrawerListView.ItemClick += DrawerListView_ItemClick;
+
+            AddPurchaseLicenseNavigationIfNotPurchased();
+        }
+
+        async Task AddPurchaseLicenseNavigationIfNotPurchased()
+        {
+            if (!(await LicenseManager.CheckLicense(false)))
+            {
+                // could hide this button until like 14 days are left
+
+                Navigation LicenseNavigation = 
+                    new Navigation("Purchase lifetime license",
+                    PurchaseLicense_Click, 
+                    Resource.Mipmap.ic_shopping_basket_white_24dp);
+
+                _NavigationAdapter.Navigations.Add(LicenseNavigation);
+
+                PutDaysLeftAtEndOfNavigation(LicenseNavigation);
+            }
+        }
+
+        async Task PutDaysLeftAtEndOfNavigation(Navigation navigation)
+        {
+            try
+            {
+                int sec_left = await LicenseManager.SecondsRemainingInTrial();
+                int days_left = Math.Abs(sec_left / 86400);
+                string plur = days_left == 1 ? "" : "s";
+
+                if (sec_left > 0)
+                {
+                    navigation.Text += $" ({days_left} day{plur} left)";
+                }
+                else
+                {
+                    navigation.Text += $" (expired {days_left} day{plur} ago)";
+                }
+
+                _NavigationAdapter.NotifyDataSetChanged();
+            }
+            catch
+            {
+
+            }
         }
 
         protected void RestoreLastFragment()
@@ -104,7 +149,9 @@ namespace POLift
 
         private void DrawerListView_ItemClick(object sender, AdapterView.ItemClickEventArgs e)
         {
-            Navigations[e.Position].OnClick();
+            _NavigationAdapter.Navigations[e.Position].OnClick();
+
+            //Navigations[e.Position].OnClick();
 
             _DrawerLayout.CloseDrawers();
         }
@@ -228,7 +275,7 @@ namespace POLift
                 Helpers.DisplayConfirmation(this, 
                     "Are you sure you want to import this file (" + 
                     Path.GetFileName(data.Data.Path) + ")? " + 
-                    "You may want to perform a backup of your current" +
+                    "You may want to perform a backup of your current " +
                     "data in case something unintended happens.", delegate
                     {
                         using (Stream read_stream = ContentResolver.OpenInputStream(data.Data))
@@ -243,6 +290,8 @@ namespace POLift
 
                         Database.ImportDatabase(imported);
                         File.Delete(ImportFilePath);
+
+                        SwitchToFragment(new MainFragment(), false);
                     });
             }
         }

@@ -12,6 +12,8 @@ using Android.Widget;
 using Android.Gms.Ads;
 using Android.Support.Compat;
 
+using Microsoft.Practices.Unity;
+
 namespace POLift
 {
     using Service;
@@ -46,6 +48,8 @@ namespace POLift
         protected Button ModifyRestOfRoutineButton;
 
         protected Button IMadeAMistakeButton;
+
+        protected ILicenseManager LicenseManager;
 
         protected IExercise CurrentExercise;
 
@@ -104,10 +108,20 @@ namespace POLift
             Add30SecButton.Click += Add30SecButton_Click;
             SkipTimerButton.Click += SkipTimerButton_Click;
 
+            LicenseManager = C.ontainer.Resolve<ILicenseManager>();
+
             if (LicenseManager.ShowAds)
             {
                 AdView ad_view = FindViewById<AdView>(Resource.Id.adView);
-                var adRequest = new AdRequest.Builder().Build();
+
+                ad_view.Visibility = ViewStates.Visible;
+                var adRequest = new AdRequest.Builder()
+#if DEBUG
+                    .AddTestDevice("9B7495553B1FEB2545BD24C542420C7F")
+#else
+#endif
+                    .Build();
+
                 ad_view.LoadAd(adRequest);
 
                 EventDrivenAdListener ad_listener = new EventDrivenAdListener();
@@ -116,14 +130,20 @@ namespace POLift
 
                 mInterstitialAd = new InterstitialAd(this);
                 mInterstitialAd.AdListener = ad_listener;
-                mInterstitialAd.AdUnitId = "ca-app-pub-1015422455885077/5168885337";
+
+#if DEBUG
+                mInterstitialAd.AdUnitId = Resources.GetString(Resource.String.interstitial_ad_unit_id_test);
+#else
+                mInterstitialAd.AdUnitId = Resources.GetString(Resource.String.interstitial_ad_unit_id);
+#endif
+
             }
         }
 
         private void Ad_listener_AdClosed(object sender, EventArgs e)
         {
-            Toast.MakeText(this, "Please consider purchasing a lifetime" +
-                " license to remove ads.", ToastLength.Long).Show();
+            Toast.MakeText(this, Resource.String.consider_purchase, 
+                ToastLength.Long).Show();
         }
 
         private void Ad_listener_AdLoaded(object sender, EventArgs e)

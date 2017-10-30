@@ -5,6 +5,8 @@
   <string name="drawer_closed">Drawer closed</string>
   <string name="banner_ad_unit_id">ca-app-pub-1015422455885077/4650188193</string>
   <string name="interstitial_ad_unit_id">ca-app-pub-1015422455885077/5168885337</string>
+  <string name="consider_purchase">Please consider purchasing a lifetime license to remove ads.</string>
+  <string name="banner_ad_unit_id_test">ca-app-pub-3940256099942544/6300978111</string>
+  <string name="interstitial_ad_unit_id_test">ca-app-pub-3940256099942544/1033173712</string>
 
- 
 </resources>
