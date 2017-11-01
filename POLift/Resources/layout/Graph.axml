@@ -4,24 +4,22 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-  <!-- The main content view -->
-  <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/graph_frame"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" />
-  <LinearLayout
-        android:orientation="vertical"
+<!-- The main content view -->
+    <FrameLayout
+        android:id="@+id/graph_frame"
         android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+    <ScrollView
+        android:layout_width="270dp"
         android:layout_height="match_parent"
+        android:background="#202020"
         android:layout_gravity="end">
-    <TextView 
-      android:id="@+id/GraphDataTextView"
-      android:layout_width="240dp"
-      android:layout_height="match_parent"
-      android:text="test!!!"
-      android:background="#202020"
-      android:paddingTop="10dip"
-      android:paddingLeft="10dip" />
-    
-  </LinearLayout>
+        <TextView
+            android:id="@+id/GraphDataTextView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text=""
+            android:paddingTop="10dip"
+            android:paddingLeft="10dip" />
+    </ScrollView>
 </android.support.v4.widget.DrawerLayout>

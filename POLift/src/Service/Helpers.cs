@@ -203,5 +203,10 @@ namespace POLift.Service
 
             return "0 seconds"; 
         }
+
+        public static string Plur(int num)
+        {
+            return num == 1 ? "" : "s";
+        }
     }
 }

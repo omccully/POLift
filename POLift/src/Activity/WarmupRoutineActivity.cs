@@ -191,6 +191,7 @@ namespace POLift
 
             if (WarmupFinished)
             {
+                SurpressTimerCallbackCleanup = true;
                 SetResult(Result.Ok);
                 Finish();
                 return;

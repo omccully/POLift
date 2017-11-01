@@ -11,31 +11,41 @@ namespace POLift.Service
         public delegate void TimerTickedCallback(int ticks_until_elapsed);
         public delegate void TimerElapsedCallback();
 
-        static Timer timer;
+        public static Timer timer;
         public static TimerTickedCallback TickedCallback;
         public static TimerElapsedCallback ElapsedCallback;
 
-        static object TicksRemainingLocker = new object();
+        // kill timer after 10 mins
+        public static int LowestTickRemaining = -600;
+
+        private static object TicksRemainingLocker = new object();
         volatile static int _TicksRemaining;
         public static int TicksRemaining
         {
             get
             {
+                int val;
                 lock (TicksRemainingLocker)
                 {
-                    return _TicksRemaining;
+                    System.Diagnostics.Debug.Write("n");
+                     val = _TicksRemaining;
+                    //return _TicksRemaining;
+                    System.Diagnostics.Debug.Write("x");
                 }
+                return val;
             }
             set
             {
                 lock (TicksRemainingLocker)
                 {
+                    System.Diagnostics.Debug.Write("t");
                     _TicksRemaining = value;
+                    System.Diagnostics.Debug.Write("i");
                 }
             }
         }
 
-        public static void StartTimer(double tick_time_ms, int ticks_until_elapsed, 
+        public static void StartTimer(double tick_time_ms, int ticks_until_elapsed,
             TimerTickedCallback ticked_cb, TimerElapsedCallback elapsed_cb)
         {
             StopTimer();
@@ -46,6 +56,7 @@ namespace POLift.Service
             StaticTimer.ElapsedCallback = elapsed_cb;
             timer.Elapsed += Timer_Elapsed;
             timer.Start();
+            System.Diagnostics.Debug.WriteLine($"StartTimer({tick_time_ms},{ticks_until_elapsed} ..)");
         }
 
         public static bool IsRunning
@@ -79,15 +90,13 @@ namespace POLift.Service
 
         public static void AddTicks(int ticks)
         {
-                TicksRemaining += ticks;
+            TicksRemaining += ticks;
         }
 
         public static void SubtractTicks(int ticks)
         {
-                TicksRemaining -= ticks;
+            TicksRemaining -= ticks;
         }
-
-        
 
         private static void Timer_Elapsed(object sender, ElapsedEventArgs e)
         {
@@ -95,14 +104,19 @@ namespace POLift.Service
             TicksRemaining--;
             int tue = TicksRemaining;
 
-            TickedCallback?.Invoke(tue);   
-            
-            if(tue == 0)
+            TickedCallback?.Invoke(tue);
+
+            if (tue == 0)
             {
                 // timer elapsed
                 ElapsedCallback?.Invoke();
 
                 //StopTimer();
+            }
+
+            if (tue < LowestTickRemaining)
+            {
+                StopTimer();
             }
         }
     }

@@ -74,6 +74,8 @@ namespace POLift
                 new Navigation("Backup data", BackupData_Click,
                     Resource.Mipmap.ic_backup_white_24dp),
                 new Navigation("Import data from backup", RestoreData_Click,
+                    Resource.Mipmap.ic_cloud_download_white_24dp),
+                new Navigation("Import routines and exercises only", ImportRoutinesAndExercises_Click,
                     Resource.Mipmap.ic_cloud_download_white_24dp)
 
                     /*,
@@ -89,7 +91,7 @@ namespace POLift
             ActionBarDrawerToggle drawer_toggle = new ActionBarDrawerToggle(this, _DrawerLayout, toolbar,
                 Resource.String.drawer_opened,
                  Resource.String.drawer_closed);
-
+            
             _DrawerLayout.SetDrawerListener(drawer_toggle);
             _DrawerLayout.Post(() => drawer_toggle.SyncState());
 
@@ -251,6 +253,18 @@ namespace POLift
 
         }
 
+        const int PickFileForRoutineAndExerciseImportCode = 543261;
+        private void ImportRoutinesAndExercises_Click(object sender, EventArgs e)
+        {
+            Intent intent = new Intent(Intent.ActionGetContent);
+            //intent.SetType("application/octet-stream");
+            intent.SetType("*/*");
+            //intent.PutExtra("CONTENT_TYPE", "*/*");
+            StartActivityForResult(intent, PickFileForRoutineAndExerciseImportCode);
+
+        }
+        
+
         private void PurchaseLicense_Click(object sender, EventArgs e)
         {
             PurchaseLicense();
@@ -263,37 +277,68 @@ namespace POLift
             System.Diagnostics.Debug.WriteLine($"bought = {bought}");
         }
 
-
         protected override void OnActivityResult(int requestCode, [GeneratedEnum] Result resultCode, Intent data)
+        {
+            base.OnActivityResult(requestCode, resultCode, data);
+
+            if(resultCode == Result.Ok)
+            { 
+                if(requestCode == PickFileRequestCode)
+                {
+                    Helpers.DisplayConfirmation(this,
+                       "Are you sure you want to import this file (" +
+                       Path.GetFileName(data.Data.Path) + ")? " +
+                       "You may want to perform a backup of your current " +
+                       "data in case something unintended happens.", delegate
+                       {
+                           ImportFromUri(data.Data);
+                       });
+                }
+                else if(requestCode == PickFileForRoutineAndExerciseImportCode)
+                {
+                    Helpers.DisplayConfirmation(this,
+                       "Are you sure you want to import the routines and exercises from this file (" +
+                       Path.GetFileName(data.Data.Path) + ")? " +
+                       "You may want to perform a backup of your current " +
+                       "data in case something unintended happens.", delegate
+                       {
+                           ImportFromUri(data.Data, false);
+                       });
+                } 
+            }
+        }
+
+        void ImportFromUri(Android.Net.Uri uri, bool full = true)
         {
             const string ImportFile = "database-import.db3";
             string ImportFilePath = Path.Combine(FilesDir.Path, ImportFile);
-            base.OnActivityResult(requestCode, resultCode, data);
 
-            if(resultCode == Result.Ok && requestCode == PickFileRequestCode)
-            { 
-                Helpers.DisplayConfirmation(this, 
-                    "Are you sure you want to import this file (" + 
-                    Path.GetFileName(data.Data.Path) + ")? " + 
-                    "You may want to perform a backup of your current " +
-                    "data in case something unintended happens.", delegate
-                    {
-                        using (Stream read_stream = ContentResolver.OpenInputStream(data.Data))
-                        {
-                            using (FileStream file_write_stream = File.Create(ImportFilePath))
-                            {
-                                read_stream.CopyTo(file_write_stream);
-                            }
-                        }
-
-                        POLDatabase imported = new POLDatabase(ImportFilePath);
-
-                        Database.ImportDatabase(imported);
-                        File.Delete(ImportFilePath);
-
-                        SwitchToFragment(new MainFragment(), false);
-                    });
+            using (Stream read_stream = ContentResolver.OpenInputStream(uri))
+            {
+                using (FileStream file_write_stream = File.Create(ImportFilePath))
+                {
+                    read_stream.CopyTo(file_write_stream);
+                }
             }
+
+            POLDatabase imported = new POLDatabase(ImportFilePath);
+
+            if(full)
+            {
+                Database.ImportDatabase(imported);
+            }
+            else
+            {
+                Database.ImportRoutinesAndExercises(imported);
+            }
+
+            try
+            {
+                File.Delete(ImportFilePath);
+            }
+            catch { }
+
+            SwitchToFragment(new MainFragment(), false);
         }
 
         public override bool OnCreateOptionsMenu(IMenu menu)
@@ -304,8 +349,15 @@ namespace POLift
 
         public override void OnBackPressed()
         {
-
-            base.OnBackPressed();
+            if (this._DrawerLayout.IsDrawerOpen((int)GravityFlags.Start))
+            {
+                this._DrawerLayout.CloseDrawer((int)GravityFlags.Start);
+            }
+            else
+            {
+                base.OnBackPressed();
+            }
+            
         }
     }
 }

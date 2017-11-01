@@ -18,16 +18,38 @@ namespace POLift.Service
 
         SQLiteConnection Connection;
 
+        const int CodeVersion = 1;
+        const string DatabaseVersionLookupKey = "DATABASE_VERSION";
+        public int DatabaseVersion
+        {
+            get
+            {
+                
+                ValueLookup value_lookup = Get<ValueLookup>(DatabaseVersionLookupKey);
+                return value_lookup.ValueInt;
+            }
+            set
+            {
+                ValueLookup value_lookup = new ValueLookup();
+                value_lookup.LookupKey = DatabaseVersionLookupKey;
+                value_lookup.ValueInt = value;
+                lock (Locker)
+                {
+                    Connection.InsertOrReplace(value_lookup);
+                }
+            }
+        }
+
         public POLDatabase(string file_path)
         {
             this.FilePath = file_path;
 
             Connection = new SQLiteConnection(file_path);
-
-            InitializeDatabase();
-            //ResetDatabase();
-
             
+            InitializeDatabase();
+           // System.Diagnostics.Debug.WriteLine("UPDATE Exercise SET ConsecutiveSetsForWeightIncrease=1 WHERE ConsecutiveSetsForWeightIncrease=0");
+            //Connection.Execute("UPDATE Exercise SET ConsecutiveSetsForWeightIncrease=1 WHERE ConsecutiveSetsForWeightIncrease=0");
+            //ResetDatabase();
         }
 
         public void ClearDatabase()
@@ -39,6 +61,7 @@ namespace POLift.Service
                 Connection.DropTable<ExerciseSets>();
                 Connection.DropTable<ExerciseResult>();
                 Connection.DropTable<RoutineResult>();
+                Connection.DropTable<ValueLookup>();
             }
         }
 
@@ -49,10 +72,41 @@ namespace POLift.Service
             CreateTableIfNotExists<ExerciseSets>();
             CreateTableIfNotExists<ExerciseResult>();
             CreateTableIfNotExists<RoutineResult>();
+            
+            int dab_version;
+            try
+            {
+                dab_version = DatabaseVersion;
+                System.Diagnostics.Debug.WriteLine("dab version " + dab_version);
+            }
+            catch(SQLiteException)
+            {
+                CreateTableIfNotExists<ValueLookup>();
+                System.Diagnostics.Debug.WriteLine("failed dab version");
+                //Connection.CreateTable<ValueLookup>();
+                dab_version = (DatabaseVersion = 0);
+                System.Diagnostics.Debug.WriteLine("failed dab version2");
+            }
+
+            if(dab_version == 0)
+            {
+                // first migration, for ConsecutiveSetsForWeightIncrease
+                lock (Locker)
+                {
+                    // SQLite may have added this column for us automatically
+                    TryExecute("ALTER TABLE Exercise ADD ConsecutiveSetsForWeightIncrease INT NOT NULL");
+                    Connection.Execute("DROP INDEX \"UniqueGroupExercise\"");
+                    Connection.Execute("CREATE UNIQUE INDEX \"UniqueGroupExercise\" on \"Exercise\"(\"Name\", \"MaxRepCount\", \"WeightIncrement\", \"RestPeriodSeconds\", \"ConsecutiveSetsForWeightIncrease\")");
+                    Connection.Execute("UPDATE Exercise SET ConsecutiveSetsForWeightIncrease=1");
+                }
+                DatabaseVersion = 1; // CodeVersion;
+                System.Diagnostics.Debug.WriteLine("DatabaseVersion = " + CodeVersion);
+            }
         }
 
         public void ApplyConstraints()
         {
+            throw new NotImplementedException();
             TryExecute("CREATE UNIQUE INDEX \"UniqueGroupExercise\" on \"Exercise\"(\"Name\", \"MaxRepCount\", \"WeightIncrement\", \"RestPeriodSeconds\")");
             TryExecute("CREATE UNIQUE INDEX \"UniqueGroupExerciseSets\" on \"ExerciseSets\"(\"SetCount\", \"ExerciseID\")");
             TryExecute("CREATE UNIQUE INDEX \"UniqueGroupRoutine\" on \"Routine\"(\"Name\", \"ExerciseSetIDs\")");
@@ -80,7 +134,7 @@ namespace POLift.Service
             {
                 lock (Locker)
                 {
-                    Connection.Execute("CREATE UNIQUE INDEX \"UniqueGroupExercise\" on \"Exercise\"(\"Name\", \"MaxRepCount\", \"WeightIncrement\", \"RestPeriodSeconds\")");
+                    Connection.Execute(s);
                 }
             }
             catch(Exception e)
@@ -97,9 +151,9 @@ namespace POLift.Service
                     Connection.CreateTable<T>();
                 }
             }
-            catch (SQLiteException)
+            catch (SQLiteException e)
             {
-
+                System.Diagnostics.Debug.WriteLine(typeof(T) + " " + e.ToString());
             }
         }
 
@@ -263,6 +317,15 @@ namespace POLift.Service
             }
         }
 
+        public T Get<T>(object objp) where T : new()
+        {
+            lock (Locker)
+            {
+                T obj = Connection.Get<T>(objp);
+                return obj;
+            }
+        }
+
         public T ReadByID<T>(int ID) where T : IDatabaseObject, new()
         {
              
@@ -300,6 +363,20 @@ namespace POLift.Service
                     return 0;
                 }
             }).Where(e => e != 0));
+        }
+
+        public void ImportRoutinesAndExercises(IPOLDatabase other_database)
+        {
+            // lookup for old to new IDs
+            Dictionary<int, int> ExerciseLookup =
+                Exercise.Import(other_database.Table<Exercise>(), this);
+
+            Dictionary<int, int> ExerciseSetsLookup = ExerciseSets.Import(
+                other_database.Table<ExerciseSets>(), this, ExerciseLookup);
+
+            Dictionary<int, int> RoutineLookup = Routine.Import(
+                other_database.Table<Routine>().Where(r => !r.Deleted), 
+                this, ExerciseSetsLookup);
         }
 
         public void ImportDatabase(IPOLDatabase other_database)

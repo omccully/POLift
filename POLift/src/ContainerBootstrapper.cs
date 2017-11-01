@@ -43,10 +43,18 @@ namespace POLift
 
         static C()
         {
-            ontainer = new UnityContainer();
-
-            ontainer.RegisterInstance<IPOLDatabase>(
+            try
+            {
+                ontainer = new UnityContainer();
+            
+                ontainer.RegisterInstance<IPOLDatabase>(
                 new POLDatabase(C.DatabasePath));
+            }
+            catch(Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine(e.ToString());
+                throw e;
+            }
         }
     }
 }

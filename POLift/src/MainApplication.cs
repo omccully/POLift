@@ -35,10 +35,12 @@ namespace POLift
         public MainApplication(IntPtr handle, JniHandleOwnership transer)
           :base(handle, transer)
         {
+            System.Diagnostics.Debug.WriteLine("MainApplication(IntPtr handle, JniHandleOwnership transer)");
         }
 
         public override void OnCreate()
         {
+            System.Diagnostics.Debug.WriteLine("OnCreate()");
             base.OnCreate();
             RegisterActivityLifecycleCallbacks(this);
             //A great place to initialize Xamarin.Insights and Dependency Services!
@@ -56,6 +58,7 @@ namespace POLift
 
             string id = "pub-1015422455885077";
             MobileAds.Initialize(ApplicationContext, id);
+            System.Diagnostics.Debug.WriteLine("OnCreate()end");
         }
 
         void RunOnMainThread(Action action)

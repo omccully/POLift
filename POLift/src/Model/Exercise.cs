@@ -93,6 +93,24 @@ namespace POLift.Model
             }
         }
 
+        
+        int _ConsecutiveSetsForWeightIncrease;
+        [Indexed(Name = "UniqueGroupExercise", Order = 5, Unique = true)]
+        public int ConsecutiveSetsForWeightIncrease
+        {
+            get
+            {
+                //if (_ConsecutiveSetsForWeightIncrease == 0) return 1;
+                return _ConsecutiveSetsForWeightIncrease;
+            }
+            set
+            {
+                //if (value == 0) _ConsecutiveSetsForWeightIncrease = 1;
+                //else 
+                _ConsecutiveSetsForWeightIncrease = value; 
+            }
+        }
+
         public bool Deleted { get; set; } = false;
 
         public int PlateMathID
@@ -168,7 +186,22 @@ namespace POLift.Model
             {
                 StringBuilder sb = new StringBuilder();
                 sb.AppendLine(Name);
-                sb.Append($"up to {MaxRepCount} reps, {RestPeriodSeconds} second rest");
+                sb.Append($"{MaxRepCount} reps");
+                if(ConsecutiveSetsForWeightIncrease != 0)
+                {
+                    if(ConsecutiveSetsForWeightIncrease > 1)
+                    {
+                        sb.Append($" for {ConsecutiveSetsForWeightIncrease} sets in a row");
+                    }
+
+                    sb.Append(" to advance");
+                }
+                else
+                {
+                    sb.Append(", manual progression");
+                }
+
+                sb.Append($", {RestPeriodSeconds} sec rest");
                 return sb.ToString();
             }
         }
@@ -178,32 +211,67 @@ namespace POLift.Model
         {
             get
             {
-                ExerciseResult most_recent_result = 
-                    ExerciseResult.MostRecentResultOf(Database, this);
+                IEnumerable<ExerciseResult> eresults =
+                    ExerciseResult.LastNOfExercise(Database, this,
+                    ConsecutiveSetsForWeightIncrease);
+
+                ExerciseResult most_recent_result = eresults.ElementAtOrDefault(0);
                 if (most_recent_result == null)
                 {
-                    if(PlateMath != null)
+                    if(PlateMath != null && PlateMath.BarWeight != 0)
                     {
-                        if(PlateMath.BarWeight != 0)
-                        {
-                            return PlateMath.BarWeight;
-                        }
-                        
+                        return PlateMath.BarWeight;
                     }
                     return WeightIncrement;
                 }
 
-                int weight = most_recent_result.Weight;
+                int most_recent_weight = most_recent_result.Weight;
 
-                if(most_recent_result.RepCount >= MaxRepCount)
+                if (ConsecutiveSetsForWeightIncrease == 1)
                 {
-                    weight += WeightIncrement;
+                    if (most_recent_result.RepCount >= MaxRepCount)
+                    {
+                        return most_recent_weight + WeightIncrement;
+                    }
                 }
-
-                return weight;
+                else if (ConsecutiveSetsForWeightIncrease > 1 &&
+                    eresults.Count() == ConsecutiveSetsForWeightIncrease &&
+                    eresults.All(er => er.RepCount >= MaxRepCount) &&
+                    eresults.All(er => er.Weight >= most_recent_weight))
+                {
+                    return most_recent_weight + WeightIncrement;
+                }
+                
+                return most_recent_weight;
             }
         }
 
+        public int SucceedsInARow(int check_count = 0)
+        {
+            if (check_count == 0) check_count = ConsecutiveSetsForWeightIncrease;
+
+            IEnumerable<ExerciseResult> eresults =
+                    ExerciseResult.LastNOfExercise(Database, this,
+                    check_count);
+            if (eresults.Count() == 0) return 0;
+
+            int most_recent_weight = eresults.ElementAt(0).Weight;
+
+            int count = 0;
+            foreach(ExerciseResult exr in eresults)
+            {
+                if(exr.IsSuccess(most_recent_weight, this))
+                {
+                    count++;
+                }
+                else
+                {
+                    return count;   
+                }
+            }
+
+            return count;
+        }
 
         public override bool Equals(object obj)
         {

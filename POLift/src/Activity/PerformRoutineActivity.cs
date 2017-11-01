@@ -23,6 +23,7 @@ namespace POLift
     public class PerformRoutineActivity : PerformRoutineBaseActivity
     {
         const int WarmUpRoutineRequestCode = 100;
+        const int EditRoutineResultRequestCode = 991234;
 
         IRoutine Routine;
 
@@ -143,6 +144,8 @@ namespace POLift
             RefreshGUI();
         }
 
+        
+
         private void IMadeAMistakeButton_Click(object sender, EventArgs e)
         {
             if (_RoutineResult == null)
@@ -160,7 +163,7 @@ namespace POLift
 
             Intent intent = new Intent(this, typeof(EditRoutineResultActivity));
             intent.PutExtra("routine_result_id", _RoutineResult.ID);
-            StartActivity(intent);
+            StartActivityForResult(intent, EditRoutineResultRequestCode);
         }
 
         const int ModifyRestOfRoutineResultCode = 6000;
@@ -192,7 +195,7 @@ namespace POLift
 
             if(resultCode == Result.Ok)
             {
-                if(requestCode == WarmUpRoutineRequestCode)
+                if (requestCode == WarmUpRoutineRequestCode)
                 {
                     if (CurrentExercise != null)
                     {
@@ -200,7 +203,7 @@ namespace POLift
                         StartRestPeriod();
                     }
                 }
-                else if(requestCode == ModifyRestOfRoutineResultCode)
+                else if (requestCode == ModifyRestOfRoutineResultCode)
                 {
                     int id = data.GetIntExtra("routine_id", -1);
                     if (id == -1) return;
@@ -208,7 +211,7 @@ namespace POLift
 
                     if (Routine == new_routine) return;
 
-                    if(_RoutineResult.ResultCount == 0)
+                    if (_RoutineResult.ResultCount == 0)
                     {
                         // routine wasn't started
                         _RoutineResult = new RoutineResult(new_routine, Database);
@@ -222,11 +225,15 @@ namespace POLift
 
                         Database.Insert((RoutineResult)_RoutineResult);
                     }
-                    
+
                     // CreateRoutineActivity removes old routine
-                    Routine = new_routine; 
+                    Routine = new_routine;
 
                     GetNextExerciseAndWeight();
+                }
+                else if(requestCode == EditRoutineResultRequestCode)
+                {
+                    RefreshRoutineDetails();
                 }
             }
         }
@@ -274,9 +281,36 @@ namespace POLift
             // just in case the app crashes or something
             Database.InsertOrUpdateByID(_RoutineResult);
 
-            if(reps >= CurrentExercise.MaxRepCount)
+
+            // TODO: make this say shit like: "nice! You've met your rep goal
+            // for ___ sets in a row. You just need 1 more!"
+
+            // TODO: break up NextWeight into a method that gives you
+            // how many sets in a row you've succeeded at. 
+            // 
+
+            //if(reps >= CurrentExercise.MaxRepCount)
+            if(CurrentExercise.NextWeight > weight)
             {
                 Toast.MakeText(this, "Weight increase!", ToastLength.Long).Show();
+            } 
+            else 
+            {
+                
+                int needed_succeeds_in_a_row = CurrentExercise.ConsecutiveSetsForWeightIncrease;
+                if(needed_succeeds_in_a_row > 1)
+                {
+                    int succeeds_in_a_row = CurrentExercise.SucceedsInARow();
+                    string plur = succeeds_in_a_row > 1 ? "s" : "";
+
+                    int needed_left = needed_succeeds_in_a_row - succeeds_in_a_row;
+
+                    Toast.MakeText(this, "Nice! You met your rep goal for " +
+                        $"{succeeds_in_a_row} set{plur} in a row. " + 
+                        $"You need {needed_left} more in a row to advance to the next weight", 
+                        ToastLength.Long).Show();
+                }
+
             }
 
             if (_RoutineResult.Completed)

@@ -264,11 +264,24 @@ namespace POLift.Model
         {
             get
             {
+                TimeSpan time_since_last_exr = (DateTime.Now - this.EndTime);
+
+                // for some reason this.EndTime is DateTime.MinValue sometimes
+                bool IsRecent =
+                    (this.EndTime == null ||
+                    time_since_last_exr < TimeSpan.FromDays(1) ||
+                    this.EndTime == DateTime.MinValue);
+
+                System.Diagnostics.Debug.WriteLine($"time_since_last_exr={time_since_last_exr}");
+                System.Diagnostics.Debug.WriteLine($"this.EndTime={this.EndTime}");
+                System.Diagnostics.Debug.WriteLine($"IsRecent={IsRecent}");
+
                 StringBuilder builder = new StringBuilder();
                 IExercise last_exercise = null;
                 IExercise[] exercises = this.Exercises;
                 for(int i = 0; i < exercises.Length; i++)
                 {
+                    bool first_set_of_exercise = false;
                     if(exercises[i].Equals(last_exercise))
                     {
                         builder.Append(", ");
@@ -280,15 +293,25 @@ namespace POLift.Model
                             builder.AppendLine();
                         }
                         builder.Append(exercises[i].Name + " ");
+                        first_set_of_exercise = true;
                     }
 
                     if(i < ResultCount)
                     {
                         IExerciseResult exr = ExerciseResults[i];
                         builder.Append($"{exr.Weight}x{exr.RepCount}");
-                    }else
+                    }
+                    else
                     {
-                        builder.Append("___");
+                        System.Diagnostics.Debug.WriteLine($"first_set_of_exercise={first_set_of_exercise}");
+                        if (first_set_of_exercise && IsRecent)
+                        {
+                            builder.Append(exercises[i].NextWeight + "x__");
+                        }
+                        else
+                        {
+                            builder.Append("___");
+                        }
                     }
                     
 

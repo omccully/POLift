@@ -49,6 +49,8 @@ namespace POLift
 
         protected Button IMadeAMistakeButton;
 
+        protected LinearLayout PerformRoutineMainContent;
+
         protected ILicenseManager LicenseManager;
 
         protected IExercise CurrentExercise;
@@ -82,6 +84,8 @@ namespace POLift
 
             SetContentView(Resource.Layout.PerformRoutine);
 
+            PerformRoutineMainContent = FindViewById<LinearLayout>(
+                Resource.Id.PerformRoutineMainContent);
             RoutineDetails = FindViewById<TextView>(Resource.Id.RoutineDetails);
             NextExerciseView = FindViewById<TextView>(Resource.Id.NextExerciseView);
             ReportResultButton = FindViewById<Button>(Resource.Id.ReportResultButton);
@@ -97,6 +101,14 @@ namespace POLift
             ModifyRestOfRoutineButton = FindViewById<Button>(Resource.Id.ModifyRestOfRoutineButton);
             NextWarmupView = FindViewById<TextView>(Resource.Id.NextWarmupView);
             IMadeAMistakeButton = FindViewById<Button>(Resource.Id.IMadeAMistakeButton);
+
+#if DEBUG
+            Button debug = new Button(this);
+            debug.Text = "debug";
+            debug.Click += Debug_Click;
+
+            PerformRoutineMainContent.AddView(debug);
+#endif
 
             RestoreTimerState(savedInstanceState);
 
@@ -136,8 +148,16 @@ namespace POLift
 #else
                 mInterstitialAd.AdUnitId = Resources.GetString(Resource.String.interstitial_ad_unit_id);
 #endif
-
             }
+        }
+
+        private void Debug_Click(object sender, EventArgs e)
+        {
+            StaticTimer.TimerTickedCallback ticked = StaticTimer.TickedCallback;
+            StaticTimer.TimerElapsedCallback elapsed = StaticTimer.ElapsedCallback;
+            System.Timers.Timer timer = StaticTimer.timer;
+
+            int i = 0;
         }
 
         private void Ad_listener_AdClosed(object sender, EventArgs e)
@@ -251,8 +271,8 @@ namespace POLift
             if (!StaticTimer.IsRunning) return;
 
             UpdateGUIByTimerState();
-
-            StaticTimer.TickedCallback += Timer_Ticked;
+            
+            StaticTimer.TickedCallback = Timer_Ticked;
             StaticTimer.ElapsedCallback = Timer_Elapsed;
 
             int intent_rpsr = Intent.GetIntExtra(RestPeriodSecondsRemainingKey, -1);
@@ -496,7 +516,20 @@ namespace POLift
         protected virtual void BuildArtificialTaskStack(TaskStackBuilder stackBuilder)
         {
             Intent main_intent = new Intent(this, typeof(MainActivity));
+        }
 
+        protected bool SurpressTimerCallbackCleanup = false;
+        protected override void OnDestroy()
+        {
+            // remove references to methods in this object
+            // if it's going to be deleted
+            if(!SurpressTimerCallbackCleanup)
+            {
+                StaticTimer.TickedCallback = null;
+                StaticTimer.ElapsedCallback = null;
+            }
+           
+            base.OnDestroy();
         }
     }
 }

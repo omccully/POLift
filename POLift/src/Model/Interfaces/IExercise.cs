@@ -17,6 +17,8 @@ namespace POLift.Model
 
         int RestPeriodSeconds { get; set; }
 
+        int ConsecutiveSetsForWeightIncrease { get; set; }
+
         int PlateMathID { get; set; }
 
         string Category { get; set; }
@@ -26,5 +28,7 @@ namespace POLift.Model
         string ShortDetails { get; }
 
         int NextWeight { get; }
+
+        int SucceedsInARow(int check_count = 0);
     }
 }

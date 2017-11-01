@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/ExerciseNameText" />
     <TextView
-        android:text="Max reps"
+        android:text="Rep count to trigger weight increase"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -24,6 +24,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/RepRangeMaxText" />
+    <TextView
+        android:text="Consecutive sets for weight increase"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView3" />
+    <EditText
+        android:inputType="number"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/ConsecutiveSetsForWeightIncrease" />
     <TextView
         android:text="Rest period (seconds)"
         android:textAppearance="?android:attr/textAppearanceMedium"
@@ -36,7 +47,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/RestPeriodSecondsTextBox" />
     <TextView
-        android:text="Weight increment"
+        android:text="Weight increase amount"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -61,4 +72,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/CreateExerciseButton" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/ExerciseDetailsTextView" />
 </LinearLayout>

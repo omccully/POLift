@@ -45,6 +45,8 @@ namespace POLift.Service
 
         IEnumerable<T> ParseIDString<T>(string IDs) where T : class, IDatabaseObject, new();
 
+        void ImportRoutinesAndExercises(IPOLDatabase other_database);
+
         void ImportDatabase(IPOLDatabase other_database);
 
         void PruneByConstaints();

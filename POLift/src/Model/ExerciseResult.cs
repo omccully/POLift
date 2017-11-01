@@ -88,7 +88,16 @@ namespace POLift.Model
 
         }
 
-        public static ExerciseResult MostRecentResultOf(IPOLDatabase database, Exercise exercise)
+        public static IEnumerable<ExerciseResult> LastNOfExercise(
+            IPOLDatabase database, IExercise exercise, int count)
+        {
+            return database.Table<ExerciseResult>()
+                .Where(er => er.ExerciseID == exercise.ID)
+                .OrderByDescending(er => er.Time)
+                .Take(count);
+        }
+
+        public static ExerciseResult MostRecentResultOf(IPOLDatabase database, IExercise exercise)
         {
             try
             {
@@ -100,7 +109,17 @@ namespace POLift.Model
             {
                 return null;
             }
-            
+        }
+
+        public bool IsSuccess(int most_recent_weight, IExercise this_exercise=null)
+        {
+            if(this_exercise == null)
+            {
+                this_exercise = this.Exercise;
+            }
+                
+            return this.RepCount >= this_exercise.MaxRepCount &&
+                this.Weight >= most_recent_weight;
         }
 
         public override string ToString()
