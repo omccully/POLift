@@ -100,14 +100,11 @@ namespace POLift.Model
         {
             get
             {
-                //if (_ConsecutiveSetsForWeightIncrease == 0) return 1;
-                return _ConsecutiveSetsForWeightIncrease;
+                return Math.Max(0, _ConsecutiveSetsForWeightIncrease);
             }
             set
             {
-                //if (value == 0) _ConsecutiveSetsForWeightIncrease = 1;
-                //else 
-                _ConsecutiveSetsForWeightIncrease = value; 
+                value = Math.Max(0, value);
             }
         }
 

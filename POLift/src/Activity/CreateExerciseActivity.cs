@@ -50,6 +50,7 @@ namespace POLift
 
             SelectMathTypeSpinner.Adapter = new PlateMathTypeAdapter(this, PlateMath.PlateMathTypes);
 
+            ExerciseNameText.TextChanged += ExerciseParameter_TextChanged;
             RepRangeMaxText.TextChanged += ExerciseParameter_TextChanged;
             RestPeriodSecondsText.TextChanged += ExerciseParameter_TextChanged;
             WeightIncrementText.TextChanged += ExerciseParameter_TextChanged;
@@ -95,21 +96,43 @@ namespace POLift
             // as you can for each set. If you get <max reps> reps,
             // you will increase the weight by <weight increment>
 
+            int cs = -1;
+            bool cs_success = Int32.TryParse(ConsecutiveSetsForWeightIncrease.Text, out cs);
+
             StringBuilder builder = new StringBuilder();
-            builder.Append("Explanation of your input: You will try to get as many reps of ")
+
+            builder.Append("Explanation of your input: ");
+
+            if (!cs_success || cs >= 1)
+            {
+                builder.Append("You will try to get as many reps of ")
                 .Append(EnsureString(ExerciseNameText.Text, "<exercise name>"))
                 .Append(" as you can for each set. If you get ")
-                .Append(EnsureInt(RepRangeMaxText.Text, "<max reps>"))
-                .Append(" reps")
+                .Append(EnsureInt(RepRangeMaxText.Text, "<reps>"))
+                .Append(" reps");
 
-                // if in the future I want to hide this when CSFWI is 0 or 1
-                .Append(" for ")
-                .Append(EnsureInt(ConsecutiveSetsForWeightIncrease.Text, "<consecutive sets>"))
-                .Append(" sets in a row")
+                if(cs > 1)
+                {
+                    builder.Append(" for ")
+                        .Append(EnsureInt(ConsecutiveSetsForWeightIncrease.Text, "<consecutive sets>"))
+                        .Append(" sets in a row");
+                }
 
-                .Append(", you will increase the weight by ")
-                .Append(EnsureInt(WeightIncrementText.Text, "<weight increment>"))
-                .Append(" for your next set. You will rest for ")
+                builder.Append(", you will increase the weight by ")
+                   .Append(EnsureInt(WeightIncrementText.Text, "<weight increment>"))
+                   .Append(" for your next set. ");
+            }
+            else if(cs == 0)
+            {
+                builder.Append("You will try to get ")
+                    .Append(EnsureInt(RepRangeMaxText.Text, "<reps>"))
+                    .Append(" reps for each set. You will increase the weight manually ")
+                    .Append("(it's normally recommended to let the app increase weight automatically")
+                    .Append(" using setting \"consecutive sets\" to a number greater than 0). ");
+            }
+
+
+           builder.Append("You will rest for ")
                 .Append(EnsureInt(RestPeriodSecondsText.Text, "<rest period seconds>"))
                 .Append(" seconds in between sets.");
 
