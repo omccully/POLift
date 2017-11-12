@@ -97,6 +97,7 @@ namespace POLift.Adapter
                 };
             }
 
+            System.Diagnostics.Debug.WriteLine($"pos = {position} locked = {locked_sets}, {es}");
             if (position < locked_sets)
             {
                 holder.TextBox.Enabled = false;

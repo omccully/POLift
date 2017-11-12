@@ -215,6 +215,7 @@ namespace POLift
             editor.PutString("create_exercise_weight_increment", WeightIncrementText.Text);
             editor.PutString("create_exercise_rest_period_seconds", RestPeriodSecondsText.Text);
             editor.PutString("consecutive_sets_for_weight_increase", ConsecutiveSetsForWeightIncrease.Text);
+            editor.PutBoolean("exercise_created_since_last_difficulty_regeneration", true);
             editor.Apply();
         }
 

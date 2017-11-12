@@ -10,6 +10,7 @@ using Android.Runtime;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using Android.Preferences;
 
 using OxyPlot;
 using OxyPlot.Axes;
@@ -25,14 +26,14 @@ namespace POLift
 
     public class GraphFragment : Fragment
     {
-        const int SelectExerciseRequestCode = 0;
+        const int SelectExerciseDifficultyRequestCode = 0;
 
         PlotView plot_view;
         TextView GraphDataTextView;
 
         IPOLDatabase Database;
 
-        int ExerciseID = 0;
+        int ExerciseDifficultyID = 0;
 
         public override void OnCreate(Bundle savedInstanceState)
         {
@@ -41,25 +42,36 @@ namespace POLift
             // Create your fragment here
             Database = C.ontainer.Resolve<IPOLDatabase>();
 
+            ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(this.Activity);
+
+            if(prefs.GetBoolean("exercise_created_since_last_difficulty_regeneration", true))
+            {
+                ExerciseDifficulty.Regenerate(Database);
+
+                ISharedPreferencesEditor editor = prefs.Edit();
+                editor.PutBoolean("exercise_created_since_last_difficulty_regeneration", false);
+                editor.Apply();
+            }
+
             plot_view = new PlotView(this.Activity);
             plot_view.Background = Resources.GetDrawable(
                 Resource.Color.white);
 
-            ExerciseID = (savedInstanceState == null ? 0 : 
-                savedInstanceState.GetInt("exercise_id"));
+            ExerciseDifficultyID = (savedInstanceState == null ? 0 :
+                savedInstanceState.GetInt("exercise_difficulty_id"));
 
-            if (ExerciseID == 0)
+            if (ExerciseDifficultyID == 0)
             {
-                Intent result_intent = new Intent(this.Activity, typeof(SelectExerciseActivity));
-                StartActivityForResult(result_intent, SelectExerciseRequestCode);
+                Intent result_intent = new Intent(this.Activity, typeof(SelectExerciseDifficultyActivity));
+                StartActivityForResult(result_intent, SelectExerciseDifficultyRequestCode);
             }
         }
 
         public override void OnSaveInstanceState(Bundle outState)
         {
-            if (ExerciseID != 0)
+            if (ExerciseDifficultyID != 0)
             {
-                outState.PutInt("exercise_id", ExerciseID);
+                outState.PutInt("exercise_difficulty_id", ExerciseDifficultyID);
             }
 
             base.OnSaveInstanceState(outState);
@@ -75,7 +87,7 @@ namespace POLift
             frame_layout = result.FindViewById<FrameLayout>(Resource.Id.graph_frame);
             GraphDataTextView = result.FindViewById<TextView>(Resource.Id.GraphDataTextView);
 
-            InitializePlot(ExerciseID);
+            InitializePlot(ExerciseDifficultyID);
 
             return result;
         }
@@ -84,26 +96,26 @@ namespace POLift
         {
             base.OnActivityResult(requestCode, resultCode, data);
 
-            if (resultCode == Result.Ok && requestCode == SelectExerciseRequestCode)
+            if (resultCode == Result.Ok && requestCode == SelectExerciseDifficultyRequestCode)
             {
-                int exercise_id = data.Extras.GetInt("exercise_id");
+                int exercise_difficulty_id = data.Extras.GetInt("exercise_difficulty_id");
 
-                if (exercise_id > 0)
+                if (exercise_difficulty_id > 0)
                 {
-                    ExerciseID = exercise_id;
-                    InitializePlot(ExerciseID);
+                    ExerciseDifficultyID = exercise_difficulty_id;
+                    InitializePlot(ExerciseDifficultyID);
                     // OnCreateView should be called after OnActivityResult
                     // thus creating the correct view based on ExerciseID
                 }
             }
         }
 
-        void InitializePlot(int exercise_id)
+        void InitializePlot(int exercise_difficulty_id)
         {
-            if (exercise_id > 0 && frame_layout != null)
+            if (exercise_difficulty_id > 0 && frame_layout != null)
             {
-                Exercise ex = Database.ReadByID<Exercise>(exercise_id);
-                IEnumerable<ExerciseResult> data = GetPlotData(exercise_id);
+                ExerciseDifficulty ex = Database.ReadByID<ExerciseDifficulty>(exercise_difficulty_id);
+                IEnumerable<ExerciseResult> data = GetPlotData(exercise_difficulty_id);
                 plot_view.Model = CreatePlotModel(ex, data);
                 frame_layout.RemoveAllViews();
                 frame_layout.AddView(plot_view);
@@ -134,14 +146,27 @@ namespace POLift
         }
 
 
-        IEnumerable<ExerciseResult> GetPlotData(int exercise_id)
+        IEnumerable<ExerciseResult> GetPlotData(int exercise_difficulty_id)
         {
+            return GetPlotData(Database.ReadByID<ExerciseDifficulty>(exercise_difficulty_id));
+        }
+
+        IEnumerable<ExerciseResult> GetPlotData(IExerciseDifficulty exercise_difficulty)
+        {
+            return GetPlotData(exercise_difficulty.ExerciseIDs.ToIDIntegers());
+        }
+
+        IEnumerable<ExerciseResult> GetPlotData(IEnumerable<int> exercise_ids)
+        {
+            // TODO: SQL builder for SQL OR operations for ExerciseID = __ OR ...
+
             return Database.Table<ExerciseResult>()
-                .Where(ex_result => ex_result.ExerciseID == exercise_id && !ex_result.Deleted)
+                .Where(ex_result => exercise_ids.Contains(ex_result.ExerciseID) && !ex_result.Deleted)
                 .OrderBy(ex_result => ex_result.Time);
         }
 
-        PlotModel CreatePlotModel(IExercise exercise, 
+
+        PlotModel CreatePlotModel(IExerciseDifficulty exercise, 
             IEnumerable<ExerciseResult> exercise_results)
         {
             var plotModel = new PlotModel { Title = $"{exercise.Name} one-rep max" };
@@ -161,8 +186,11 @@ namespace POLift
             
             if (exercise_results.Count() > 1)
             {
-                date_axis.AbsoluteMinimum = DateTimeAxis.ToDouble(exercise_results.First().Time);
-                date_axis.AbsoluteMaximum = DateTimeAxis.ToDouble(exercise_results.Last().Time);
+                DateTime min_date = exercise_results.First().Time;
+                date_axis.AbsoluteMinimum = DateTimeAxis.ToDouble(min_date);
+
+                DateTime max_date = exercise_results.Last().Time;
+                date_axis.AbsoluteMaximum = DateTimeAxis.ToDouble(max_date);
 
                 AddExerciseResultsToSeries(series1, exercise_results);
             }

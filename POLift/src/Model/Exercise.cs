@@ -104,7 +104,7 @@ namespace POLift.Model
             }
             set
             {
-                value = Math.Max(0, value);
+                _ConsecutiveSetsForWeightIncrease = Math.Max(0, value);
             }
         }
 
@@ -125,7 +125,6 @@ namespace POLift.Model
         }
 
         string _Category;
-
         public string Category
         {
             get
@@ -184,7 +183,7 @@ namespace POLift.Model
                 StringBuilder sb = new StringBuilder();
                 sb.AppendLine(Name);
                 sb.Append($"{MaxRepCount} reps");
-                if(ConsecutiveSetsForWeightIncrease != 0)
+                if (ConsecutiveSetsForWeightIncrease != 0)
                 {
                     if(ConsecutiveSetsForWeightIncrease > 1)
                     {
@@ -212,7 +211,7 @@ namespace POLift.Model
                     ExerciseResult.LastNOfExercise(Database, this,
                     ConsecutiveSetsForWeightIncrease);
 
-                ExerciseResult most_recent_result = eresults.ElementAtOrDefault(0);
+                ExerciseResult most_recent_result = eresults.FirstOrDefault();
                 if (most_recent_result == null)
                 {
                     if(PlateMath != null && PlateMath.BarWeight != 0)
@@ -268,6 +267,17 @@ namespace POLift.Model
             }
 
             return count;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns>null if no ExerciseDifficulty in the db</returns>
+        public ExerciseDifficulty GetDifficultyRecord()
+        {
+            return Database.Query<ExerciseDifficulty>(
+                "SELECT * FROM ExerciseDifficulty WHERE Name = ? AND RestPeriodSeconds = ?",
+                Name, RestPeriodSeconds).FirstOrDefault();
         }
 
         public override bool Equals(object obj)

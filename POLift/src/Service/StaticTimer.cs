@@ -27,10 +27,10 @@ namespace POLift.Service
                 int val;
                 lock (TicksRemainingLocker)
                 {
-                    System.Diagnostics.Debug.Write("n");
+                    //System.Diagnostics.Debug.Write("n");
                      val = _TicksRemaining;
                     //return _TicksRemaining;
-                    System.Diagnostics.Debug.Write("x");
+                   // System.Diagnostics.Debug.Write("x");
                 }
                 return val;
             }
@@ -38,9 +38,9 @@ namespace POLift.Service
             {
                 lock (TicksRemainingLocker)
                 {
-                    System.Diagnostics.Debug.Write("t");
+                    //System.Diagnostics.Debug.Write("t");
                     _TicksRemaining = value;
-                    System.Diagnostics.Debug.Write("i");
+                    //System.Diagnostics.Debug.Write("i");
                 }
             }
         }
@@ -56,7 +56,7 @@ namespace POLift.Service
             StaticTimer.ElapsedCallback = elapsed_cb;
             timer.Elapsed += Timer_Elapsed;
             timer.Start();
-            System.Diagnostics.Debug.WriteLine($"StartTimer({tick_time_ms},{ticks_until_elapsed} ..)");
+            //System.Diagnostics.Debug.WriteLine($"StartTimer({tick_time_ms},{ticks_until_elapsed} ..)");
         }
 
         public static bool IsRunning
@@ -100,7 +100,7 @@ namespace POLift.Service
 
         private static void Timer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine("StaticTimer.Timer_Elapsed(object sender, ElapsedEventArgs e)");
+            //System.Diagnostics.Debug.WriteLine("StaticTimer.Timer_Elapsed(object sender, ElapsedEventArgs e)");
             TicksRemaining--;
             int tue = TicksRemaining;
 

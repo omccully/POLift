@@ -17,6 +17,7 @@ using Android.Support.Design.Widget;
 using Android.Support.V7.App;
 using Android.Content.PM;
 using Android.Support.V4.Content;
+using Android.Preferences;
 using Fragment = Android.App.Fragment;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
 using ActionBarDrawerToggle = Android.Support.V7.App.ActionBarDrawerToggle;
@@ -308,6 +309,14 @@ namespace POLift
             }
         }
 
+        void ExercisesChanged()
+        {
+            ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(this);
+            ISharedPreferencesEditor editor = prefs.Edit();
+            editor.PutBoolean("exercise_created_since_last_difficulty_regeneration", true);
+            editor.Apply();
+        }
+
         void ImportFromUri(Android.Net.Uri uri, bool full = true)
         {
             const string ImportFile = "database-import.db3";
@@ -337,6 +346,8 @@ namespace POLift
                 File.Delete(ImportFilePath);
             }
             catch { }
+
+            ExercisesChanged();
 
             SwitchToFragment(new MainFragment(), false);
         }

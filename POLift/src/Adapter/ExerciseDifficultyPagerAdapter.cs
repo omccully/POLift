@@ -16,42 +16,29 @@ namespace POLift
     using Model;
     using static Android.Views.View;
 
-    class ExercisesPagerAdapter : PagerAdapter
+    class ExerciseDifficultyPagerAdapter : PagerAdapter
     {
-        public event EventHandler<ExerciseEventArgs> DeleteButtonClicked;
-        protected virtual void OnDeleteButtonClicked(ExerciseEventArgs e)
-        {
-            DeleteButtonClicked?.Invoke(this, e);
-        }
-
-        public event EventHandler<ExerciseEventArgs> EditButtonClicked;
-        protected virtual void OnEditButtonClicked(ExerciseEventArgs e)
-        {
-            EditButtonClicked?.Invoke(this, e);
-        }
-
-        public event EventHandler<ExerciseEventArgs> ListItemClicked;
-        protected virtual void OnListItemClicked(ExerciseEventArgs e)
+        public event EventHandler<ContainerEventArgs<IExerciseDifficulty>> ListItemClicked;
+        protected virtual void OnListItemClicked(ContainerEventArgs<IExerciseDifficulty> e)
         {
             ListItemClicked?.Invoke(this, e);
         }
 
         Activity context;
-        List<KeyValuePair<string, List<IExercise>>> exercises_in_categories;
+        List<KeyValuePair<string, List<IExerciseDifficulty>>> exercise_difficulties_in_categories;
 
-        public ExercisesPagerAdapter(Activity context, 
-            List<KeyValuePair<string, List<IExercise>>> exercises_in_categories)
+        public ExerciseDifficultyPagerAdapter(Activity context,
+            List<KeyValuePair<string, List<IExerciseDifficulty>>> exercise_difficulties_in_categories)
         {
             this.context = context;
-            this.exercises_in_categories = exercises_in_categories;
-
+            this.exercise_difficulties_in_categories = exercise_difficulties_in_categories;
         }
 
         public override int Count
         {
             get
             {
-                return exercises_in_categories.Count;
+                return exercise_difficulties_in_categories.Count;
             }
         }
 
@@ -62,9 +49,8 @@ namespace POLift
 
         [Obsolete]
         public override Java.Lang.Object InstantiateItem(View container, int position)
-        { 
-            
-            List<IExercise> exercises = exercises_in_categories[position].Value;
+        {
+            List<IExerciseDifficulty> exercise_difficulties = exercise_difficulties_in_categories[position].Value;
 
             ListView list_view = new ListView(context);
 
@@ -72,31 +58,19 @@ namespace POLift
             list_view.ItemsCanFocus = true;
             list_view.ItemClick += delegate (object sender, AdapterView.ItemClickEventArgs e)
             {
-                OnListItemClicked(new ExerciseEventArgs(exercises[e.Position]));
+                OnListItemClicked(new ContainerEventArgs<IExerciseDifficulty>(exercise_difficulties[e.Position]));
             };
 
-            ExerciseAdapter exercise_adapter = new ExerciseAdapter(context, exercises);
+            ExerciseDifficultyAdapter exercise_difficulty_adapter = 
+                new ExerciseDifficultyAdapter(context, exercise_difficulties);
 
-            exercise_adapter.EditButtonClicked += Exercise_adapter_EditButtonClicked;
-            exercise_adapter.DeleteButtonClicked += Exercise_adapter_DeleteButtonClicked;
-
-            list_view.Adapter = exercise_adapter;
+            list_view.Adapter = exercise_difficulty_adapter;
 
             ViewPager view_pager = container.JavaCast<ViewPager>();
-            
+
             view_pager.AddView(list_view);
 
             return list_view;
-        }
-
-        private void Exercise_adapter_EditButtonClicked(object sender, ExerciseEventArgs e)
-        {
-            OnEditButtonClicked(e);
-        }
-
-        private void Exercise_adapter_DeleteButtonClicked(object sender, ExerciseEventArgs e)
-        {
-            OnDeleteButtonClicked(e);
         }
 
         [Obsolete]
@@ -108,13 +82,12 @@ namespace POLift
 
         public override Java.Lang.ICharSequence GetPageTitleFormatted(int position)
         {
-
             return new Java.Lang.String(GetPageTitleFormattedCLI(position));
         }
 
         public string GetPageTitleFormattedCLI(int position)
         {
-            return exercises_in_categories[position].Key;
+            return exercise_difficulties_in_categories[position].Key;
         }
 
         public string GetCurrentCategory(ViewPager view_pager)
@@ -125,13 +98,13 @@ namespace POLift
 
         public int IndexOfCategory(string category)
         {
-            return exercises_in_categories.FindIndex(kvp => category == kvp.Key);
+            return exercise_difficulties_in_categories.FindIndex(kvp => category == kvp.Key);
         }
 
         public void GoToCategory(string category, ViewPager view_pager)
         {
             int index = IndexOfCategory(category);
-            if(index != -1)
+            if (index != -1)
             {
                 view_pager.SetCurrentItem(index, false);
             }

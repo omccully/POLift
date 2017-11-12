@@ -19,7 +19,7 @@ namespace POLift
     using Service;
     using Model;
 
-    [Activity(Label = "Perform routine")]
+    [Activity(Label = "Perform routine", ParentActivity = typeof(MainActivity))]
     public class PerformRoutineActivity : PerformRoutineBaseActivity
     {
         const int WarmUpRoutineRequestCode = 100;
@@ -40,6 +40,12 @@ namespace POLift
             {
                 _routine_result = value;
                 _routine_result.Database = Database;
+
+                //if (_routine_result != null)
+                //{
+                //    Intent.PutExtra("resume_routine_result_id", _routine_result.ID);
+                //}
+
                 GetNextExerciseAndWeight();
             }
         }
@@ -48,6 +54,8 @@ namespace POLift
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
+            System.Diagnostics.Debug.WriteLine("PerformRoutineActivity.OnCreate()");
+
             base.OnCreate(savedInstanceState);
 
             Database = C.ontainer.Resolve<IPOLDatabase>();
@@ -102,6 +110,8 @@ namespace POLift
                 // prefer to use the saved state, but if there is no RR ID, use the intent's
                 resume_routine_result_id = savedInstanceState.GetInt("resume_routine_result_id", intent_resume_routine_result_id);
             }
+
+            /* Intent.GetBooleanExtra("backed_into", false) ||  */
 
             if (resume_routine_result_id == 0)
             {
@@ -191,6 +201,7 @@ namespace POLift
 
         protected override void OnActivityResult(int requestCode, [GeneratedEnum] Result resultCode, Intent data)
         {
+            System.Diagnostics.Debug.WriteLine("PerformRoutineActivity.OnActivityResult()");
             base.OnActivityResult(requestCode, resultCode, data);
 
             if(resultCode == Result.Ok)
@@ -209,7 +220,9 @@ namespace POLift
                     if (id == -1) return;
                     Routine new_routine = Database.ReadByID<Routine>(id);
 
-                    if (Routine == new_routine) return;
+                    if (Routine.Equals(new_routine)) return;
+
+                    Intent.PutExtra("routine_id", new_routine.ID);
 
                     if (_RoutineResult.ResultCount == 0)
                     {
@@ -540,6 +553,7 @@ namespace POLift
             var intent = new Intent(this, typeof(WarmupRoutineActivity));
             intent.PutExtra("exercise_id", CurrentExercise.ID);
             intent.PutExtra("working_set_weight", WeightInput);
+            intent.PutExtra("parent_intent", this.Intent);
             StartActivityForResult(intent, WarmUpRoutineRequestCode);
         }
 
@@ -568,3 +582,4 @@ namespace POLift
         }
     }
 }
+ 

@@ -205,6 +205,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="src\Activity\SelectExerciseDifficultyActivity.cs" />
+    <Compile Include="src\Adapter\ExerciseDifficultyAdapter.cs" />
+    <Compile Include="src\Adapter\ExerciseDifficultyPagerAdapter.cs" />
     <Compile Include="src\MainApplication.cs" />
     <Compile Include="src\Activity\EditRoutineResultActivity.cs" />
     <Compile Include="src\Activity\RoutineDetailsActivity.cs" />
@@ -225,6 +228,8 @@
     <Compile Include="src\Fragment\GraphFragment.cs" />
     <Compile Include="src\Fragment\SettingsFragment.cs" />
     <Compile Include="src\Fragment\ViewRoutineResultsFragment.cs" />
+    <Compile Include="src\Model\ExerciseDifficulty.cs" />
+    <Compile Include="src\Model\Interfaces\IExerciseDifficulty.cs" />
     <Compile Include="src\Model\ValueLookup.cs" />
     <Compile Include="src\Model\Exercise.cs" />
     <Compile Include="src\Activity\CreateExerciseActivity.cs" />
@@ -327,6 +332,12 @@
       <SubType>Designer</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\NeverShowAgainCheckBox.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\SelectExerciseDifficulty.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\ExerciseDifficultyItem.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>

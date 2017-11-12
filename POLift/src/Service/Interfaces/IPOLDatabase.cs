@@ -17,6 +17,8 @@ namespace POLift.Service
 
         void Update(IIdentifiable obj);
 
+        List<T> Query<T>(string query, params object[] args) where T : new();
+
        // void Invoke(DatabaseOperation operation);
 
         void CreateTableIfNotExists<T>();

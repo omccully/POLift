@@ -138,6 +138,11 @@ namespace POLift.Service
             return String.Join(",", obj.Select(e => e.ID).ToArray());
         }
 
+        public static string ToIDString(this IEnumerable<int> ids)
+        {
+            return String.Join(",", ids.ToArray());
+        }
+
         public static int[] ToIDIntegers(this string str)
         {
             if (String.IsNullOrEmpty(str)) return new int[] { };

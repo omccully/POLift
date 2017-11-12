@@ -29,6 +29,8 @@ namespace POLift.Model
 
         int NextWeight { get; }
 
+        ExerciseDifficulty GetDifficultyRecord();
+
         int SucceedsInARow(int check_count = 0);
     }
 }

@@ -1,48 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:minWidth="25px"
     android:minHeight="25px">
-  <TextView
-      android:text="Routine name:"
-      android:textAppearance="?android:attr/textAppearanceLarge"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:id="@+id/textView1" />
-  <EditText
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:id="@+id/RoutineTitleText" />
-  <TextView
-      android:text="Exercises:"
-      android:textAppearance="?android:attr/textAppearanceLarge"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:id="@+id/textView2" />
-  <Button
-      android:text="Add Exercise"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:id="@+id/AddExerciseButton" />
-  <ListView
-      android:minWidth="25px"
-      android:minHeight="25px"
-      android:layout_width="match_parent"
-      android:layout_height="fill_parent"
-      android:layout_weight="1"
-      android:id="@+id/ExercisesListView" />
-  <TextView
-      android:text="Tip: To delete an exercise, set the set count to 0"
-      android:textAppearance="?android:attr/textAppearanceSmall"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:id="@+id/textView3" />
-  <Button
-      android:text="Create Routine"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:id="@+id/CreateRoutineButton" />
+    <TextView
+        android:text="Routine name:"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView1" />
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/RoutineTitleText" />
+    <TextView
+        android:text="Exercises:"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView2" />
+    <Button
+        android:text="Add Exercise"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/AddExerciseButton" />
+    <ListView
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+        android:id="@+id/ExercisesListView" />
+    <TextView
+        android:text="Tip: To delete an exercise, set the set count to 0"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView3" />
+    <Button
+        android:text="Create Routine"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/CreateRoutineButton" />
 </LinearLayout>

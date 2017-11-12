@@ -76,6 +76,8 @@ namespace POLift
             }
         }
 
+        Intent parent_intent;
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -103,11 +105,11 @@ namespace POLift
             IMadeAMistakeButton = FindViewById<Button>(Resource.Id.IMadeAMistakeButton);
 
 #if DEBUG
-            Button debug = new Button(this);
-            debug.Text = "debug";
-            debug.Click += Debug_Click;
+            //Button debug = new Button(this);
+            //debug.Text = "debug";
+            // debug.Click += Debug_Click;
 
-            PerformRoutineMainContent.AddView(debug);
+            //PerformRoutineMainContent.AddView(debug);
 #endif
 
             RestoreTimerState(savedInstanceState);
@@ -119,6 +121,8 @@ namespace POLift
             Sub30SecButton.Click += Sub30SecButton_Click;
             Add30SecButton.Click += Add30SecButton_Click;
             SkipTimerButton.Click += SkipTimerButton_Click;
+
+            parent_intent = (Intent)Intent.GetParcelableExtra("parent_intent");
 
             LicenseManager = C.ontainer.Resolve<ILicenseManager>();
 
@@ -421,7 +425,7 @@ namespace POLift
 
         protected virtual void Timer_Ticked(int ticks_until_elapsed)
         {
-            System.Diagnostics.Debug.WriteLine("PerformRoutineBaseActivity.Timer_Ticked(int ticks_until_elapsed)");
+            //System.Diagnostics.Debug.WriteLine("PerformRoutineBaseActivity.Timer_Ticked(int ticks_until_elapsed)");
             RestPeriodSecondsRemaining = ticks_until_elapsed;
             RunOnUiThread(delegate
             {
@@ -458,12 +462,33 @@ namespace POLift
             Intent result_intent = new Intent(this, this.GetType());
             SaveStateToIntent(result_intent);
 
-            PendingIntent resultPendingIntent = TaskStackBuilder.Create(this)
-                //.AddParentStack(this)
-                //.AddNextIntent(result_intent)
-                .AddNextIntentWithParentStack(result_intent)
-                .GetPendingIntent(500, (int)PendingIntentFlags.UpdateCurrent);
+            TaskStackBuilder tsb = TaskStackBuilder.Create(this)
+               //.AddParentStack(this.GetType())
+               //.AddParentStack(this)
+               .AddParentStack(Java.Lang.Class.FromType(this.GetType()))
 
+               .AddNextIntent(result_intent);
+
+            Intent new_pi = tsb.EditIntentAt(tsb.IntentCount - 2);
+            System.Diagnostics.Debug.WriteLine("IntentAt(0) is " + tsb.EditIntentAt(0).Component.ClassName);
+            System.Diagnostics.Debug.WriteLine("IntentAt(1) is " + tsb.EditIntentAt(1).Component.ClassName);
+            System.Diagnostics.Debug.WriteLine("parent is " + new_pi.Component.ClassName);
+            if (parent_intent != null) new_pi.PutExtras(parent_intent);
+            
+            //new_pi.PutExtra("backed_into", true);
+
+            new_pi.PutExtra("resume_routine_result_id", 0);
+
+            System.Diagnostics.Debug.WriteLine(tsb.ToString());
+            System.Diagnostics.Debug.WriteLine("count = " + tsb.ToEnumerable<Intent>().Count());
+
+            PendingIntent resultPendingIntent = tsb
+                //.AddNextIntentWithParentStack(result_intent)
+                //.GetPendingIntent();
+                .GetPendingIntent(500, (int)PendingIntentFlags.UpdateCurrent);
+            // PendingIntent.
+
+            //resultPendingIntent
             NotificationCompat.Builder n_builder = new NotificationCompat.Builder(this)
                .SetSmallIcon(Resource.Drawable.timer_white)
                .SetContentTitle("Lifting rest period finished")

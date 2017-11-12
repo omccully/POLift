@@ -18,7 +18,7 @@ namespace POLift
     using Service;
     using Adapter;
 
-    [Activity(Label = "Create Routine")]
+    [Activity(Label = "Create Routine", WindowSoftInputMode = SoftInput.AdjustPan)]
     class CreateRoutineActivity : Activity
     {
         EditText RoutineTitleText;
@@ -33,12 +33,14 @@ namespace POLift
 
         IRoutine RoutineToDeleteIfDifferent = null;
 
-        int LockedSetCount = 0;
+        int ExercisesLocked = 0;
 
         IPOLDatabase Database;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
+            System.Diagnostics.Debug.WriteLine("CreateRoutineActivity.OnCreate()");
+
             base.OnCreate(savedInstanceState);
 
             SetContentView(Resource.Layout.CreateRoutine);
@@ -52,15 +54,19 @@ namespace POLift
 
             int edit_routine_id = Intent.GetIntExtra("edit_routine_id", -1);
 
-            List<IExerciseSets> exercise_sets = new List<IExerciseSets>();
             if (savedInstanceState != null)
             {
                 int[] ids = savedInstanceState.GetIntArray(EXERCISE_SETS_IDS_KEY);
-                if(ids != null)
+                ExercisesLocked = savedInstanceState.GetInt("exercises_locked", 0);
+                if (ids != null)
                 {
-                    exercise_sets = new List<IExerciseSets>(Database.ParseIDs<ExerciseSets>(ids));
+                    System.Diagnostics.Debug.WriteLine("ids after save: " + ids.ToIDString());
+                    //foreach (int id in ids) System.Diagnostics.Debug.WriteLine("esid = " + id);
+                    List<IExerciseSets> exercise_sets = 
+                        new List<IExerciseSets>(Database.ParseIDs<ExerciseSets>(ids));
+
+                    InitializeExerciseSetsAdapter(exercise_sets, ExercisesLocked);
                 }
-                LockedSetCount = savedInstanceState.GetInt("exercise_sets_locked", 0);
 
                 int RoutineIDToDeleteIfDifferent = savedInstanceState
                     .GetInt(RoutineIDToDeleteIfDifferentKey, 0);
@@ -79,30 +85,51 @@ namespace POLift
 
                 // take the exercises list, split it at location exercises_locked
                 // ExerciseSets.Group(Exercise[] exercises)
-                int locked_count = Intent.GetIntExtra("exercises_locked", 0);
 
-                IEnumerable<IExercise> all_exercises = routine.Exercises;
+                ExercisesLocked = Intent.GetIntExtra("exercises_locked", 0);
 
-                IEnumerable<IExerciseSets> locked_sets = 
-                    ExerciseSets.Group(all_exercises.Take(locked_count), Database);
-                IEnumerable<IExerciseSets> unlocked_sets = 
-                    ExerciseSets.Group(all_exercises.Skip(locked_count), Database);
-                LockedSetCount = locked_sets.Count();
-                exercise_sets.AddRange(locked_sets);
-                exercise_sets.AddRange(unlocked_sets);
+                InitializeExerciseSetsAdapter(routine.Exercises, ExercisesLocked);
 
                 RoutineToDeleteIfDifferent = routine;
             }
             // else, start new routine
 
-            exercise_sets_adapter = new ExerciseSetsAdapter(this, 
-                exercise_sets, LockedSetCount);
-
-            AddExerciseButton.Click += AddExerciseButton_Click;
+            /* initialize the adapter if it hasn't been so far..
+            if (exercise_sets_adapter == null)
+            {
+                exercise_sets_adapter = new ExerciseSetsAdapter(this, 
+                    new List<IExerciseSets>() { });
+            }
+            */
 
             ExercisesListView.Adapter = exercise_sets_adapter;
 
+
+            AddExerciseButton.Click += AddExerciseButton_Click;
             CreateRoutineButton.Click += CreateRoutineButton_Click;
+        }
+
+        void InitializeExerciseSetsAdapter(IEnumerable<IExerciseSets> exercise_sets, 
+            int exercises_locked)
+        {
+            InitializeExerciseSetsAdapter(ExerciseSets.Expand(exercise_sets), exercises_locked);
+        }
+
+        void InitializeExerciseSetsAdapter(IEnumerable<IExercise> exercises, 
+            int exercises_locked)
+        {
+            List<IExerciseSets> exercise_sets = new List<IExerciseSets>();
+
+            IEnumerable<IExerciseSets> locked_sets =
+                    ExerciseSets.Group(exercises.Take(exercises_locked), Database);
+            IEnumerable<IExerciseSets> unlocked_sets =
+                ExerciseSets.Group(exercises.Skip(exercises_locked), Database);
+            int locked_set_count = locked_sets.Count();
+            exercise_sets.AddRange(locked_sets);
+            exercise_sets.AddRange(unlocked_sets);
+
+            exercise_sets_adapter = new ExerciseSetsAdapter(this,
+                exercise_sets, locked_set_count);
         }
 
         const string EXERCISE_SETS_IDS_KEY = "exercise_sets_ids";
@@ -111,13 +138,19 @@ namespace POLift
         {
             base.OnSaveInstanceState(outState);
 
+            
             SaveExerciseSets();
             int[] ids = exercise_sets_adapter.ExerciseSets.Select(es => es.ID).ToArray();
+            System.Diagnostics.Debug.WriteLine("ids during save: " + ids.ToIDString());
+
             outState.PutIntArray(EXERCISE_SETS_IDS_KEY, ids);
 
-            outState.PutInt("exercise_sets_locked", LockedSetCount);
+            //System.Diagnostics.Debug.WriteLine("saving exercise_sets_locked=" + LockedSetCount);
+            //outState.PutInt("exercise_sets_locked", LockedSetCount);
+            outState.PutInt("exercises_locked", ExercisesLocked);
 
-            if(RoutineToDeleteIfDifferent != null)
+
+            if (RoutineToDeleteIfDifferent != null)
             {
                 outState.PutInt(RoutineIDToDeleteIfDifferentKey,
                     RoutineToDeleteIfDifferent.ID);

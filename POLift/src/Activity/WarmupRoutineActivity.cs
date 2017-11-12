@@ -18,7 +18,7 @@ namespace POLift
     using Model;
     using Service;
 
-    [Activity(Label = "Warmup")]
+    [Activity(Label = "Warmup", ParentActivity = typeof(PerformRoutineActivity))]
     public class WarmupRoutineActivity : PerformRoutineBaseActivity
     {
         IExercise FirstExercise = null;
@@ -106,9 +106,10 @@ namespace POLift
             {
                 WarmupSetIndex = savedInstanceState.GetInt("warmup_set_index", warmup_set_index_intent);
             }
+
             // set index and display the stuff
 
-            RoutineDetails.Visibility = ViewStates.Gone;
+            //RoutineDetails.Visibility = ViewStates.Gone;
             WeightLabel.Text = "Working set weight: ";
             ReportResultButton.Text = "Set completed";
             RepResultLabel.Visibility = ViewStates.Gone;
@@ -123,8 +124,12 @@ namespace POLift
             //var toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
             //SetActionBar(toolbar);
             //ActionBar.Title = $"{FirstExercise.Name} warmup";
+
+            
         }
 
+
+        
         private void IMadeAMistakeButton_Click(object sender, EventArgs e)
         {
             SetResult(Result.Canceled);
@@ -151,13 +156,20 @@ namespace POLift
 
         void RefreshWarmupInfo()
         {
+            RefreshCurrentWarmupDetails();
+
+            RefreshFullWarmupDetails();
+        }
+
+        void RefreshCurrentWarmupDetails()
+        {
             if (WarmupFinished)
             {
                 NextExerciseView.Text = "Finished";
                 return;
             }
 
-            string txt = $"Warmup exercise {WarmupSetIndex+1}/{WarmupSets.Count()}: ";
+            string txt = $"Warmup exercise {WarmupSetIndex + 1}/{WarmupSets.Count()}: ";
             txt += $"{NextWarmupSet.Reps} reps of {FirstExercise.Name} at a weight of ";
 
             try
@@ -182,6 +194,48 @@ namespace POLift
             }
 
             NextWarmupView.Text = txt;
+        }
+
+        void RefreshFullWarmupDetails()
+        {
+            StringBuilder builder = new StringBuilder();
+
+            try
+            {
+                int weight = WeightInput;
+
+                int i = 0;
+                foreach (IWarmupSet ws in WarmupSets)
+                {
+                    if (i == WarmupSetIndex)
+                    {
+                        builder.Append("> ");
+                    }
+
+                    builder.Append("Weight of ");
+                    builder.Append(ws.GetWeight(FirstExercise, weight).ToString());
+                    builder.Append(", rest ");
+                    builder.Append(ws.GetRestPeriod(FirstExercise).ToString());
+
+                    if (i < WarmupSetIndex)
+                    {
+                        builder.Append(" (done)");
+                    }
+
+                    if(i < WarmupSets.Length - 1)
+                    {
+                        builder.AppendLine();
+                    }
+
+                    i++;
+                }
+
+                RoutineDetails.Text = builder.ToString();
+            }
+            catch (FormatException)
+            {
+                RoutineDetails.Text = "??";
+            }
         }
 
         protected override void ReportResultButton_Click(object sender, EventArgs e)

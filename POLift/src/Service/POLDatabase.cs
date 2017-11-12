@@ -62,6 +62,7 @@ namespace POLift.Service
                 Connection.DropTable<ExerciseResult>();
                 Connection.DropTable<RoutineResult>();
                 Connection.DropTable<ValueLookup>();
+                Connection.DropTable<ExerciseDifficulty>();
             }
         }
 
@@ -72,7 +73,8 @@ namespace POLift.Service
             CreateTableIfNotExists<ExerciseSets>();
             CreateTableIfNotExists<ExerciseResult>();
             CreateTableIfNotExists<RoutineResult>();
-            
+            CreateTableIfNotExists<ExerciseDifficulty>();
+
             int dab_version;
             try
             {
@@ -139,6 +141,14 @@ namespace POLift.Service
             }
             catch(Exception e)
             {
+            }
+        }
+
+        public List<T> Query<T>(string query, params object[] args) where T : new()
+        {
+            lock(Locker)
+            {
+                return Connection.Query<T>(query, args);
             }
         }
 
