@@ -7,12 +7,12 @@ namespace POLift.Service
 {
     public interface IPlateMath
     {
-        int BarWeight { get; }
+        float BarWeight { get; }
 
         bool SplitWeights { get; }
 
-        Dictionary<float, int> CalculateTotalPlateCounts(int weight);
+        Dictionary<float, int> CalculateTotalPlateCounts(float weight);
 
-        string PlateCountsToString(int weight);
+        string PlateCountsToString(float weight);
     }
 }

@@ -10,7 +10,7 @@ namespace POLift.Model
         int Reps { get; }
         string Notes { get; }
 
-        int GetWeight(IExercise ex, int max_weight);
+        float GetWeight(IExercise ex, float max_weight);
 
         int GetRestPeriod(IExercise ex);
     }

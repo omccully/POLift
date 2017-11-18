@@ -11,7 +11,7 @@ namespace POLift.Model
 
         IExercise Exercise { get; set; }
 
-        int Weight { get; set; }
+        float Weight { get; set; }
 
         int RepCount { get; set; }
 

@@ -44,8 +44,6 @@ namespace POLift
         {
             base.OnCreate(savedInstanceState);
 
-
-
             //SetContentView(Resource.Layout.Main);
 
             Database = C.ontainer.Resolve<IPOLDatabase>();

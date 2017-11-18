@@ -54,9 +54,9 @@ namespace POLift.Model
             }
         }
 
-        int _WeightIncrement;
+        float _WeightIncrement;
         [Indexed(Name = "UniqueGroupExercise", Order = 3, Unique = true)]
-        public int WeightIncrement
+        public float WeightIncrement
         {
             get
             {
@@ -152,7 +152,7 @@ namespace POLift.Model
 
         }
 
-        public Exercise(string Name, int MaxRepCount, int WeightIncrement=5, 
+        public Exercise(string Name, int MaxRepCount, float WeightIncrement=5.0f, 
             int RestPeriodSeconds=120, IPlateMath plate_math = null)
         {
             this.Name = Name;
@@ -203,7 +203,7 @@ namespace POLift.Model
         }
 
         [Ignore]
-        public int NextWeight
+        public float NextWeight
         {
             get
             {
@@ -221,7 +221,7 @@ namespace POLift.Model
                     return WeightIncrement;
                 }
 
-                int most_recent_weight = most_recent_result.Weight;
+                float most_recent_weight = most_recent_result.Weight;
 
                 if (ConsecutiveSetsForWeightIncrease == 1)
                 {
@@ -251,7 +251,7 @@ namespace POLift.Model
                     check_count);
             if (eresults.Count() == 0) return 0;
 
-            int most_recent_weight = eresults.ElementAt(0).Weight;
+            float most_recent_weight = eresults.ElementAt(0).Weight;
 
             int count = 0;
             foreach(ExerciseResult exr in eresults)

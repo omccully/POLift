@@ -23,7 +23,7 @@ namespace POLift.Model
             Notes = notes;
         }
 
-        public int GetWeight(IExercise ex, int max_weight)
+        public float GetWeight(IExercise ex, float max_weight)
         {
             return Helpers.GetClosestToIncrement((max_weight * PercentOfWeight) / 100,
                 ex.WeightIncrement,

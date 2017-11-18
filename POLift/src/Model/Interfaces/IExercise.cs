@@ -13,7 +13,7 @@ namespace POLift.Model
 
         int MaxRepCount { get; set; }
 
-        int WeightIncrement { get; set; }
+        float WeightIncrement { get; set; }
 
         int RestPeriodSeconds { get; set; }
 
@@ -27,7 +27,7 @@ namespace POLift.Model
 
         string ShortDetails { get; }
 
-        int NextWeight { get; }
+        float NextWeight { get; }
 
         ExerciseDifficulty GetDifficultyRecord();
 

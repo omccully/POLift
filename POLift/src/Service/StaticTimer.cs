@@ -100,7 +100,7 @@ namespace POLift.Service
 
         private static void Timer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            //System.Diagnostics.Debug.WriteLine("StaticTimer.Timer_Elapsed(object sender, ElapsedEventArgs e)");
+            System.Diagnostics.Debug.WriteLine("StaticTimer.Timer_Elapsed(object sender, ElapsedEventArgs e)");
             TicksRemaining--;
             int tue = TicksRemaining;
 

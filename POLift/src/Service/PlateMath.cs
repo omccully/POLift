@@ -40,10 +40,10 @@ namespace POLift.Service
 
 
         float[] PlateWeights;
-        public int BarWeight { get; private set; }
+        public float BarWeight { get; private set; }
         public bool SplitWeights { get; private set; }
 
-        public PlateMath(float[] plate_weights, int bar_weight = 0, bool split_weights = true)
+        public PlateMath(float[] plate_weights, float bar_weight = 0, bool split_weights = true)
         {
             PlateWeights = plate_weights.ToArray();
             Array.Sort(PlateWeights);
@@ -64,7 +64,7 @@ namespace POLift.Service
             return result;
         }
 
-        public Dictionary<float, int> CalculateTotalPlateCounts(int weight)
+        public Dictionary<float, int> CalculateTotalPlateCounts(float weight)
         {
             weight -= BarWeight;
 
@@ -80,7 +80,7 @@ namespace POLift.Service
             return CalculatePlateCountsOneSide(weight);
         }
 
-        public string PlateCountsToString(int weight)
+        public string PlateCountsToString(float weight)
         {
             return PlateCountsToString(CalculateTotalPlateCounts(weight));
         }

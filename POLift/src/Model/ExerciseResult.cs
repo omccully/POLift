@@ -32,8 +32,8 @@ namespace POLift.Model
             }
         }
 
-        int _Weight;
-        public int Weight
+        float _Weight;
+        public float Weight
         {
             get
             {
@@ -70,12 +70,12 @@ namespace POLift.Model
 
         public bool Deleted { get; set; } = false;
 
-        public ExerciseResult(IExercise Exercise, int Weight, int RepCount) : 
+        public ExerciseResult(IExercise Exercise, float Weight, int RepCount) : 
             this(Exercise.ID, Weight, RepCount)
         {
         }
 
-        public ExerciseResult(int ExerciseID, int Weight, int RepCount)
+        public ExerciseResult(int ExerciseID, float Weight, int RepCount)
         {
             this.ExerciseID = ExerciseID;
             this.Weight = Weight;
@@ -111,7 +111,7 @@ namespace POLift.Model
             }
         }
 
-        public bool IsSuccess(int most_recent_weight, IExercise this_exercise=null)
+        public bool IsSuccess(float most_recent_weight, IExercise this_exercise=null)
         {
             if(this_exercise == null)
             {

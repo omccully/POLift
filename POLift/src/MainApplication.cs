@@ -11,6 +11,7 @@ using Android.Provider;
 using Android.Gms.Ads;
 using Android.Preferences;
 using Plugin.CurrentActivity;
+using Android.Util;
 using Plugin.InAppBilling;
 using Plugin.InAppBilling.Abstractions;
 
@@ -35,7 +36,9 @@ namespace POLift
         public MainApplication(IntPtr handle, JniHandleOwnership transer)
           :base(handle, transer)
         {
-            System.Diagnostics.Debug.WriteLine("MainApplication(IntPtr handle, JniHandleOwnership transer)");
+            //System.Diagnostics.Debug.WriteLine();
+
+            Log.Debug("POLift", "MainApplication(IntPtr handle, JniHandleOwnership transer)");
         }
 
         public override void OnCreate()

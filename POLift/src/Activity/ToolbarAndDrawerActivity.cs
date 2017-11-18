@@ -5,6 +5,7 @@ using System.Text;
 using System.IO;
 using System.Threading.Tasks;
 
+using Android.Util;
 using Android.App;
 using Android.Content;
 using Android.OS;
@@ -34,6 +35,8 @@ namespace POLift
     [Activity(Label = "ToolbarAndDrawerActivity")]
     public class ToolbarAndDrawerActivity : AppCompatActivity
     {
+        const int GetFreeLiftingProgramsRequestCode = 54392;
+
         DrawerLayout _DrawerLayout;
         ListView DrawerListView;
         NavigationAdapter _NavigationAdapter;
@@ -77,6 +80,8 @@ namespace POLift
                 new Navigation("Import data from backup", RestoreData_Click,
                     Resource.Mipmap.ic_cloud_download_white_24dp),
                 new Navigation("Import routines and exercises only", ImportRoutinesAndExercises_Click,
+                    Resource.Mipmap.ic_cloud_download_white_24dp),
+                new Navigation("Get free lifting programs", GetFreeLiftingPrograms_Click,
                     Resource.Mipmap.ic_cloud_download_white_24dp)
 
                     /*,
@@ -98,7 +103,48 @@ namespace POLift
 
             DrawerListView.ItemClick += DrawerListView_ItemClick;
 
+            PromptUserForExternalProgramsIfFirstLaunch();
+
             AddPurchaseLicenseNavigationIfNotPurchased();
+        }
+
+        void PromptUserForExternalProgramsIfFirstLaunch()
+        {
+            ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(this);
+
+            bool first_launch = 
+                prefs.GetBoolean("first_launch_for_external_programs", true);
+            Log.Debug("POLift", $"first_launch_for_external_programs = {first_launch}");
+
+            if(first_launch)
+            {
+                Helpers.DisplayConfirmation(this, 
+                    "You can get started with the app right away " +
+                    "by using one of the built-in weightlifting programs. " +
+                    "They focus on compound lifts that have withstood " +
+                    "the test of time. Would you like to select a " +
+                    "built-in program now?",
+                    delegate
+                    {
+                        FlagExternalProgramsResponse(prefs);
+                        GetFreeLiftingPrograms();
+                    },
+                    delegate
+                    {
+                        FlagExternalProgramsResponse(prefs);
+                        Toast.MakeText(this, "If you change your mind, you " +
+                            "can get one of the built-in working programs " +
+                            "at any time from the navigation drawer by swiping " +
+                            "from the left.", ToastLength.Long).Show();
+                    });
+            }
+        }
+
+        void FlagExternalProgramsResponse(ISharedPreferences prefs)
+        {
+            ISharedPreferencesEditor editor = prefs.Edit();
+            editor.PutBoolean("first_launch_for_external_programs", false);
+            editor.Apply();
         }
 
         async Task AddPurchaseLicenseNavigationIfNotPurchased()
@@ -204,6 +250,18 @@ namespace POLift
             StartActivity(intent);
         }
 
+        private void GetFreeLiftingPrograms_Click(object sender, EventArgs e)
+        {
+            GetFreeLiftingPrograms();
+        }
+
+        
+        void GetFreeLiftingPrograms()
+        {
+            StartActivityForResult(typeof(SelectProgramToDownloadActivity), 
+                GetFreeLiftingProgramsRequestCode);
+        }
+
         private void BackupData_Click(object sender, EventArgs e)
         {
             Java.IO.File export_file = new Java.IO.File(C.DatabasePath);
@@ -305,7 +363,11 @@ namespace POLift
                        {
                            ImportFromUri(data.Data, false);
                        });
-                } 
+                }
+                else if(requestCode == GetFreeLiftingProgramsRequestCode)
+                {
+                    GoToMainFragment();
+                }
             }
         }
 
@@ -319,34 +381,13 @@ namespace POLift
 
         void ImportFromUri(Android.Net.Uri uri, bool full = true)
         {
-            const string ImportFile = "database-import.db3";
-            string ImportFilePath = Path.Combine(FilesDir.Path, ImportFile);
+            Helpers.ImportFromUri(uri, Database, this.ContentResolver, FilesDir.Path, full);
 
-            using (Stream read_stream = ContentResolver.OpenInputStream(uri))
-            {
-                using (FileStream file_write_stream = File.Create(ImportFilePath))
-                {
-                    read_stream.CopyTo(file_write_stream);
-                }
-            }
+            GoToMainFragment();
+        }
 
-            POLDatabase imported = new POLDatabase(ImportFilePath);
-
-            if(full)
-            {
-                Database.ImportDatabase(imported);
-            }
-            else
-            {
-                Database.ImportRoutinesAndExercises(imported);
-            }
-
-            try
-            {
-                File.Delete(ImportFilePath);
-            }
-            catch { }
-
+        void GoToMainFragment()
+        {
             ExercisesChanged();
 
             SwitchToFragment(new MainFragment(), false);

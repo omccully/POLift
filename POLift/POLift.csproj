@@ -206,6 +206,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="src\Activity\SelectExerciseDifficultyActivity.cs" />
+    <Compile Include="src\Activity\SelectProgramToDownloadActivity.cs" />
     <Compile Include="src\Adapter\ExerciseDifficultyAdapter.cs" />
     <Compile Include="src\Adapter\ExerciseDifficultyPagerAdapter.cs" />
     <Compile Include="src\MainApplication.cs" />
@@ -338,6 +339,9 @@
       <SubType>Designer</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\ExerciseDifficultyItem.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\ProgramItem.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>

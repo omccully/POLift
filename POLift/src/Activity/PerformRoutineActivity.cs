@@ -11,6 +11,7 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using Android.Preferences;
+using Android.Util;
 
 using Microsoft.Practices.Unity;
 
@@ -84,10 +85,15 @@ namespace POLift
             if(savedInstanceState == null)
             {
                 routine_id = Intent.GetIntExtra("routine_id", -1);
+                Log.Debug("POLift", "Starting PerformRoutine from intent. intent[routine_id] = " +
+                    routine_id);
             }
             else
             {
-                routine_id = savedInstanceState.GetInt("routine_id", Intent.GetIntExtra("routine_id", -1));
+                int routine_id_from_intent = Intent.GetIntExtra("routine_id", -1);
+                routine_id = savedInstanceState.GetInt("routine_id", routine_id_from_intent);
+                Log.Debug("POLift", "Restoring PerformRoutine from saved state. state[routine_id] = " +
+                    savedInstanceState.GetInt("routine_id", -9999) + ", using " + routine_id);
             }
             
             
@@ -104,22 +110,54 @@ namespace POLift
             {
                 // if there was no saved state, try to use the RR ID from the intent
                 resume_routine_result_id = intent_resume_routine_result_id;
+
+                Log.Debug("POLift", "Starting PerformRoutine from intent. intent[resume_routine_result_id] = " +
+                    intent_resume_routine_result_id);
+
             }
             else
             {
                 // prefer to use the saved state, but if there is no RR ID, use the intent's
                 resume_routine_result_id = savedInstanceState.GetInt("resume_routine_result_id", intent_resume_routine_result_id);
+
+                Log.Debug("POLift", 
+                    "Restoring PerformRoutine from saved state. state[resume_routine_result_id] = " +
+                    savedInstanceState.GetInt("resume_routine_result_id", -9999) + 
+                    ", using " + resume_routine_result_id);
             }
+
+            bool intent_warmup_prompted = Intent.GetBooleanExtra("intent_was_started", false);
+            if(savedInstanceState == null)
+            {
+                Log.Debug("POLift", "Starting PerformRoutine from intent. intent[intent_was_started] = " +
+                   intent_warmup_prompted);
+                WarmupPrompted = intent_warmup_prompted;
+            }
+            else
+            {
+                WarmupPrompted = savedInstanceState.GetBoolean("warmup_prompted",
+                    intent_warmup_prompted);
+
+                Log.Debug("POLift",
+                    "Restoring PerformRoutine from saved state. state[warmup_prompted] = " +
+                    savedInstanceState.GetBoolean("warmup_prompted", false) +
+                    ", using " + WarmupPrompted);
+            }
+
 
             /* Intent.GetBooleanExtra("backed_into", false) ||  */
 
             if (resume_routine_result_id == 0)
             {
+                Log.Debug("POLift", "No resume_routine_result_id, starting new RoutineResult");
+
                 // a routine result was started but has no contents
                 _RoutineResult = new RoutineResult(Routine);
             }
             else if (recent_uncompleted != null && recent_uncompleted.ID == resume_routine_result_id)
             {
+                Log.Debug("POLift", "Restoring RoutineResult with ID " + resume_routine_result_id);
+
                 // restore saved state
                 _RoutineResult = recent_uncompleted;
             }
@@ -134,15 +172,20 @@ namespace POLift
                     // OR
                     // if the most recent uncompleted routine result is more than a day ago, 
                     // just start a new one without asking
+                    Log.Debug("POLift", "Starting new RoutineResult and prompting for warmup routine");
 
                     _RoutineResult = new RoutineResult(Routine);
-                    PromptUserForWarmupRoutine();
+                    if(!WarmupPrompted)
+                    {
+                        PromptUserForWarmupRoutine();
+                    }
                 }
                 else
                 {
                     // there is a uncompleted routine result within the last 1 day for this routine
                     // so ask user if they want to resume it
-                
+                    Log.Debug("POLift", "Prompting user to resume an uncompleted routine");
+
                     PromptUserToResumeRoutine(recent_uncompleted);
                 }
             }
@@ -195,7 +238,9 @@ namespace POLift
             }
 
             outState.PutInt("routine_id", Routine.ID);
-            
+
+            outState.PutBoolean("warmup_prompted", WarmupPrompted);
+
             base.OnSaveInstanceState(outState);
         }
 
@@ -258,7 +303,7 @@ namespace POLift
 
             // get number of reps and clear the text box
             int reps = 0;
-            int weight = 0;
+            float weight = 0;
             try
             {
                 weight = WeightInput;
@@ -281,7 +326,7 @@ namespace POLift
             }
         }
 
-        bool ReportExerciseResult(int weight, int reps)
+        bool ReportExerciseResult(float weight, int reps)
         {
             // report the exercise result
             ExerciseResult ex_result =
@@ -477,6 +522,15 @@ namespace POLift
         const string DefaultWarmupPreferenceKey = "default_warmup";
         void PromptUserForWarmupRoutine()
         {
+            if (WarmupPrompted)
+            {
+                // this method should only be used once
+                Log.Debug("POLift", "Prevented additional prompt for warmup routine");
+
+                return; 
+            }
+            WarmupPrompted = true;
+
             ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(this);
             
             bool AskForWarmup = prefs.GetBoolean(AskForWarmupPreferenceKey, true);
@@ -548,8 +602,12 @@ namespace POLift
             editor.Apply();
         }
 
+
+        bool WarmupPrompted = false;
         void StartWarmupActivity()
         {
+            
+
             var intent = new Intent(this, typeof(WarmupRoutineActivity));
             intent.PutExtra("exercise_id", CurrentExercise.ID);
             intent.PutExtra("working_set_weight", WeightInput);
@@ -579,6 +637,29 @@ namespace POLift
             int rr_id = (_RoutineResult == null ? 0 : _RoutineResult.ID);
 
             intent.PutExtra("resume_routine_result_id", rr_id);
+
+            intent.PutExtra("warmup_prompted", WarmupPrompted);
+        }
+
+        protected override void OnPause()
+        {
+            Log.Debug("POLift", "PerformWarmupActivity.OnPause()");
+
+            base.OnPause();
+        }
+
+        protected override void OnStop()
+        {
+            Log.Debug("POLift", "PerformWarmupActivity.OnStop()");
+
+            base.OnStop();
+        }
+
+        protected override void OnDestroy()
+        {
+            Log.Debug("POLift", "PerformWarmupActivity.OnDestroy()");
+
+            base.OnDestroy();
         }
     }
 }

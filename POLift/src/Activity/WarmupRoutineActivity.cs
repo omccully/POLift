@@ -9,6 +9,7 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
+using Android.Util;
 
 using Microsoft.Practices.Unity;
 
@@ -72,6 +73,8 @@ namespace POLift
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
+            Log.Debug("POLift", "WarmupRoutineActivity.OnCreate()");
+
             base.OnCreate(savedInstanceState);
 
             // Create your application here
@@ -84,7 +87,7 @@ namespace POLift
                 FirstExercise = Database.ReadByID<Exercise>(id);
             }
 
-            WeightInput = Intent.GetIntExtra("working_set_weight", 0);
+            WeightInput = Intent.GetFloatExtra("working_set_weight", 0);
 
             if (FirstExercise == null)
             {
@@ -100,10 +103,14 @@ namespace POLift
             int warmup_set_index_intent = Intent.GetIntExtra("warmup_set_index", 0);
             if (savedInstanceState == null)
             {
+                Log.Debug("POLift", "Starting WarmupRoutine from intent. intent[warmup_set_index] = " +
+                    warmup_set_index_intent);
                 WarmupSetIndex = warmup_set_index_intent;
             }
             else
             {
+                Log.Debug("POLift", "Restoring WarmupRoutine from saved state. state[warmup_set_index] = " +
+                    savedInstanceState.GetInt("warmup_set_index", -9999));
                 WarmupSetIndex = savedInstanceState.GetInt("warmup_set_index", warmup_set_index_intent);
             }
 
@@ -174,7 +181,7 @@ namespace POLift
 
             try
             {
-                int weight = NextWarmupSet.GetWeight(FirstExercise, WeightInput);
+                float weight = NextWarmupSet.GetWeight(FirstExercise, WeightInput);
                 txt += weight.ToString();
 
                 if (FirstExercise.PlateMath != null)
@@ -202,7 +209,7 @@ namespace POLift
 
             try
             {
-                int weight = WeightInput;
+                float weight = WeightInput;
 
                 int i = 0;
                 foreach (IWarmupSet ws in WarmupSets)
@@ -267,11 +274,28 @@ namespace POLift
 
         protected override void OnPause()
         {
+            Log.Debug("POLift", "WarmupRoutineActivity.OnPause()");
+
             // dismiss dialog boxes to prevent window leaks
             error_dialog?.Dismiss();
             back_button_dialog?.Dismiss();
 
             base.OnPause();
+        }
+
+        protected override void OnStop()
+        {
+            Log.Debug("POLift", "WarmupRoutineActivity.OnStop()");
+
+            base.OnStop();
+        }
+
+
+        protected override void OnDestroy()
+        {
+            Log.Debug("POLift", "WarmupRoutineActivity.OnDestroy()");
+
+            base.OnDestroy();
         }
 
         protected override void SaveStateToIntent(Intent intent)
@@ -298,5 +322,7 @@ namespace POLift
             Intent perform_routine_intent = new Intent(this, typeof(PerformRoutineActivity));
             //perform_routine_intent.PutExtra("routine_id", )
         }
+
+        
     }
 }

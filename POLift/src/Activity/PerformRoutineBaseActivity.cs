@@ -10,6 +10,7 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using Android.Gms.Ads;
+using Android.Util;
 using Android.Support.Compat;
 
 using Microsoft.Practices.Unity;
@@ -64,11 +65,11 @@ namespace POLift
             }
         }
 
-        protected int WeightInput
+        protected float WeightInput
         {
             get
             {
-                return Int32.Parse(WeightEditText.Text);
+                return Single.Parse(WeightEditText.Text);
             }
             set
             {
@@ -80,6 +81,8 @@ namespace POLift
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
+            Log.Debug("POLift", "PerformRoutineBaseActivity.OnCreate()");
+
             base.OnCreate(savedInstanceState);
 
             // Create your application here
@@ -546,9 +549,11 @@ namespace POLift
         protected bool SurpressTimerCallbackCleanup = false;
         protected override void OnDestroy()
         {
+            Log.Debug("POLift", "PerformRoutineBaseActivity.OnDestroy()");
+
             // remove references to methods in this object
             // if it's going to be deleted
-            if(!SurpressTimerCallbackCleanup)
+            if (!SurpressTimerCallbackCleanup)
             {
                 StaticTimer.TickedCallback = null;
                 StaticTimer.ElapsedCallback = null;
@@ -556,5 +561,19 @@ namespace POLift
            
             base.OnDestroy();
         }
+
+        protected override void OnPause()
+        {
+            Log.Debug("POLift", "PerformRoutineBaseActivity.OnPause()");
+            base.OnPause();
+        }
+
+        protected override void OnStop()
+        {
+            Log.Debug("POLift", "PerformRoutineBaseActivity.OnStop()");
+            base.OnStop();
+        }
+
+       
     }
 }

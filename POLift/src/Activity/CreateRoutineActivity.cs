@@ -94,13 +94,13 @@ namespace POLift
             }
             // else, start new routine
 
-            /* initialize the adapter if it hasn't been so far..
+            // initialize the adapter if it hasn't been so far..
             if (exercise_sets_adapter == null)
             {
                 exercise_sets_adapter = new ExerciseSetsAdapter(this, 
                     new List<IExerciseSets>() { });
             }
-            */
+            
 
             ExercisesListView.Adapter = exercise_sets_adapter;
 
@@ -172,8 +172,6 @@ namespace POLift
         {
             try
             {
-                SaveExerciseSets();
-
                 if(exercise_sets_adapter.Count == 0)
                 {
                     Toast.MakeText(this, 
@@ -181,6 +179,8 @@ namespace POLift
                         ToastLength.Long).Show();
                     return;
                 }
+
+                SaveExerciseSets();
 
                 Routine routine = new Routine(RoutineTitleText.Text, 
                     exercise_sets_adapter.ExerciseSets);

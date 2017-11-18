@@ -119,7 +119,7 @@ namespace POLift
                 }
 
                 builder.Append(", you will increase the weight by ")
-                   .Append(EnsureInt(WeightIncrementText.Text, "<weight increment>"))
+                   .Append(EnsureFloat(WeightIncrementText.Text, "<weight increment>"))
                    .Append(" for your next set. ");
             }
             else if(cs == 0)
@@ -156,13 +156,25 @@ namespace POLift
             }
         }
 
+        string EnsureFloat(string input_text, string fail_text = "?")
+        {
+            try
+            {
+                return Single.Parse(input_text).ToString();
+            }
+            catch
+            {
+                return fail_text;
+            }
+        }
+
         protected void CreateExerciseButton_Click(object sender, EventArgs e)
         {
             try
             {
                 string name = ExerciseNameText.Text;
                 int max_reps = Int32.Parse(RepRangeMaxText.Text);
-                int weight_increment = Int32.Parse(WeightIncrementText.Text);
+                float weight_increment = Single.Parse(WeightIncrementText.Text);
                 int rest_period_s = Int32.Parse(RestPeriodSecondsText.Text);
                 int consecutive_sets = Int32.Parse(ConsecutiveSetsForWeightIncrease.Text);
 
