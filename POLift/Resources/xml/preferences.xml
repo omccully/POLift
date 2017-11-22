@@ -19,6 +19,19 @@
     android:summary="When selecting an uncompleted routine"
     android:defaultValue="true"
       />
+
+  <CheckBoxPreference
+    android:key="ask_for_start_next_routine"
+    android:title="Ask for next routine start"
+    android:summary="on startup"
+    android:defaultValue="true"
+      />
+  <CheckBoxPreference
+    android:key="default_start_next_routine"
+    android:title="Start next routine automatically"
+    android:summary="the above setting must be disabled"
+    android:defaultValue="false"
+      />
   <!--
   <CheckBoxPreference
       android:key="ask_for_more_exercises"

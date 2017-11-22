@@ -70,11 +70,7 @@ namespace POLift
                     Resource.Mipmap.ic_timeline_white_24dp),
                 //new Navigation("View gym time graph", ViewGymTimeGraphs_Click,
                 //    Resource.Mipmap.ic_timeline_white_24dp),
-                new Navigation("Settings", Settings_Click,
-                    Resource.Mipmap.ic_settings_white_24dp),
-                new Navigation("Help & feedback", HelpAndFeedback_Click,
-                    Resource.Mipmap.ic_help_white_24dp),
-
+                
                 new Navigation("Backup data", BackupData_Click,
                     Resource.Mipmap.ic_backup_white_24dp),
                 new Navigation("Import data from backup", RestoreData_Click,
@@ -82,13 +78,30 @@ namespace POLift
                 new Navigation("Import routines and exercises only", ImportRoutinesAndExercises_Click,
                     Resource.Mipmap.ic_cloud_download_white_24dp),
                 new Navigation("Get free lifting programs", GetFreeLiftingPrograms_Click,
-                    Resource.Mipmap.ic_cloud_download_white_24dp)
+                    Resource.Mipmap.ic_cloud_download_white_24dp),
+
+                new Navigation("Settings", Settings_Click,
+                    Resource.Mipmap.ic_settings_white_24dp),
+                new Navigation("Help & feedback", HelpAndFeedback_Click,
+                    Resource.Mipmap.ic_help_white_24dp)
 
                     /*,
                      * TODO: export data as text
                 new Navigation("Export data as text", ExportAsText_Click,
                     Resource.Mipmap.ic_backup_white_24dp)*/
             };
+
+            ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(this);
+            if (!prefs.GetBoolean("has_rated_app", false))
+            {
+                Navigations.Add(new Navigation("Rate app",
+                    RateApp_Click, Resource.Mipmap.ic_rate_review_white_18dp));
+            }
+
+#if DEBUG
+            //Navigations.Add(new Navigation("Metricize", Metricize_Click,
+            //    Resource.Mipmap.ic_settings_white_24dp));
+#endif
 
             _NavigationAdapter = new NavigationAdapter(this, Navigations);
 
@@ -255,6 +268,74 @@ namespace POLift
             GetFreeLiftingPrograms();
         }
 
+        private void RateApp_Click(object sender, EventArgs e)
+        {
+            ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(this);
+
+            StartActivity(new Intent(Intent.ActionView,
+                Android.Net.Uri.Parse("market://details?id=com.cml.polift")));
+            prefs.Edit().PutBoolean("has_rated_app", true).Apply();
+        }
+
+        private void Metricize_Click(object sender, EventArgs e)
+        {
+            Helpers.DisplayConfirmation(this,
+                "Are you sure you want to convert exercises to metric? " +
+                "If yes, make sure you do a backup first.",
+                delegate
+                {
+                    ConvertEverythingToMetric();
+                });
+        }
+
+        void ConvertEverythingToMetric()
+        {
+            foreach(Exercise ex in Database.Table<Exercise>())
+            {
+                ex.WeightIncrement /= 2;
+
+                IPlateMath pm = ex.PlateMath;
+
+                if(pm == null)
+                {
+
+                }
+                else if(pm.BarWeight == 45)
+                {
+                    ex.PlateMath = PlateMath.MetricBarbellAndPlates;
+                }
+                else
+                {
+                    if(pm.BarWeight == 0)
+                    {
+                        // no bar
+                        if (pm.SplitWeights)
+                        {
+                            ex.PlateMath = PlateMath.MetricPlates;
+                        }
+                        else
+                        {
+                            ex.PlateMath = 
+                                PlateMath.MetricPlatesNoSplit;
+                        }
+                    }
+                }
+
+                Database.Update(ex);
+            }
+
+            foreach(Routine r in Database.Table<Routine>())
+            {
+                if(r.Name.Contains("imperial"))
+                {
+                    r.Name = r.Name.Replace("imperial", "metric");
+
+                    Database.Update(r);
+                }
+            }
+
+            ExercisesChanged();
+        }
         
         void GetFreeLiftingPrograms()
         {

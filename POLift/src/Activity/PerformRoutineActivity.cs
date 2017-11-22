@@ -385,6 +385,42 @@ namespace POLift
             // rest period is based on the NEXT exercise's rest period
 
             StartRestPeriod();
+
+            const string ask_for_rating_pref_key = "ask_for_rating";
+            if (_RoutineResult.ResultCount == 1)
+            {
+                ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(this);
+                bool ask_for_rating = prefs.GetBoolean(ask_for_rating_pref_key, true);
+                if (ask_for_rating)
+                {
+                    int rr_count = Database.Table<RoutineResult>().Count();
+                    Log.Debug("POLift", "rr_count = " + rr_count);
+                    if (rr_count == 10 || rr_count > 15)
+                    {
+                        Helpers.DisplayConfirmationYesNotNowNever(this,
+                            "Thank you for using POLift. Would you like to " +
+                            "rate this app in the Google Play store? ",
+                            "ask_for_rating", delegate
+                            {
+                                try
+                                {
+                                    StartActivity(new Intent(Intent.ActionView,
+                                        Android.Net.Uri.Parse("market://details?id=com.cml.polift")));
+                                    prefs.Edit().PutBoolean("has_rated_app", true).Apply();
+                                }
+                                catch { }
+                            });
+
+                        if (rr_count > 15)
+                        {
+                            prefs.Edit().PutBoolean(ask_for_rating_pref_key, false).Apply();
+                        }
+                    }
+                }
+            }
+            
+
+
             return true;
         }
 
@@ -531,7 +567,34 @@ namespace POLift
             }
             WarmupPrompted = true;
 
-            ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(this);
+            string exercise_name;
+            if (CurrentExercise == null)
+            {
+                exercise_name = "";
+            }
+            else
+            {
+                string en = CurrentExercise.Name.ToLower();
+
+                bool is_vowel = "aeiouAEIOU".IndexOf(en[0]) >= 0;
+
+                exercise_name = (is_vowel ? "n " : " ") + en;
+            }
+
+            Helpers.DisplayConfirmationNeverShowAgain(this,
+                $"Would you like to do a{exercise_name} warmup routine?",
+                "warmup", delegate
+                {
+                    StartWarmupActivity();
+                });
+
+
+
+
+
+
+
+            /*ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(this);
             
             bool AskForWarmup = prefs.GetBoolean(AskForWarmupPreferenceKey, true);
             bool DefaultWarmup = prefs.GetBoolean(DefaultWarmupPreferenceKey, false);
@@ -591,7 +654,7 @@ namespace POLift
                 {
                     StartWarmupActivity();
                 }
-            }
+            }*/
         }
 
         void DefaultWarmupTo(ISharedPreferences prefs, bool default_warmup)

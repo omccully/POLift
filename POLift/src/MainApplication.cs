@@ -2,7 +2,9 @@ using System;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
+using System.Linq;
 
+using Android.Content;
 using Android.App;
 using Android.OS;
 using Android.Runtime;
@@ -21,6 +23,7 @@ using Microsoft.Practices.Unity;
 namespace POLift
 {
     using Service;
+    using Model;
 
     //You can specify additional application information in this attribute
 #if DEBUG
@@ -32,6 +35,7 @@ namespace POLift
     {
         Handler handler;
         ILicenseManager license_manager;
+        IPOLDatabase Database;
 
         public MainApplication(IntPtr handle, JniHandleOwnership transer)
           :base(handle, transer)
@@ -55,9 +59,10 @@ namespace POLift
                     Settings.Secure.AndroidId);
             license_manager = C.ontainer.Resolve<ILicenseManager>();
 
-
             license_manager.BackupPreferences = 
                 PreferenceManager.GetDefaultSharedPreferences(this);
+
+            Database = C.ontainer.Resolve<IPOLDatabase>();
 
             string id = "pub-1015422455885077";
             MobileAds.Initialize(ApplicationContext, id);
@@ -118,6 +123,7 @@ namespace POLift
             UnregisterActivityLifecycleCallbacks(this);
         }
 
+        bool first_main_activity = true;
         volatile bool seen_activity = false;
         public void OnActivityCreated(Activity activity, Bundle savedInstanceState)
         {
@@ -135,6 +141,88 @@ namespace POLift
                 {
 
                 }
+
+                
+            }
+
+            if(first_main_activity && activity.GetType() == typeof(MainActivity))
+            {
+                first_main_activity = false;
+
+                PromptUserForStartingNextRoutine(activity);
+               
+            }
+        }
+
+        void PromptUserForStartingNextRoutine(Activity activity)
+        {
+            Log.Debug("POLift", "finding next routine...");
+            var rrs = Database.Table<RoutineResult>().OrderByDescending(rr => rr.StartTime);
+            RoutineResult latest_routine_result = rrs.ElementAtOrDefault(0);
+            if (latest_routine_result == null)
+            {
+                Log.Debug("POLift", "no recent routine result");
+                return;
+            }
+            if (!latest_routine_result.Completed)
+            {
+                int ec = latest_routine_result.ExerciseCount;
+                int erc = latest_routine_result.ExerciseResults.Count();
+                Log.Debug("POLift", $"latest routine result was uncompleted. ec={ec}, erc={erc}");
+                //
+                return;
+            }
+
+            if ((DateTime.Now - latest_routine_result.StartTime) < TimeSpan.FromHours(20))
+            {
+                Log.Debug("POLift", $"latest routine result was started less than 20 hours ago");
+                return;
+            }
+
+            int latest_routine_id = latest_routine_result.RoutineID;
+            string latest_routine_name = latest_routine_result.Routine.Name;
+
+            int previous_routine_id = -1;
+            foreach (RoutineResult rr in rrs)
+            {
+                Log.Debug("POLift", "checking " + rr);
+                if (previous_routine_id != -1 && 
+                    (rr.RoutineID == latest_routine_id || rr.Routine.Name == latest_routine_name))
+                {
+                    Routine next_routine = Database.ReadByID<Routine>(previous_routine_id);
+
+                    /*Helpers.DisplayConfirmation(activity, 
+                        "Based on your history, it looks like your next routine is " + 
+                        $"\"{next_routine.Name}\". Would you like to do this routine now?",
+                        delegate
+                        {
+                            Intent intent = new Intent(activity, typeof(PerformRoutineActivity));
+                            intent.PutExtra("routine_id", next_routine.ID);
+
+                            activity.StartActivity(intent);
+                        },
+                        delegate
+                        {
+
+                        });*/
+
+                    Log.Debug("POLift", "next routine found");
+                    Helpers.DisplayConfirmationNeverShowAgain(activity,
+                        "Based on your history, it looks like your next routine is " +
+                        $"\"{next_routine.Name}\". Would you like to do this routine now?",
+                        "start_next_routine",
+                        delegate
+                        {
+                            Intent intent = new Intent(activity, typeof(PerformRoutineActivity));
+                            intent.PutExtra("routine_id", next_routine.ID);
+
+                            activity.StartActivity(intent);
+                        });
+
+                    break;
+                }
+
+                previous_routine_id = rr.RoutineID;
             }
         }
 

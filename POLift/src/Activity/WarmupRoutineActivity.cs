@@ -145,6 +145,12 @@ namespace POLift
 
         public override void OnBackPressed()
         {
+            if(WarmupSetIndex == 0)
+            {
+                base.OnBackPressed();
+                return;
+            }
+
             back_button_dialog = Helpers.DisplayConfirmation(this,
                 "Are you sure you want to end this warmup session? " +
                 " You will lose all of your progress in this warmup.",
