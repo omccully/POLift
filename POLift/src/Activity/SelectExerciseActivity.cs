@@ -60,8 +60,6 @@ namespace POLift
                     exercises_pager_adapter.GoToCategory(routine_name, ExercisesViewPager);
                 }, 50);
             }
-            
-
         }
 
         private void Exercises_pager_adapter_ListItemClicked(object sender, ExerciseEventArgs e)
@@ -180,7 +178,9 @@ namespace POLift
         {
             Dictionary<string, List<IExercise>> dict = new Dictionary<string, List<IExercise>>();
 
-            foreach (Exercise ex in Database.Table<Exercise>())
+            foreach (Exercise ex in Database
+                .Table<Exercise>()
+                .OrderByDescending(ex => ex.Usage))
             {
                 string cat = ex.Deleted ? DeletedCategory :
                     (ex.Category == null ? DefaultCategory : ex.Category);

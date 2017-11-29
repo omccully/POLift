@@ -206,6 +206,21 @@ namespace POLift.Model
             EndTime = ex_result.Time;
 
             ExerciseResults.Add(ex_result);
+
+            IExercise exercise = ex_result.Exercise;
+            if(exercise.RefreshUsage())
+            {
+                Database.Update((Exercise)exercise);
+            }
+
+            ExerciseDifficulty diff = exercise.GetDifficultyRecord();
+            if(diff != null)
+            {
+                if (diff.RefreshUsage())
+                {
+                    Database.Update(diff);
+                }
+            }
         }
 
         public static IRoutineResult MostRecentForRoutine(IPOLDatabase database, IRoutine r)

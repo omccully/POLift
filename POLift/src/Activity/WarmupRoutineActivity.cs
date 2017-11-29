@@ -132,7 +132,7 @@ namespace POLift
             //SetActionBar(toolbar);
             //ActionBar.Title = $"{FirstExercise.Name} warmup";
 
-            
+            RepDetailsTextView.Visibility = ViewStates.Gone;
         }
 
 

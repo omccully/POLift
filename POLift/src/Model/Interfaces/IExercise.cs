@@ -25,11 +25,15 @@ namespace POLift.Model
 
         IPlateMath PlateMath { get; set; }
 
+        int Usage { get; set; }
+
         string ShortDetails { get; }
 
         float NextWeight { get; }
 
         ExerciseDifficulty GetDifficultyRecord();
+
+        bool RefreshUsage();
 
         int SucceedsInARow(int check_count = 0);
     }

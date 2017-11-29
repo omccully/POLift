@@ -18,6 +18,9 @@ namespace POLift.Model
         int RestPeriodSeconds { get; set; }
         string ExerciseIDs { get; set; }
         IEnumerable<Exercise> Exercises { get; set; }
+        int Usage { get; set; }
+
+        bool RefreshUsage();
 
         bool AddExercise(IExercise ex);
     }

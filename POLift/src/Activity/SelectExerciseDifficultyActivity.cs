@@ -70,7 +70,8 @@ namespace POLift
             Dictionary<string, List<IExerciseDifficulty>> dict = 
                 new Dictionary<string, List<IExerciseDifficulty>>();
 
-            foreach (ExerciseDifficulty ex in Database.Table<ExerciseDifficulty>())
+            foreach (ExerciseDifficulty ex in Database
+                .Table<ExerciseDifficulty>().OrderByDescending(ed => ed.Usage))
             {
                 string cat = (ex.Category == null ? DefaultCategory : ex.Category);
 

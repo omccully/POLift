@@ -73,7 +73,17 @@ namespace POLift
         void RefreshRoutineList()
         {
             routine_adapter = new RoutineAdapter(Activity,
-                Database.TableWhereUndeleted<Routine>());
+                Database.TableWhereUndeleted<Routine>().OrderBy(r =>
+                {
+                    IRoutineResult latest_rr = 
+                        RoutineResult.MostRecentForRoutine(Database, r);
+                    if (latest_rr == null)
+                        return DateTime.MinValue.AddSeconds(1);
+                    if (!latest_rr.Completed)
+                        return DateTime.MinValue;
+
+                    return latest_rr.StartTime;
+                }));
             RoutinesList.Adapter = routine_adapter;
 
             routine_adapter.DeleteButtonClicked += Routine_adapter_DeleteButtonClicked;

@@ -73,6 +73,11 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/RepResultEditText"
                     android:width="80dip" />
+              <TextView
+                    android:id="@+id/RepDetailsTextView"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
             </LinearLayout>
             <TextView
                 android:text="Next Warmup"

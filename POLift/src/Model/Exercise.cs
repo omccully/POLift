@@ -147,6 +147,23 @@ namespace POLift.Model
         [Ignore]
         public IPlateMath PlateMath { get; set; }
 
+        int _Usage = 0;
+        public int Usage {
+            get
+            {
+                if (_Usage == 0)
+                {
+                    RefreshUsage();
+                }
+
+                return _Usage;
+            }
+            set
+            {
+                _Usage = value;
+            }
+        }
+
         public Exercise() : this("Generic exercise", 6)
         {
 
@@ -198,6 +215,7 @@ namespace POLift.Model
                 }
 
                 sb.Append($", {RestPeriodSeconds} sec rest");
+                //sb.Append($", {Usage} usage");
                 return sb.ToString();
             }
         }
@@ -242,6 +260,20 @@ namespace POLift.Model
             }
         }
 
+        int CalculateUsage()
+        {
+            return Database.Table<ExerciseResult>()
+                .Where(er => er.ExerciseID == this.ID)
+                .Count() + 1;
+        }
+
+        public bool RefreshUsage()
+        {
+            int old_usage = _Usage;
+            _Usage = CalculateUsage();
+            return old_usage != _Usage;
+        }
+
         public int SucceedsInARow(int check_count = 0)
         {
             if (check_count == 0) check_count = ConsecutiveSetsForWeightIncrease;
@@ -275,9 +307,11 @@ namespace POLift.Model
         /// <returns>null if no ExerciseDifficulty in the db</returns>
         public ExerciseDifficulty GetDifficultyRecord()
         {
-            return Database.Query<ExerciseDifficulty>(
+            ExerciseDifficulty ed = Database.Query<ExerciseDifficulty>(
                 "SELECT * FROM ExerciseDifficulty WHERE Name = ? AND RestPeriodSeconds = ?",
                 Name, RestPeriodSeconds).FirstOrDefault();
+            if (ed != null) ed.Database = Database;
+            return ed;
         }
 
         public override bool Equals(object obj)

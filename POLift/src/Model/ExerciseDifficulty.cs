@@ -86,7 +86,17 @@ namespace POLift.Model
                     return new List<Exercise>();
                 }
 
-                return Database.ParseIDString<Exercise>(ExerciseIDs);
+                try
+                {
+                    return Database.ParseIDString<Exercise>(ExerciseIDs);
+                }
+                catch(Exception e)
+                {
+                    System.Diagnostics.Debug.WriteLine("ex ids: " + ExerciseIDs);
+                    System.Diagnostics.Debug.WriteLine(e.ToString());
+                    throw e;
+                }
+                
             }
             set
             {
@@ -111,6 +121,24 @@ namespace POLift.Model
                 {
                     _Category = Helpers.UniformString(value);
                 }
+            }
+        }
+
+        int _Usage = 0;
+        public int Usage
+        {
+            get
+            {
+                if (_Usage == 0)
+                {
+                    RefreshUsage();
+                }
+
+                return _Usage;
+            }
+            set
+            {
+                _Usage = value;
             }
         }
 
@@ -147,6 +175,18 @@ namespace POLift.Model
             return true;
         }
 
+        int CalculateUsage()
+        {
+            return this.Exercises.Sum(e => e.Usage);
+        }
+
+        public bool RefreshUsage()
+        {
+            int old_usage = _Usage;
+            _Usage = CalculateUsage();
+            return old_usage != _Usage;
+        }
+
         public static int Regenerate(IPOLDatabase database)
         {
             foreach(Exercise ex in database.Table<Exercise>())
@@ -156,6 +196,7 @@ namespace POLift.Model
                 if (difficulty == null)
                 {
                     difficulty = new ExerciseDifficulty(ex);
+                    difficulty.Database = database;
                     database.Insert(difficulty);
                 }
                 else
@@ -172,7 +213,13 @@ namespace POLift.Model
 
         public override string ToString()
         {
-            return $"{this.Name}, {this.RestPeriodSeconds} sec rest";
+            string ret = $"{this.Name}, {this.RestPeriodSeconds} sec rest";
+
+#if DEBUG
+            //ret += " " + Usage;
+#endif
+
+            return ret;
         }
     }
 }

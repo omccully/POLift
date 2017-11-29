@@ -354,7 +354,6 @@ namespace POLift
             } 
             else 
             {
-                
                 int needed_succeeds_in_a_row = CurrentExercise.ConsecutiveSetsForWeightIncrease;
                 if(needed_succeeds_in_a_row > 1)
                 {
@@ -368,7 +367,6 @@ namespace POLift
                         $"You need {needed_left} more in a row to advance to the next weight", 
                         ToastLength.Long).Show();
                 }
-
             }
 
             if (_RoutineResult.Completed)
@@ -400,7 +398,7 @@ namespace POLift
                         Helpers.DisplayConfirmationYesNotNowNever(this,
                             "Thank you for using POLift. Would you like to " +
                             "rate this app in the Google Play store? ",
-                            "ask_for_rating", delegate
+                            ask_for_rating_pref_key, delegate
                             {
                                 try
                                 {
@@ -419,8 +417,6 @@ namespace POLift
                 }
             }
             
-
-
             return true;
         }
 
@@ -463,6 +459,29 @@ namespace POLift
             {
                 NextExerciseView.Text = "Pending";
             }
+
+
+            IEnumerable<ExerciseResult> previous_ers = Database.Table<ExerciseResult>()
+                .Where(er => er.ExerciseID == CurrentExercise?.ID)
+                .TakeLast(3);
+            if (previous_ers.Count() == 0)
+            {
+                RepDetailsTextView.Text = "";
+            }
+            else
+            {
+                ExerciseResult first = previous_ers.First();
+                string s = $" (prev: {first.Weight}x{first.RepCount}";
+
+                foreach(ExerciseResult er in previous_ers.Skip(1))
+                {
+                    s += $", {er.Weight}x{er.RepCount}";
+                }
+                s += ")";
+
+                RepDetailsTextView.Text = s;
+            }
+            
         }
 
         void RefreshGUI()

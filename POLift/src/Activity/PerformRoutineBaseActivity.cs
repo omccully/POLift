@@ -36,6 +36,7 @@ namespace POLift
 
         protected TextView RepResultLabel;
         protected EditText RepResultEditText;
+        protected TextView RepDetailsTextView;
 
         protected TextView NextWarmupView;
 
@@ -95,6 +96,7 @@ namespace POLift
             NextExerciseView = FindViewById<TextView>(Resource.Id.NextExerciseView);
             ReportResultButton = FindViewById<Button>(Resource.Id.ReportResultButton);
             RepResultEditText = FindViewById<EditText>(Resource.Id.RepResultEditText);
+            RepDetailsTextView = FindViewById<TextView>(Resource.Id.RepDetailsTextView);
             CountDownTextView = FindViewById<TextView>(Resource.Id.CountDownTextView);
             WeightEditText = FindViewById<EditText>(Resource.Id.WeightEditText);
             Sub30SecButton = FindViewById<Button>(Resource.Id.Sub30SecButton);
