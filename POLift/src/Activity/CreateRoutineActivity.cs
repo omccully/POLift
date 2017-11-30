@@ -14,8 +14,8 @@ using Microsoft.Practices.Unity;
 
 namespace POLift
 {
-    using Model;
-    using Service;
+    using Core.Model;
+    using Core.Service;
     using Adapter;
 
     [Activity(Label = "Create Routine", WindowSoftInputMode = SoftInput.AdjustPan)]

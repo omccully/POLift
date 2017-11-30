@@ -13,8 +13,9 @@ using Android.Widget;
 
 namespace POLift.Adapter
 {
-    using Model;
     using Service;
+    using Core.Model;
+    using Core.Service;
 
     class ExerciseSetsAdapter : BaseAdapter<IExerciseSets>
     {
@@ -112,7 +113,7 @@ namespace POLift.Adapter
                         es.SetCount = Int32.Parse(holder.TextBox.Text);
                         if (es.SetCount == 0)
                         {
-                            Helpers.DisplayConfirmation(context, "Would you like to delete this exercise?",
+                            AndroidHelpers.DisplayConfirmation(context, "Would you like to delete this exercise?",
                                 delegate {
                                     ExerciseSets.RemoveAt(position);
                                     NotifyDataSetChanged();
@@ -134,7 +135,7 @@ namespace POLift.Adapter
         public void Regroup(IPOLDatabase database)
         {
             List<IExerciseSets> new_exercise_sets =
-                POLift.Model.ExerciseSets.Regroup(
+                POLift.Core.Model.ExerciseSets.Regroup(
                     this.ExerciseSets,
                     database);
 

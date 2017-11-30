@@ -15,8 +15,8 @@ using Microsoft.Practices.Unity;
 
 namespace POLift
 {
-    using Service;
-    using Model;
+    using Core.Service;
+    using Core.Model;
 
     [Activity(Label = "Select Exercise Difficulty")]
     public class SelectExerciseDifficultyActivity : Activity

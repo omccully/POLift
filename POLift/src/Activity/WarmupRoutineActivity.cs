@@ -15,9 +15,10 @@ using Microsoft.Practices.Unity;
 
 namespace POLift
 {
-    using Android.Text;
-    using Model;
     using Service;
+    using Android.Text;
+    using Core.Model;
+    using Core.Service;
 
     [Activity(Label = "Warmup", ParentActivity = typeof(PerformRoutineActivity))]
     public class WarmupRoutineActivity : PerformRoutineBaseActivity
@@ -91,7 +92,7 @@ namespace POLift
 
             if (FirstExercise == null)
             {
-                error_dialog = Helpers.DisplayError(this, "Error (" + id + ")",
+                error_dialog = AndroidHelpers.DisplayError(this, "Error (" + id + ")",
                     delegate
                     {
                         Finish();
@@ -151,7 +152,7 @@ namespace POLift
                 return;
             }
 
-            back_button_dialog = Helpers.DisplayConfirmation(this,
+            back_button_dialog = AndroidHelpers.DisplayConfirmation(this,
                 "Are you sure you want to end this warmup session? " +
                 " You will lose all of your progress in this warmup.",
                 delegate

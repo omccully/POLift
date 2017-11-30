@@ -26,6 +26,8 @@ namespace POLift
 		
 		public static void UpdateIdValues()
 		{
+			global::SQLite.Net.Platform.XamarinAndroid.Resource.String.ApplicationName = global::POLift.Resource.String.ApplicationName;
+			global::SQLite.Net.Platform.XamarinAndroid.Resource.String.Hello = global::POLift.Resource.String.Hello;
 		}
 		
 		public partial class Animation
@@ -2104,26 +2106,26 @@ namespace POLift
 			// aapt resource value: 0x7f020053
 			public const int avd_hide_password = 2130837587;
 			
+			// aapt resource value: 0x7f020068
+			public const int avd_hide_password_1 = 2130837608;
+			
+			// aapt resource value: 0x7f020069
+			public const int avd_hide_password_2 = 2130837609;
+			
 			// aapt resource value: 0x7f02006a
-			public const int avd_hide_password_1 = 2130837610;
-			
-			// aapt resource value: 0x7f02006b
-			public const int avd_hide_password_2 = 2130837611;
-			
-			// aapt resource value: 0x7f02006c
-			public const int avd_hide_password_3 = 2130837612;
+			public const int avd_hide_password_3 = 2130837610;
 			
 			// aapt resource value: 0x7f020054
 			public const int avd_show_password = 2130837588;
 			
+			// aapt resource value: 0x7f02006b
+			public const int avd_show_password_1 = 2130837611;
+			
+			// aapt resource value: 0x7f02006c
+			public const int avd_show_password_2 = 2130837612;
+			
 			// aapt resource value: 0x7f02006d
-			public const int avd_show_password_1 = 2130837613;
-			
-			// aapt resource value: 0x7f02006e
-			public const int avd_show_password_2 = 2130837614;
-			
-			// aapt resource value: 0x7f02006f
-			public const int avd_show_password_3 = 2130837615;
+			public const int avd_show_password_3 = 2130837613;
 			
 			// aapt resource value: 0x7f020055
 			public const int design_bottom_navigation_item_background = 2130837589;
@@ -2144,49 +2146,43 @@ namespace POLift
 			public const int design_snackbar_background = 2130837594;
 			
 			// aapt resource value: 0x7f02005b
-			public const int list_divide = 2130837595;
+			public const int navigation_empty_icon = 2130837595;
 			
 			// aapt resource value: 0x7f02005c
-			public const int navigation_empty_icon = 2130837596;
+			public const int notification_action_background = 2130837596;
 			
 			// aapt resource value: 0x7f02005d
-			public const int notification_action_background = 2130837597;
+			public const int notification_bg = 2130837597;
 			
 			// aapt resource value: 0x7f02005e
-			public const int notification_bg = 2130837598;
+			public const int notification_bg_low = 2130837598;
 			
 			// aapt resource value: 0x7f02005f
-			public const int notification_bg_low = 2130837599;
+			public const int notification_bg_low_normal = 2130837599;
 			
 			// aapt resource value: 0x7f020060
-			public const int notification_bg_low_normal = 2130837600;
+			public const int notification_bg_low_pressed = 2130837600;
 			
 			// aapt resource value: 0x7f020061
-			public const int notification_bg_low_pressed = 2130837601;
+			public const int notification_bg_normal = 2130837601;
 			
 			// aapt resource value: 0x7f020062
-			public const int notification_bg_normal = 2130837602;
+			public const int notification_bg_normal_pressed = 2130837602;
 			
 			// aapt resource value: 0x7f020063
-			public const int notification_bg_normal_pressed = 2130837603;
-			
-			// aapt resource value: 0x7f020064
-			public const int notification_icon_background = 2130837604;
-			
-			// aapt resource value: 0x7f020068
-			public const int notification_template_icon_bg = 2130837608;
-			
-			// aapt resource value: 0x7f020069
-			public const int notification_template_icon_low_bg = 2130837609;
-			
-			// aapt resource value: 0x7f020065
-			public const int notification_tile_bg = 2130837605;
+			public const int notification_icon_background = 2130837603;
 			
 			// aapt resource value: 0x7f020066
-			public const int notify_panel_notification_icon_bg = 2130837606;
+			public const int notification_template_icon_bg = 2130837606;
 			
 			// aapt resource value: 0x7f020067
-			public const int timer_white = 2130837607;
+			public const int notification_template_icon_low_bg = 2130837607;
+			
+			// aapt resource value: 0x7f020064
+			public const int notification_tile_bg = 2130837604;
+			
+			// aapt resource value: 0x7f020065
+			public const int notify_panel_notification_icon_bg = 2130837605;
 			
 			static Drawable()
 			{
@@ -3301,6 +3297,12 @@ namespace POLift
 		public partial class String
 		{
 			
+			// aapt resource value: 0x7f0a002b
+			public const int ApplicationName = 2131361835;
+			
+			// aapt resource value: 0x7f0a002a
+			public const int Hello = 2131361834;
+			
 			// aapt resource value: 0x7f0a0001
 			public const int abc_action_bar_home_description = 2131361793;
 			
@@ -3394,17 +3396,17 @@ namespace POLift
 			// aapt resource value: 0x7f0a0013
 			public const int abc_toolbar_collapse_description = 2131361811;
 			
-			// aapt resource value: 0x7f0a002a
-			public const int app_name = 2131361834;
+			// aapt resource value: 0x7f0a002c
+			public const int app_name = 2131361836;
 			
 			// aapt resource value: 0x7f0a0022
 			public const int appbar_scrolling_view_behavior = 2131361826;
 			
-			// aapt resource value: 0x7f0a002d
-			public const int banner_ad_unit_id = 2131361837;
+			// aapt resource value: 0x7f0a002f
+			public const int banner_ad_unit_id = 2131361839;
 			
-			// aapt resource value: 0x7f0a0030
-			public const int banner_ad_unit_id_test = 2131361840;
+			// aapt resource value: 0x7f0a0032
+			public const int banner_ad_unit_id_test = 2131361842;
 			
 			// aapt resource value: 0x7f0a0023
 			public const int bottom_sheet_behavior = 2131361827;
@@ -3415,20 +3417,20 @@ namespace POLift
 			// aapt resource value: 0x7f0a0000
 			public const int common_google_play_services_unknown_issue = 2131361792;
 			
-			// aapt resource value: 0x7f0a002f
-			public const int consider_purchase = 2131361839;
-			
-			// aapt resource value: 0x7f0a002c
-			public const int drawer_closed = 2131361836;
-			
-			// aapt resource value: 0x7f0a002b
-			public const int drawer_opened = 2131361835;
+			// aapt resource value: 0x7f0a0031
+			public const int consider_purchase = 2131361841;
 			
 			// aapt resource value: 0x7f0a002e
-			public const int interstitial_ad_unit_id = 2131361838;
+			public const int drawer_closed = 2131361838;
 			
-			// aapt resource value: 0x7f0a0031
-			public const int interstitial_ad_unit_id_test = 2131361841;
+			// aapt resource value: 0x7f0a002d
+			public const int drawer_opened = 2131361837;
+			
+			// aapt resource value: 0x7f0a0030
+			public const int interstitial_ad_unit_id = 2131361840;
+			
+			// aapt resource value: 0x7f0a0033
+			public const int interstitial_ad_unit_id_test = 2131361843;
 			
 			// aapt resource value: 0x7f0a0025
 			public const int password_toggle_content_description = 2131361829;

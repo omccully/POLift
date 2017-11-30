@@ -19,6 +19,8 @@ using Plugin.InAppBilling.Abstractions;
 
 namespace POLift.Service
 {
+    using Core.Service;
+
     public class LicenseManager : ILicenseManager
     {
         public static readonly string ProductID = "polift_license";
@@ -54,7 +56,7 @@ namespace POLift.Service
                 _BackupPreferences = value;
                 if(value != null && !value.Contains(TimeOfFirstLaunchKey))
                 {
-                    value.Edit().PutLong(TimeOfFirstLaunchKey, Helpers.UnixTimeStamp()).Apply();
+                    value.Edit().PutLong(TimeOfFirstLaunchKey, Core.Service.Helpers.UnixTimeStamp()).Apply();
                 }
             }
         }
@@ -120,7 +122,7 @@ namespace POLift.Service
                     if (first_launch != 0)
                     {
                         long trial_end_time = first_launch + TrialPeriodSeconds;
-                        int sec_left = (int)(trial_end_time - Helpers.UnixTimeStamp());
+                        int sec_left = (int)(trial_end_time - Core.Service.Helpers.UnixTimeStamp());
 
                         return sec_left;
                     }    

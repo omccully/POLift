@@ -21,8 +21,8 @@ using Microsoft.Practices.Unity;
 
 namespace POLift
 {
-    using Model;
-    using Service;
+    using Core.Model;
+    using Core.Service;
 
     public class GraphFragment : Fragment
     {

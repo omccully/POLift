@@ -5,7 +5,7 @@
     <MinimumVisualStudioVersion>10.0</MinimumVisualStudioVersion>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{2285E61A-D82F-4038-A71E-3AC9DBEFE738}</ProjectGuid>
+    <ProjectGuid>{F0C1F149-E2BE-47D1-86A7-D00FE62E9936}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>POLift.Core</RootNamespace>
@@ -35,10 +35,38 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="POLift.Core.cs" />
+    <Compile Include="Model\Exercise.cs" />
+    <Compile Include="Model\ExerciseDifficulty.cs" />
+    <Compile Include="Model\ExerciseResult.cs" />
+    <Compile Include="Model\ExerciseSets.cs" />
+    <Compile Include="Model\Interfaces\IDatabaseObject.cs" />
+    <Compile Include="Model\Interfaces\IDeletable.cs" />
+    <Compile Include="Model\Interfaces\IExercise.cs" />
+    <Compile Include="Model\Interfaces\IExerciseDifficulty.cs" />
+    <Compile Include="Model\Interfaces\IExerciseResult.cs" />
+    <Compile Include="Model\Interfaces\IExerciseSets.cs" />
+    <Compile Include="Model\Interfaces\IIdentifiable.cs" />
+    <Compile Include="Model\Interfaces\INavigation.cs" />
+    <Compile Include="Model\Interfaces\IRoutine.cs" />
+    <Compile Include="Model\Interfaces\IRoutineResult.cs" />
+    <Compile Include="Model\Interfaces\IWarmupSet.cs" />
+    <Compile Include="Model\Navigation.cs" />
+    <Compile Include="Model\Routine.cs" />
+    <Compile Include="Model\RoutineResult.cs" />
+    <Compile Include="Model\ValueLookup.cs" />
+    <Compile Include="Model\WarmupSet.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Service\Helpers.cs" />
+    <Compile Include="Service\Interfaces\IFileOperations.cs" />
+    <Compile Include="Service\Interfaces\IPlateMath.cs" />
+    <Compile Include="Service\Interfaces\IPOLDatabase.cs" />
+    <Compile Include="Service\PlateMath.cs" />
+    <Compile Include="Service\POLDatabase.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="SQLite.Net, Version=3.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SQLite.Net-PCL.3.1.1\lib\portable-win8+net45+wp8+wpa81+MonoAndroid1+MonoTouch1\SQLite.Net.dll</HintPath>
+    </Reference>
     <Reference Include="Xamarin.Forms.Core, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Xamarin.Forms.2.3.4.247\lib\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20\Xamarin.Forms.Core.dll</HintPath>
     </Reference>

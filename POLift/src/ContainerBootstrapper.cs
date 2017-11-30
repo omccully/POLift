@@ -16,6 +16,7 @@ using Microsoft.Practices.Unity;
 
 namespace POLift
 {
+    using Core.Service;
     using Service;
 
     static class C
@@ -48,7 +49,9 @@ namespace POLift
                 ontainer = new UnityContainer();
             
                 ontainer.RegisterInstance<IPOLDatabase>(
-                new POLDatabase(C.DatabasePath));
+                    new POLDatabase(
+                        new SQLite.Net.Platform.XamarinAndroid.SQLitePlatformAndroid(),
+                        C.DatabasePath));
             }
             catch(Exception e)
             {

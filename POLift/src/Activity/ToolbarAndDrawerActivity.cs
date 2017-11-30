@@ -29,8 +29,9 @@ using Microsoft.Practices.Unity;
 
 namespace POLift
 {
-    using Model;
     using Service;
+    using Core.Model;
+    using Core.Service;
 
     [Activity(Label = "ToolbarAndDrawerActivity")]
     public class ToolbarAndDrawerActivity : AppCompatActivity
@@ -131,7 +132,7 @@ namespace POLift
 
             if(first_launch)
             {
-                Helpers.DisplayConfirmation(this, 
+                AndroidHelpers.DisplayConfirmation(this, 
                     "You can get started with the app right away " +
                     "by using one of the built-in weightlifting programs. " +
                     "They focus on compound lifts that have withstood " +
@@ -279,7 +280,7 @@ namespace POLift
 
         private void Metricize_Click(object sender, EventArgs e)
         {
-            Helpers.DisplayConfirmation(this,
+            AndroidHelpers.DisplayConfirmation(this,
                 "Are you sure you want to convert exercises to metric? " +
                 "If yes, make sure you do a backup first.",
                 delegate
@@ -425,7 +426,7 @@ namespace POLift
             { 
                 if(requestCode == PickFileRequestCode)
                 {
-                    Helpers.DisplayConfirmation(this,
+                    AndroidHelpers.DisplayConfirmation(this,
                        "Are you sure you want to import this file (" +
                        Path.GetFileName(data.Data.Path) + ")? " +
                        "You may want to perform a backup of your current " +
@@ -436,7 +437,7 @@ namespace POLift
                 }
                 else if(requestCode == PickFileForRoutineAndExerciseImportCode)
                 {
-                    Helpers.DisplayConfirmation(this,
+                    AndroidHelpers.DisplayConfirmation(this,
                        "Are you sure you want to import the routines and exercises from this file (" +
                        Path.GetFileName(data.Data.Path) + ")? " +
                        "You may want to perform a backup of your current " +
@@ -462,7 +463,8 @@ namespace POLift
 
         void ImportFromUri(Android.Net.Uri uri, bool full = true)
         {
-            Helpers.ImportFromUri(uri, Database, this.ContentResolver, FilesDir.Path, full);
+            AndroidHelpers.ImportFromUri(uri, Database, this.ContentResolver, 
+                FilesDir.Path, new FileOperations(), full);
 
             GoToMainFragment();
         }

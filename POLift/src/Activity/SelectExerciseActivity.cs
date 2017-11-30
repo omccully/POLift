@@ -18,8 +18,9 @@ using Microsoft.Practices.Unity;
 
 namespace POLift
 {
-    using Model;
     using Service;
+    using Core.Model;
+    using Core.Service;
 
     [Activity(Label = "Select Exercise")]
     public class SelectExerciseActivity : Activity
@@ -95,7 +96,7 @@ namespace POLift
 
         private void Exercises_pager_adapter_DeleteButtonClicked(object sender, ExerciseEventArgs e)
         {
-            Helpers.DisplayConfirmation(this, "Are you sure you want to remove the \"" +
+            AndroidHelpers.DisplayConfirmation(this, "Are you sure you want to remove the \"" +
                 e.Exercise.ToString() + "\" exercise? (this won't have any effect" +
                 " on any routines that use this exercise)", delegate
                 {

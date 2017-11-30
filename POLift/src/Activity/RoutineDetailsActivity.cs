@@ -14,8 +14,8 @@ using Microsoft.Practices.Unity;
 
 namespace POLift
 {
-    using Service;
-    using Model;
+    using Core.Service;
+    using Core.Model;
 
     [Activity(Label = "RoutineDetailsActivity")]
     public class RoutineDetailsActivity : Activity

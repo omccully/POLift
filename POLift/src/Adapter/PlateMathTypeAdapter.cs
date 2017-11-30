@@ -12,7 +12,7 @@ using Android.Widget;
 
 namespace POLift
 {
-    using Service;
+    using Core.Service;
 
     class PlateMathTypeAdapter : BaseAdapter<IPlateMath>
     {

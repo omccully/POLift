@@ -13,7 +13,7 @@ using Android.Support.V4.View;
 
 namespace POLift
 {
-    using Model;
+    using Core.Model;
     using static Android.Views.View;
 
     class ExerciseDifficultyPagerAdapter : PagerAdapter

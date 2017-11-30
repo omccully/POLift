@@ -23,7 +23,8 @@ using Microsoft.Practices.Unity;
 namespace POLift
 {
     using Service;
-    using Model;
+    using Core.Service;
+    using Core.Model;
 
     //You can specify additional application information in this attribute
 #if DEBUG
@@ -207,7 +208,7 @@ namespace POLift
                         });*/
 
                     Log.Debug("POLift", "next routine found");
-                    Helpers.DisplayConfirmationNeverShowAgain(activity,
+                    AndroidHelpers.DisplayConfirmationNeverShowAgain(activity,
                         "Based on your history, it looks like your next routine is " +
                         $"\"{next_routine.Name}\". Would you like to do this routine now?",
                         "start_next_routine",

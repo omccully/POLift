@@ -13,7 +13,7 @@ using Android.Widget;
 
 namespace POLift
 {
-    using Model;
+    using Core.Model;
 
     class NavigationAdapter : BaseAdapter<INavigation>
     {

@@ -13,8 +13,8 @@ using Android.Widget;
 
 namespace POLift
 {
-    using Model;
-    using Service;
+    using Core.Model;
+    using Core.Service;
 
     class ExerciseEventArgs : EventArgs
     {

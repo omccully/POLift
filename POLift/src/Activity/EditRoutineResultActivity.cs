@@ -12,8 +12,9 @@ using System.Text;
 
 namespace POLift
 {
-    using Model;
     using Service;
+    using Core.Model;
+    using Core.Service;
 
     [Activity(Label = "Edit routine result")]
     public class EditRoutineResultActivity : Activity
@@ -48,7 +49,7 @@ namespace POLift
             else
             {
                 System.Diagnostics.Debug.WriteLine("invalid routine ID " + routine_result_id);
-                Helpers.DisplayError(this, "Error: invalid routine result", delegate
+                AndroidHelpers.DisplayError(this, "Error: invalid routine result", delegate
                 {
                     Finish();
                 });

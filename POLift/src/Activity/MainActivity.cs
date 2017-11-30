@@ -20,8 +20,8 @@ using Plugin.InAppBilling;
 
 namespace POLift
 {
-    using Model;
-    using Service;
+    using Core.Model;
+    using Core.Service;
 
     [Activity(Label = "POLift", MainLauncher = true /*, Icon ="@mipmap/polift"*/)]
     class MainActivity : ToolbarAndDrawerActivity

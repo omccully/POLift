@@ -18,7 +18,8 @@ using Microsoft.Practices.Unity;
 namespace POLift
 {
     using Service;
-    using Model;
+    using Core.Service;
+    using Core.Model;
 
     [Activity(Label = "Perform routine", ParentActivity = typeof(MainActivity))]
     public class PerformRoutineActivity : PerformRoutineBaseActivity
@@ -395,7 +396,7 @@ namespace POLift
                     Log.Debug("POLift", "rr_count = " + rr_count);
                     if (rr_count == 10 || rr_count > 15)
                     {
-                        Helpers.DisplayConfirmationYesNotNowNever(this,
+                        AndroidHelpers.DisplayConfirmationYesNotNowNever(this,
                             "Thank you for using POLift. Would you like to " +
                             "rate this app in the Google Play store? ",
                             ask_for_rating_pref_key, delegate
@@ -460,9 +461,9 @@ namespace POLift
                 NextExerciseView.Text = "Pending";
             }
 
-
             IEnumerable<ExerciseResult> previous_ers = Database.Table<ExerciseResult>()
-                .Where(er => er.ExerciseID == CurrentExercise?.ID)
+                .Where(er => er.ExerciseID == CurrentExercise?.ID &&
+                    er.Time < _RoutineResult.StartTime)
                 .TakeLast(3);
             if (previous_ers.Count() == 0)
             {
@@ -471,11 +472,22 @@ namespace POLift
             else
             {
                 ExerciseResult first = previous_ers.First();
+                ExerciseResult previous = first;
                 string s = $" (prev: {first.Weight}x{first.RepCount}";
 
                 foreach(ExerciseResult er in previous_ers.Skip(1))
                 {
-                    s += $", {er.Weight}x{er.RepCount}";
+                    if (er.Weight == previous.Weight)
+                    {
+                        s += $", x{er.RepCount}";
+                    }
+                    else
+                    {
+                        s += $", {er.Weight}x{er.RepCount}";
+                    }
+                    
+
+                    previous = er;
                 }
                 s += ")";
 
@@ -600,80 +612,12 @@ namespace POLift
                 exercise_name = (is_vowel ? "n " : " ") + en;
             }
 
-            Helpers.DisplayConfirmationNeverShowAgain(this,
+            AndroidHelpers.DisplayConfirmationNeverShowAgain(this,
                 $"Would you like to do a{exercise_name} warmup routine?",
                 "warmup", delegate
                 {
                     StartWarmupActivity();
                 });
-
-
-
-
-
-
-
-            /*ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(this);
-            
-            bool AskForWarmup = prefs.GetBoolean(AskForWarmupPreferenceKey, true);
-            bool DefaultWarmup = prefs.GetBoolean(DefaultWarmupPreferenceKey, false);
-
-            if (AskForWarmup)
-            {
-                string exercise_name;
-                if(CurrentExercise == null)
-                {
-                    exercise_name = "";
-                }
-                else
-                {
-                    string en = CurrentExercise.Name.ToLower();
-
-                    bool is_vowel = "aeiouAEIOU".IndexOf(en[0]) >= 0;
-
-                    exercise_name = (is_vowel ? "n " : " ") + en;
-                }
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.SetMessage($"Would you like to do a{exercise_name} warmup routine?");
-                
-                View CheckBoxLayout = LayoutInflater.Inflate(Resource.Layout.NeverShowAgainCheckBox, null);
-                CheckBox NeverShowAgainCheckBox = CheckBoxLayout.FindViewById<CheckBox>(
-                    Resource.Id.NeverShowAgainCheckBox);
-
-                builder.SetView(CheckBoxLayout);
-
-                builder.SetPositiveButton("Yes", delegate
-                {
-                    System.Diagnostics.Debug.WriteLine("yes: " + NeverShowAgainCheckBox.Checked);
-                    if (NeverShowAgainCheckBox.Checked)
-                    {
-                        DefaultWarmupTo(prefs, true);
-                    }
-
-                    StartWarmupActivity();
-                });
-
-                builder.SetNegativeButton("No", delegate 
-                {
-                    System.Diagnostics.Debug.WriteLine("no: " + NeverShowAgainCheckBox.Checked);
-                    if (NeverShowAgainCheckBox.Checked)
-                    {
-                        DefaultWarmupTo(prefs, false);
-                    }
-                });
-
-                dialog = builder.Create();
-                builder.Dispose();
-                dialog.Show();
-            }
-            else
-            {
-                if(DefaultWarmup)
-                {
-                    StartWarmupActivity();
-                }
-            }*/
         }
 
         void DefaultWarmupTo(ISharedPreferences prefs, bool default_warmup)
@@ -688,8 +632,6 @@ namespace POLift
         bool WarmupPrompted = false;
         void StartWarmupActivity()
         {
-            
-
             var intent = new Intent(this, typeof(WarmupRoutineActivity));
             intent.PutExtra("exercise_id", CurrentExercise.ID);
             intent.PutExtra("working_set_weight", WeightInput);

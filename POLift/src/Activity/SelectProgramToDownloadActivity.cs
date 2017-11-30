@@ -21,6 +21,7 @@ using Microsoft.Practices.Unity;
 namespace POLift
 {
     using Service;
+    using Core.Service;
 
     [Activity(Label = "SelectProgramToDownloadActivity")]
     public class SelectProgramToDownloadActivity : ListActivity
@@ -77,7 +78,7 @@ namespace POLift
         {
             ExternalProgram program = Programs[e.Position];
 
-            Helpers.DisplayConfirmation(this, "Are you sure you want to import the routines" +
+            AndroidHelpers.DisplayConfirmation(this, "Are you sure you want to import the routines" +
                 $" and exercises for the \"{program.title}\" lifting program?",
                 delegate
                 {
@@ -94,7 +95,7 @@ namespace POLift
                 Log.Debug("POLift", $"Selected program: {program.title}, {program.description}, {program.file}");
                 //Helpers.ImportFromUri(Android.Net.Uri.Parse(url), Database, this.ContentResolver, FilesDir.Path, false);
 
-                Helpers.ImportFromUrl(url, Database, FilesDir.Path, false);
+                Helpers.ImportFromUrl(url, Database, FilesDir.Path, new FileOperations(), false);
 
                 SetResult(Result.Ok);
                 Finish();

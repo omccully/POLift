@@ -13,8 +13,8 @@ using Android.Views.InputMethods;
 namespace POLift
 {
    
-    using Model;
-    using Service;
+    using Core.Model;
+    using Core.Service;
 
     [Activity(Label = "Create Exercise")]
     public class CreateExerciseActivity : Activity

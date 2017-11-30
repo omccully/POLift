@@ -7,7 +7,7 @@ using System.Collections.ObjectModel;
 
 namespace POLift
 {
-    using Model;
+    using Core.Model;
 
     class RoutineEventArgs
     {

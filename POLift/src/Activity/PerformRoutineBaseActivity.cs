@@ -18,7 +18,8 @@ using Microsoft.Practices.Unity;
 namespace POLift
 {
     using Service;
-    using Model;
+    using Core.Service;
+    using Core.Model;
     using Android.Support.V4.App;
 
     //[Activity(Label = "Perform routine")]
@@ -53,7 +54,7 @@ namespace POLift
 
         protected LinearLayout PerformRoutineMainContent;
 
-        protected ILicenseManager LicenseManager;
+        protected Service.ILicenseManager LicenseManager;
 
         protected IExercise CurrentExercise;
 
@@ -495,7 +496,8 @@ namespace POLift
 
             //resultPendingIntent
             NotificationCompat.Builder n_builder = new NotificationCompat.Builder(this)
-               .SetSmallIcon(Resource.Drawable.timer_white)
+               //.SetSmallIcon(Resource.Drawable.timer_white)
+               .SetSmallIcon(Resource.Drawable.abc_ab_share_pack_mtrl_alpha)
                .SetContentTitle("Lifting rest period finished")
                .SetContentText("Start your next set whenever you are ready")
                .SetContentIntent(resultPendingIntent);

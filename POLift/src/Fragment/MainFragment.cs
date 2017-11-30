@@ -15,8 +15,9 @@ using Microsoft.Practices.Unity;
 
 namespace POLift
 {
-    using Model;
     using Service;
+    using Core.Model;
+    using Core.Service;
 
     [Activity(Label = "Progressive Overload Lifting", MainLauncher = true)]
     class MainFragment : Fragment
@@ -99,7 +100,7 @@ namespace POLift
 
         private void Routine_adapter_DeleteButtonClicked(object sender, RoutineEventArgs e)
         {
-            Helpers.DisplayConfirmation(Activity, "Are you sure you want to delete this routine?",
+            AndroidHelpers.DisplayConfirmation(Activity, "Are you sure you want to delete this routine?",
                 delegate
                 {
                     // yes

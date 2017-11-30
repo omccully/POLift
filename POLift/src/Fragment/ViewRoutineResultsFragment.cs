@@ -16,7 +16,8 @@ using Microsoft.Practices.Unity;
 namespace POLift
 {
     using Service;
-    using Model;
+    using Core.Service;
+    using Core.Model;
 
     public class ViewRoutineResultsFragment : ListFragment
     {
@@ -61,8 +62,8 @@ namespace POLift
         private void RoutineResultAdapter_DeleteButtonClicked(object sender, ContainerEventArgs<IRoutineResult> e)
         {
             IRoutineResult rr = e.Contents;
-            
-            Helpers.DisplayConfirmation(this.Activity, "Are you sure you want to delete this workout session? " +
+
+            AndroidHelpers.DisplayConfirmation(this.Activity, "Are you sure you want to delete this workout session? " +
                 $"{rr.Routine.Name} at {rr.StartTime}",
                delegate
                {
