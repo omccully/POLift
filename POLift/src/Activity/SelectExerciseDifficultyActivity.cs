@@ -40,7 +40,7 @@ namespace POLift
                 FindViewById<ViewPager>(Resource.Id.ExercisesDifficultyViewPager);
 
             exercise_difficulty_pager_adapter = new ExerciseDifficultyPagerAdapter(this,
-                ExercisesInCategories());
+                ExerciseDifficulty.InCategories(Database, DefaultCategory));
             exercise_difficulty_pager_adapter.ListItemClicked += Exercise_difficulty_pager_adapter_ListItemClicked;
             ExercisesDifficultyViewPager.Adapter = exercise_difficulty_pager_adapter;
         }
@@ -63,36 +63,6 @@ namespace POLift
             SetResult(Result.Ok, result_intent);
 
             Finish();
-        }
-
-        List<KeyValuePair<string, List<IExerciseDifficulty>>> ExercisesInCategories()
-        {
-            Dictionary<string, List<IExerciseDifficulty>> dict = 
-                new Dictionary<string, List<IExerciseDifficulty>>();
-
-            foreach (ExerciseDifficulty ex in Database
-                .Table<ExerciseDifficulty>().OrderByDescending(ed => ed.Usage))
-            {
-                string cat = (ex.Category == null ? DefaultCategory : ex.Category);
-
-                if (dict.ContainsKey(cat))
-                {
-                    dict[cat].Add(ex);
-                }
-                else
-                {
-                    dict[cat] = new List<IExerciseDifficulty>() { ex };
-                }
-            }
-
-            //POLDatabase.Table<Exercise>()
-            //    .GroupBy(ex => ex.Category)
-            //    .OrderByDescending(group => group.Count());
-
-
-            return dict.OrderByDescending(kvp =>
-                kvp.Value.Count
-            ).ToList();
         }
     }
 }

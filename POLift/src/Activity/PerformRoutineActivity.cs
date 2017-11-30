@@ -385,7 +385,15 @@ namespace POLift
 
             StartRestPeriod();
 
+            PromptUserForRating();
+           
+            return true;
+        }
+
+        void PromptUserForRating()
+        {
             const string ask_for_rating_pref_key = "ask_for_rating";
+
             if (_RoutineResult.ResultCount == 1)
             {
                 ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(this);
@@ -417,8 +425,6 @@ namespace POLift
                     }
                 }
             }
-            
-            return true;
         }
 
         void StartRestPeriod()

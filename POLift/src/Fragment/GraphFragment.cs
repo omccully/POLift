@@ -23,6 +23,7 @@ namespace POLift
 {
     using Core.Model;
     using Core.Service;
+    using Core.Helpers;
 
     public class GraphFragment : Fragment
     {
@@ -30,6 +31,7 @@ namespace POLift
 
         PlotView plot_view;
         TextView GraphDataTextView;
+        OrmGraph orm_graph;
 
         IPOLDatabase Database;
 
@@ -41,6 +43,7 @@ namespace POLift
 
             // Create your fragment here
             Database = C.ontainer.Resolve<IPOLDatabase>();
+            orm_graph = new OrmGraph(Database);
 
             ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(this.Activity);
 
@@ -115,125 +118,13 @@ namespace POLift
             if (exercise_difficulty_id > 0 && frame_layout != null)
             {
                 ExerciseDifficulty ex = Database.ReadByID<ExerciseDifficulty>(exercise_difficulty_id);
-                IEnumerable<ExerciseResult> data = GetPlotData(exercise_difficulty_id);
-                plot_view.Model = CreatePlotModel(ex, data);
+                IEnumerable<ExerciseResult> data = orm_graph.GetPlotData(exercise_difficulty_id);
+                plot_view.Model = orm_graph.CreatePlotModel(ex, data);
                 frame_layout.RemoveAllViews();
                 frame_layout.AddView(plot_view);
 
-                StringBuilder data_text = new StringBuilder();
-
-                DateTime last_date = DateTime.MinValue;
-                foreach (ExerciseResult ex_result in data)
-                {
-                    if (last_date.Date != ex_result.Time.Date)
-                    {
-                        data_text.AppendLine();
-                    }
-
-                    data_text.Append(ex_result.Weight);
-                    data_text.Append(" weight, ");
-                    data_text.Append(ex_result.RepCount);
-                    data_text.Append(" reps, ");
-                    data_text.Append(ex_result.Time.ToShortDateString());
-
-                    data_text.AppendLine();
-
-                    last_date = ex_result.Time;
-                }
-
-                GraphDataTextView.Text = data_text.ToString();
-            }
-        }
-
-
-        IEnumerable<ExerciseResult> GetPlotData(int exercise_difficulty_id)
-        {
-            return GetPlotData(Database.ReadByID<ExerciseDifficulty>(exercise_difficulty_id));
-        }
-
-        IEnumerable<ExerciseResult> GetPlotData(IExerciseDifficulty exercise_difficulty)
-        {
-            return GetPlotData(exercise_difficulty.ExerciseIDs.ToIDIntegers());
-        }
-
-        IEnumerable<ExerciseResult> GetPlotData(IEnumerable<int> exercise_ids)
-        {
-            // TODO: SQL builder for SQL OR operations for ExerciseID = __ OR ...
-
-            return Database.Table<ExerciseResult>()
-                .Where(ex_result => exercise_ids.Contains(ex_result.ExerciseID) && !ex_result.Deleted)
-                .OrderBy(ex_result => ex_result.Time);
-        }
-
-
-        PlotModel CreatePlotModel(IExerciseDifficulty exercise, 
-            IEnumerable<ExerciseResult> exercise_results)
-        {
-            var plotModel = new PlotModel { Title = $"{exercise.Name} one-rep max" };
-
-            DateTimeAxis date_axis = new DateTimeAxis { Position = AxisPosition.Bottom };
-            plotModel.Axes.Add(date_axis);
-            plotModel.Axes.Add(new LinearAxis { Position = AxisPosition.Left });
-
-            var series1 = new LineSeries
-            {
-                MarkerType = MarkerType.Circle,
-                MarkerSize = 4,
-                MarkerStroke = OxyColors.White,
-                Background = OxyColor.FromArgb(255, 255, 255, 255)
-            };
-
-            
-            if (exercise_results.Count() > 1)
-            {
-                DateTime min_date = exercise_results.First().Time;
-                date_axis.AbsoluteMinimum = DateTimeAxis.ToDouble(min_date);
-
-                DateTime max_date = exercise_results.Last().Time;
-                date_axis.AbsoluteMaximum = DateTimeAxis.ToDouble(max_date);
-
-                AddExerciseResultsToSeries(series1, exercise_results);
-            }
-
-            plotModel.Series.Add(series1);
-
-            return plotModel;
-        }
-
-        void AddExerciseResultsToSeries(LineSeries series1, IEnumerable<ExerciseResult> exercise_results)
-        {
-            // must average each day's 1RM
-            DateTime last_date = DateTime.MinValue;
-            int orm_sum = 0;
-            int orm_count = 0;
-            foreach (ExerciseResult ex_result in exercise_results)
-            {
-                int orm = Helpers.OneRepMax(ex_result.Weight, ex_result.RepCount);
-
-                if (last_date.Date == ex_result.Time.Date)
-                {
-                    orm_sum += orm;
-                    orm_count++;
-                }
-                else
-                {
-                    if (orm_count > 0)
-                    {
-                        double last_date_d = DateTimeAxis.ToDouble(last_date);
-                        series1.Points.Add(new DataPoint(last_date_d, orm_sum / orm_count));
-                    }
-
-                    orm_sum = orm;
-                    orm_count = 1;
-                }
-
-                last_date = ex_result.Time;
-            }
-
-            if (orm_count > 0)
-            {
-                double last_date_d = DateTimeAxis.ToDouble(last_date);
-                series1.Points.Add(new DataPoint(last_date_d, orm_sum / orm_count));
+                // generate list of values for sidebar
+                GraphDataTextView.Text = OrmGraph.DataSourceText(data);
             }
         }
     }

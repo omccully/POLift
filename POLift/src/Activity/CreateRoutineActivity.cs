@@ -101,9 +101,7 @@ namespace POLift
                     new List<IExerciseSets>() { });
             }
             
-
             ExercisesListView.Adapter = exercise_sets_adapter;
-
 
             AddExerciseButton.Click += AddExerciseButton_Click;
             CreateRoutineButton.Click += CreateRoutineButton_Click;
@@ -118,16 +116,11 @@ namespace POLift
         void InitializeExerciseSetsAdapter(IEnumerable<IExercise> exercises, 
             int exercises_locked)
         {
-            List<IExerciseSets> exercise_sets = new List<IExerciseSets>();
+            int locked_set_count;
 
-            IEnumerable<IExerciseSets> locked_sets =
-                    ExerciseSets.Group(exercises.Take(exercises_locked), Database);
-            IEnumerable<IExerciseSets> unlocked_sets =
-                ExerciseSets.Group(exercises.Skip(exercises_locked), Database);
-            int locked_set_count = locked_sets.Count();
-            exercise_sets.AddRange(locked_sets);
-            exercise_sets.AddRange(unlocked_sets);
-
+            IEnumerable<IExerciseSets> exercise_sets = 
+                exercises.SplitLockedSets(exercises_locked, out locked_set_count);
+          
             exercise_sets_adapter = new ExerciseSetsAdapter(this,
                 exercise_sets, locked_set_count);
         }
@@ -138,7 +131,6 @@ namespace POLift
         {
             base.OnSaveInstanceState(outState);
 
-            
             SaveExerciseSets();
             int[] ids = exercise_sets_adapter.ExerciseSets.Select(es => es.ID).ToArray();
             System.Diagnostics.Debug.WriteLine("ids during save: " + ids.ToIDString());

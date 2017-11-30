@@ -22,6 +22,7 @@ namespace POLift
 {
     using Service;
     using Core.Service;
+    using Core.Model;
 
     [Activity(Label = "SelectProgramToDownloadActivity")]
     public class SelectProgramToDownloadActivity : ListActivity
@@ -38,22 +39,14 @@ namespace POLift
             Database = C.ontainer.Resolve<IPOLDatabase>();
             ListView.ItemClick += ListView_ItemClick;
 
-            QueryProgramsList();
+            RefreshProgramsList();
         }
 
-        
-
-        async Task QueryProgramsList()
+        async Task RefreshProgramsList()
         {
             try
             {
-                string url = "http://crystalmathlabs.com/polift/programs_list.php";
-                string response = await Helpers.HttpQueryAsync(url);
-
-                Log.Debug("POLift", response);
-
-                this.Programs =
-                    JsonConvert.DeserializeObject<ExternalProgram[]>(response);
+                this.Programs = await ExternalProgram.QueryProgramsList();
                 Log.Debug("POLift", "programs deserialized");
                 string[] titles = this.Programs.Select(p => p.title).ToArray();
 
@@ -105,13 +98,6 @@ namespace POLift
                 Toast.MakeText(this, "Error importing program", ToastLength.Long).Show();
                 Log.Debug("POLift", "Error importing program: " + ex);
             }
-        }
-
-        class ExternalProgram
-        {
-            public string title;
-            public string description;
-            public string file;
         }
     }
 }

@@ -186,14 +186,17 @@ namespace POLift
                 int days_left = Math.Abs(sec_left / 86400);
                 string plur = days_left == 1 ? "" : "s";
 
-                if (sec_left > 0)
+                RunOnUiThread(delegate
                 {
-                    navigation.Text += $" ({days_left} day{plur} left)";
-                }
-                else
-                {
-                    navigation.Text += $" (expired {days_left} day{plur} ago)";
-                }
+                    if (sec_left > 0)
+                    {
+                        navigation.Text += $" ({days_left} day{plur} left)";
+                    }
+                    else
+                    {
+                        navigation.Text += $" (expired {days_left} day{plur} ago)";
+                    }
+                });
 
                 _NavigationAdapter.NotifyDataSetChanged();
             }
@@ -291,49 +294,7 @@ namespace POLift
 
         void ConvertEverythingToMetric()
         {
-            foreach(Exercise ex in Database.Table<Exercise>())
-            {
-                ex.WeightIncrement /= 2;
-
-                IPlateMath pm = ex.PlateMath;
-
-                if(pm == null)
-                {
-
-                }
-                else if(pm.BarWeight == 45)
-                {
-                    ex.PlateMath = PlateMath.MetricBarbellAndPlates;
-                }
-                else
-                {
-                    if(pm.BarWeight == 0)
-                    {
-                        // no bar
-                        if (pm.SplitWeights)
-                        {
-                            ex.PlateMath = PlateMath.MetricPlates;
-                        }
-                        else
-                        {
-                            ex.PlateMath = 
-                                PlateMath.MetricPlatesNoSplit;
-                        }
-                    }
-                }
-
-                Database.Update(ex);
-            }
-
-            foreach(Routine r in Database.Table<Routine>())
-            {
-                if(r.Name.Contains("imperial"))
-                {
-                    r.Name = r.Name.Replace("imperial", "metric");
-
-                    Database.Update(r);
-                }
-            }
+            Database.ConvertEverythingToMetric();
 
             ExercisesChanged();
         }
@@ -358,28 +319,6 @@ namespace POLift
             share_intent.SetData(uri);
             share_intent.AddFlags(ActivityFlags.GrantReadUriPermission);
             StartActivity(share_intent);
-
-
-            /*Intent intent = new Intent(Intent.ActionSend);
-
-            intent.SetType("application/octet-stream");
-
-            intent.PutExtra(Intent.ExtraStream, uri);
-
-            //intent.SetData(uri);
-            //intent.AddFlags(ActivityFlags.GrantReadUriPermission);
-
-            // grant permission to all
-            IList<ResolveInfo> res_info_list = PackageManager.QueryIntentActivities(intent,
-                PackageInfoFlags.MatchDefaultOnly);
-            foreach (ResolveInfo res_info in res_info_list)
-            {
-                string package_name = res_info.ActivityInfo.PackageName;
-                System.Diagnostics.Debug.WriteLine("giving permission for " + package_name);
-                GrantUriPermission(package_name, uri, ActivityFlags.GrantReadUriPermission);
-            }
-
-            StartActivity(Intent.CreateChooser(intent, "Backup via: "));*/
         }
 
 

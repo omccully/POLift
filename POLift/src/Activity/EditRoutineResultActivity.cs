@@ -58,7 +58,7 @@ namespace POLift
 
         private void DoneEditingRoutineResultButton_Click(object sender, EventArgs e)
         {
-            SaveEdits();
+            _RoutineResult.SaveEdits(WeightEdits, RepsEdits);
             SetResult(Result.Ok);
             Finish();
         }
@@ -70,7 +70,7 @@ namespace POLift
             return text_view;
         }
 
-        Dictionary<int, int> WeightEdits = new Dictionary<int, int>();
+        Dictionary<int, float> WeightEdits = new Dictionary<int, float>();
         Dictionary<int, int> RepsEdits = new Dictionary<int, int>();
 
         void InitializeGUI()
@@ -88,47 +88,7 @@ namespace POLift
 
                 Layout.AddView(EditLayoutForExerciseResult(ex_result));
 
-
                 last_exercise_id = ex_result.ExerciseID;
-            }
-        }
-
-        Dictionary<int, IExerciseResult> ExerciseResultMap()
-        {
-            Dictionary<int, IExerciseResult> map = new Dictionary<int, IExerciseResult>();
-
-            foreach (IExerciseResult ex_result in _RoutineResult.ExerciseResults)
-            {
-                map[ex_result.ID] = ex_result;
-            }
-
-            return map;
-        }
-
-        void SaveEdits()
-        {
-            Dictionary<int, IExerciseResult> ex_result_map = ExerciseResultMap();
-            HashSet<int> ex_result_ids_to_save = new HashSet<int>();
-
-            foreach (KeyValuePair<int, int> er_id_to_weight in WeightEdits)
-            {
-                int er_id = er_id_to_weight.Key;
-                int new_weight = er_id_to_weight.Value;
-                ex_result_map[er_id].Weight = new_weight;
-                ex_result_ids_to_save.Add(er_id);
-            }
-
-            foreach (KeyValuePair<int, int> er_id_to_weight in RepsEdits)
-            {
-                int er_id = er_id_to_weight.Key;
-                int new_reps = er_id_to_weight.Value;
-                ex_result_map[er_id].RepCount = new_reps;
-                ex_result_ids_to_save.Add(er_id);
-            }
-
-            foreach(int id in ex_result_ids_to_save)
-            {
-                Database.Update((ExerciseResult)ex_result_map[id]);
             }
         }
 
@@ -151,7 +111,7 @@ namespace POLift
                 try
                 {
                     WeightEdits[ex_result.ID] =
-                        Int32.Parse(weight_edit.Text);
+                        Single.Parse(weight_edit.Text);
                 }
                 catch (FormatException)
                 {

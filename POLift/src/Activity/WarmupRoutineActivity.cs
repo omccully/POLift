@@ -27,14 +27,7 @@ namespace POLift
 
         const string WarmupSetIndexKey = "warmup_set_index";
 
-        IWarmupSet[] WarmupSets =
-        {
-            new WarmupSet(8, 50, 50),
-            new WarmupSet(8, 50, 50),
-            new WarmupSet(4, 70, 50),
-            new WarmupSet(1, 90, 50)
-        };
-
+        IWarmupSet[] WarmupSets = WarmupSet.Default;
 
         IWarmupSet NextWarmupSet
         {

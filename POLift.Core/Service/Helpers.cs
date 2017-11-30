@@ -275,5 +275,131 @@ namespace POLift.Core.Service
         {
             return source.Skip(Math.Max(0, source.Count() - N));
         }
+
+        public static IEnumerable<Routine> MainPageRoutinesList(IPOLDatabase database)
+        {
+            return database.TableWhereUndeleted<Routine>().OrderBy(r =>
+            {
+                IRoutineResult latest_rr =
+                    RoutineResult.MostRecentForRoutine(database, r);
+                if (latest_rr == null)
+                    return DateTime.MinValue.AddSeconds(1);
+                if (!latest_rr.Completed)
+                    return DateTime.MinValue;
+
+                return latest_rr.StartTime;
+            });
+        }
+
+        public static void ConvertEverythingToMetric(this IPOLDatabase Database)
+        {
+            foreach (Exercise ex in Database.Table<Exercise>())
+            {
+                ex.WeightIncrement /= 2;
+
+                IPlateMath pm = ex.PlateMath;
+
+                if (pm == null)
+                {
+
+                }
+                else if (pm.BarWeight == 45)
+                {
+                    ex.PlateMath = PlateMath.MetricBarbellAndPlates;
+                }
+                else
+                {
+                    if (pm.BarWeight == 0)
+                    {
+                        // no bar
+                        if (pm.SplitWeights)
+                        {
+                            ex.PlateMath = PlateMath.MetricPlates;
+                        }
+                        else
+                        {
+                            ex.PlateMath =
+                                PlateMath.MetricPlatesNoSplit;
+                        }
+                    }
+                }
+
+                Database.Update(ex);
+            }
+
+            foreach (Routine r in Database.Table<Routine>())
+            {
+                if (r.Name.Contains("imperial"))
+                {
+                    r.Name = r.Name.Replace("imperial", "metric");
+
+                    Database.Update(r);
+                }
+            }
+        }
+
+        public static Dictionary<int, T> ToMap<T>(this IEnumerable<T> objs) where T : IIdentifiable
+        {
+            Dictionary<int, T> map = new Dictionary<int, T>();
+
+            foreach (T obj in objs)
+            {
+                map[obj.ID] = obj;
+            }
+
+            return map;
+        }
+
+        public static void SaveEdits(this IRoutineResult routine_result, Dictionary<int, float> WeightEdits, Dictionary<int, int> RepsEdits)
+        {
+            Dictionary<int, IExerciseResult> ex_result_map = routine_result.ExerciseResults.ToMap();
+            HashSet<int> ex_result_ids_to_save = new HashSet<int>();
+
+            foreach (KeyValuePair<int, float> er_id_to_weight in WeightEdits)
+            {
+                int er_id = er_id_to_weight.Key;
+                float new_weight = er_id_to_weight.Value;
+                ex_result_map[er_id].Weight = new_weight;
+                ex_result_ids_to_save.Add(er_id);
+            }
+
+            foreach (KeyValuePair<int, int> er_id_to_reps in RepsEdits)
+            {
+                int er_id = er_id_to_reps.Key;
+                int new_reps = er_id_to_reps.Value;
+                ex_result_map[er_id].RepCount = new_reps;
+                ex_result_ids_to_save.Add(er_id);
+            }
+
+            foreach (int id in ex_result_ids_to_save)
+            {
+                routine_result.Database.Update((ExerciseResult)ex_result_map[id]);
+            }
+        }
+
+        public static IEnumerable<IExerciseSets> SplitLockedSets(this IEnumerable<IExercise> exercises,
+            int exercises_locked, out int sets_locked)
+        {
+            List<IExerciseSets> exercise_sets = new List<IExerciseSets>();
+
+            IExercise first = exercises.FirstOrDefault();
+            if (first == null)
+            {
+                sets_locked = 0;
+
+                return exercise_sets;
+            }
+            IPOLDatabase Database = first.Database;
+
+            IEnumerable<IExerciseSets> locked_sets =
+                    ExerciseSets.Group(exercises.Take(exercises_locked), Database);
+            IEnumerable<IExerciseSets> unlocked_sets =
+                ExerciseSets.Group(exercises.Skip(exercises_locked), Database);
+            sets_locked = locked_sets.Count();
+            exercise_sets.AddRange(locked_sets);
+            exercise_sets.AddRange(unlocked_sets);
+
+            return exercise_sets;
+        }
     }
 }

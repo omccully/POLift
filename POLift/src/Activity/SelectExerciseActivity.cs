@@ -25,6 +25,9 @@ namespace POLift
     [Activity(Label = "Select Exercise")]
     public class SelectExerciseActivity : Activity
     {
+        const string DefaultCategory = "other";
+        const string DeletedCategory = "DELETED";
+
         const int CreateExerciseRequestCode = 3;
         const int ExerciseEditedRequestCode = 4;
 
@@ -78,7 +81,8 @@ namespace POLift
             string category = CurrentCategory();
 
             exercises_pager_adapter = new ExercisesPagerAdapter(this,
-                ExercisesInCategories());
+                Exercise.InCategories(Database, 
+                    DefaultCategory, DeletedCategory));
             exercises_pager_adapter.ListItemClicked += Exercises_pager_adapter_ListItemClicked;
             exercises_pager_adapter.EditButtonClicked += Exercises_pager_adapter_EditButtonClicked;
             exercises_pager_adapter.DeleteButtonClicked += Exercises_pager_adapter_DeleteButtonClicked;
@@ -167,44 +171,6 @@ namespace POLift
             Finish();
         }
 
-        const string DefaultCategory = "other";
-
-        const string DeletedCategory = "DELETED";
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns>Ordered list of KVP category => list of exercises</returns>
-        List<KeyValuePair<string, List<IExercise>>> ExercisesInCategories()
-        {
-            Dictionary<string, List<IExercise>> dict = new Dictionary<string, List<IExercise>>();
-
-            foreach (Exercise ex in Database
-                .Table<Exercise>()
-                .OrderByDescending(ex => ex.Usage))
-            {
-                string cat = ex.Deleted ? DeletedCategory :
-                    (ex.Category == null ? DefaultCategory : ex.Category);
-                    
-                if (dict.ContainsKey(cat))
-                {
-                    dict[cat].Add(ex);
-                }
-                else
-                {
-                    dict[cat] = new List<IExercise>() { ex };
-                }
-            }
-
-            //POLDatabase.Table<Exercise>()
-            //    .GroupBy(ex => ex.Category)
-            //    .OrderByDescending(group => group.Count());
-            
-                
-            return dict.OrderByDescending(kvp => 
-                // put deleted category in back
-                kvp.Key == DeletedCategory ? 0 : kvp.Value.Count
-            ).ToList();
-        }
+        
     }
 }
