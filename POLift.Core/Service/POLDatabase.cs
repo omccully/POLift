@@ -459,5 +459,10 @@ namespace POLift.Core.Service
                 this.Update(r);
             }
         }
+
+        public override string ToString()
+        {
+            return $"Database<{FilePath}>";
+        }
     }
 }
