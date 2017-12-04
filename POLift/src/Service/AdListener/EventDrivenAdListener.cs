@@ -11,7 +11,7 @@ using Android.Views;
 using Android.Widget;
 using Android.Gms.Ads;
 
-namespace POLift.Service
+namespace POLift.Droid.Service
 {
     public class EventDrivenAdListener : AdListener
     {

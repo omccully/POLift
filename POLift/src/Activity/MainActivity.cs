@@ -18,7 +18,7 @@ using Microsoft.Practices.Unity;
 
 using Plugin.InAppBilling;
 
-namespace POLift
+namespace POLift.Droid
 {
     using Core.Model;
     using Core.Service;

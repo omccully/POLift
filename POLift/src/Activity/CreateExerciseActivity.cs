@@ -10,7 +10,7 @@ using Microsoft.Practices.Unity;
 using Android.Preferences;
 using Android.Views.InputMethods;
 
-namespace POLift
+namespace POLift.Droid
 {
    
     using Core.Model;

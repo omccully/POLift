@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Timers;
 
-namespace POLift.Service
+namespace POLift.Droid.Service
 {
     static class StaticTimer
     {

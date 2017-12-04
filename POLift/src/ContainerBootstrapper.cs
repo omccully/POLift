@@ -14,7 +14,7 @@ using Android.Provider;
 
 using Microsoft.Practices.Unity;
 
-namespace POLift
+namespace POLift.Droid
 {
     using Core.Service;
     using Service;

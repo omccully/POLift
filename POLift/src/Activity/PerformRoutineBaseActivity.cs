@@ -12,15 +12,18 @@ using Android.Widget;
 using Android.Gms.Ads;
 using Android.Util;
 using Android.Support.Compat;
+using Android.Support.V4.App;
 
 using Microsoft.Practices.Unity;
 
-namespace POLift
+using TaskStackBuilder = Android.Support.V4.App.TaskStackBuilder;
+
+namespace POLift.Droid
 {
     using Service;
     using Core.Service;
     using Core.Model;
-    using Android.Support.V4.App;
+    
 
     //[Activity(Label = "Perform routine")]
     public abstract class PerformRoutineBaseActivity : Activity
@@ -543,11 +546,6 @@ namespace POLift
                 CountDownTextView.SetTextColor(Android.Graphics.Color.Green);
             }
             
-        }
-
-        protected virtual void BuildArtificialTaskStack(TaskStackBuilder stackBuilder)
-        {
-            Intent main_intent = new Intent(this, typeof(MainActivity));
         }
 
         protected bool SurpressTimerCallbackCleanup = false;

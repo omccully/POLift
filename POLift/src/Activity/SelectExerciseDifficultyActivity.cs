@@ -13,7 +13,7 @@ using Android.Support.V4.View;
 
 using Microsoft.Practices.Unity;
 
-namespace POLift
+namespace POLift.Droid
 {
     using Core.Service;
     using Core.Model;

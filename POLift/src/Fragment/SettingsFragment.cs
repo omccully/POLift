@@ -12,7 +12,7 @@ using Android.Views;
 using Android.Widget;
 using Android.Preferences;
 
-namespace POLift
+namespace POLift.Droid
 {
     public class SettingsFragment : PreferenceFragment
     {

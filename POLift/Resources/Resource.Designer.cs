@@ -11,7 +11,7 @@
 
 [assembly: global::Android.Runtime.ResourceDesignerAttribute("POLift.Resource", IsApplication=true)]
 
-namespace POLift
+namespace POLift.Droid
 {
 	
 	
@@ -26,8 +26,8 @@ namespace POLift
 		
 		public static void UpdateIdValues()
 		{
-			global::SQLite.Net.Platform.XamarinAndroid.Resource.String.ApplicationName = global::POLift.Resource.String.ApplicationName;
-			global::SQLite.Net.Platform.XamarinAndroid.Resource.String.Hello = global::POLift.Resource.String.Hello;
+			global::SQLite.Net.Platform.XamarinAndroid.Resource.String.ApplicationName = global::POLift.Droid.Resource.String.ApplicationName;
+			global::SQLite.Net.Platform.XamarinAndroid.Resource.String.Hello = global::POLift.Droid.Resource.String.Hello;
 		}
 		
 		public partial class Animation

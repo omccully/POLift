@@ -11,7 +11,7 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 
-namespace POLift.Adapter
+namespace POLift.Droid.Adapter
 {
     using Service;
     using Core.Model;

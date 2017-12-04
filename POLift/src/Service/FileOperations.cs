@@ -12,7 +12,7 @@ using Android.Widget;
 
 using System.IO;
 
-namespace POLift.Service
+namespace POLift.Droid.Service
 {
     using POLift.Core.Service;
 

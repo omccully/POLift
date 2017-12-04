@@ -10,7 +10,7 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 
-namespace POLift.Service
+namespace POLift.Droid.Service
 {
     public class AdFailedToLoadEventArgs
     {

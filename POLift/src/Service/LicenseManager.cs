@@ -17,7 +17,7 @@ using Plugin.CurrentActivity;
 using Plugin.InAppBilling;
 using Plugin.InAppBilling.Abstractions;
 
-namespace POLift.Service
+namespace POLift.Droid.Service
 {
     using Core.Service;
 

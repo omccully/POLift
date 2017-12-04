@@ -13,7 +13,7 @@ using Android.Util;
 
 using Microsoft.Practices.Unity;
 
-namespace POLift
+namespace POLift.Droid
 {
     using Service;
     using Android.Text;
@@ -313,16 +313,6 @@ namespace POLift
             }
 
             intent.PutExtra("warmup_set_index", WarmupSetIndex);
-        }
-
-        protected override void BuildArtificialTaskStack(Android.Support.V4.App.TaskStackBuilder stackBuilder)
-        {
-            base.BuildArtificialTaskStack(stackBuilder);
-
-            Intent perform_routine_intent = new Intent(this, typeof(PerformRoutineActivity));
-            //perform_routine_intent.PutExtra("routine_id", )
-        }
-
-        
+        }  
     }
 }

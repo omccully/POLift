@@ -10,7 +10,7 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 
-namespace POLift
+namespace POLift.Droid
 {
     class ContainerEventArgs<T> : EventArgs
     {

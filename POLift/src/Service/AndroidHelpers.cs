@@ -16,7 +16,7 @@ using Android.Widget;
 using Android.Util;
 using Android.Preferences;
 
-namespace POLift.Service
+namespace POLift.Droid.Service
 {
     using Core.Service;
     using Core.Model;

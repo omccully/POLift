@@ -11,7 +11,7 @@ using Android.Views;
 using Android.Widget;
 using Android.Support.V4.View;
 
-namespace POLift
+namespace POLift.Droid
 {
     using Core.Model;
     using static Android.Views.View;
