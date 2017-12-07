@@ -50,7 +50,7 @@ namespace POLift.Droid
             
                 ontainer.RegisterInstance<IPOLDatabase>(
                     new POLDatabase(
-                        new SQLite.Net.Platform.XamarinAndroid.SQLitePlatformAndroid(),
+                        new SQLite.Net.Platform.XamarinAndroid.SQLitePlatformAndroidN(),
                         C.DatabasePath));
             }
             catch(Exception e)

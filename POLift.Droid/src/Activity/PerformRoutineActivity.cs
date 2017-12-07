@@ -63,9 +63,7 @@ namespace POLift.Droid
             sw.Start();
 
             System.Diagnostics.Debug.WriteLine("PerformRoutineActivity.OnCreate()");
-
             
-
             base.OnCreate(savedInstanceState);
             System.Diagnostics.Debug.WriteLine("base finish " + sw.ElapsedMilliseconds + "ms");
             Log.Debug("POLift", "base finish " + sw.ElapsedMilliseconds + "ms");
