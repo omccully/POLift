@@ -185,6 +185,7 @@ namespace POLift.Droid
 
                 Exercise ex = new Exercise(name, max_reps, weight_increment, 
                     rest_period_s, plate_math);
+                ex.Database = Database;
                 ex.ConsecutiveSetsForWeightIncrease = consecutive_sets;
 
                 // sets ex.ID

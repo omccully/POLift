@@ -16,7 +16,7 @@ namespace POLift.iOS.Controllers
     {
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
-        UIKit.UITextField ConsecutiveSetsTextView { get; set; }
+        UIKit.UITextField ConsecutiveSetsTextField { get; set; }
 
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
@@ -36,7 +36,7 @@ namespace POLift.iOS.Controllers
 
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
-        UIKit.UITextField RestPeriodTextView { get; set; }
+        UIKit.UITextField RestPeriodTextField { get; set; }
 
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
@@ -44,9 +44,9 @@ namespace POLift.iOS.Controllers
 
         void ReleaseDesignerOutlets ()
         {
-            if (ConsecutiveSetsTextView != null) {
-                ConsecutiveSetsTextView.Dispose ();
-                ConsecutiveSetsTextView = null;
+            if (ConsecutiveSetsTextField != null) {
+                ConsecutiveSetsTextField.Dispose ();
+                ConsecutiveSetsTextField = null;
             }
 
             if (CreateExerciseButton != null) {
@@ -69,9 +69,9 @@ namespace POLift.iOS.Controllers
                 RepCountTextField = null;
             }
 
-            if (RestPeriodTextView != null) {
-                RestPeriodTextView.Dispose ();
-                RestPeriodTextView = null;
+            if (RestPeriodTextField != null) {
+                RestPeriodTextField.Dispose ();
+                RestPeriodTextField = null;
             }
 
             if (WeightIncrementTextField != null) {

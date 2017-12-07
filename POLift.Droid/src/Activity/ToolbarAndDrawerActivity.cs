@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 using Android.Util;
 using Android.App;
@@ -163,19 +164,23 @@ namespace POLift.Droid
 
         async Task AddPurchaseLicenseNavigationIfNotPurchased()
         {
-            if (!(await LicenseManager.CheckLicense(false)))
+            try
             {
-                // could hide this button until like 14 days are left
+                if (!(await LicenseManager.CheckLicense(false)))
+                {
+                    // could hide this button until like 14 days are left
 
-                Navigation LicenseNavigation = 
-                    new Navigation("Purchase lifetime license",
-                    PurchaseLicense_Click, 
-                    Resource.Mipmap.ic_shopping_basket_white_24dp);
+                    Navigation LicenseNavigation =
+                        new Navigation("Purchase lifetime license",
+                        PurchaseLicense_Click,
+                        Resource.Mipmap.ic_shopping_basket_white_24dp);
 
-                _NavigationAdapter.Navigations.Add(LicenseNavigation);
+                    _NavigationAdapter.Navigations.Add(LicenseNavigation);
 
-                PutDaysLeftAtEndOfNavigation(LicenseNavigation);
+                    PutDaysLeftAtEndOfNavigation(LicenseNavigation);
+                }
             }
+            catch { }
         }
 
         async Task PutDaysLeftAtEndOfNavigation(Navigation navigation)

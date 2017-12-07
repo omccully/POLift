@@ -23,8 +23,11 @@ namespace POLift.iOS.Controllers
             ExerciseListTableView.RegisterClassForCellReuse(typeof(UITableViewCell),
                 ExercisesDataSource.ExerciseCellId);
 
-            ExerciseListTableView.Source = new ExercisesDataSource(
+            ExerciseListTableView.Source = new ExercisesDataSource(this, 
                 Database.Table<Exercise>());
+
+            //ExerciseListTableView.RowSelected
+            //ExerciseListTableView.IndexPathForSelectedRow
         }
 
         public override void PrepareForSegue(UIStoryboardSegue segue, NSObject sender)
@@ -44,17 +47,21 @@ namespace POLift.iOS.Controllers
         {
             // pass it up to parent
             ValueChosen?.Invoke(exercise);
-            DismissViewController(true, delegate { });
+
+            NavigationController.PopViewController(true);
         }
 
         class ExercisesDataSource : UITableViewSource
         {
             public static NSString ExerciseCellId = new NSString("ExerciseCell");
 
+            SelectExerciseController parent;
             List<Exercise> exercises;
 
-            public ExercisesDataSource(IEnumerable<Exercise> exercises)
+            public ExercisesDataSource(SelectExerciseController parent, 
+                IEnumerable<Exercise> exercises)
             {
+                this.parent = parent;
                 this.exercises = new List<Exercise>(exercises);
             }
 
@@ -70,6 +77,12 @@ namespace POLift.iOS.Controllers
             public override nint RowsInSection(UITableView tableview, nint section)
             {
                 return exercises.Count;
+            }
+
+            public override void RowSelected(UITableView tableView, NSIndexPath indexPath)
+            {
+                Console.WriteLine($"calling parent.ReturnExercise(exercises[{indexPath.Row}])");
+                parent.ReturnExercise(exercises[indexPath.Row]);
             }
         }
     }

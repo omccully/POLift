@@ -36,6 +36,8 @@ namespace POLift.Droid
 
             Database = C.ontainer.Resolve<IPOLDatabase>();
 
+            ExerciseDifficulty.RefreshAllUsages(Database);
+
             ExercisesDifficultyViewPager = 
                 FindViewById<ViewPager>(Resource.Id.ExercisesDifficultyViewPager);
 

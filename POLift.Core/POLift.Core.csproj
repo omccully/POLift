@@ -51,10 +51,12 @@
     <Compile Include="Model\Interfaces\INavigation.cs" />
     <Compile Include="Model\Interfaces\IRoutine.cs" />
     <Compile Include="Model\Interfaces\IRoutineResult.cs" />
+    <Compile Include="Model\Interfaces\IRoutineWithLatestResult.cs" />
     <Compile Include="Model\Interfaces\IWarmupSet.cs" />
     <Compile Include="Model\Navigation.cs" />
     <Compile Include="Model\Routine.cs" />
     <Compile Include="Model\RoutineResult.cs" />
+    <Compile Include="Model\RoutineWithLatestResult.cs" />
     <Compile Include="Model\ValueLookup.cs" />
     <Compile Include="Model\WarmupSet.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

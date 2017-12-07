@@ -31,6 +31,8 @@ namespace POLift.Core.Model
 
         string ShortDetails { get; }
 
+        string RelativeTimeDetails { get; }
+
         void ReportExerciseResult(IExerciseResult ex_result);
 
         IRoutineResult Transform(IRoutine new_routine);

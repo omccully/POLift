@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Timers;
+using System.Threading.Tasks;
 
 using Android.App;
 using Android.Content;
@@ -12,6 +13,8 @@ using Android.Views;
 using Android.Widget;
 using Android.Preferences;
 using Android.Util;
+
+using System.Diagnostics;
 
 using Microsoft.Practices.Unity;
 
@@ -56,10 +59,16 @@ namespace POLift.Droid
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+
             System.Diagnostics.Debug.WriteLine("PerformRoutineActivity.OnCreate()");
 
-            base.OnCreate(savedInstanceState);
+            
 
+            base.OnCreate(savedInstanceState);
+            System.Diagnostics.Debug.WriteLine("base finish " + sw.ElapsedMilliseconds + "ms");
+            Log.Debug("POLift", "base finish " + sw.ElapsedMilliseconds + "ms");
             Database = C.ontainer.Resolve<IPOLDatabase>();
 
             /*if (IsTaskRoot)
@@ -147,7 +156,7 @@ namespace POLift.Droid
 
 
             /* Intent.GetBooleanExtra("backed_into", false) ||  */
-
+            Log.Debug("POLift", "perform_z finish " + sw.ElapsedMilliseconds + "ms");
             if (resume_routine_result_id == 0)
             {
                 Log.Debug("POLift", "No resume_routine_result_id, starting new RoutineResult");
@@ -191,11 +200,13 @@ namespace POLift.Droid
                 }
             }
 
-           // var toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
+            // var toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
             //SetActionBar(toolbar);
             //ActionBar.Title = $"Perform {Routine.Name} routine";
-
+            Log.Debug("POLift", "perform_0 finish " + sw.ElapsedMilliseconds + "ms");
             RefreshGUI();
+
+            Log.Debug("POLift", "perform finish " + sw.ElapsedMilliseconds + "ms");
         }
 
         
@@ -449,6 +460,16 @@ namespace POLift.Droid
             }
         }
 
+        void RefreshGUI()
+        {
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+            RefreshRoutineDetails();
+            Log.Debug("POLift", "RefreshRoutineDetails " + sw.ElapsedMilliseconds + "ms");
+            RefreshExerciseDetails();
+            Log.Debug("POLift", "RefreshExerciseDetails+ " + sw.ElapsedMilliseconds + "ms");
+        }
+
         void RefreshExerciseDetails()
         {
             if (CurrentExercise != null)
@@ -467,46 +488,66 @@ namespace POLift.Droid
                 NextExerciseView.Text = "Pending";
             }
 
-            IEnumerable<ExerciseResult> previous_ers = Database.Table<ExerciseResult>()
-                .Where(er => er.ExerciseID == CurrentExercise?.ID &&
-                    er.Time < _RoutineResult.StartTime)
-                .TakeLast(3);
+            RefreshPreviousRepCounts();
+        }
+
+        async Task RefreshPreviousRepCounts()
+        {
+            string new_text = "";
+
+            //IEnumerable<ExerciseResult> previous_ers = Database.Table<ExerciseResult>()
+            //   .Where(er => er.ExerciseID == CurrentExercise?.ID &&
+            //       er.Time < _RoutineResult.StartTime)
+            //        .TakeLastEx(3);
+
+            DateTime routine_start_time = _RoutineResult.StartTime == default(DateTime) ?
+                DateTime.MaxValue : _RoutineResult.StartTime;
+            IEnumerable<ExerciseResult> previous_ers =
+                Database.Query<ExerciseResult>(
+                    "SELECT * FROM ExerciseResult WHERE ExerciseID = ? AND Time < ? ORDER BY Time DESC LIMIT 3",
+                    CurrentExercise?.ID, routine_start_time).OrderBy(er => er.Time);
+
+
+            //.Where(er => er.ExerciseID == CurrentExercise?.ID &&
+            //    er.Time < _RoutineResult.StartTime)
+            // .TakeLast(3);
             if (previous_ers.Count() == 0)
             {
-                RepDetailsTextView.Text = "";
+                Log.Debug("POLift", "no previous exercise results found");
+                new_text = "";
             }
             else
             {
                 ExerciseResult first = previous_ers.First();
                 ExerciseResult previous = first;
-                string s = $" (prev: {first.Weight}x{first.RepCount}";
+                StringBuilder sb = new StringBuilder($" (prev: {first.Weight}x{first.RepCount}");
 
-                foreach(ExerciseResult er in previous_ers.Skip(1))
+                foreach (ExerciseResult er in previous_ers.Skip(1))
                 {
                     if (er.Weight == previous.Weight)
                     {
-                        s += $", x{er.RepCount}";
+                        sb.Append($", x{er.RepCount}");
                     }
                     else
                     {
-                        s += $", {er.Weight}x{er.RepCount}";
+                        sb.Append($", {er.Weight}x{er.RepCount}");
                     }
-                    
+
 
                     previous = er;
                 }
-                s += ")";
+                sb.Append(")");
 
-                RepDetailsTextView.Text = s;
+                new_text = sb.ToString();
             }
-            
+
+            this.RunOnUiThread(delegate
+            {
+                RepDetailsTextView.Text = new_text;
+            });
         }
 
-        void RefreshGUI()
-        {
-            RefreshRoutineDetails();
-            RefreshExerciseDetails();
-        }
+        
 
         void GetNextExerciseAndWeight()
         {

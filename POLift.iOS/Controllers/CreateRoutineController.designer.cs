@@ -26,6 +26,10 @@ namespace POLift.iOS.Controllers
         [GeneratedCode ("iOS Designer", "1.0")]
         UIKit.UITableView ExerciseSetsTableView { get; set; }
 
+        [Outlet]
+        [GeneratedCode ("iOS Designer", "1.0")]
+        UIKit.UITextField RoutineNameTextField { get; set; }
+
         void ReleaseDesignerOutlets ()
         {
             if (AddExerciseLink != null) {
@@ -41,6 +45,11 @@ namespace POLift.iOS.Controllers
             if (ExerciseSetsTableView != null) {
                 ExerciseSetsTableView.Dispose ();
                 ExerciseSetsTableView = null;
+            }
+
+            if (RoutineNameTextField != null) {
+                RoutineNameTextField.Dispose ();
+                RoutineNameTextField = null;
             }
         }
     }

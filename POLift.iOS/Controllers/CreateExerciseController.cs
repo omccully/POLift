@@ -24,18 +24,11 @@ namespace POLift.iOS.Controllers
             
             MathTypePicker.Delegate = new MathTypePickerDelegate();
 
-
-            ExerciseNameTextField.ShouldReturn = KeyboardDismisser;
-            RepCountTextField.ShouldReturn = KeyboardDismisser;
-            WeightIncrementTextField.ShouldReturn = KeyboardDismisser;
-            RestPeriodTextView.ShouldReturn = KeyboardDismisser;
-            ConsecutiveSetsTextView.ShouldReturn = KeyboardDismisser;
-        }
-
-        bool KeyboardDismisser(UITextField text_field)
-        {
-            text_field.ResignFirstResponder();
-            return true;
+            ExerciseNameTextField.ShouldReturn = AppleHelpers.DismissKeyboard;
+            RepCountTextField.ShouldReturn = AppleHelpers.DismissKeyboard;
+            WeightIncrementTextField.ShouldReturn = AppleHelpers.DismissKeyboard;
+            RestPeriodTextField.ShouldReturn = AppleHelpers.DismissKeyboard;
+            ConsecutiveSetsTextField.ShouldReturn = AppleHelpers.DismissKeyboard;
         }
 
         private void CreateExerciseButton_TouchUpInside(object sender, EventArgs e)
@@ -45,8 +38,8 @@ namespace POLift.iOS.Controllers
                 string name = ExerciseNameTextField.Text;
                 int max_reps = Int32.Parse(RepCountTextField.Text);
                 float weight_increment = Single.Parse(WeightIncrementTextField.Text);
-                int rest_period_s = Int32.Parse(RestPeriodTextView.Text);
-                int consecutive_sets = Int32.Parse(ConsecutiveSetsTextView.Text);
+                int rest_period_s = Int32.Parse(RestPeriodTextField.Text);
+                int consecutive_sets = Int32.Parse(ConsecutiveSetsTextField.Text);
 
                 nint pm_index = MathTypePicker.SelectedRowInComponent(0);
                 IPlateMath plate_math = PlateMath.PlateMathTypes[pm_index];
@@ -79,7 +72,7 @@ namespace POLift.iOS.Controllers
         {
             // pass it up to parent
             ValueChosen?.Invoke(exercise);
-            DismissViewController(true, delegate { });
+            NavigationController.PopViewController(true);
         }
 
         class MathTypePickerDelegate : UIPickerViewDelegate

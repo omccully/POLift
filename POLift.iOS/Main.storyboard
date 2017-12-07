@@ -175,29 +175,16 @@
                         <outlet property="AddExerciseLink" destination="1439" id="name-outlet-1439"/>
                         <outlet property="CreateRoutineButton" destination="1440" id="name-outlet-1440"/>
                         <outlet property="ExerciseSetsTableView" destination="5789" id="name-outlet-5789"/>
+                        <outlet property="RoutineNameTextField" destination="1437" id="name-outlet-1437"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="1202" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="209" y="-9"/>
         </scene>
-        <scene sceneID="3201">
-            <objects>
-                <tabBarController id="3202" sceneMemberID="viewController" customClass="SelectExerciseController" title="Select Exercise">
-                    <tabBar key="tabBar" contentMode="scaleToFill" id="3205">
-                        <rect key="frame" x="0.0" y="618" width="375" height="49"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                    </tabBar>
-                    <connections/>
-                </tabBarController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="3206" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="640" y="787"/>
-        </scene>
         <scene sceneID="3564">
             <objects>
-                <viewController id="3565" sceneMemberID="viewController" customClass="CreateExerciseController">
+                <viewController id="3565" sceneMemberID="viewController" customClass="CreateExerciseController" title="Create Exercise">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="3562"/>
                         <viewControllerLayoutGuide type="bottom" id="3563"/>
@@ -329,8 +316,8 @@
                     <connections>
                         <outlet property="ExerciseNameTextField" destination="3834" id="name-outlet-3834"/>
                         <outlet property="RepCountTextField" destination="3846" id="name-outlet-3846"/>
-                        <outlet property="ConsecutiveSetsTextView" destination="3848" id="name-outlet-3848"/>
-                        <outlet property="RestPeriodTextView" destination="3850" id="name-outlet-3850"/>
+                        <outlet property="ConsecutiveSetsTextField" destination="3848" id="name-outlet-3848"/>
+                        <outlet property="RestPeriodTextField" destination="3850" id="name-outlet-3850"/>
                         <outlet property="WeightIncrementTextField" destination="3852" id="name-outlet-3852"/>
                         <outlet property="MathTypePicker" destination="3854" id="name-outlet-3854"/>
                         <outlet property="CreateExerciseButton" destination="5771" id="name-outlet-5771"/>
@@ -342,7 +329,7 @@
         </scene>
         <scene sceneID="4365">
             <objects>
-                <viewController id="4366" sceneMemberID="viewController" customClass="SelectExerciseController">
+                <viewController id="4366" sceneMemberID="viewController" customClass="SelectExerciseController" title="Select Exercise">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="4363"/>
                         <viewControllerLayoutGuide type="bottom" id="4364"/>
@@ -385,6 +372,129 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4368" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="714" y="-14"/>
+        </scene>
+        <scene sceneID="6658">
+            <objects>
+                <viewController id="6659" sceneMemberID="viewController" customClass="PerformRoutineController" storyboardIdentifier="PerformRoutineController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="6656"/>
+                        <viewControllerLayoutGuide type="bottom" id="6657"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="6660">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Routine details" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="6663" translatesAutoresizingMaskIntoConstraints="NO" fixedFrame="YES">
+                                <rect key="frame" x="21" y="49" width="308" height="126"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Exercise details" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="7004" translatesAutoresizingMaskIntoConstraints="NO" fixedFrame="YES">
+                                <rect key="frame" x="28" y="1098" width="318" height="76"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Exercise details" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="7005" translatesAutoresizingMaskIntoConstraints="NO" fixedFrame="YES">
+                                <rect key="frame" x="30" y="183" width="310" height="101"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Weight:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="7006" translatesAutoresizingMaskIntoConstraints="NO" fixedFrame="YES">
+                                <rect key="frame" x="30" y="278" width="84" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="5" borderStyle="roundedRect" minimumFontSize="17" id="7007" translatesAutoresizingMaskIntoConstraints="NO" fixedFrame="YES">
+                                <rect key="frame" x="99" y="274" width="97" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Reps:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="7008" translatesAutoresizingMaskIntoConstraints="NO" fixedFrame="YES">
+                                <rect key="frame" x="30" y="323" width="61" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" id="7010" translatesAutoresizingMaskIntoConstraints="NO" fixedFrame="YES">
+                                <rect key="frame" x="99" y="318" width="97" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="7011" translatesAutoresizingMaskIntoConstraints="NO" fixedFrame="YES">
+                                <rect key="frame" x="89" y="388" width="159" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Report result">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections/>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="7036" translatesAutoresizingMaskIntoConstraints="NO" fixedFrame="YES" text="reps">
+                                <rect key="frame" x="204" y="323" width="125" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="math" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="7037" translatesAutoresizingMaskIntoConstraints="NO" fixedFrame="YES">
+                                <rect key="frame" x="204" y="278" width="136" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <variation key="default">
+                            <mask key="subviews">
+                                <exclude reference="7004"/>
+                                <exclude reference="7005"/>
+                                <exclude reference="7006"/>
+                                <exclude reference="7007"/>
+                                <exclude reference="7008"/>
+                                <exclude reference="7010"/>
+                                <exclude reference="7011"/>
+                                <exclude reference="7036"/>
+                                <exclude reference="7037"/>
+                            </mask>
+                        </variation>
+                        <variation key="heightClass=regular-widthClass=compact">
+                            <mask key="subviews">
+                                <include reference="7004"/>
+                                <include reference="7005"/>
+                                <include reference="7006"/>
+                                <include reference="7007"/>
+                                <include reference="7008"/>
+                                <include reference="7010"/>
+                                <include reference="7011"/>
+                                <include reference="7036"/>
+                                <include reference="7037"/>
+                            </mask>
+                        </variation>
+                    </view>
+                    <connections>
+                        <outlet property="RoutineDetailsLabel" destination="6663" id="name-outlet-6663"/>
+                        <outlet property="ExerciseDetailsLabel" destination="7005" id="name-outlet-7005"/>
+                        <outlet property="WeightTextField" destination="7007" id="name-outlet-7007"/>
+                        <outlet property="RepCountTextField" destination="7010" id="name-outlet-7010"/>
+                        <outlet property="ReportResultButton" destination="7011" id="name-outlet-7011"/>
+                        <outlet property="RepDetailsLabel" destination="7036" id="name-outlet-7036"/>
+                        <outlet property="PlateMathLabel" destination="7037" id="name-outlet-7037"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="6661" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-316" y="751"/>
         </scene>
     </scenes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">

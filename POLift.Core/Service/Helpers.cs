@@ -271,13 +271,35 @@ namespace POLift.Core.Service
         }
 
         // Ex: collection.TakeLast(5);
-        public static IEnumerable<T> TakeLast<T>(this IEnumerable<T> source, int N)
+        public static IEnumerable<T> TakeLastEx<T>(this IEnumerable<T> source, int N)
         {
             return source.Skip(Math.Max(0, source.Count() - N));
         }
 
-        public static IEnumerable<Routine> MainPageRoutinesList(IPOLDatabase database)
+        public static IEnumerable<IRoutineWithLatestResult> 
+            MainPageRoutinesList(IPOLDatabase database)
         {
+            List<IRoutineWithLatestResult> result = 
+                new List<IRoutineWithLatestResult>();
+
+            foreach(Routine r in database.TableWhereUndeleted<Routine>())
+            {
+                IRoutineResult latest_rr =
+                      RoutineResult.MostRecentForRoutine(database, r);
+                result.Add(new RoutineWithLatestResult(r, latest_rr));
+            }
+
+            return result.OrderBy(t =>
+            {
+                if (t.LatestResult == null)
+                    return DateTime.MinValue.AddSeconds(1);
+                if (!t.LatestResult.Completed)
+                    return DateTime.MinValue;
+
+                return t.LatestResult.StartTime;
+            });
+
+            /*
             return database.TableWhereUndeleted<Routine>().OrderBy(r =>
             {
                 IRoutineResult latest_rr =
@@ -288,7 +310,8 @@ namespace POLift.Core.Service
                     return DateTime.MinValue;
 
                 return latest_rr.StartTime;
-            });
+            });*/
+
         }
 
         public static void ConvertEverythingToMetric(this IPOLDatabase Database)
@@ -400,6 +423,40 @@ namespace POLift.Core.Service
             exercise_sets.AddRange(unlocked_sets);
 
             return exercise_sets;
+        }
+
+        public static List<IExerciseSets> RemoveZeroSets(this IEnumerable<IExerciseSets> exercise_sets)
+        {
+            List<IExerciseSets> result = new List<IExerciseSets>();
+
+            foreach (IExerciseSets es in exercise_sets)
+            {
+                if (es.SetCount != 0)
+                {
+                    result.Add(es);
+                    break;
+                }
+            }
+
+            return result;
+        }
+
+        public static List<IExerciseSets> NormalizeExerciseSets(this IEnumerable<IExerciseSets> exercise_sets, 
+            IPOLDatabase database)
+        {
+            return ExerciseSets.Regroup(exercise_sets.RemoveZeroSets(), database);
+        }
+
+        public static List<IExerciseSets> SaveExerciseSets(this IEnumerable<IExerciseSets> exercise_sets,
+            IPOLDatabase database)
+        {
+            List<IExerciseSets> normalized = exercise_sets.NormalizeExerciseSets(database);
+            foreach (IExerciseSets ex_sets in normalized)
+            {
+                database.InsertOrUpdateNoID<ExerciseSets>((ExerciseSets)ex_sets);
+            }
+
+            return normalized;
         }
     }
 }

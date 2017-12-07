@@ -21,7 +21,7 @@ namespace POLift.Core.Service
 
         void Update(IIdentifiable obj);
 
-        List<T> Query<T>(string query, params object[] args) where T : class, new();
+        List<T> Query<T>(string query, params object[] args) where T : class, IDatabaseObject, new();
 
        // void Invoke(DatabaseOperation operation);
 

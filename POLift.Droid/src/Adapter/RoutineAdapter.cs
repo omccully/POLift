@@ -4,6 +4,8 @@ using Android.Widget;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
+using System.Diagnostics;
 
 namespace POLift.Droid
 {
@@ -19,9 +21,9 @@ namespace POLift.Droid
         }
     }
 
-    class RoutineAdapter : BaseAdapter<IRoutine>
+    class RoutineAdapter : BaseAdapter<IRoutineWithLatestResult>
     {
-        public ObservableCollection<IRoutine> Routines;
+        public ObservableCollection<IRoutineWithLatestResult> Data;
         Activity context;
 
         public event EventHandler<RoutineEventArgs> DeleteButtonClicked;
@@ -36,23 +38,23 @@ namespace POLift.Droid
             EditButtonClicked?.Invoke(this, e);
         }
 
-        public RoutineAdapter(Activity context, IEnumerable<IRoutine> routines)
+        public RoutineAdapter(Activity context, IEnumerable<IRoutineWithLatestResult> data)
         {
             this.context = context;
-            this.Routines = new ObservableCollection<IRoutine>(routines);
-            Routines.CollectionChanged += Routines_CollectionChanged;
+            this.Data = new ObservableCollection<IRoutineWithLatestResult>(data);
+            Data.CollectionChanged += Data_CollectionChanged;
         }
 
-        void Routines_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        void Data_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             NotifyDataSetChanged();
         }
 
-        public override IRoutine this[int position]
+        public override IRoutineWithLatestResult this[int position]
         {
             get
             {
-                return Routines[position];
+                return Data[position];
             }
         }
 
@@ -84,19 +86,30 @@ namespace POLift.Droid
             holder.EditButton.Click += delegate (object sender, EventArgs e)
             {
                 // defined here so we have access to position 
-                OnEditButtonClicked(new RoutineEventArgs(this[position]));
+                OnEditButtonClicked(new RoutineEventArgs(this[position].Routine));
             };
 
             holder.DeleteButton.Click += delegate (object sender, EventArgs e)
             {
                 // defined here so we have access to position 
-                OnDeleteButtonClicked(new RoutineEventArgs(this[position]));
+                OnDeleteButtonClicked(new RoutineEventArgs(this[position].Routine));
             };
+
 
             //fill in your items
             //holder.Title.Text = "new text here";
-            holder.Title.Text = this[position].ToString();
-            holder.Subtext.Text = this[position].RecentResultDetails;
+            holder.Title.Text = this[position].Routine.ToString();
+
+            IRoutineResult latest = this[position].LatestResult;
+            if(latest == null)
+            {
+                holder.Subtext.Text = "Never performed";
+            }
+            else
+            {
+                holder.Subtext.Text = latest.RelativeTimeDetails;
+            }
+            
             if(holder.Subtext.Text.Contains("Uncompleted") &&
                 !holder.Subtext.Text.Contains("day"))
             {
@@ -108,7 +121,6 @@ namespace POLift.Droid
                 holder.Subtext.SetTextColor(Android.Graphics.Color.White);
             }
 
-
             return view;
         }
 
@@ -117,7 +129,7 @@ namespace POLift.Droid
         {
             get
             {
-                return Routines.Count;
+                return Data.Count;
             }
         }
 

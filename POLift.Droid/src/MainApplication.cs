@@ -66,7 +66,13 @@ namespace POLift.Droid
             Database = C.ontainer.Resolve<IPOLDatabase>();
 
             string id = "pub-1015422455885077";
-            MobileAds.Initialize(ApplicationContext, id);
+
+            try
+            {
+                MobileAds.Initialize(ApplicationContext, id);
+            }
+            catch { }
+            
             System.Diagnostics.Debug.WriteLine("OnCreate()end");
         }
 
@@ -77,45 +83,49 @@ namespace POLift.Droid
 
         async Task CheckLicense()
         {
-            const int TimeDay = 86400;
-            const int TimeWeek = 7 * TimeDay;
-            const int WarningPeriod = 7 * TimeDay;
-
-            bool has_license = await license_manager.CheckLicense();
-            System.Diagnostics.Debug.WriteLine($"has_license = {has_license}");
-            if (!has_license)
+            try
             {
-                int seconds_left_in_trial = await license_manager.SecondsRemainingInTrial();
-                bool is_in_trial = seconds_left_in_trial > 0;
+                const int TimeDay = 86400;
+                const int TimeWeek = 7 * TimeDay;
+                const int WarningPeriod = 7 * TimeDay;
 
-                System.Diagnostics.Debug.WriteLine
-                    ($"is_in_trial = {is_in_trial}, {seconds_left_in_trial} seconds left");
-
-                if (!is_in_trial)
+                bool has_license = await license_manager.CheckLicense();
+                System.Diagnostics.Debug.WriteLine($"has_license = {has_license}");
+                if (!has_license)
                 {
-                    bool bought = await license_manager.PromptToBuyLicense();
-                    if(!bought)
+                    int seconds_left_in_trial = await license_manager.SecondsRemainingInTrial();
+                    bool is_in_trial = seconds_left_in_trial > 0;
+
+                    System.Diagnostics.Debug.WriteLine
+                        ($"is_in_trial = {is_in_trial}, {seconds_left_in_trial} seconds left");
+
+                    if (!is_in_trial)
                     {
+                        bool bought = await license_manager.PromptToBuyLicense();
+                        if (!bought)
+                        {
+                            RunOnMainThread(delegate
+                            {
+                                Toast.MakeText(CrossCurrentActivity.Current.Activity,
+                                    Resource.String.consider_purchase, ToastLength.Long).Show();
+                            });
+                        }
+                        System.Diagnostics.Debug.WriteLine($"bought = {bought}");
+                    }
+                    else if (seconds_left_in_trial < WarningPeriod)
+                    {
+                        int days_left = seconds_left_in_trial / TimeDay;
                         RunOnMainThread(delegate
                         {
                             Toast.MakeText(CrossCurrentActivity.Current.Activity,
-                                Resource.String.consider_purchase, ToastLength.Long).Show();
+                                $"You have {days_left} days left in your free trial. ",
+                                ToastLength.Long).Show();
                         });
+                        System.Diagnostics.Debug.WriteLine($"You have {days_left} days left in your free trial. ");
                     }
-                    System.Diagnostics.Debug.WriteLine($"bought = {bought}");
-                }
-                else if(seconds_left_in_trial < WarningPeriod)
-                {
-                    int days_left = seconds_left_in_trial / TimeDay;
-                    RunOnMainThread(delegate
-                    {
-                        Toast.MakeText(CrossCurrentActivity.Current.Activity,
-                            $"You have {days_left} days left in your free trial. ", 
-                            ToastLength.Long).Show();
-                    });
-                    System.Diagnostics.Debug.WriteLine($"You have {days_left} days left in your free trial. ");
                 }
             }
+            catch { }
         }
 
         public override void OnTerminate()
@@ -142,15 +152,17 @@ namespace POLift.Droid
                 {
 
                 }
-
-                
             }
 
             if(first_main_activity && activity.GetType() == typeof(MainActivity))
             {
                 first_main_activity = false;
 
-                PromptUserForStartingNextRoutine(activity);
+                try
+                {
+                    PromptUserForStartingNextRoutine(activity);
+                }
+                catch { }
                
             }
         }

@@ -117,15 +117,15 @@ namespace POLift.Core.Model
             }
         }
 
-        int _Usage = 0;
+        int _Usage = 1;
         public int Usage
         {
             get
             {
-                if (_Usage == 0)
-                {
-                    RefreshUsage();
-                }
+                //if (_Usage == 0)
+                //{
+                //    RefreshUsage();
+                //}
 
                 return _Usage;
             }
@@ -178,6 +178,18 @@ namespace POLift.Core.Model
             int old_usage = _Usage;
             _Usage = CalculateUsage();
             return old_usage != _Usage;
+        }
+
+        public static void RefreshAllUsages(IPOLDatabase database)
+        {
+            IEnumerable<ExerciseDifficulty> eds =
+                database.Table<ExerciseDifficulty>().Where(e => e.Usage == 0);
+
+            foreach (ExerciseDifficulty ed in eds)
+            {
+                ed.RefreshUsage();
+                database.Update(ed);
+            }
         }
 
         public static int Regenerate(IPOLDatabase database)

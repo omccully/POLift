@@ -91,10 +91,14 @@ namespace POLift.Core.Model
         public static IEnumerable<ExerciseResult> LastNOfExercise(
             IPOLDatabase database, IExercise exercise, int count)
         {
-            return database.Table<ExerciseResult>()
+            /*return database.Table<ExerciseResult>()
                 .Where(er => er.ExerciseID == exercise.ID)
                 .OrderByDescending(er => er.Time)
-                .Take(count);
+                .Take(count);*/
+
+            return database.Query<ExerciseResult>(
+                "SELECT * FROM ExerciseResult WHERE ExerciseID = ? ORDER BY Time DESC LIMIT ?",
+                exercise.ID, count);
         }
 
         public static ExerciseResult MostRecentResultOf(IPOLDatabase database, IExercise exercise)

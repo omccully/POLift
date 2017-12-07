@@ -13,6 +13,8 @@ using Android.Util;
 
 using Microsoft.Practices.Unity;
 
+using System.Diagnostics;
+
 namespace POLift.Droid
 {
     using Service;
@@ -67,9 +69,13 @@ namespace POLift.Droid
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
             Log.Debug("POLift", "WarmupRoutineActivity.OnCreate()");
 
             base.OnCreate(savedInstanceState);
+            Log.Debug("POLift", "Warmup after base " + sw.ElapsedMilliseconds + "ms");
+
 
             // Create your application here
 
@@ -127,10 +133,13 @@ namespace POLift.Droid
             //ActionBar.Title = $"{FirstExercise.Name} warmup";
 
             RepDetailsTextView.Visibility = ViewStates.Gone;
+
+            Log.Debug("POLift", "Warmup final " + sw.ElapsedMilliseconds + "ms");
+
         }
 
 
-        
+
         private void IMadeAMistakeButton_Click(object sender, EventArgs e)
         {
             SetResult(Result.Canceled);

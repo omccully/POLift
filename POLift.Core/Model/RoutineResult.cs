@@ -227,9 +227,15 @@ namespace POLift.Core.Model
         {
             try
             {
-                return database.Table<RoutineResult>()
-                    .Where(rr => rr.RoutineID == r.ID)
-                    .MaxObject(rr => rr.EndTime);
+                RoutineResult result = database.Query<RoutineResult>(
+                    "SELECT * FROM RoutineResult WHERE RoutineID = ? ORDER BY EndTime DESC LIMIT 1", r.ID)
+                    .FirstOrDefault();
+                if (result != null) result.Database = database;
+                return result;
+
+               // return database.Table<RoutineResult>()
+                //    .Where(rr => rr.RoutineID == r.ID)
+                //    .MaxObject(rr => rr.EndTime);
             }
             catch (InvalidOperationException)
             {
@@ -275,6 +281,23 @@ namespace POLift.Core.Model
             }
         }
 
+        public string RelativeTimeDetails
+        {
+            get
+            {
+                if (Completed)
+                {
+                    TimeSpan time_since_end = DateTime.Now - EndTime;
+
+                    return $"Last completed {time_since_end.ToRoundedString()} ago";
+                }
+
+                TimeSpan time_since_start = DateTime.Now - StartTime;
+
+                return $"Uncompleted {time_since_start.ToRoundedString()} ago";
+            }
+        }
+
         public string ShortDetails
         {
             get
@@ -287,9 +310,9 @@ namespace POLift.Core.Model
                     time_since_last_exr < TimeSpan.FromDays(1) ||
                     this.EndTime == DateTime.MinValue);
 
-                System.Diagnostics.Debug.WriteLine($"time_since_last_exr={time_since_last_exr}");
-                System.Diagnostics.Debug.WriteLine($"this.EndTime={this.EndTime}");
-                System.Diagnostics.Debug.WriteLine($"IsRecent={IsRecent}");
+                //System.Diagnostics.Debug.WriteLine($"time_since_last_exr={time_since_last_exr}");
+                //System.Diagnostics.Debug.WriteLine($"this.EndTime={this.EndTime}");
+                //System.Diagnostics.Debug.WriteLine($"IsRecent={IsRecent}");
 
                 StringBuilder builder = new StringBuilder();
                 IExercise last_exercise = null;
@@ -318,7 +341,7 @@ namespace POLift.Core.Model
                     }
                     else
                     {
-                        System.Diagnostics.Debug.WriteLine($"first_set_of_exercise={first_set_of_exercise}");
+                        //System.Diagnostics.Debug.WriteLine($"first_set_of_exercise={first_set_of_exercise}");
                         if (first_set_of_exercise && IsRecent)
                         {
                             builder.Append(exercises[i].NextWeight + "x__");

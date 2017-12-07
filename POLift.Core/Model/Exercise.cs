@@ -146,14 +146,14 @@ namespace POLift.Core.Model
         [Ignore]
         public IPlateMath PlateMath { get; set; }
 
-        int _Usage = 0;
+        int _Usage = 1;
         public int Usage {
             get
             {
-                if (_Usage == 0)
-                {
-                    RefreshUsage();
-                }
+                //if (_Usage == 0)
+                //{
+                //    RefreshUsage();
+                //}
 
                 return _Usage;
             }
@@ -271,6 +271,18 @@ namespace POLift.Core.Model
             int old_usage = _Usage;
             _Usage = CalculateUsage();
             return old_usage != _Usage;
+        }
+
+        public static void RefreshAllUsages(IPOLDatabase database)
+        {
+            IEnumerable<Exercise> exercises =
+                database.Table<Exercise>().Where(e => e.Usage == 0);
+
+            foreach(Exercise exercise in exercises)
+            {
+                exercise.RefreshUsage();
+                database.Update(exercise);
+            }
         }
 
         public int SucceedsInARow(int check_count = 0)

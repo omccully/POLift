@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using System.Diagnostics;
 
 using Android.App;
 using Android.Content;
@@ -67,14 +68,16 @@ namespace POLift.Droid
         private void RoutinesList_ItemLongClick(object sender, AdapterView.ItemLongClickEventArgs e)
         {
             Intent intent = new Intent(this.Activity, typeof(RoutineDetailsActivity));
-            intent.PutExtra("routine_id", routine_adapter.Routines[e.Position].ID);
+            intent.PutExtra("routine_id", routine_adapter.Data[e.Position].Routine.ID);
             StartActivity(intent);
         }
 
         void RefreshRoutineList()
         {
+            var data = Helpers.MainPageRoutinesList(Database);
+
             routine_adapter = new RoutineAdapter(Activity,
-                Helpers.MainPageRoutinesList(Database));
+                data);
             RoutinesList.Adapter = routine_adapter;
 
             routine_adapter.DeleteButtonClicked += Routine_adapter_DeleteButtonClicked;
@@ -108,7 +111,7 @@ namespace POLift.Droid
         {
             var intent = new Intent(Activity, typeof(PerformRoutineActivity));
 
-            IRoutine routine = routine_adapter[e.Position];
+            IRoutine routine = routine_adapter[e.Position].Routine;
             int id = routine.ID;
 
             intent.PutExtra("routine_id", id);

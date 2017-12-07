@@ -149,11 +149,17 @@ namespace POLift.Core.Service
             }
         }
 
-        public List<T> Query<T>(string query, params object[] args) where T : class, new()
+        public List<T> Query<T>(string query, params object[] args) where T : class, IDatabaseObject, new()
         {
             lock(Locker)
             {
-                return Connection.Query<T>(query, args);
+                List<T> result = Connection.Query<T>(query, args).ToList();
+                foreach(T item in result)
+                {
+                    item.Database = this;
+                }
+
+                return result;
             }
         }
 

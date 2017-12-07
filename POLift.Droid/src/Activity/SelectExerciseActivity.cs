@@ -78,6 +78,7 @@ namespace POLift.Droid
 
         void RefreshExerciseList()
         {
+            Exercise.RefreshAllUsages(Database);
             string category = CurrentCategory();
 
             exercises_pager_adapter = new ExercisesPagerAdapter(this,
