@@ -1,6 +1,15 @@
 ﻿using Foundation;
 using UIKit;
 
+using POLift.Core.Service;
+using POLift.Core.ViewModel;
+
+using GalaSoft.MvvmLight.Ioc;
+using GalaSoft.MvvmLight.Threading;
+using GalaSoft.MvvmLight.Views;
+
+using Unity;
+
 namespace POLift.iOS
 {
     // The UIApplicationDelegate for the application. This class is responsible for launching the 
@@ -22,6 +31,22 @@ namespace POLift.iOS
             // Override point for customization after application launch.
             // If not required for your application you can safely delete this method
 
+            DispatcherHelper.Initialize(application);
+
+            SimpleIoc.Default.Register<IPOLDatabase>(() => 
+                C.ontainer.Resolve<IPOLDatabase>());
+
+            var nav = new NavigationService();
+            SimpleIoc.Default.Register<INavigationService>(() => nav);
+
+            nav.Initialize((UINavigationController)Window.RootViewController);
+            nav.Configure(ViewModelLocator.CreateRoutinePageKey, "CreateRoutinePage");
+            nav.Configure(ViewModelLocator.SelectExercisePageKey, "SelectExercisePage");
+            nav.Configure(ViewModelLocator.CreateExercisePageKey, "CreateExercisePage");
+            nav.Configure(ViewModelLocator.PerformRoutinePageKey, "PerformRoutinePage");
+
+
+            //nav.GetAndRemoveParameter()
             return true;
         }
 

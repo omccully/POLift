@@ -209,16 +209,16 @@ namespace POLift.Core.Service
 
         public static async Task<Stream> HttpQueryStreamAsync(string url)
         {
-            WebRequest web_request = HttpWebRequest.Create(url);
+            System.Diagnostics.Debug.WriteLine("querying " + url);
+            WebRequest web_request = WebRequest.CreateHttp(url); 
 
             //web_request.Timeout = 4000;
-            web_request.Proxy = null;
 
             //Log.Info("POLift", "Querying server " + url);
 
             //throw new NotImplementedException();
 
-            return (await web_request.GetRequestStreamAsync());
+            return (await web_request.GetResponseAsync()).GetResponseStream();
 
             //System.Diagnostics.Debug.WriteLine("Received response from server  " + url);
 
@@ -236,7 +236,7 @@ namespace POLift.Core.Service
             }
         }*/
 
-        public static async void ImportFromUrl(string url, IPOLDatabase Database, string temp_dir, IFileOperations fops, bool full=true)
+        public static async Task ImportFromUrlAsync(string url, IPOLDatabase Database, string temp_dir, IFileOperations fops, bool full=true)
         {
             const string ImportFile = "database-import.db3";
             string ImportFilePath = Path.Combine(temp_dir, ImportFile);

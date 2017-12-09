@@ -7,37 +7,25 @@ using POLift.Core.Model;
 using POLift.Core.Service;
 using POLift.Core.Helpers;
 
+using POLift.Core.ViewModel;
+using GalaSoft.MvvmLight.Helpers;
+
+using Unity;
+
 namespace POLift.iOS.Controllers
 {
     public partial class PerformRoutineController : DatabaseController, IValueReturner<IRoutineResult>
     {
+        // Keep track of bindings to avoid premature garbage collection
+        private readonly List<Binding> bindings = new List<Binding>();
+
         public event Action<IRoutineResult> ValueChosen;
 
-        public IRoutine Routine { get; set; }
-
-        IRoutineResult _routine_result;
-        IRoutineResult _RoutineResult
+        private PerformRoutineViewModel Vm
         {
             get
             {
-                return _routine_result;
-            }
-            set
-            {
-                _routine_result = value;
-                _routine_result.Database = Database;
-
-                GetNextExerciseAndWeight();
-            }
-        }
-        IExercise CurrentExercise;
-
-        IPlateMath CurrentPlateMath
-        {
-            get
-            {
-                if (CurrentExercise == null) return null;
-                return PlateMath.PlateMathTypes[CurrentExercise.PlateMathID];
+                return Application.Locator.PerformRoutine;
             }
         }
 
@@ -48,222 +36,82 @@ namespace POLift.iOS.Controllers
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
+            Console.WriteLine("PerformRoutineController");
 
-            ReportResultButton.TouchUpInside += ReportResultButton_TouchUpInside;
-            WeightTextField.ValueChanged += WeightTextField_ValueChanged;
+            WeightTextField.EditingChanged += WeightTextField_ValueChanged;
 
-            IRoutineResult recent_uncompleted = 
-               RoutineResult.MostRecentUncompleted(Database, Routine);
-            if(recent_uncompleted == null)
-            {
-                _RoutineResult = new RoutineResult(Routine);
-            }
-            else
-            {
-                _RoutineResult = recent_uncompleted;
-            }
+            ReportResultButton.SetCommand(
+                "TouchUpInside",
+                Vm.SubmitResultCommand);
 
-            RefreshGUI();
+            WeightTextField.SetCommand(
+                "ValueChanged",
+                Vm.WeightInputChangedCommand);
+
+            WeightTextField.EditingChanged += (s, e) => { };
+            WeightTextField.ValueChanged += (s, e) => { };
+            //this.SetBinding(
+            //   () => WeightTextField.Text)
+            //    .UpdateSourceTrigger("ValueChanged")
+            //    .WhenSourceChanges(() => Vm.WeightInputText = WeightTextField.Text);
+
+            this.SetBinding(
+                () => WeightTextField.Text,
+                () => Vm.WeightInputText)
+                .ObserveSourceEvent("EditingChanged");
+               // .WhenSourceChanges(() => Vm.WeightInputText = WeightTextField.Text);
+
+
+
+            RepCountTextField.EditingChanged += (s, e) => { };
+            RepCountTextField.ValueChanged += (s, e) => { };
+            RepCountTextField.EditingChanged += RepCountTextField_ValueChanged;
+            this.SetBinding(
+                () => RepCountTextField.Text,
+                () => Vm.RepsInputText)
+                .ObserveSourceEvent("EditingChanged");
+
+            bindings.Add(
+                this.SetBinding(
+                    () => Vm.RoutineDetails,
+                    () => RoutineDetailsLabel.Text));
+
+            bindings.Add(
+               this.SetBinding(
+                   () => Vm.ExerciseDetails,
+                   () => ExerciseDetailsLabel.Text));
+
+            bindings.Add(
+               this.SetBinding(
+                   () => Vm.PlateMathDetails,
+                   () => PlateMathLabel.Text));
+
+            bindings.Add(
+               this.SetBinding(
+                   () => Vm.RepDetails,
+                   () => RepDetailsLabel.Text));
+
+
+
+            Vm.Routine = 
+                C.ontainer.Resolve<IPOLDatabase>()
+                .ReadByID<Routine>(1);
+
+            Console.WriteLine("view load finished");
+
+        }
+
+        private void RepCountTextField_ValueChanged(object sender, EventArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine("RepCountTextField_EditingChanged");
         }
 
         private void WeightTextField_ValueChanged(object sender, EventArgs e)
         {
-            Console.WriteLine("WeightTextField_ValueChanged");
-            try
-            {
-                Console.WriteLine($"CurrentExercise.PlateMathID={CurrentExercise.PlateMathID}");
-                if (CurrentPlateMath == null)
-                {
-                    PlateMathLabel.Text = "";
-                }
-                else
-                {
-                    int WeightInput = Int32.Parse(WeightTextField.Text);
-                    string plate_counts_str = CurrentPlateMath.PlateCountsToString(WeightInput);
-                    PlateMathLabel.Text = $" ({plate_counts_str})";
-                }
-            }
-            catch (FormatException)
-            {
-
-            }
+            System.Diagnostics.Debug.WriteLine("WeightTextField_EditingChanged");
         }
 
-        private void ReportResultButton_TouchUpInside(object sender, EventArgs e)
-        {
-            // user submitted a result for this CurrentExercise
 
-            // get number of reps and clear the text box
-            int reps = 0;
-            float weight = 0;
-            try
-            {
-                weight = Int32.Parse(WeightTextField.Text);
-                reps = Int32.Parse(RepCountTextField.Text);
-            }
-            catch (FormatException)
-            {
-                // "You must fill out the weight and rep count with integers",
-                return;
-            }
-
-            RepCountTextField.Text = "";
-
-            if (ReportExerciseResult(weight, reps))
-            {
-                // if there's more exercises, try to show an ad
-                //TryShowFullScreenAd();
-            }
-        }
-
-        bool ReportExerciseResult(float weight, int reps)
-        {
-            // report the exercise result
-            ExerciseResult ex_result =
-                new ExerciseResult(CurrentExercise, weight, reps);
-            ex_result.Database = Database;
-            Database.Insert(ex_result);
-            _RoutineResult.ReportExerciseResult(ex_result);
-
-            // insert or update the routine result after EVERY new result
-            // just in case the app crashes or something
-            Database.InsertOrUpdateByID(_RoutineResult);
-
-            //if(reps >= CurrentExercise.MaxRepCount)
-            if (CurrentExercise.NextWeight > weight)
-            {
-                // "Weight increase!"
-            }
-            else
-            {
-                int needed_succeeds_in_a_row = CurrentExercise.ConsecutiveSetsForWeightIncrease;
-                if (needed_succeeds_in_a_row > 1)
-                {
-                    int succeeds_in_a_row = CurrentExercise.SucceedsInARow();
-                    string plur = succeeds_in_a_row > 1 ? "s" : "";
-
-                    int needed_left = needed_succeeds_in_a_row - succeeds_in_a_row;
-
-                    //string message = "Nice! You met your rep goal for " +
-                    //    $"{succeeds_in_a_row} set{plur} in a row. " +
-                    //    $"You need {needed_left} more in a row to advance to the next weight";
-                     
-                }
-            }
-
-            if (_RoutineResult.Completed)
-            {
-                // no more exercises
-                ReturnRoutineResult(_RoutineResult);
-                //StaticTimer.StopTimer();
-                //CancelTimerNotification();
-                return false;
-            }
-
-            // update Weight and CurrentExercise
-            GetNextExerciseAndWeight();
-            // rest period is based on the NEXT exercise's rest period
-
-            //StartRestPeriod();
-
-            //PromptUserForRating();
-
-            return true;
-        }
-
-        void ReturnRoutineResult(IRoutineResult routine_result)
-        {
-            ValueChosen?.Invoke(routine_result);
-            NavigationController.PopViewController(true);
-        }
-
-        void GetNextExerciseAndWeight()
-        {
-            // get next exercise
-            CurrentExercise = _RoutineResult.NextExercise;
-
-            if (CurrentExercise != null)
-            {
-                WeightTextField.Text = CurrentExercise.NextWeight.ToString();
-            }
-
-            RefreshGUI();
-        }
-
-        void RefreshGUI()
-        {
-            RefreshRoutineDetails();
-            ExerciseDetailsLabel.Text = CurrentExercise.ToString();
-        }
-
-        void RefreshRoutineDetails()
-        {
-            if (_RoutineResult != null)
-            {
-                RoutineDetailsLabel.Text = _RoutineResult.ShortDetails;
-            }
-            else if (Routine != null)
-            {
-                RoutineDetailsLabel.Text = Routine.ToString();
-            }
-            else
-            {
-                RoutineDetailsLabel.Text = "?";
-            }
-        }
-
-        void RefreshExerciseDetails()
-        {
-            if (CurrentExercise != null)
-            {
-                ExerciseDetailsLabel.Text = $"Exercise {_RoutineResult.ResultCount + 1}/"
-                    + $"{ _RoutineResult.ExerciseCount}: "
-                    + CurrentExercise.ShortDetails;
-
-            }
-            else if (_RoutineResult != null && _RoutineResult.Completed)
-            {
-                ExerciseDetailsLabel.Text = "Routine completed" + (_RoutineResult == null ? "" : "!");
-            }
-            else
-            {
-                ExerciseDetailsLabel.Text = "Pending";
-            }
-
-            IEnumerable<ExerciseResult> previous_ers = Database.Table<ExerciseResult>()
-                .Where(er => er.ExerciseID == CurrentExercise?.ID &&
-                    er.Time < _RoutineResult.StartTime)
-                .TakeLast(3);
-            if (previous_ers.Count() == 0)
-            {
-                RepDetailsLabel.Text = "";
-            }
-            else
-            {
-                ExerciseResult first = previous_ers.First();
-                ExerciseResult previous = first;
-                string s = $" (prev: {first.Weight}x{first.RepCount}";
-
-                foreach (ExerciseResult er in previous_ers.Skip(1))
-                {
-                    if (er.Weight == previous.Weight)
-                    {
-                        s += $", x{er.RepCount}";
-                    }
-                    else
-                    {
-                        s += $", {er.Weight}x{er.RepCount}";
-                    }
-
-
-                    previous = er;
-                }
-                s += ")";
-
-                RepDetailsLabel.Text = s;
-            }
-
-        }
 
         
     }

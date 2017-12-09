@@ -8,11 +8,24 @@ using POLift.Core.Service;
 using UIKit;
 
 using Unity;
+using GalaSoft.MvvmLight.Helpers;
+using POLift.Core.ViewModel;
 
 namespace POLift.iOS.Controllers
 {
     public partial class MainController : DatabaseController
     {
+        // Keep track of bindings to avoid premature garbage collection
+        private readonly List<Binding> bindings = new List<Binding>();
+
+        private MainViewModel Vm
+        {
+            get
+            {
+                return Application.Locator.Main;
+            }
+        }
+
         public MainController(IntPtr handle) : base(handle)
         {
         }
@@ -28,15 +41,30 @@ namespace POLift.iOS.Controllers
                 RoutinesDataSource.RoutineCellId);
 
             RefreshRoutinesList();
+
+            CreateNewRoutineLink.SetCommand(
+                "TouchUpInside",
+                Vm.CreateRoutineNavigateCommand);
         }
 
+        RoutinesDataSource routine_data_source;
         void RefreshRoutinesList()
         {
-            RoutinesTableView.Source = new RoutinesDataSource(this, 
-                Helpers.MainPageRoutinesList(Database));
+            routine_data_source = new RoutinesDataSource(this,
+                Vm.RoutinesList);
+
+            routine_data_source.RoutineSelected += Routine_data_source_RoutineSelected;
+
+            RoutinesTableView.Source = routine_data_source;
         }
 
-        public override void PrepareForSegue(UIStoryboardSegue segue, NSObject sender)
+        private void Routine_data_source_RoutineSelected(object sender, IRoutineWithLatestResult e)
+        {
+            Console.WriteLine("navigating...");
+            Vm.SelectRoutineNavigateCommand(e).Execute(e.Routine);
+        }
+
+        /*public override void PrepareForSegue(UIStoryboardSegue segue, NSObject sender)
         {
             base.PrepareForSegue(segue, sender);
 
@@ -46,52 +74,59 @@ namespace POLift.iOS.Controllers
             {
                 ChildController.ValueChosen += ChildController_RoutineCreated;
             }
-        }
+        }*/
 
         private void ChildController_RoutineCreated(IRoutine routine)
         {
             RefreshRoutinesList();
         }
 
+
         class RoutinesDataSource : UITableViewSource
         {
+            public event EventHandler<IRoutineWithLatestResult> RoutineSelected;
+
             public static NSString RoutineCellId = new NSString("RoutineCell");
 
             MainController parent;
-            List<IRoutine> routines;
+            List<IRoutineWithLatestResult> data;
 
-            public RoutinesDataSource(MainController parent, IEnumerable<IRoutine> routines)
+            public RoutinesDataSource(MainController parent, 
+                IEnumerable<IRoutineWithLatestResult> data)
             {
                 this.parent = parent;
-                this.routines = new List<IRoutine>(routines);
+                this.data = new List<IRoutineWithLatestResult>(data);
             }
 
             public override nint RowsInSection(UITableView tableview, nint section)
             {
-                return routines.Count;
+                return data.Count;
             }
 
             public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
             {
                 var cell = tableView.DequeueReusableCell(RoutineCellId);
 
-                cell.TextLabel.Text = routines[indexPath.Row].ToString();
+                cell.TextLabel.Text = data[indexPath.Row].Routine.ToString();
 
                 return cell;
             }
 
             public override void RowSelected(UITableView tableView, NSIndexPath indexPath)
             {
-                PerformRoutineController pr = 
+                RoutineSelected?.Invoke(this, data[indexPath.Row]);
+
+
+                /*PerformRoutineController pr = 
                     parent.Storyboard.InstantiateViewController("PerformRoutineController") 
                     as PerformRoutineController;
 
                 if(pr != null)
                 {
                     pr.Database = parent.Database;
-                    pr.Routine = routines[indexPath.Row];
+                    pr.Routine = data[indexPath.Row].Routine;
                     parent.NavigationController.PushViewController(pr, true);
-                }
+                }*/
             }
         }
     }

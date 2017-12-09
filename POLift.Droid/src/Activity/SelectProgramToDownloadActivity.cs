@@ -75,11 +75,11 @@ namespace POLift.Droid
                 $" and exercises for the \"{program.title}\" lifting program?",
                 delegate
                 {
-                    ImportProgram(program);
+                    ImportProgramAsync(program);
                 });
         }
 
-        void ImportProgram(ExternalProgram program)
+        async Task ImportProgramAsync(ExternalProgram program)
         {
             try
             {
@@ -88,14 +88,21 @@ namespace POLift.Droid
                 Log.Debug("POLift", $"Selected program: {program.title}, {program.description}, {program.file}");
                 //Helpers.ImportFromUri(Android.Net.Uri.Parse(url), Database, this.ContentResolver, FilesDir.Path, false);
 
-                Helpers.ImportFromUrl(url, Database, FilesDir.Path, new FileOperations(), false);
+                await Helpers.ImportFromUrlAsync(url, Database, FilesDir.Path, new FileOperations(), false);
 
-                SetResult(Result.Ok);
-                Finish();
+                RunOnUiThread(delegate
+                {
+                    SetResult(Result.Ok);
+                    Finish();
+                });
             }
             catch (Exception ex)
             {
-                Toast.MakeText(this, "Error importing program", ToastLength.Long).Show();
+                RunOnUiThread(delegate
+                {
+                    Toast.MakeText(this, "Error importing program", ToastLength.Long).Show();
+                });
+                
                 Log.Debug("POLift", "Error importing program: " + ex);
             }
         }

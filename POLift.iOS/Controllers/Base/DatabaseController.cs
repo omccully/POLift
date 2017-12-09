@@ -6,6 +6,8 @@ using UIKit;
 using Foundation;
 using POLift.Core.Service;
 
+using GalaSoft.MvvmLight.Views;
+
 namespace POLift.iOS.Controllers
 {
     public class DatabaseController : UIViewController, IDatabaseUser

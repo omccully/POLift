@@ -8,7 +8,7 @@
         <!--View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="MainController" sceneMemberID="viewController">
+                <viewController id="BYZ-38-t0r" customClass="MainController" sceneMemberID="viewController" storyboardIdentifier="MainPage">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
                         <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
@@ -31,9 +31,7 @@
                                 <state key="normal" title="Create new routine">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
-                                <connections>
-                                    <segue id="2476" destination="1200" kind="show"/>
-                                </connections>
+                                <connections/>
                             </button>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="2483" translatesAutoresizingMaskIntoConstraints="NO" fixedFrame="YES">
                                 <rect key="frame" x="16" y="126" width="345" height="477"/>
@@ -95,7 +93,7 @@
         </scene>
         <scene sceneID="1199">
             <objects>
-                <viewController id="1200" sceneMemberID="viewController" title="Create Routine" customClass="CreateRoutineController">
+                <viewController id="1200" sceneMemberID="viewController" title="Create Routine" customClass="CreateRoutineController" storyboardIdentifier="CreateRoutinePage">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="1197"/>
                         <viewControllerLayoutGuide type="bottom" id="1198"/>
@@ -184,7 +182,7 @@
         </scene>
         <scene sceneID="3564">
             <objects>
-                <viewController id="3565" sceneMemberID="viewController" customClass="CreateExerciseController" title="Create Exercise">
+                <viewController id="3565" sceneMemberID="viewController" customClass="CreateExerciseController" title="Create Exercise" storyboardIdentifier="CreateExercisePage">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="3562"/>
                         <viewControllerLayoutGuide type="bottom" id="3563"/>
@@ -329,7 +327,7 @@
         </scene>
         <scene sceneID="4365">
             <objects>
-                <viewController id="4366" sceneMemberID="viewController" customClass="SelectExerciseController" title="Select Exercise">
+                <viewController id="4366" sceneMemberID="viewController" customClass="SelectExerciseController" title="Select Exercise" storyboardIdentifier="SelectExercisePage">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="4363"/>
                         <viewControllerLayoutGuide type="bottom" id="4364"/>
@@ -375,7 +373,7 @@
         </scene>
         <scene sceneID="6658">
             <objects>
-                <viewController id="6659" sceneMemberID="viewController" customClass="PerformRoutineController" storyboardIdentifier="PerformRoutineController">
+                <viewController id="6659" sceneMemberID="viewController" customClass="PerformRoutineController" storyboardIdentifier="PerformRoutinePage">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="6656"/>
                         <viewControllerLayoutGuide type="bottom" id="6657"/>
@@ -400,34 +398,34 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Exercise details" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="7005" translatesAutoresizingMaskIntoConstraints="NO" fixedFrame="YES">
-                                <rect key="frame" x="30" y="183" width="310" height="101"/>
+                                <rect key="frame" x="30" y="183" width="310" height="87"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Weight:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="7006" translatesAutoresizingMaskIntoConstraints="NO" fixedFrame="YES">
-                                <rect key="frame" x="30" y="278" width="84" height="21"/>
+                                <rect key="frame" x="18" y="278" width="84" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="5" borderStyle="roundedRect" minimumFontSize="17" id="7007" translatesAutoresizingMaskIntoConstraints="NO" fixedFrame="YES">
-                                <rect key="frame" x="99" y="274" width="97" height="30"/>
+                                <rect key="frame" x="81" y="274" width="60" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Reps:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="7008" translatesAutoresizingMaskIntoConstraints="NO" fixedFrame="YES">
-                                <rect key="frame" x="30" y="323" width="61" height="21"/>
+                                <rect key="frame" x="21" y="323" width="61" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" id="7010" translatesAutoresizingMaskIntoConstraints="NO" fixedFrame="YES">
-                                <rect key="frame" x="99" y="318" width="97" height="30"/>
+                                <rect key="frame" x="89" y="1440" width="97" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
@@ -441,19 +439,25 @@
                                 <connections/>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="7036" translatesAutoresizingMaskIntoConstraints="NO" fixedFrame="YES" text="reps">
-                                <rect key="frame" x="204" y="323" width="125" height="21"/>
+                                <rect key="frame" x="149" y="322" width="191" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="math" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="7037" translatesAutoresizingMaskIntoConstraints="NO" fixedFrame="YES">
-                                <rect key="frame" x="204" y="278" width="136" height="21"/>
+                                <rect key="frame" x="149" y="278" width="180" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" id="7351" translatesAutoresizingMaskIntoConstraints="NO" fixedFrame="YES">
+                                <rect key="frame" x="81" y="318" width="60" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
                         </subviews>
                         <variation key="default">
                             <mask key="subviews">
@@ -466,6 +470,7 @@
                                 <exclude reference="7011"/>
                                 <exclude reference="7036"/>
                                 <exclude reference="7037"/>
+                                <exclude reference="7351"/>
                             </mask>
                         </variation>
                         <variation key="heightClass=regular-widthClass=compact">
@@ -479,6 +484,7 @@
                                 <include reference="7011"/>
                                 <include reference="7036"/>
                                 <include reference="7037"/>
+                                <include reference="7351"/>
                             </mask>
                         </variation>
                     </view>
@@ -490,6 +496,7 @@
                         <outlet property="ReportResultButton" destination="7011" id="name-outlet-7011"/>
                         <outlet property="RepDetailsLabel" destination="7036" id="name-outlet-7036"/>
                         <outlet property="PlateMathLabel" destination="7037" id="name-outlet-7037"/>
+                        <outlet property="RepCountTextField" destination="7351" id="name-outlet-7351"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="6661" userLabel="First Responder" sceneMemberID="firstResponder"/>
