@@ -47,6 +47,8 @@ namespace POLift.Core.ViewModel
                 {
                     RoutineResult = recent_uncompleted;
                 }
+
+                RefreshRoutineDetails();
             }
         }
 
@@ -59,13 +61,47 @@ namespace POLift.Core.ViewModel
             }
             set
             {
+                if (value.RoutineID != Routine.ID)
+                    throw new ArgumentException("RoutineResult is not for Routine");
+
                 _routine_result = value;
                 _routine_result.Database = Database;
 
-                GetNextExerciseAndWeight();
+                SwitchToNextExercise();
             }
         }
-        IExercise CurrentExercise;
+
+        IExercise _CurrentExercise;
+        IExercise CurrentExercise
+        {
+            get
+            {
+                return _CurrentExercise;
+            }
+            set
+            {
+                bool is_different_from_previous = _CurrentExercise != value;
+
+                _CurrentExercise = value;
+
+                ResetWeightInput();
+
+                RefreshExerciseDetails();
+
+                if (is_different_from_previous)
+                {
+                    RefreshPreviousRepCountDetails();
+                }
+            }
+        }
+
+        public void ResetWeightInput()
+        {
+            if (CurrentExercise != null)
+            {
+                WeightInputText = CurrentExercise.NextWeight.ToString();
+            }
+        }
 
         IPlateMath CurrentPlateMath
         {
@@ -95,7 +131,7 @@ namespace POLift.Core.ViewModel
                     }
                     else
                     {
-                        int WeightInput = Int32.Parse(WeightInputText);
+                        int WeightInput = Int32.Parse(value);
                         string plate_counts_str = CurrentPlateMath.PlateCountsToString(WeightInput);
                         PlateMathDetails = $" ({plate_counts_str})";
                     }
@@ -123,17 +159,10 @@ namespace POLift.Core.ViewModel
             }
         }
 
-        void GetNextExerciseAndWeight()
+        void SwitchToNextExercise()
         {
             // get next exercise
             CurrentExercise = RoutineResult.NextExercise;
-
-            if (CurrentExercise != null)
-            {
-                WeightInputText = CurrentExercise.NextWeight.ToString();
-            }
-
-            RefreshDetails();
         }
 
         string _PlateMathDetails;
@@ -145,6 +174,7 @@ namespace POLift.Core.ViewModel
             }
             set
             {
+                System.Diagnostics.Debug.WriteLine($"updating PlateMathDetails={value}");
                 Set(ref _PlateMathDetails, value);
             }
         }
@@ -210,27 +240,27 @@ namespace POLift.Core.ViewModel
             }
         }
 
-        
-
-
-
         void RefreshExerciseDetails()
         {
             if (CurrentExercise != null)
             {
-                _ExerciseDetails = $"Exercise {RoutineResult.ResultCount + 1}/"
+                ExerciseDetails = $"Exercise {RoutineResult.ResultCount + 1}/"
                     + $"{ RoutineResult.ExerciseCount}: "
                     + CurrentExercise.ShortDetails;
             }
             else if (RoutineResult != null && RoutineResult.Completed)
             {
-                _ExerciseDetails = "Routine completed" + (RoutineResult == null ? "" : "!");
+                ExerciseDetails = "Routine completed" + (RoutineResult == null ? "" : "!");
             }
             else
             {
-                _ExerciseDetails = "Pending";
+                ExerciseDetails = "Pending";
             }
+        }
 
+
+        void RefreshPreviousRepCountDetails()
+        {
             IEnumerable<ExerciseResult> previous_ers = Database.Table<ExerciseResult>()
                 .Where(er => er.ExerciseID == CurrentExercise?.ID &&
                     er.Time < RoutineResult.StartTime)
@@ -265,11 +295,6 @@ namespace POLift.Core.ViewModel
                 RepDetails = s;
             }
         }
-
-
-
-
-
 
         bool ReportExerciseResult(float weight, int reps)
         {
@@ -319,7 +344,10 @@ namespace POLift.Core.ViewModel
             }
 
             // update Weight and CurrentExercise
-            GetNextExerciseAndWeight();
+            SwitchToNextExercise();
+
+            RefreshRoutineDetails();
+
             // rest period is based on the NEXT exercise's rest period
 
             //StartRestPeriod();
@@ -331,7 +359,7 @@ namespace POLift.Core.ViewModel
 
 
 
-        void SubmitResult()
+        void SubmitResultFromInput()
         {
             // user submitted a result for this CurrentExercise
 
@@ -371,7 +399,7 @@ namespace POLift.Core.ViewModel
                         System.Diagnostics.Debug.WriteLine($"ar1234a weight={WeightInputText} rep={RepsInputText}");
                         try
                         {
-                            SubmitResult();
+                            SubmitResultFromInput();
                         }
                         catch(Exception e)
                         {
@@ -382,19 +410,5 @@ namespace POLift.Core.ViewModel
                     }));
             }
         }
-
-        RelayCommand _WeightInputChangedCommand;
-        public RelayCommand WeightInputChangedCommand
-        {
-            get
-            {
-                return _WeightInputChangedCommand ??
-                    (_WeightInputChangedCommand = new RelayCommand(delegate
-                    {
-                        System.Diagnostics.Debug.WriteLine("asdf");
-                    }));
-            }
-        }
-
     }
 }

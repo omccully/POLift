@@ -215,6 +215,8 @@ namespace POLift.Core.Model
 
                 sb.Append($", {RestPeriodSeconds} sec rest");
                 //sb.Append($", {Usage} usage");
+
+                System.Diagnostics.Debug.WriteLine("Internal ShortDetails = " + sb.ToString());
                 return sb.ToString();
             }
         }

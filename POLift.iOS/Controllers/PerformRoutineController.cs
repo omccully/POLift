@@ -44,9 +44,9 @@ namespace POLift.iOS.Controllers
                 "TouchUpInside",
                 Vm.SubmitResultCommand);
 
-            WeightTextField.SetCommand(
-                "ValueChanged",
-                Vm.WeightInputChangedCommand);
+            //WeightTextField.SetCommand(
+              //  "ValueChanged",
+              //  Vm.WeightInputChangedCommand);
 
             WeightTextField.EditingChanged += (s, e) => { };
             WeightTextField.ValueChanged += (s, e) => { };
@@ -54,22 +54,24 @@ namespace POLift.iOS.Controllers
             //   () => WeightTextField.Text)
             //    .UpdateSourceTrigger("ValueChanged")
             //    .WhenSourceChanges(() => Vm.WeightInputText = WeightTextField.Text);
-
-            this.SetBinding(
+            WeightTextField.Text = "";
+            bindings.Add(this.SetBinding(
                 () => WeightTextField.Text,
-                () => Vm.WeightInputText)
-                .ObserveSourceEvent("EditingChanged");
-               // .WhenSourceChanges(() => Vm.WeightInputText = WeightTextField.Text);
+                () => Vm.WeightInputText,
+                BindingMode.TwoWay)
+                .ObserveSourceEvent("EditingChanged"));
+            // .WhenSourceChanges(() => Vm.WeightInputText = WeightTextField.Text);
 
-
-
+            
             RepCountTextField.EditingChanged += (s, e) => { };
             RepCountTextField.ValueChanged += (s, e) => { };
             RepCountTextField.EditingChanged += RepCountTextField_ValueChanged;
-            this.SetBinding(
+            RepCountTextField.Text = "";
+            bindings.Add(this.SetBinding(
                 () => RepCountTextField.Text,
-                () => Vm.RepsInputText)
-                .ObserveSourceEvent("EditingChanged");
+                () => Vm.RepsInputText,
+                BindingMode.TwoWay)
+                .ObserveSourceEvent("EditingChanged"));
 
             bindings.Add(
                 this.SetBinding(
@@ -93,9 +95,11 @@ namespace POLift.iOS.Controllers
 
 
 
-            Vm.Routine = 
-                C.ontainer.Resolve<IPOLDatabase>()
-                .ReadByID<Routine>(1);
+            //Vm.Routine = 
+            //    C.ontainer.Resolve<IPOLDatabase>()
+            //    .ReadByID<Routine>(1);
+
+            Vm.ResetWeightInput();
 
             Console.WriteLine("view load finished");
 
@@ -103,12 +107,12 @@ namespace POLift.iOS.Controllers
 
         private void RepCountTextField_ValueChanged(object sender, EventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine("RepCountTextField_EditingChanged");
+            System.Diagnostics.Debug.WriteLine("RepCountTextField_EditingChanged to " + RepCountTextField.Text);
         }
 
         private void WeightTextField_ValueChanged(object sender, EventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine("WeightTextField_EditingChanged");
+            System.Diagnostics.Debug.WriteLine("WeightTextField_EditingChanged" + WeightTextField.Text);
         }
 
 

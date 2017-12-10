@@ -66,8 +66,12 @@
     <Compile Include="Service\Interfaces\IPOLDatabase.cs" />
     <Compile Include="Service\PlateMath.cs" />
     <Compile Include="Service\POLDatabase.cs" />
+    <Compile Include="ViewModel\CreateExerciseViewModel.cs" />
+    <Compile Include="ViewModel\CreateRoutineViewModel.cs" />
+    <Compile Include="ViewModel\IValueReturner.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\PerformRoutineViewModel.cs" />
+    <Compile Include="ViewModel\SelectExerciseViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
   </ItemGroup>
   <ItemGroup>

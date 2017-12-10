@@ -1,13 +1,28 @@
 ﻿using Foundation;
+using System.Collections.Generic;
 using System;
 using UIKit;
 using POLift.Core.Service;
 using POLift.Core.Model;
 
+using POLift.Core.ViewModel;
+using GalaSoft.MvvmLight.Helpers;
+
 namespace POLift.iOS.Controllers
 {
     public partial class CreateExerciseController : DatabaseController, IValueReturner<IExercise>
     {
+        // Keep track of bindings to avoid premature garbage collection
+        private readonly List<Binding> bindings = new List<Binding>();
+
+        private CreateExerciseViewModel Vm
+        {
+            get
+            {
+                return Application.Locator.CreateExercise;
+            }
+        }
+
         public event Action<IExercise> ValueChosen;
 
         public CreateExerciseController (IntPtr handle) : base (handle)
@@ -18,11 +33,22 @@ namespace POLift.iOS.Controllers
         {
             base.ViewDidLoad();
 
-            CreateExerciseButton.TouchUpInside += CreateExerciseButton_TouchUpInside;
+            CreateExerciseButton.SetCommand(Vm.CreateExerciseCommand);
 
             MathTypePicker.Model = new MathTypePickerViewModel();
             
             MathTypePicker.Delegate = new MathTypePickerDelegate();
+
+            bindings.Add(ExerciseNameTextField.TwoWayBinding(this,
+                () => Vm.ExerciseNameInput));
+            bindings.Add(RepCountTextField.TwoWayBinding(this,
+               () => Vm.RepCountInput));
+            bindings.Add(WeightIncrementTextField.TwoWayBinding(this,
+              () => Vm.WeightIncrementInput));
+            bindings.Add(RestPeriodTextField.TwoWayBinding(this,
+              () => Vm.RestPeriodInput));
+            bindings.Add(ConsecutiveSetsTextField.TwoWayBinding(this,
+              () => Vm.ConsecutiveSetsInput));
 
             ExerciseNameTextField.ShouldReturn = AppleHelpers.DismissKeyboard;
             RepCountTextField.ShouldReturn = AppleHelpers.DismissKeyboard;
@@ -31,71 +57,27 @@ namespace POLift.iOS.Controllers
             ConsecutiveSetsTextField.ShouldReturn = AppleHelpers.DismissKeyboard;
         }
 
-        private void CreateExerciseButton_TouchUpInside(object sender, EventArgs e)
-        {
-            try
-            {
-                string name = ExerciseNameTextField.Text;
-                int max_reps = Int32.Parse(RepCountTextField.Text);
-                float weight_increment = Single.Parse(WeightIncrementTextField.Text);
-                int rest_period_s = Int32.Parse(RestPeriodTextField.Text);
-                int consecutive_sets = Int32.Parse(ConsecutiveSetsTextField.Text);
-
-                nint pm_index = MathTypePicker.SelectedRowInComponent(0);
-                IPlateMath plate_math = PlateMath.PlateMathTypes[pm_index];
-
-                Exercise ex = new Exercise(name, max_reps, weight_increment,
-                    rest_period_s, plate_math);
-                ex.ConsecutiveSetsForWeightIncrease = consecutive_sets;
-                ex.Database = this.Database;
-
-                Database.InsertOrUndeleteAndUpdate(ex);
-
-                //SavePreferences();
-
-                ReturnExercise(ex);
-            }
-            catch (FormatException)
-            {
-                // FormatException for int parsing
-                // "Numerical fields must be integers",
-
-            }
-            catch (ArgumentException ae)
-            {
-                // ArgumentException for Exercise constructor
-                // ae.Message, 
-            }
-        }
-
-        void ReturnExercise(IExercise exercise)
-        {
-            // pass it up to parent
-            ValueChosen?.Invoke(exercise);
-            NavigationController.PopViewController(true);
-        }
-
         class MathTypePickerDelegate : UIPickerViewDelegate
         {
             public override UIView GetView(UIPickerView pickerView, nint row, nint component, UIView view)
+        {
+            UILabel label = view as UILabel;
+
+            if (label == null)
             {
-                UILabel label = view as UILabel;
+                label = new UILabel();
 
-                if(label == null)
-                {
-                    label = new UILabel();
-
-                    label.TextAlignment = UITextAlignment.Center;
-                    label.AdjustsFontSizeToFitWidth = true;
-                }
-
-                label.Text = pickerView.Model.GetTitle(pickerView, row, component);
-
-                return label;
+                label.TextAlignment = UITextAlignment.Center;
+                label.AdjustsFontSizeToFitWidth = true;
             }
-        }
 
-        class MathTypePickerViewModel : UIPickerViewModel
+            label.Text = pickerView.Model.GetTitle(pickerView, row, component);
+
+            return label;
+        }
+    }
+
+    class MathTypePickerViewModel : UIPickerViewModel
         {
             public override nint GetComponentCount(UIPickerView pickerView)
             {

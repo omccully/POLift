@@ -5,17 +5,25 @@ using System.Collections.Generic;
 
 using POLift.Core.Service;
 using POLift.Core.Model;
+using POLift.Core.ViewModel;
 
 namespace POLift.iOS.Controllers
 {
-    public partial class SelectExerciseController : DatabaseController, IValueReturner<IExercise>
+    public partial class SelectExerciseController : DatabaseController
     {
-        public event Action<IExercise> ValueChosen;
+        private SelectExerciseViewModel Vm
+        {
+            get
+            {
+                return Application.Locator.SelectExercise;
+            }
+        }
 
         public SelectExerciseController (IntPtr handle) : base (handle)
         {
         }
 
+        ExercisesDataSource eds;
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
@@ -23,45 +31,26 @@ namespace POLift.iOS.Controllers
             ExerciseListTableView.RegisterClassForCellReuse(typeof(UITableViewCell),
                 ExercisesDataSource.ExerciseCellId);
 
-            ExerciseListTableView.Source = new ExercisesDataSource(this, 
-                Database.Table<Exercise>());
-
-            //ExerciseListTableView.RowSelected
-            //ExerciseListTableView.IndexPathForSelectedRow
+            eds = new ExercisesDataSource(Database.Table<Exercise>());
+            eds.ValueChosen += Eds_ValueChosen;
+            ExerciseListTableView.Source = eds;
         }
 
-        public override void PrepareForSegue(UIStoryboardSegue segue, NSObject sender)
+        private void Eds_ValueChosen(IExercise obj)
         {
-            base.PrepareForSegue(segue, sender);
-
-            var ChildController = segue.DestinationViewController as IValueReturner<IExercise>;
-
-            if (ChildController != null)
-            {
-                ChildController.ValueChosen += ReturnExercise;
-            }
+            Vm.SelectExerciseCommand(obj).Execute(null);
         }
 
-
-        void ReturnExercise(IExercise exercise)
-        {
-            // pass it up to parent
-            ValueChosen?.Invoke(exercise);
-
-            NavigationController.PopViewController(true);
-        }
-
-        class ExercisesDataSource : UITableViewSource
+        class ExercisesDataSource : UITableViewSource, IValueReturner<IExercise>
         {
             public static NSString ExerciseCellId = new NSString("ExerciseCell");
 
-            SelectExerciseController parent;
+            public event Action<IExercise> ValueChosen;
+
             List<Exercise> exercises;
 
-            public ExercisesDataSource(SelectExerciseController parent, 
-                IEnumerable<Exercise> exercises)
+            public ExercisesDataSource(IEnumerable<Exercise> exercises)
             {
-                this.parent = parent;
                 this.exercises = new List<Exercise>(exercises);
             }
 
@@ -82,7 +71,8 @@ namespace POLift.iOS.Controllers
             public override void RowSelected(UITableView tableView, NSIndexPath indexPath)
             {
                 Console.WriteLine($"calling parent.ReturnExercise(exercises[{indexPath.Row}])");
-                parent.ReturnExercise(exercises[indexPath.Row]);
+
+                ValueChosen?.Invoke(exercises[indexPath.Row]);
             }
         }
     }

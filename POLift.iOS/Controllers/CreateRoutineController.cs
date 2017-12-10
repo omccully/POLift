@@ -5,13 +5,31 @@ using POLift.Core.Model;
 using POLift.Core.Service;
 using System.Collections.Generic;
 
+using POLift.Core.ViewModel;
+
+using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Views;
+using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Helpers;
+
+
+
 namespace POLift.iOS.Controllers
 {
     public partial class CreateRoutineController : DatabaseController, IValueReturner<IRoutine>
     {
+        private readonly List<Binding> bindings = new List<Binding>();
         ExerciseSetsDataSource es_data_source;
 
         public event Action<IRoutine> ValueChosen;
+
+        private CreateRoutineViewModel Vm
+        {
+            get
+            {
+                return Application.Locator.CreateRoutine;
+            }
+        }
 
         public CreateRoutineController (IntPtr handle) : base (handle)
         {
@@ -24,81 +42,30 @@ namespace POLift.iOS.Controllers
             ExerciseSetsTableView.RegisterClassForCellReuse(typeof(UITableViewCell),
                 ExerciseSetsDataSource.ExerciseSetsCellId);
 
-            es_data_source = new ExerciseSetsDataSource(new List<IExerciseSets>());
-            ExerciseSetsTableView.Source = es_data_source;
+            RefreshExerciseSetsList();
 
             RoutineNameTextField.ShouldReturn = AppleHelpers.DismissKeyboard;
 
-            CreateRoutineButton.TouchUpInside += CreateRoutineButton_TouchUpInside;
+            AddExerciseLink.SetCommand(Vm.AddExerciseCommand);
+
+            bindings.Add(this.SetBinding(
+                () => RoutineNameTextField.Text,
+                () => Vm.RoutineNameInput,
+                BindingMode.TwoWay)
+                .ObserveSourceEvent("EditingChanged"));
+
+            Vm.ExerciseSets.CollectionChanged += ExerciseSets_CollectionChanged;
         }
 
-        List<IExerciseSets> SaveExerciseSets()
+        private void ExerciseSets_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            List<IExerciseSets> normalized = es_data_source.ExerciseSets.NormalizeExerciseSets(Database);
-            foreach (IExerciseSets ex_sets in normalized)
-            {
-                Database.InsertOrUpdateNoID<ExerciseSets>((ExerciseSets)ex_sets);
-            }
-
-            return normalized;
+            RefreshExerciseSetsList();
         }
 
-        private void CreateRoutineButton_TouchUpInside(object sender, EventArgs e)
+        void RefreshExerciseSetsList()
         {
-            if(es_data_source.ExerciseSets.Count == 0)
-            {
-                // "You must have exercises in your routine. "
-                return;
-            }
-
-            List<IExerciseSets> normalized = es_data_source.ExerciseSets.SaveExerciseSets(Database);
-
-            Routine routine = new Routine(RoutineNameTextField.Text,
-                   normalized);
-            routine.Database = Database;
-
-            Database.InsertOrUndeleteAndUpdate(routine);
-
-            // set the category for all of the exercises in this routine
-            foreach (IExerciseSets ex_sets in normalized)
-            {
-                Exercise ex = ex_sets.Exercise;
-                ex.Category = routine.Name;
-                Database.Update(ex);
-            }
-
-            ReturnRoutine(routine);
-        }
-
-        void ReturnRoutine(IRoutine routine)
-        {
-            // pass it up to parent
-            ValueChosen?.Invoke(routine);
-
-            NavigationController.PopViewController(true);
-        }
-
-        public override void PrepareForSegue(UIStoryboardSegue segue, NSObject sender)
-        {
-            base.PrepareForSegue(segue, sender);
-
-            var ChildController = segue.DestinationViewController as IValueReturner<IExercise>;
-
-            if(ChildController != null)
-            {
-                ChildController.ValueChosen += ChildController_ExerciseChosen;
-            }
-        }
-
-        private void ChildController_ExerciseChosen(IExercise exercise)
-        {
-            // add exercise to ExerciseSets list
-
-            ExerciseSets es = new ExerciseSets(exercise);
-            es.Database = Database;
-            es_data_source.ExerciseSets.Add(es);
-
-            ExerciseSetsTableView.ReloadData();
+            ExerciseSetsTableView.Source = 
+                new ExerciseSetsDataSource(Vm.ExerciseSets);
         }
 
         class ExerciseSetsDataSource : UITableViewSource

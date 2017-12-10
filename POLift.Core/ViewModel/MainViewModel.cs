@@ -54,9 +54,12 @@ namespace POLift.Core.ViewModel
 
         public RelayCommand SelectRoutineNavigateCommand(IRoutine selection)
         {
-            return new RelayCommand(()
-                => navigationService.NavigateTo(
-                    ViewModelLocator.PerformRoutinePageKey, selection));
+            return new RelayCommand(() => {
+                ViewModelLocator.Default.PerformRoutine.Routine = selection;
+
+                navigationService.NavigateTo(
+                        ViewModelLocator.PerformRoutinePageKey, selection);
+            });
         }
     }
 }
