@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,10 +19,21 @@ namespace POLift.Core.ViewModel
         private readonly INavigationService navigationService;
         private readonly IPOLDatabase database;
 
+        public event EventHandler RoutinesListChanged;
+
         public MainViewModel(INavigationService navigationService, IPOLDatabase database)
         {
             this.navigationService = navigationService;
             this.database = database;
+
+            ViewModelLocator.Default.CreateRoutine.ValueChosen += CreateRoutine_ValueChosen;
+        }
+
+        private void CreateRoutine_ValueChosen(IRoutine obj)
+        {
+            //RoutinesList.Insert(0, new RoutineWithLatestResult(obj, null));
+
+            RefreshRoutinesList();
         }
 
         private IEnumerable<IRoutineWithLatestResult> _RoutinesList;
@@ -29,9 +41,16 @@ namespace POLift.Core.ViewModel
         {
             get
             {
-                return _RoutinesList
-                    ?? (_RoutinesList = Helpers.MainPageRoutinesList(database));
+                if (_RoutinesList == null) RefreshRoutinesList();
+
+                return _RoutinesList;
             }
+        }
+
+        void RefreshRoutinesList()
+        {
+            _RoutinesList = Helpers.MainPageRoutinesList(database);
+            RoutinesListChanged?.Invoke(this, new EventArgs());
         }
 
         private RelayCommand navigateCommand;
@@ -59,6 +78,16 @@ namespace POLift.Core.ViewModel
 
                 navigationService.NavigateTo(
                         ViewModelLocator.PerformRoutinePageKey, selection);
+            });
+        }
+
+        public RelayCommand EditRoutineNavigateCommand(IRoutine selection)
+        {
+            return new RelayCommand(() => {
+                ViewModelLocator.Default.CreateRoutine.EditRoutine(selection);
+
+                navigationService.NavigateTo(
+                        ViewModelLocator.CreateRoutinePageKey, selection);
             });
         }
     }

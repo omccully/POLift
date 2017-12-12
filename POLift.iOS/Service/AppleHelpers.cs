@@ -30,5 +30,17 @@ namespace POLift.iOS
                 BindingMode.TwoWay)
                 .ObserveSourceEvent("EditingChanged");
         }
+
+        /*public static Binding TwoWayBinding(this UIViewController cont,
+             Expression<Func<string>> text_field, Expression<Func<string>> view_model_prop)
+        {
+            //text_field..EditingChanged += (s, e) => { };
+
+            return cont.SetBinding<string, string>(
+                () => text_field.Text,
+                view_model_field,
+                BindingMode.TwoWay)
+                .ObserveSourceEvent("EditingChanged");
+        }*/
     }
 }

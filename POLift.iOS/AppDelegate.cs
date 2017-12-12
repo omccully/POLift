@@ -12,6 +12,8 @@ using Unity;
 
 namespace POLift.iOS
 {
+    using Service;
+
     // The UIApplicationDelegate for the application. This class is responsible for launching the 
     // User Interface of the application, as well as listening (and optionally responding) to 
     // application events from iOS.
@@ -44,6 +46,11 @@ namespace POLift.iOS
             nav.Configure(ViewModelLocator.SelectExercisePageKey, "SelectExercisePage");
             nav.Configure(ViewModelLocator.CreateExercisePageKey, "CreateExercisePage");
             nav.Configure(ViewModelLocator.PerformRoutinePageKey, "PerformRoutinePage");
+
+            IDialogMessageService DialogService = new DialogMessageService();
+            ViewModelLocator.Default.CreateExercise.DialogService = DialogService;
+            ViewModelLocator.Default.CreateRoutine.DialogService = DialogService;
+            ViewModelLocator.Default.PerformRoutine.DialogService = DialogService;
 
 
             //nav.GetAndRemoveParameter()

@@ -20,6 +20,8 @@ namespace POLift.Core.ViewModel
         private readonly INavigationService navigationService;
         private readonly IPOLDatabase Database;
 
+        public IDialogMessageService DialogService;
+
         public CreateExerciseViewModel(INavigationService navigationService, IPOLDatabase database)
         {
             this.navigationService = navigationService;
@@ -107,7 +109,7 @@ namespace POLift.Core.ViewModel
         }
 
 
-        void CreateExerciseFromInput()
+        Exercise CreateExerciseFromInput()
         {
             try
             {
@@ -126,19 +128,23 @@ namespace POLift.Core.ViewModel
 
                 //SavePreferences();
 
-                ValueChosen?.Invoke(ex);
+                
+                return ex;
             }
             catch (FormatException)
             {
                 // FormatException for int parsing
-                // "Numerical fields must be integers",
 
+                DialogService?.DisplayTemporaryError("Numerical fields must be integers");
             }
             catch (ArgumentException ae)
             {
                 // ArgumentException for Exercise constructor
-                // ae.Message, 
+
+                DialogService?.DisplayTemporaryError(ae.Message);
             }
+
+            return null;
         }
 
         RelayCommand _CreateExerciseCommand;
@@ -149,7 +155,14 @@ namespace POLift.Core.ViewModel
                 return _CreateExerciseCommand ??
                     (_CreateExerciseCommand= 
                     new RelayCommand(
-                        () => CreateExerciseFromInput()));
+                        () => {
+                            Exercise result = CreateExerciseFromInput();
+                            if (result != null)
+                            {
+                                ValueChosen?.Invoke(result);
+                                navigationService.GoBack();
+                            }
+                        }));
             }
         }
     }

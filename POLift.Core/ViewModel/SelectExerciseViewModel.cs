@@ -31,6 +31,15 @@ namespace POLift.Core.ViewModel
         private void CreateExercise_ValueChosen(IExercise obj)
         {
             ValueChosen?.Invoke(obj);
+            navigationService.GoBack();
+        }
+
+        public IEnumerable<Exercise> Exercises
+        {
+            get
+            {
+                return Database.Table<Exercise>();
+            }
         }
 
         RelayCommand _CreateExerciseCommand;
@@ -49,7 +58,10 @@ namespace POLift.Core.ViewModel
         public RelayCommand SelectExerciseCommand(IExercise exercise)
         {
             return new RelayCommand(
-                    () => ValueChosen?.Invoke(exercise));
+                    () => {
+                        ValueChosen?.Invoke(exercise);
+                        navigationService.GoBack();
+                        });
         }
     }
 }

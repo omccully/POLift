@@ -84,7 +84,7 @@
     <CodesignKey>iPhone Distribution</CodesignKey>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="AppleHelpers.cs" />
+    <Compile Include="Service\AppleHelpers.cs" />
     <Compile Include="ContainerBootstrapper.cs" />
     <Compile Include="Controllers\Base\PerformRoutineBaseController.cs" />
     <Compile Include="Controllers\CreateRoutineController.cs" />
@@ -97,7 +97,8 @@
     <Compile Include="Controllers\CreateExerciseController.designer.cs">
       <DependentUpon>CreateExerciseController.cs</DependentUpon>
     </Compile>
-    <Compile Include="IValueReturner.cs" />
+    <Compile Include="Service\DialogMessageService.cs" />
+    <Compile Include="Service\IValueReturner.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="AppDelegate.cs" />
     <Compile Include="Controllers\SelectExerciseController.cs" />

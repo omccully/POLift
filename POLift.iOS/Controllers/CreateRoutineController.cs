@@ -16,12 +16,9 @@ using GalaSoft.MvvmLight.Helpers;
 
 namespace POLift.iOS.Controllers
 {
-    public partial class CreateRoutineController : DatabaseController, IValueReturner<IRoutine>
+    public partial class CreateRoutineController : DatabaseController
     {
         private readonly List<Binding> bindings = new List<Binding>();
-        ExerciseSetsDataSource es_data_source;
-
-        public event Action<IRoutine> ValueChosen;
 
         private CreateRoutineViewModel Vm
         {
@@ -48,12 +45,15 @@ namespace POLift.iOS.Controllers
 
             AddExerciseLink.SetCommand(Vm.AddExerciseCommand);
 
+
             bindings.Add(this.SetBinding(
                 () => RoutineNameTextField.Text,
                 () => Vm.RoutineNameInput,
                 BindingMode.TwoWay)
                 .ObserveSourceEvent("EditingChanged"));
 
+            CreateRoutineButton.SetCommand(Vm.CreateRoutineCommand);
+            
             Vm.ExerciseSets.CollectionChanged += ExerciseSets_CollectionChanged;
         }
 

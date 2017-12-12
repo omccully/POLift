@@ -61,6 +61,7 @@
     <Compile Include="Model\WarmupSet.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Service\Helpers.cs" />
+    <Compile Include="Service\Interfaces\IDialogMessageService.cs" />
     <Compile Include="Service\Interfaces\IFileOperations.cs" />
     <Compile Include="Service\Interfaces\IPlateMath.cs" />
     <Compile Include="Service\Interfaces\IPOLDatabase.cs" />

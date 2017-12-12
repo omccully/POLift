@@ -19,6 +19,8 @@ namespace POLift.Core.ViewModel
         private readonly INavigationService navigationService;
         private readonly IPOLDatabase Database;
 
+        public IDialogMessageService DialogService;
+
         public PerformRoutineViewModel(INavigationService navigationService, IPOLDatabase database)
         {
             this.navigationService = navigationService;
@@ -62,7 +64,9 @@ namespace POLift.Core.ViewModel
             set
             {
                 if (value.RoutineID != Routine.ID)
-                    throw new ArgumentException("RoutineResult is not for Routine");
+                {
+                    DialogService?.DisplayTemporaryMessage("RoutineResult is not for Routine");
+                }      
 
                 _routine_result = value;
                 _routine_result.Database = Database;
@@ -121,8 +125,6 @@ namespace POLift.Core.ViewModel
             }
             set
             {
-                System.Diagnostics.Debug.WriteLine($"updating WeightInputText={value}");
-
                 try
                 {
                     if (CurrentPlateMath == null)
@@ -154,7 +156,6 @@ namespace POLift.Core.ViewModel
             }
             set
             {
-                System.Diagnostics.Debug.WriteLine($"updating RepsInputText={value}");
                 Set(() => RepsInputText, ref _RepsInputText, value);
             }
         }
@@ -174,7 +175,6 @@ namespace POLift.Core.ViewModel
             }
             set
             {
-                System.Diagnostics.Debug.WriteLine($"updating PlateMathDetails={value}");
                 Set(ref _PlateMathDetails, value);
             }
         }
@@ -312,7 +312,7 @@ namespace POLift.Core.ViewModel
             //if(reps >= CurrentExercise.MaxRepCount)
             if (CurrentExercise.NextWeight > weight)
             {
-                // "Weight increase!"
+                DialogService?.DisplayTemporaryMessage("Weight increase!");
             }
             else
             {
@@ -324,10 +324,10 @@ namespace POLift.Core.ViewModel
 
                     int needed_left = needed_succeeds_in_a_row - succeeds_in_a_row;
 
-                    //string message = "Nice! You met your rep goal for " +
-                    //    $"{succeeds_in_a_row} set{plur} in a row. " +
-                    //    $"You need {needed_left} more in a row to advance to the next weight";
-
+                    string message = "Nice! You met your rep goal for " +
+                        $"{succeeds_in_a_row} set{plur} in a row. " +
+                        $"You need {needed_left} more in a row to advance to the next weight";
+                    DialogService?.DisplayTemporaryMessage(message);
                 }
             }
 
@@ -373,10 +373,10 @@ namespace POLift.Core.ViewModel
             }
             catch (FormatException)
             {
-                // "You must fill out the weight and rep count with integers",
+                DialogService?.DisplayTemporaryError(
+                    "You must fill out the weight and rep count with integers");
                 return;
             }
-
 
             RepsInputText = "";
 
@@ -396,17 +396,7 @@ namespace POLift.Core.ViewModel
                 return _SubmitResultCommand ??
                     (_SubmitResultCommand = new RelayCommand(delegate
                     {
-                        System.Diagnostics.Debug.WriteLine($"ar1234a weight={WeightInputText} rep={RepsInputText}");
-                        try
-                        {
-                            SubmitResultFromInput();
-                        }
-                        catch(Exception e)
-                        {
-                            System.Diagnostics.Debug.WriteLine(e.ToString());
-
-                            throw e;
-                        }
+                        SubmitResultFromInput();
                     }));
             }
         }

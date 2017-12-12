@@ -46,6 +46,13 @@ namespace POLift.iOS.Controllers
             CreateNewRoutineLink.SetCommand(
                 "TouchUpInside",
                 Vm.CreateRoutineNavigateCommand);
+
+            Vm.RoutinesListChanged += Vm_RoutinesListChanged;
+        }
+
+        private void Vm_RoutinesListChanged(object sender, EventArgs e)
+        {
+            RefreshRoutinesList();
         }
 
         RoutinesDataSource routine_data_source;

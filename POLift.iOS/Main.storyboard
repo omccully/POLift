@@ -129,9 +129,7 @@
                                 <state key="normal" title="Add exercise">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
-                                <connections>
-                                    <segue id="5739" destination="4366" kind="show"/>
-                                </connections>
+                                <connections/>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="1440" translatesAutoresizingMaskIntoConstraints="NO" fixedFrame="YES">
                                 <rect key="frame" x="78" y="617" width="220" height="30"/>
@@ -357,14 +355,13 @@
                                 <state key="normal" title="Create exercise">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
-                                <connections>
-                                    <segue id="4666" destination="3565" kind="show"/>
-                                </connections>
+                                <connections/>
                             </button>
                         </subviews>
                     </view>
                     <connections>
                         <outlet property="ExerciseListTableView" destination="4370" id="name-outlet-4370"/>
+                        <outlet property="CreateExerciseLink" destination="4373" id="name-outlet-4373"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4368" userLabel="First Responder" sceneMemberID="firstResponder"/>

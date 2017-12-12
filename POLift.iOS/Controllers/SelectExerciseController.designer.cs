@@ -16,10 +16,19 @@ namespace POLift.iOS.Controllers
     {
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
+        UIKit.UIButton CreateExerciseLink { get; set; }
+
+        [Outlet]
+        [GeneratedCode ("iOS Designer", "1.0")]
         UIKit.UITableView ExerciseListTableView { get; set; }
 
         void ReleaseDesignerOutlets ()
         {
+            if (CreateExerciseLink != null) {
+                CreateExerciseLink.Dispose ();
+                CreateExerciseLink = null;
+            }
+
             if (ExerciseListTableView != null) {
                 ExerciseListTableView.Dispose ();
                 ExerciseListTableView = null;

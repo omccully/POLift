@@ -20,6 +20,7 @@ namespace POLift.Core.ViewModel
         private readonly IPOLDatabase Database;
 
         public event Action<IRoutine> ValueChosen;
+        public IDialogMessageService DialogService;
 
         public CreateRoutineViewModel(INavigationService navigationService, IPOLDatabase database)
         {
@@ -29,8 +30,55 @@ namespace POLift.Core.ViewModel
             ViewModelLocator.Default.SelectExercise.ValueChosen += SelectExercise_ValueChosen;
         }
 
+        IRoutine RoutineToDeleteIfDifferent;
+        public int LockedSets { get; set; }
+
+        int _LockedExerciseSets;
+        public int LockedExerciseSets {
+            get
+            {
+                return _LockedExerciseSets;
+            }
+            set
+            {
+                _LockedExerciseSets = value;
+            }
+        }
+
+        public void EditRoutine(IRoutine routine, int locked_sets = 0)
+        {
+            Reset();
+
+            if (routine != null)
+            {
+                RoutineToDeleteIfDifferent = routine;
+                RoutineNameInput = routine.Name;
+
+                ExerciseSets.Clear();
+
+                LockedSets = locked_sets;
+                IEnumerable<IExerciseSets> exercise_sets = 
+                    Model.ExerciseSets.Expand(routine.ExerciseSets)
+                    .SplitLockedSets(locked_sets, out _LockedExerciseSets);
+
+                foreach (IExerciseSets es in exercise_sets)
+                {
+                    ExerciseSets.Add(es);
+                }
+            }
+        }
+           
         public readonly ObservableCollection<IExerciseSets> ExerciseSets =
             new ObservableCollection<IExerciseSets>();
+
+        void Reset()
+        {
+            RoutineToDeleteIfDifferent = null;
+            RoutineNameInput = "";
+            ExerciseSets.Clear();
+            LockedSets = 0;
+            LockedExerciseSets = 0;
+        }
 
         private void SelectExercise_ValueChosen(IExercise exercise)
         {
@@ -56,12 +104,13 @@ namespace POLift.Core.ViewModel
             }
         }
 
-        void CreateRoutineFromInput()
+        Routine CreateRoutineFromInput()
         {
             if (this.ExerciseSets.Count == 0)
             {
-                // "You must have exercises in your routine. "
-                return;
+                DialogService?.DisplayTemporaryError(
+                    "You must have exercises in your routine. ");
+                return null;
             }
 
             List<IExerciseSets> normalized =
@@ -73,6 +122,13 @@ namespace POLift.Core.ViewModel
 
             Database.InsertOrUndeleteAndUpdate(routine);
 
+            // if this routine is being edited, then delete the old one
+            if (RoutineToDeleteIfDifferent != null &&
+                !routine.Equals(RoutineToDeleteIfDifferent))
+            {
+                Database.HideDeletable<Routine>((Routine)RoutineToDeleteIfDifferent);
+            }
+
             // set the category for all of the exercises in this routine
             foreach (IExerciseSets ex_sets in normalized)
             {
@@ -81,7 +137,7 @@ namespace POLift.Core.ViewModel
                 Database.Update(ex);
             }
 
-            ValueChosen?.Invoke(routine);
+            return routine;
         }
 
         RelayCommand _AddExerciseCommand;
@@ -93,8 +149,37 @@ namespace POLift.Core.ViewModel
                     (_AddExerciseCommand =
                     new RelayCommand(
                         () => navigationService.NavigateTo(
-                                ViewModelLocator.CreateExercisePageKey)));
+                                ViewModelLocator.SelectExercisePageKey)));
             }
         }
+
+        RelayCommand _CreateRoutineCommand;
+        public RelayCommand CreateRoutineCommand
+        {
+            get
+            {
+                return _CreateRoutineCommand ??
+                    (_CreateRoutineCommand =
+                    new RelayCommand(
+                        () => {
+                            try
+                            {
+                                Routine result = CreateRoutineFromInput();
+
+                                if (result != null)
+                                {
+                                    ValueChosen?.Invoke(result);
+                                    navigationService.GoBack();
+                                }
+                            }
+                            catch (ArgumentException ae)
+                            {
+                                DialogService?.DisplayTemporaryError(ae.Message);
+                            }
+                        }));
+            }
+        }
+
+
     }
 }

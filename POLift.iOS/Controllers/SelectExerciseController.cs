@@ -7,6 +7,8 @@ using POLift.Core.Service;
 using POLift.Core.Model;
 using POLift.Core.ViewModel;
 
+using GalaSoft.MvvmLight.Helpers;
+
 namespace POLift.iOS.Controllers
 {
     public partial class SelectExerciseController : DatabaseController
@@ -31,9 +33,11 @@ namespace POLift.iOS.Controllers
             ExerciseListTableView.RegisterClassForCellReuse(typeof(UITableViewCell),
                 ExercisesDataSource.ExerciseCellId);
 
-            eds = new ExercisesDataSource(Database.Table<Exercise>());
+            eds = new ExercisesDataSource(Vm.Exercises);
             eds.ValueChosen += Eds_ValueChosen;
             ExerciseListTableView.Source = eds;
+
+            CreateExerciseLink.SetCommand(Vm.CreateExerciseCommand);
         }
 
         private void Eds_ValueChosen(IExercise obj)
@@ -58,6 +62,7 @@ namespace POLift.iOS.Controllers
             {
                 var cell = tableView.DequeueReusableCell(ExerciseCellId);
 
+                cell.TextLabel.Lines = 3;
                 cell.TextLabel.Text = exercises[indexPath.Row].ToString();
 
                 return cell;

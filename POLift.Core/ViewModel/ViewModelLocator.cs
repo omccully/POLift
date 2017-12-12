@@ -22,6 +22,9 @@ namespace POLift.Core.ViewModel
 
             SimpleIoc.Default.Register<MainViewModel>();
             SimpleIoc.Default.Register<PerformRoutineViewModel>();
+            SimpleIoc.Default.Register<SelectExerciseViewModel>();
+            SimpleIoc.Default.Register<CreateExerciseViewModel>();
+            SimpleIoc.Default.Register<CreateRoutineViewModel>();
         }          public MainViewModel Main
         {
             get

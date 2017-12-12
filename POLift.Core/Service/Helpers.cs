@@ -427,18 +427,7 @@ namespace POLift.Core.Service
 
         public static List<IExerciseSets> RemoveZeroSets(this IEnumerable<IExerciseSets> exercise_sets)
         {
-            List<IExerciseSets> result = new List<IExerciseSets>();
-
-            foreach (IExerciseSets es in exercise_sets)
-            {
-                if (es.SetCount != 0)
-                {
-                    result.Add(es);
-                    break;
-                }
-            }
-
-            return result;
+            return exercise_sets.Where(es => es.SetCount != 0).ToList();
         }
 
         public static List<IExerciseSets> NormalizeExerciseSets(this IEnumerable<IExerciseSets> exercise_sets, 
@@ -451,6 +440,7 @@ namespace POLift.Core.Service
             IPOLDatabase database)
         {
             List<IExerciseSets> normalized = exercise_sets.NormalizeExerciseSets(database);
+
             foreach (IExerciseSets ex_sets in normalized)
             {
                 database.InsertOrUpdateNoID<ExerciseSets>((ExerciseSets)ex_sets);

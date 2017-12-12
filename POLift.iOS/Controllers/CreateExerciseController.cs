@@ -10,7 +10,7 @@ using GalaSoft.MvvmLight.Helpers;
 
 namespace POLift.iOS.Controllers
 {
-    public partial class CreateExerciseController : DatabaseController, IValueReturner<IExercise>
+    public partial class CreateExerciseController : DatabaseController
     {
         // Keep track of bindings to avoid premature garbage collection
         private readonly List<Binding> bindings = new List<Binding>();
@@ -23,7 +23,6 @@ namespace POLift.iOS.Controllers
             }
         }
 
-        public event Action<IExercise> ValueChosen;
 
         public CreateExerciseController (IntPtr handle) : base (handle)
         {
@@ -39,16 +38,37 @@ namespace POLift.iOS.Controllers
             
             MathTypePicker.Delegate = new MathTypePickerDelegate();
 
-            bindings.Add(ExerciseNameTextField.TwoWayBinding(this,
-                () => Vm.ExerciseNameInput));
-            bindings.Add(RepCountTextField.TwoWayBinding(this,
-               () => Vm.RepCountInput));
-            bindings.Add(WeightIncrementTextField.TwoWayBinding(this,
-              () => Vm.WeightIncrementInput));
-            bindings.Add(RestPeriodTextField.TwoWayBinding(this,
-              () => Vm.RestPeriodInput));
-            bindings.Add(ConsecutiveSetsTextField.TwoWayBinding(this,
-              () => Vm.ConsecutiveSetsInput));
+            ExerciseNameTextField.EditingChanged += (s, e) => { };
+
+            bindings.Add(this.SetBinding(
+                () => ExerciseNameTextField.Text,
+                () => Vm.ExerciseNameInput,
+                BindingMode.TwoWay)
+                .ObserveSourceEvent("EditingChanged"));
+
+            bindings.Add(this.SetBinding(
+                () => RepCountTextField.Text,
+                () => Vm.RepCountInput,
+                BindingMode.TwoWay)
+                .ObserveSourceEvent("EditingChanged"));
+
+            bindings.Add(this.SetBinding(
+                () => WeightIncrementTextField.Text,
+                () => Vm.WeightIncrementInput,
+                BindingMode.TwoWay)
+                .ObserveSourceEvent("EditingChanged"));
+
+            bindings.Add(this.SetBinding(
+                () => RestPeriodTextField.Text,
+                () => Vm.RestPeriodInput,
+                BindingMode.TwoWay)
+                .ObserveSourceEvent("EditingChanged"));
+
+            bindings.Add(this.SetBinding(
+                () => ConsecutiveSetsTextField.Text,
+                () => Vm.ConsecutiveSetsInput,
+                BindingMode.TwoWay)
+                .ObserveSourceEvent("EditingChanged"));
 
             ExerciseNameTextField.ShouldReturn = AppleHelpers.DismissKeyboard;
             RepCountTextField.ShouldReturn = AppleHelpers.DismissKeyboard;
