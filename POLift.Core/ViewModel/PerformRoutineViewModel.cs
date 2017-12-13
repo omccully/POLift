@@ -47,11 +47,69 @@ namespace POLift.Core.ViewModel
                 }
                 else
                 {
+                    DialogService?.DisplayConfirmationNeverShowAgain(
+                        )
+
                     RoutineResult = recent_uncompleted;
                 }
 
                 RefreshRoutineDetails();
             }
+        }
+
+        public void PromptUser()
+        {
+            IRoutineResult recent_uncompleted =
+                Model.RoutineResult.MostRecentUncompleted(Database, Routine);
+
+            RoutineResult = new RoutineResult(_Routine);
+
+            if(recent_uncompleted != null &&
+                (DateTime.Now - recent_uncompleted.EndTime) < TimeSpan.FromDays(1))
+            {
+                // there is a uncompleted routine result within the last 1 day for this routine
+                // so ask user if they want to resume it
+                DialogService?.DisplayConfirmation(
+                    "You did not finish this routine on " +
+                    recent_uncompleted.EndTime.ToString() +
+                    ". Would you like to resume it?",
+                    delegate
+                    {
+                        RoutineResult = recent_uncompleted;
+                    },
+                    delegate
+                    {
+                        PromptUserForWarmupRoutine();
+                    });
+            }
+            else
+            {
+                PromptUserForWarmupRoutine();
+            }
+        }
+
+        void PromptUserForWarmupRoutine()
+        {
+            string exercise_name;
+            if (CurrentExercise == null)
+            {
+                exercise_name = "";
+            }
+            else
+            {
+                string en = CurrentExercise.Name.ToLower();
+
+                bool is_vowel = "aeiouAEIOU".IndexOf(en[0]) >= 0;
+
+                exercise_name = (is_vowel ? "n " : " ") + en;
+            }
+
+            DialogService?.DisplayConfirmationNeverShowAgain(
+                $"Would you like to do a{exercise_name} warmup routine?",
+                "warmup", delegate
+                {
+                    navigationService.NavigateTo(ViewModelLocator.PerformWarmupPageKey);
+                });
         }
 
         IRoutineResult _routine_result;
@@ -65,13 +123,14 @@ namespace POLift.Core.ViewModel
             {
                 if (value.RoutineID != Routine.ID)
                 {
-                    DialogService?.DisplayTemporaryMessage("RoutineResult is not for Routine");
+                    _Routine = value.Routine;
                 }      
 
                 _routine_result = value;
                 _routine_result.Database = Database;
 
                 SwitchToNextExercise();
+                RefreshRoutineDetails();
             }
         }
 

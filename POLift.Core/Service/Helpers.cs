@@ -448,5 +448,12 @@ namespace POLift.Core.Service
 
             return normalized;
         }
+
+        public static Action<bool> ToBoolAction(Action action)
+        {
+            if (action == null) return null;
+
+            return delegate (bool b) { action.Invoke();};
+        }
     }
 }

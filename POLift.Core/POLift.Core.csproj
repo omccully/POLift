@@ -60,9 +60,15 @@
     <Compile Include="Model\ValueLookup.cs" />
     <Compile Include="Model\WarmupSet.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Service\DatabaseKeyValueStorage.cs" />
+    <Compile Include="Service\DialogService.cs" />
     <Compile Include="Service\Helpers.cs" />
-    <Compile Include="Service\Interfaces\IDialogMessageService.cs" />
+    <Compile Include="Service\Interfaces\IDialogBuilder.cs" />
+    <Compile Include="Service\Interfaces\IDialogBuilderFactory.cs" />
+    <Compile Include="Service\Interfaces\IDialogService.cs" />
     <Compile Include="Service\Interfaces\IFileOperations.cs" />
+    <Compile Include="Service\Interfaces\IToaster.cs" />
+    <Compile Include="Service\KeyValueStorage.cs" />
     <Compile Include="Service\Interfaces\IPlateMath.cs" />
     <Compile Include="Service\Interfaces\IPOLDatabase.cs" />
     <Compile Include="Service\PlateMath.cs" />

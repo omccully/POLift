@@ -135,6 +135,15 @@ namespace POLift.Core.Service
             }
         }
 
+        public void InsertOrReplace(IDatabaseObject obj)
+        {
+            lock (Locker)
+            {
+                Connection.InsertOrReplace(obj);
+            }
+        }
+
+
         void TryExecute(string s)
         {
             try

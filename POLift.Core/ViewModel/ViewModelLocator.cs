@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using GalaSoft.MvvmLight; using GalaSoft.MvvmLight.Ioc;
+using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Ioc;
 using Microsoft.Practices.ServiceLocation;
 
 namespace POLift.Core.ViewModel
@@ -14,7 +15,7 @@ namespace POLift.Core.ViewModel
         public const string SelectExercisePageKey = "SelectExercise";
         public const string CreateExercisePageKey = "CreateExercise";
         public const string PerformRoutinePageKey = "PerformRoutine";
-
+        public const string PerformWarmupPageKey = "PerformWarmup";
 
         public ViewModelLocator()
         {
@@ -25,7 +26,9 @@ namespace POLift.Core.ViewModel
             SimpleIoc.Default.Register<SelectExerciseViewModel>();
             SimpleIoc.Default.Register<CreateExerciseViewModel>();
             SimpleIoc.Default.Register<CreateRoutineViewModel>();
-        }          public MainViewModel Main
+        }
+
+        public MainViewModel Main
         {
             get
             {

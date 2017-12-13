@@ -97,7 +97,7 @@
     <Compile Include="Controllers\CreateExerciseController.designer.cs">
       <DependentUpon>CreateExerciseController.cs</DependentUpon>
     </Compile>
-    <Compile Include="Service\DialogMessageService.cs" />
+    <Compile Include="Service\DialogBuilder.cs" />
     <Compile Include="Service\IValueReturner.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="AppDelegate.cs" />
@@ -105,6 +105,7 @@
     <Compile Include="Controllers\SelectExerciseController.designer.cs">
       <DependentUpon>SelectExerciseController.cs</DependentUpon>
     </Compile>
+    <Compile Include="Service\Toaster.cs" />
     <None Include="GettingStarted.Xamarin" />
     <None Include="Info.plist" />
     <Compile Include="Controllers\PerformRoutineController.cs" />

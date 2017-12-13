@@ -614,7 +614,6 @@ namespace POLift.Droid
                     editor.Apply();
                 });
 
-              
                 AlertDialog ad = builder.Create();
                 ad.Show();
                 builder.Dispose();

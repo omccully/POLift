@@ -247,13 +247,14 @@
     <Compile Include="src\Adapter\RoutineAdapter.cs" />
     <Compile Include="src\Service\AdListener\AdFailedToLoadEventArgs.cs" />
     <Compile Include="src\Service\AdListener\EventDrivenAdListener.cs" />
-    <Compile Include="src\Service\DialogMessageService.cs" />
     <Compile Include="src\Service\FailedToConnectToBillingException.cs" />
     <Compile Include="src\Service\AndroidHelpers.cs" />
     <Compile Include="src\Service\FileOperations.cs" />
     <Compile Include="src\Service\Interfaces\ILicenseManager.cs" />
+    <Compile Include="src\Service\PreferencesKeyValueStorage.cs" />
     <Compile Include="src\Service\StaticTimer.cs" />
     <Compile Include="src\Service\LicenseManager.cs" />
+    <Compile Include="src\Service\Toaster.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="GettingStarted.Xamarin" />
