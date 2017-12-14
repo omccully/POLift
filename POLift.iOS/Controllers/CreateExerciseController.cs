@@ -75,6 +75,8 @@ namespace POLift.iOS.Controllers
             WeightIncrementTextField.ShouldReturn = AppleHelpers.DismissKeyboard;
             RestPeriodTextField.ShouldReturn = AppleHelpers.DismissKeyboard;
             ConsecutiveSetsTextField.ShouldReturn = AppleHelpers.DismissKeyboard;
+
+            Vm.Reset();
         }
 
         class MathTypePickerDelegate : UIPickerViewDelegate

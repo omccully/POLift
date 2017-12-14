@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace POLift.Core.Service
 {
-    public interface IDialogService : IDisposable
+    public interface IDialogService
     {
-        //IDialogBuilderFactory Factory { get; }
-
         void DisplayAcknowledgement(string message, Action action_when_ok = null);
 
         void DisplayConfirmation(string message, Action action_if_yes, Action action_if_no = null);
@@ -17,5 +15,8 @@ namespace POLift.Core.Service
         void DisplayConfirmationNeverShowAgain(string message, string preference_key, Action action_if_yes, Action action_if_no = null);
 
         void DisplayConfirmationYesNotNowNever(string message, string ask_for_key, Action action_if_yes);
+
+        void DisplayConfirmationYesNoYesNeverShowAgain(string message, string ask_for_key,
+            Action action_if_yes, Action action_if_no = null);
     }
 }

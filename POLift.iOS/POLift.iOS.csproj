@@ -84,6 +84,10 @@
     <CodesignKey>iPhone Distribution</CodesignKey>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Controllers\PerformWarmupController.cs" />
+    <Compile Include="Controllers\PerformWarmupController.designer.cs">
+      <DependentUpon>PerformWarmupController.cs</DependentUpon>
+    </Compile>
     <Compile Include="Service\AppleHelpers.cs" />
     <Compile Include="ContainerBootstrapper.cs" />
     <Compile Include="Controllers\Base\PerformRoutineBaseController.cs" />
@@ -98,6 +102,7 @@
       <DependentUpon>CreateExerciseController.cs</DependentUpon>
     </Compile>
     <Compile Include="Service\DialogBuilder.cs" />
+    <Compile Include="Service\DialogBuilderFactory.cs" />
     <Compile Include="Service\IValueReturner.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="AppDelegate.cs" />
@@ -106,6 +111,7 @@
       <DependentUpon>SelectExerciseController.cs</DependentUpon>
     </Compile>
     <Compile Include="Service\Toaster.cs" />
+    <Compile Include="Service\UserDefaultsKeyValueStorage.cs" />
     <None Include="GettingStarted.Xamarin" />
     <None Include="Info.plist" />
     <Compile Include="Controllers\PerformRoutineController.cs" />

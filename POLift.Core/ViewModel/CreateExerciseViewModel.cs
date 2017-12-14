@@ -20,7 +20,20 @@ namespace POLift.Core.ViewModel
         private readonly INavigationService navigationService;
         private readonly IPOLDatabase Database;
 
-        public IDialogMessageService DialogService;
+        public KeyValueStorage KeyValueStorage;
+        public IToaster Toaster;
+
+        public const string MaxRepsStorageKey = "create_exercise_max_reps";
+        public const string WeightIncrementStorageKey = "create_exercise_weight_increment";
+        public const string RestPeriodStorageKey = "create_exercise_rest_period_seconds";
+        public const string ConsecutiveSetsStorageKey = "consecutive_sets_for_weight_increase";
+        public const string ExerciseCreatedSinceLastDifficultyRegenerationStorageKey =
+            "exercise_created_since_last_difficulty_regeneration";
+
+        const string DefaultMaxReps = "8";
+        const string DefaultWeightIncrement = "5";
+        const string DefaultRestPeriod = "150";
+        const string DefaultConsecutiveSets = "1";
 
         public CreateExerciseViewModel(INavigationService navigationService, IPOLDatabase database)
         {
@@ -28,6 +41,41 @@ namespace POLift.Core.ViewModel
             this.Database = database;
         }
 
+        public void Reset()
+        {
+            ExerciseNameInput = "";
+
+            if(KeyValueStorage == null)
+            {
+                RepCountInput = DefaultMaxReps;
+                WeightIncrementInput = DefaultWeightIncrement;
+                RestPeriodInput = DefaultRestPeriod;
+                ConsecutiveSetsInput = DefaultConsecutiveSets;
+            }
+            else
+            {
+                LoadPreferences();
+            }
+
+            PlateMath = null;
+        }
+
+        void LoadPreferences()
+        {
+            RepCountInput = KeyValueStorage.GetString(MaxRepsStorageKey, DefaultMaxReps);
+            WeightIncrementInput = KeyValueStorage.GetString(WeightIncrementStorageKey, DefaultWeightIncrement);
+            RestPeriodInput = KeyValueStorage.GetString(RestPeriodStorageKey, DefaultRestPeriod);
+            ConsecutiveSetsInput = KeyValueStorage.GetString(ConsecutiveSetsStorageKey, DefaultConsecutiveSets);
+        }
+
+        void SavePreferences()
+        {
+            KeyValueStorage
+                .SetValue(MaxRepsStorageKey, RepCountInput)
+                .SetValue(WeightIncrementStorageKey, WeightIncrementInput)
+                .SetValue(RestPeriodStorageKey, RestPeriodInput)
+                .SetValue(ConsecutiveSetsStorageKey, ConsecutiveSetsInput);
+        }       
 
         string _ExerciseNameInput;
         public string ExerciseNameInput
@@ -126,7 +174,7 @@ namespace POLift.Core.ViewModel
 
                 Database.InsertOrUndeleteAndUpdate(ex);
 
-                //SavePreferences();
+                SavePreferences();
 
                 
                 return ex;
@@ -135,13 +183,13 @@ namespace POLift.Core.ViewModel
             {
                 // FormatException for int parsing
 
-                DialogService?.DisplayTemporaryError("Numerical fields must be integers");
+                Toaster?.DisplayError("Numerical fields must be integers");
             }
             catch (ArgumentException ae)
             {
                 // ArgumentException for Exercise constructor
 
-                DialogService?.DisplayTemporaryError(ae.Message);
+                Toaster?.DisplayError(ae.Message);   
             }
 
             return null;

@@ -20,7 +20,7 @@ namespace POLift.Core.ViewModel
         private readonly IPOLDatabase Database;
 
         public event Action<IRoutine> ValueChosen;
-        public IDialogMessageService DialogService;
+        public IToaster Toaster;
 
         public CreateRoutineViewModel(INavigationService navigationService, IPOLDatabase database)
         {
@@ -108,7 +108,7 @@ namespace POLift.Core.ViewModel
         {
             if (this.ExerciseSets.Count == 0)
             {
-                DialogService?.DisplayTemporaryError(
+                Toaster.DisplayError(
                     "You must have exercises in your routine. ");
                 return null;
             }
@@ -174,7 +174,7 @@ namespace POLift.Core.ViewModel
                             }
                             catch (ArgumentException ae)
                             {
-                                DialogService?.DisplayTemporaryError(ae.Message);
+                                Toaster.DisplayError(ae.Message);
                             }
                         }));
             }

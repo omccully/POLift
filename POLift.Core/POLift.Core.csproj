@@ -78,7 +78,9 @@
     <Compile Include="ViewModel\IValueReturner.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\PerformRoutineViewModel.cs" />
+    <Compile Include="ViewModel\PerformWarmupViewModel.cs" />
     <Compile Include="ViewModel\SelectExerciseViewModel.cs" />
+    <Compile Include="ViewModel\TimerViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
   </ItemGroup>
   <ItemGroup>

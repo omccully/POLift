@@ -23,18 +23,20 @@ namespace POLift.Droid.Service
             this.Prefs = prefs;
         }
 
-        public override void SetValue(string key, int val)
+        public override KeyValueStorage SetValue(string key, int val)
         {
             Prefs.Edit()
                 .PutInt(key, val)
                 .Apply();
+            return this;
         }
 
-        public override void SetValue(string key, string val)
+        public override KeyValueStorage SetValue(string key, string val)
         {
             Prefs.Edit()
                 .PutString(key, val)
                 .Apply();
+            return this;
         }
 
         public override int GetInteger(string key, int default_val = 0)
@@ -52,11 +54,12 @@ namespace POLift.Droid.Service
             return Prefs.GetBoolean(key, default_val);
         }
 
-        public override void SetValue(string key, bool val)
+        public override KeyValueStorage SetValue(string key, bool val)
         {
             Prefs.Edit()
                 .PutBoolean(key, val)
                 .Apply();
+            return this;
         }
 
     }

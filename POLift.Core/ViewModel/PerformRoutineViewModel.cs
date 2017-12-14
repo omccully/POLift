@@ -14,12 +14,13 @@ namespace POLift.Core.ViewModel
     using Service;
     using Helpers;
 
-    public class PerformRoutineViewModel : ViewModelBase
+    public class PerformRoutineViewModel : ViewModelBase, IValueReturner<IRoutineResult>
     {
         private readonly INavigationService navigationService;
         private readonly IPOLDatabase Database;
 
-        public IDialogMessageService DialogService;
+        public IDialogService DialogService;
+        public IToaster Toaster;
 
         public PerformRoutineViewModel(INavigationService navigationService, IPOLDatabase database)
         {
@@ -29,6 +30,7 @@ namespace POLift.Core.ViewModel
 
 
         public event EventHandler ResultSubmittedWithoutCompleting;
+        public event Action<IRoutineResult> ValueChosen;
 
         IRoutine _Routine;
         public IRoutine Routine {
@@ -39,7 +41,9 @@ namespace POLift.Core.ViewModel
             set
             {
                 _Routine = value;
-                IRoutineResult recent_uncompleted =
+
+                RoutineResult = new RoutineResult(_Routine);
+                /*IRoutineResult recent_uncompleted =
                     Model.RoutineResult.MostRecentUncompleted(Database, _Routine);
                 if (recent_uncompleted == null)
                 {
@@ -47,16 +51,18 @@ namespace POLift.Core.ViewModel
                 }
                 else
                 {
-                    DialogService?.DisplayConfirmationNeverShowAgain(
-                        )
+
+                    //DialogService.DisplayConfirmationNeverShowAgain(
+                        //)
 
                     RoutineResult = recent_uncompleted;
-                }
+                }*/
 
                 RefreshRoutineDetails();
             }
         }
 
+        public const string AskForRoutineResumeKey = "ask_for_routine_resume";
         public void PromptUser()
         {
             IRoutineResult recent_uncompleted =
@@ -69,10 +75,10 @@ namespace POLift.Core.ViewModel
             {
                 // there is a uncompleted routine result within the last 1 day for this routine
                 // so ask user if they want to resume it
-                DialogService?.DisplayConfirmation(
+                DialogService?.DisplayConfirmationYesNoYesNeverShowAgain(
                     "You did not finish this routine on " +
                     recent_uncompleted.EndTime.ToString() +
-                    ". Would you like to resume it?",
+                    ". Would you like to resume it?", AskForRoutineResumeKey,
                     delegate
                     {
                         RoutineResult = recent_uncompleted;
@@ -87,6 +93,10 @@ namespace POLift.Core.ViewModel
                 PromptUserForWarmupRoutine();
             }
         }
+
+        const string WarmupKey = "warmup";
+        public readonly string AskForWarmupKey = Service.DialogService.AskForKey(WarmupKey);
+        public readonly string DefaultWarmupKey = Service.DialogService.DefaultKey(WarmupKey);
 
         void PromptUserForWarmupRoutine()
         {
@@ -106,9 +116,10 @@ namespace POLift.Core.ViewModel
 
             DialogService?.DisplayConfirmationNeverShowAgain(
                 $"Would you like to do a{exercise_name} warmup routine?",
-                "warmup", delegate
+                WarmupKey, delegate
                 {
                     navigationService.NavigateTo(ViewModelLocator.PerformWarmupPageKey);
+                    ViewModelLocator.Default.PerformWarmup.WarmupExercise = CurrentExercise;
                 });
         }
 
@@ -371,7 +382,7 @@ namespace POLift.Core.ViewModel
             //if(reps >= CurrentExercise.MaxRepCount)
             if (CurrentExercise.NextWeight > weight)
             {
-                DialogService?.DisplayTemporaryMessage("Weight increase!");
+                Toaster?.DisplayMessage("Weight increase!");
             }
             else
             {
@@ -386,7 +397,7 @@ namespace POLift.Core.ViewModel
                     string message = "Nice! You met your rep goal for " +
                         $"{succeeds_in_a_row} set{plur} in a row. " +
                         $"You need {needed_left} more in a row to advance to the next weight";
-                    DialogService?.DisplayTemporaryMessage(message);
+                    Toaster?.DisplayMessage(message);
                 }
             }
 
@@ -394,7 +405,7 @@ namespace POLift.Core.ViewModel
             {
                 // no more exercises
                 //ReturnRoutineResult(_RoutineResult);
-
+                ValueChosen?.Invoke(RoutineResult);
                 navigationService.GoBack();
 
                 //StaticTimer.StopTimer();
@@ -432,8 +443,8 @@ namespace POLift.Core.ViewModel
             }
             catch (FormatException)
             {
-                DialogService?.DisplayTemporaryError(
-                    "You must fill out the weight and rep count with integers");
+                Toaster?.DisplayError(
+                     "You must fill out the weight and rep count with integers");
                 return;
             }
 

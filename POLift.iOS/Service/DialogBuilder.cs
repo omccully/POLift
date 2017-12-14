@@ -40,10 +40,13 @@ namespace POLift.iOS.Service
             return AddNeutralButton(text, action);
         }
 
+
         public IDialogBuilder SetCheckBox(string text)
         {
-            throw new NotImplementedException();
-            //return this;
+
+            //throw new NotImplementedException();
+
+            return this;
         }
 
         public void Dispose()

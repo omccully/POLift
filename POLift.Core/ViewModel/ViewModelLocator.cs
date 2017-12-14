@@ -26,6 +26,7 @@ namespace POLift.Core.ViewModel
             SimpleIoc.Default.Register<SelectExerciseViewModel>();
             SimpleIoc.Default.Register<CreateExerciseViewModel>();
             SimpleIoc.Default.Register<CreateRoutineViewModel>();
+            SimpleIoc.Default.Register<PerformWarmupViewModel>();
         }
 
         public MainViewModel Main
@@ -41,6 +42,14 @@ namespace POLift.Core.ViewModel
             get
             {
                 return ServiceLocator.Current.GetInstance<PerformRoutineViewModel>();
+            }
+        }
+
+        public PerformWarmupViewModel PerformWarmup
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<PerformWarmupViewModel>();
             }
         }
 

@@ -30,12 +30,14 @@ namespace POLift.Core.Service
             }
         }
             
-        public override void SetValue(string key, string val)
+        public override KeyValueStorage SetValue(string key, string val)
         {
             ValueLookup value = new ValueLookup();
             value.LookupKey = key;
             value.ValueString = val;
             Database.InsertOrReplace(value);
+
+            return this;
         }
 
         public override int GetInteger(string key, int default_val = 0)
@@ -51,9 +53,14 @@ namespace POLift.Core.Service
             }
         }
 
-        public override void SetValue(string key, int val)
+        public override KeyValueStorage SetValue(string key, int val)
         {
-            base.SetValue(key, val);
+            ValueLookup value = new ValueLookup();
+            value.LookupKey = key;
+            value.ValueInt = val;
+            Database.InsertOrReplace(value);
+
+            return this;
         }
 
         ValueLookup ValueObjectFromKey(string key)
@@ -61,7 +68,6 @@ namespace POLift.Core.Service
             return Database.Query<ValueLookup>(
                 "SELECT * FROM ValueLookup WHERE LookupKey = ?", key)
                 .FirstOrDefault();
-        
-    }
+        }
     }
 }

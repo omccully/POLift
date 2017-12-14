@@ -10,8 +10,6 @@ using POLift.Core.Helpers;
 using POLift.Core.ViewModel;
 using GalaSoft.MvvmLight.Helpers;
 
-using Unity;
-
 namespace POLift.iOS.Controllers
 {
     public partial class PerformRoutineController : DatabaseController, IValueReturner<IRoutineResult>
@@ -100,6 +98,7 @@ namespace POLift.iOS.Controllers
             //    .ReadByID<Routine>(1);
 
             Vm.ResetWeightInput();
+            Vm.PromptUser();
 
             Console.WriteLine("view load finished");
 

@@ -8,13 +8,13 @@ namespace POLift.Core.Service
 {
     public abstract class KeyValueStorage
     {
-        public abstract void SetValue(string key, string val);
+        public abstract KeyValueStorage SetValue(string key, string val);
 
         public abstract string GetString(string key, string default_val = null);
 
-        public virtual void SetValue(string key, int val)
+        public virtual KeyValueStorage SetValue(string key, int val)
         {
-            SetValue(key, val.ToString());
+            return SetValue(key, val.ToString());
         }
 
         public virtual int GetInteger(string key, int default_val = 0)
@@ -29,9 +29,9 @@ namespace POLift.Core.Service
             }
         }
 
-        public virtual void SetValue(string key, bool val)
+        public virtual KeyValueStorage SetValue(string key, bool val)
         {
-            SetValue(key, val.ToString());
+            return SetValue(key, val.ToString());
         }
 
         public virtual bool GetBoolean(string key, bool default_val = false)

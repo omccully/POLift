@@ -9,6 +9,9 @@ using GalaSoft.MvvmLight.Threading;
 using GalaSoft.MvvmLight.Views;
 
 using Unity;
+using DialogService = POLift.Core.Service.DialogService;
+using IDialogService = POLift.Core.Service.IDialogService;
+
 
 namespace POLift.iOS
 {
@@ -35,8 +38,9 @@ namespace POLift.iOS
 
             DispatcherHelper.Initialize(application);
 
-            SimpleIoc.Default.Register<IPOLDatabase>(() => 
-                C.ontainer.Resolve<IPOLDatabase>());
+            IPOLDatabase database = C.ontainer.Resolve<IPOLDatabase>();
+            SimpleIoc.Default.Register<IPOLDatabase>(() =>
+                database);
 
             var nav = new NavigationService();
             SimpleIoc.Default.Register<INavigationService>(() => nav);
@@ -46,11 +50,22 @@ namespace POLift.iOS
             nav.Configure(ViewModelLocator.SelectExercisePageKey, "SelectExercisePage");
             nav.Configure(ViewModelLocator.CreateExercisePageKey, "CreateExercisePage");
             nav.Configure(ViewModelLocator.PerformRoutinePageKey, "PerformRoutinePage");
+            nav.Configure(ViewModelLocator.PerformWarmupPageKey, "PerformWarmupPage");
 
-            IDialogMessageService DialogService = new DialogMessageService();
-            ViewModelLocator.Default.CreateExercise.DialogService = DialogService;
-            ViewModelLocator.Default.CreateRoutine.DialogService = DialogService;
+
+            UserDefaultsKeyValueStorage storage =
+                new UserDefaultsKeyValueStorage();
+                //new DatabaseKeyValueStorage(database);
+            Toaster Toaster = new Toaster();
+            DialogService DialogService = new DialogService(
+                new DialogBuilderFactory(), storage);
+
+            ViewModelLocator.Default.Main.Toaster = Toaster;
+            ViewModelLocator.Default.CreateExercise.KeyValueStorage = storage;
+            ViewModelLocator.Default.CreateExercise.Toaster = Toaster;
+            ViewModelLocator.Default.CreateRoutine.Toaster = Toaster;
             ViewModelLocator.Default.PerformRoutine.DialogService = DialogService;
+            ViewModelLocator.Default.PerformWarmup.DialogService = DialogService;
 
 
             //nav.GetAndRemoveParameter()

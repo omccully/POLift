@@ -380,7 +380,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Routine details" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="6663" translatesAutoresizingMaskIntoConstraints="NO" fixedFrame="YES">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Routine details" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="6663" translatesAutoresizingMaskIntoConstraints="NO" fixedFrame="YES" numberOfLines="4">
                                 <rect key="frame" x="21" y="49" width="308" height="126"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
@@ -499,6 +499,83 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="6661" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-316" y="751"/>
+        </scene>
+        <scene sceneID="7638">
+            <objects>
+                <viewController id="7639" sceneMemberID="viewController" customClass="PerformWarmupController" storyboardIdentifier="PerformWarmupPage">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="7636"/>
+                        <viewControllerLayoutGuide type="bottom" id="7637"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="7640">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Routine details" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="7649" translatesAutoresizingMaskIntoConstraints="NO" fixedFrame="YES" numberOfLines="5">
+                                <rect key="frame" x="31" y="58" width="279" height="131"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Exercise details" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" id="7675" translatesAutoresizingMaskIntoConstraints="NO" fixedFrame="YES" numberOfLines="3" minimumScaleFactor="0.5" adjustsLetterSpacingToFitWidth="YES">
+                                <rect key="frame" x="31" y="197" width="264" height="78"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="7676" translatesAutoresizingMaskIntoConstraints="NO" fixedFrame="YES" text="Working set weight:">
+                                <rect key="frame" x="31" y="306" width="169" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" id="7677" translatesAutoresizingMaskIntoConstraints="NO" fixedFrame="YES">
+                                <rect key="frame" x="198" y="304" width="97" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="7705" translatesAutoresizingMaskIntoConstraints="NO" fixedFrame="YES">
+                                <rect key="frame" x="89" y="360" width="182" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Set completed">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                            </button>
+                        </subviews>
+                        <variation key="default">
+                            <mask key="subviews">
+                                <exclude reference="7649"/>
+                                <exclude reference="7675"/>
+                                <exclude reference="7676"/>
+                                <exclude reference="7677"/>
+                                <exclude reference="7705"/>
+                            </mask>
+                        </variation>
+                        <variation key="heightClass=regular-widthClass=compact">
+                            <mask key="subviews">
+                                <include reference="7649"/>
+                                <include reference="7675"/>
+                                <include reference="7676"/>
+                                <include reference="7677"/>
+                                <include reference="7705"/>
+                            </mask>
+                        </variation>
+                    </view>
+                    <connections>
+                        <outlet property="RoutineDetailsLabel" destination="7649" id="name-outlet-7649"/>
+                        <outlet property="ExerciseDetailsLabel" destination="7675" id="name-outlet-7675"/>
+                        <outlet property="WeightTextField" destination="7677" id="name-outlet-7677"/>
+                        <outlet property="SetCompletedButton" destination="7705" id="name-outlet-7705"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="7641" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="210" y="749"/>
         </scene>
     </scenes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">

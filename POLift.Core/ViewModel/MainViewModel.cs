@@ -19,6 +19,7 @@ namespace POLift.Core.ViewModel
         private readonly INavigationService navigationService;
         private readonly IPOLDatabase database;
 
+        public IToaster Toaster;
         public event EventHandler RoutinesListChanged;
 
         public MainViewModel(INavigationService navigationService, IPOLDatabase database)
@@ -27,6 +28,13 @@ namespace POLift.Core.ViewModel
             this.database = database;
 
             ViewModelLocator.Default.CreateRoutine.ValueChosen += CreateRoutine_ValueChosen;
+            ViewModelLocator.Default.PerformRoutine.ValueChosen += PerformRoutine_ValueChosen; ;
+
+        }
+
+        private void PerformRoutine_ValueChosen(IRoutineResult obj)
+        {
+            Toaster?.DisplayMessage("Routine completed");
         }
 
         private void CreateRoutine_ValueChosen(IRoutine obj)
