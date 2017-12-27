@@ -5,11 +5,14 @@ using POLift.Core.Model;
 using POLift.Core;
 using POLift.Core.Helpers;
 using POLift.Core.Service;
+using System.Linq;
 using UIKit;
 
 using Unity;
 using GalaSoft.MvvmLight.Helpers;
 using POLift.Core.ViewModel;
+using POLift.iOS.DataSources;
+using System.Threading.Tasks;
 
 namespace POLift.iOS.Controllers
 {
@@ -22,7 +25,7 @@ namespace POLift.iOS.Controllers
         {
             get
             {
-                return Application.Locator.Main;
+                return ViewModelLocator.Default.Main;
             }
         }
 
@@ -35,10 +38,8 @@ namespace POLift.iOS.Controllers
             base.ViewDidLoad();
             // Perform any additional setup after loading the view, typically from a nib.
 
-            this.Database = C.ontainer.Resolve<IPOLDatabase>();
-
             RoutinesTableView.RegisterClassForCellReuse(typeof(UITableViewCell),
-                RoutinesDataSource.RoutineCellId);
+                RoutinesDataSource.GetCellId<IRoutineWithLatestResult>());
 
             RefreshRoutinesList();
 
@@ -58,12 +59,13 @@ namespace POLift.iOS.Controllers
         RoutinesDataSource routine_data_source;
         void RefreshRoutinesList()
         {
-            routine_data_source = new RoutinesDataSource(this,
-                Vm.RoutinesList);
+            routine_data_source = new RoutinesDataSource(Vm.RoutinesList.ToList());
 
-            routine_data_source.RoutineSelected += Routine_data_source_RoutineSelected;
+            routine_data_source.RowClicked += Routine_data_source_RoutineSelected;
+            routine_data_source.DeleteClicked += Vm.DeleteRoutine;
 
             RoutinesTableView.Source = routine_data_source;
+            RoutinesTableView.Delegate = new RoutinesTableViewDelegate();
         }
 
         private void Routine_data_source_RoutineSelected(object sender, IRoutineWithLatestResult e)
@@ -72,69 +74,25 @@ namespace POLift.iOS.Controllers
             Vm.SelectRoutineNavigateCommand(e).Execute(e.Routine);
         }
 
-        /*public override void PrepareForSegue(UIStoryboardSegue segue, NSObject sender)
+        class RoutinesTableViewDelegate : UITableViewDelegate
         {
-            base.PrepareForSegue(segue, sender);
-
-            var ChildController = segue.DestinationViewController as IValueReturner<IRoutine>;
-
-            if (ChildController != null)
-            {
-                ChildController.ValueChosen += ChildController_RoutineCreated;
-            }
-        }*/
-
-        private void ChildController_RoutineCreated(IRoutine routine)
-        {
-            RefreshRoutinesList();
-        }
-
-
-        class RoutinesDataSource : UITableViewSource
-        {
-            public event EventHandler<IRoutineWithLatestResult> RoutineSelected;
-
-            public static NSString RoutineCellId = new NSString("RoutineCell");
-
-            MainController parent;
-            List<IRoutineWithLatestResult> data;
-
-            public RoutinesDataSource(MainController parent, 
-                IEnumerable<IRoutineWithLatestResult> data)
-            {
-                this.parent = parent;
-                this.data = new List<IRoutineWithLatestResult>(data);
-            }
-
-            public override nint RowsInSection(UITableView tableview, nint section)
-            {
-                return data.Count;
-            }
-
-            public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
-            {
-                var cell = tableView.DequeueReusableCell(RoutineCellId);
-
-                cell.TextLabel.Text = data[indexPath.Row].Routine.ToString();
-
-                return cell;
-            }
-
             public override void RowSelected(UITableView tableView, NSIndexPath indexPath)
             {
-                RoutineSelected?.Invoke(this, data[indexPath.Row]);
+                Console.WriteLine("RoutinesTableViewDelegate.RowSelected");
+            }
+        }
 
+        class RoutinesDataSource : DeleteTableViewSource<IRoutineWithLatestResult>
+        {
+            public RoutinesDataSource(IList<IRoutineWithLatestResult> Data) : 
+                base(Data)
+            {
 
-                /*PerformRoutineController pr = 
-                    parent.Storyboard.InstantiateViewController("PerformRoutineController") 
-                    as PerformRoutineController;
+            }
 
-                if(pr != null)
-                {
-                    pr.Database = parent.Database;
-                    pr.Routine = data[indexPath.Row].Routine;
-                    parent.NavigationController.PushViewController(pr, true);
-                }*/
+            protected override string GetTextLabelText(NSIndexPath indexPath)
+            {
+                return Data[indexPath.Row].Routine.ToString();
             }
         }
     }

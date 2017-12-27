@@ -14,12 +14,13 @@ namespace POLift.Core.ViewModel
     using Service;
     using Model;
 
-    public class PerformWarmupViewModel : ViewModelBase
+    public class PerformWarmupViewModel : ViewModelBase, IPerformWarmupViewModel
     {
         private readonly INavigationService navigationService;
         private readonly IPOLDatabase Database;
 
         public IDialogService DialogService;
+        public ITimerViewModel TimerViewModel;
 
         public PerformWarmupViewModel(INavigationService navigationService, IPOLDatabase database)
         {
@@ -212,16 +213,17 @@ namespace POLift.Core.ViewModel
         {
             WarmupSetIndex++;
 
-            if(WarmupFinished)
+            if (WarmupFinished)
             {
                 navigationService.GoBack();
+                TimerViewModel.StartTimer(WarmupExercise.RestPeriodSeconds);
+                return;
             }
 
 
-            // start rest period of NextWarmupSet.GetRestPeriod(FirstExercise)
+            TimerViewModel.StartTimer(NextWarmupSet.GetRestPeriod(WarmupExercise));
 
             // TryShowFullScreenAd();
-
         }
 
         RelayCommand _SetCompletedCommand;

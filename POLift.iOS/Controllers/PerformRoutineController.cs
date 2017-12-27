@@ -23,7 +23,15 @@ namespace POLift.iOS.Controllers
         {
             get
             {
-                return Application.Locator.PerformRoutine;
+                return ViewModelLocator.Default.PerformRoutine;
+            }
+        }
+
+        private TimerViewModel TimerVm
+        {
+            get
+            {
+                return ViewModelLocator.Default.Timer;
             }
         }
 
@@ -91,6 +99,17 @@ namespace POLift.iOS.Controllers
                    () => Vm.RepDetails,
                    () => RepDetailsLabel.Text));
 
+
+            bool t = TimerVm.TimerIsStartable;
+            bindings.Add(
+                this.SetBinding(
+                    () => TimerVm.TimerIsStartable,
+                    () => ReportResultButton.Enabled));
+
+            bindings.Add(
+                this.SetBinding(
+                    () => TimerVm.TimerIsStartable,
+                    () => RepCountTextField.Enabled));
 
 
             //Vm.Routine = 

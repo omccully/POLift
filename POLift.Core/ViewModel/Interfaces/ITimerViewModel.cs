@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace POLift.Core.ViewModel
 {
-    public interface IValueReturner<T>
+    public interface ITimerViewModel
     {
-        event Action<T> ValueChosen;
+        bool TimerIsStartable { get; set; }
+
+        void StartTimer(int seconds_left);
     }
 }

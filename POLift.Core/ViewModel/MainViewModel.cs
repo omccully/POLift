@@ -22,14 +22,40 @@ namespace POLift.Core.ViewModel
         public IToaster Toaster;
         public event EventHandler RoutinesListChanged;
 
+        public DialogService DialogService;
+
+        IValueReturner<IRoutine> _CreateRoutineViewModel;
+        public IValueReturner<IRoutine> CreateRoutineViewModel
+        {
+            get
+            {
+                return _CreateRoutineViewModel;
+            }
+            set
+            {
+                _CreateRoutineViewModel = value;
+                _CreateRoutineViewModel.ValueChosen += CreateRoutine_ValueChosen;
+            }
+        }
+
+        IValueReturner<IRoutineResult> _PerformRoutineViewModel;
+        public IValueReturner<IRoutineResult> PerformRoutineViewModel
+        {
+            get
+            {
+                return _PerformRoutineViewModel;
+            }
+            set
+            {
+                _PerformRoutineViewModel = value;
+                _PerformRoutineViewModel.ValueChosen += PerformRoutine_ValueChosen;
+            }
+        }
+
         public MainViewModel(INavigationService navigationService, IPOLDatabase database)
         {
             this.navigationService = navigationService;
             this.database = database;
-
-            ViewModelLocator.Default.CreateRoutine.ValueChosen += CreateRoutine_ValueChosen;
-            ViewModelLocator.Default.PerformRoutine.ValueChosen += PerformRoutine_ValueChosen; ;
-
         }
 
         private void PerformRoutine_ValueChosen(IRoutineResult obj)
@@ -98,5 +124,32 @@ namespace POLift.Core.ViewModel
                         ViewModelLocator.CreateRoutinePageKey, selection);
             });
         }
+
+        public RelayCommand DeleteRoutineCommand(IRoutine selection, Action action_if_yes = null)
+        {
+            return new RelayCommand(() => {
+                DeleteRoutine(selection, action_if_yes);
+            });
+        }
+
+        public void DeleteRoutine(IRoutineWithLatestResult selection, Action action_if_yes = null)
+        {
+            DeleteRoutine(selection.Routine);
+        }
+
+        public void DeleteRoutine(IRoutine selection, Action action_if_yes = null)
+        {
+            DialogService?.DisplayConfirmation(
+                    "Are you sure you want to delete the routine \"" +
+                    selection.Name + "\"?",
+                    delegate
+                    {
+                        database.HideDeletable((Routine)selection);
+
+                        // additional gui actions
+                        action_if_yes?.Invoke();
+                    });
+        }
+
     }
 }

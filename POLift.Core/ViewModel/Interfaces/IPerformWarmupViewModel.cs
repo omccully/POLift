@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace POLift.Core.ViewModel
 {
-    public interface IValueReturner<T>
+    using Model;
+    public interface IPerformWarmupViewModel
     {
-        event Action<T> ValueChosen;
+        IExercise WarmupExercise { get; set; }
     }
 }

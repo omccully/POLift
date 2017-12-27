@@ -450,7 +450,7 @@ namespace POLift.Core.Model
         /// 
         /// </summary>
         /// <returns>Ordered list of KVP category => list of exercises</returns>
-        public static List<KeyValuePair<string, List<IExercise>>> InCategories(
+        public static List<KeyValuePair<string,List<IExercise>>> InCategories(
             IPOLDatabase Database, string DefaultCategory = "other", string DeletedCategory = "DELETED")
         {
             Dictionary<string, List<IExercise>> dict = new Dictionary<string, List<IExercise>>();
@@ -481,6 +481,17 @@ namespace POLift.Core.Model
                 // put deleted category in back
                 kvp.Key == DeletedCategory ? 0 : kvp.Value.Count
             ).ToList();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns>Ordered list of KVP category => list of exercises</returns>
+        public static List<ExerciseCategory> InExCategories(
+            IPOLDatabase Database, string DefaultCategory = "other", string DeletedCategory = "DELETED")
+        {
+            return InCategories(Database, DefaultCategory, DeletedCategory)
+                .Select(kvp => new ExerciseCategory(kvp.Key, kvp.Value)).ToList();
         }
     }
 }

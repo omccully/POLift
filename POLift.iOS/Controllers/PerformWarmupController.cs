@@ -16,9 +16,18 @@ namespace POLift.iOS.Controllers
         {
             get
             {
-                return Application.Locator.PerformWarmup;
+                return ViewModelLocator.Default.PerformWarmup;
             }
         }
+
+        private TimerViewModel TimerVm
+        {
+            get
+            {
+                return ViewModelLocator.Default.Timer;
+            }
+        }
+
         public PerformWarmupController (IntPtr handle) : base (handle)
         {
         }
@@ -59,6 +68,12 @@ namespace POLift.iOS.Controllers
                this.SetBinding(
                    () => Vm.ExerciseDetails,
                    () => ExerciseDetailsLabel.Text));
+
+            bool t = TimerVm.TimerIsStartable;
+            bindings.Add(
+                this.SetBinding(
+                    () => TimerVm.TimerIsStartable,
+                    () => SetCompletedButton.Enabled));
         }
     }
 }

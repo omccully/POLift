@@ -4,10 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace POLift.Core.ViewModel
+namespace POLift.Core.Service
 {
-    public interface IValueReturner<T>
+    /// <summary>
+    /// ;)
+    /// </summary>
+    public interface IVibrator
     {
-        event Action<T> ValueChosen;
+        void Vibrate();
     }
 }

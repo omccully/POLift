@@ -28,6 +28,10 @@ namespace POLift.iOS.Controllers
 
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
+        UIKit.UIView TimerContainer { get; set; }
+
+        [Outlet]
+        [GeneratedCode ("iOS Designer", "1.0")]
         UIKit.UITextField WeightTextField { get; set; }
 
         void ReleaseDesignerOutlets ()
@@ -45,6 +49,11 @@ namespace POLift.iOS.Controllers
             if (SetCompletedButton != null) {
                 SetCompletedButton.Dispose ();
                 SetCompletedButton = null;
+            }
+
+            if (TimerContainer != null) {
+                TimerContainer.Dispose ();
+                TimerContainer = null;
             }
 
             if (WeightTextField != null) {

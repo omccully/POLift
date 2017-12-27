@@ -13,7 +13,7 @@ namespace POLift.Core.ViewModel
     using Service;
     using Model;
 
-    public class CreateExerciseViewModel : ViewModelBase, IValueReturner<IExercise>
+    public class CreateExerciseViewModel : ViewModelBase, ICreateExerciseViewModel, IValueReturner<IExercise>
     {
         public event Action<IExercise> ValueChosen;
 
@@ -39,6 +39,20 @@ namespace POLift.Core.ViewModel
         {
             this.navigationService = navigationService;
             this.Database = database;
+        }
+
+        public void EditExercise(IExercise exercise)
+        {
+            // editing exercise does not affect original
+            // unless ONLY platemath was changed. 
+
+            ExerciseNameInput = exercise.Name;
+            RepCountInput = exercise.MaxRepCount.ToString();
+            WeightIncrementInput = exercise.WeightIncrement.ToString();
+            RestPeriodInput = exercise.RestPeriodSeconds.ToString();
+            ConsecutiveSetsInput = exercise.ConsecutiveSetsForWeightIncrease.ToString();
+
+            PlateMath = exercise.PlateMath;
         }
 
         public void Reset()
@@ -143,7 +157,6 @@ namespace POLift.Core.ViewModel
         }
 
         IPlateMath _PlateMath;
-
         public IPlateMath PlateMath
         {
             get
@@ -155,6 +168,21 @@ namespace POLift.Core.ViewModel
                 Set(() => PlateMath, ref _PlateMath, value);
             }
         }
+
+        public int PlateMathID
+        {
+            get
+            {
+                int index = Array.IndexOf(Service.PlateMath.PlateMathTypes, PlateMath);
+                if (index == -1) return 0;
+                return index;
+            }
+            set
+            {
+                PlateMath = Service.PlateMath.PlateMathTypes[value];
+            }
+        }
+
 
 
         Exercise CreateExerciseFromInput()
@@ -171,8 +199,12 @@ namespace POLift.Core.ViewModel
                     rest_period_s, PlateMath);
                 ex.ConsecutiveSetsForWeightIncrease = consecutive_sets;
                 ex.Database = this.Database;
-
+            
                 Database.InsertOrUndeleteAndUpdate(ex);
+                // TODO: fix issue with editing PlateMath wiping out the Category
+                // similarly, make sure usage is set properly,
+
+                System.Diagnostics.Debug.WriteLine("Saved exercise with PM ID " + ex.PlateMathID);
 
                 SavePreferences();
 

@@ -37,6 +37,7 @@
   <ItemGroup>
     <Compile Include="Helpers\OrmGraph.cs" />
     <Compile Include="Model\Exercise.cs" />
+    <Compile Include="Model\ExerciseCategory.cs" />
     <Compile Include="Model\ExerciseDifficulty.cs" />
     <Compile Include="Model\ExerciseResult.cs" />
     <Compile Include="Model\ExerciseSets.cs" />
@@ -67,14 +68,21 @@
     <Compile Include="Service\Interfaces\IDialogBuilderFactory.cs" />
     <Compile Include="Service\Interfaces\IDialogService.cs" />
     <Compile Include="Service\Interfaces\IFileOperations.cs" />
+    <Compile Include="Service\Interfaces\IMainThreadInvoker.cs" />
+    <Compile Include="Service\Timer.cs" />
     <Compile Include="Service\Interfaces\IToaster.cs" />
+    <Compile Include="Service\Interfaces\IVibrator.cs" />
     <Compile Include="Service\KeyValueStorage.cs" />
     <Compile Include="Service\Interfaces\IPlateMath.cs" />
     <Compile Include="Service\Interfaces\IPOLDatabase.cs" />
     <Compile Include="Service\PlateMath.cs" />
     <Compile Include="Service\POLDatabase.cs" />
+    <Compile Include="Service\PclTimer.cs" />
     <Compile Include="ViewModel\CreateExerciseViewModel.cs" />
     <Compile Include="ViewModel\CreateRoutineViewModel.cs" />
+    <Compile Include="ViewModel\Interfaces\ICreateExerciseViewModel.cs" />
+    <Compile Include="ViewModel\Interfaces\IPerformWarmupViewModel.cs" />
+    <Compile Include="ViewModel\Interfaces\ITimerViewModel.cs" />
     <Compile Include="ViewModel\IValueReturner.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\PerformRoutineViewModel.cs" />

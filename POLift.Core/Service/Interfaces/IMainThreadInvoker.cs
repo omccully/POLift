@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace POLift.Core.ViewModel
+namespace POLift.Core.Service
 {
-    public interface IValueReturner<T>
+    public interface IMainThreadInvoker
     {
-        event Action<T> ValueChosen;
+        void Invoke(Action action);
     }
 }

@@ -6,8 +6,12 @@ using System.Threading.Tasks;
 
 namespace POLift.Core.ViewModel
 {
-    public interface IValueReturner<T>
+    using Model;
+
+    public interface ICreateExerciseViewModel : IValueReturner<IExercise>
     {
-        event Action<T> ValueChosen;
+        void EditExercise(IExercise exercise);
+
+        void Reset();
     }
 }

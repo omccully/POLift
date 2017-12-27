@@ -9,6 +9,8 @@ using Microsoft.Practices.ServiceLocation;
 
 namespace POLift.Core.ViewModel
 {
+    using Service;
+
     public class ViewModelLocator
     {
         public const string CreateRoutinePageKey = "CreateRoutine";
@@ -27,6 +29,20 @@ namespace POLift.Core.ViewModel
             SimpleIoc.Default.Register<CreateExerciseViewModel>();
             SimpleIoc.Default.Register<CreateRoutineViewModel>();
             SimpleIoc.Default.Register<PerformWarmupViewModel>();
+            SimpleIoc.Default.Register<TimerViewModel>();
+
+            SelectExercise.CreateExerciseViewModel = CreateExercise;
+            CreateRoutine.SelectExerciseViewModel = SelectExercise;
+
+            Main.CreateRoutineViewModel = CreateRoutine;
+            Main.PerformRoutineViewModel = PerformRoutine;
+
+            PerformRoutine.PerformWarmupViewModel = PerformWarmup;
+            PerformRoutine.TimerViewModel = Timer;
+
+            PerformWarmup.TimerViewModel = Timer;
+
+            Timer.Timer = new PclTimer();
         }
 
         public MainViewModel Main
@@ -76,6 +92,15 @@ namespace POLift.Core.ViewModel
                 return ServiceLocator.Current.GetInstance<CreateRoutineViewModel>();
             }
         }
+
+        public TimerViewModel Timer
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<TimerViewModel>();
+            }
+        }
+
 
         private static ViewModelLocator _default_locator;
         public static ViewModelLocator Default

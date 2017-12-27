@@ -9,29 +9,29 @@ using System;
 using System.CodeDom.Compiler;
 using UIKit;
 
-namespace POLift.iOS.Controllers
+namespace POLift.iOS
 {
-    [Register ("SelectExerciseController")]
-    partial class SelectExerciseController
+    [Register ("ExerciseCell")]
+    partial class ExerciseCell
     {
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
-        UIKit.UIButton CreateExerciseLink { get; set; }
+        UIKit.UIButton EditExerciseButton { get; set; }
 
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
-        UIKit.UITableView ExercisesTableView { get; set; }
+        UIKit.UILabel ExerciseLabel { get; set; }
 
         void ReleaseDesignerOutlets ()
         {
-            if (CreateExerciseLink != null) {
-                CreateExerciseLink.Dispose ();
-                CreateExerciseLink = null;
+            if (EditExerciseButton != null) {
+                EditExerciseButton.Dispose ();
+                EditExerciseButton = null;
             }
 
-            if (ExercisesTableView != null) {
-                ExercisesTableView.Dispose ();
-                ExercisesTableView = null;
+            if (ExerciseLabel != null) {
+                ExerciseLabel.Dispose ();
+                ExerciseLabel = null;
             }
         }
     }

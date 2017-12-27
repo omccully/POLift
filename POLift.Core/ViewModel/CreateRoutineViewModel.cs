@@ -22,12 +22,24 @@ namespace POLift.Core.ViewModel
         public event Action<IRoutine> ValueChosen;
         public IToaster Toaster;
 
+        IValueReturner<IExercise> _SelectExerciseViewModel;
+        public IValueReturner<IExercise> SelectExerciseViewModel
+        {
+            get
+            {
+                return _SelectExerciseViewModel;
+            }
+            set
+            {
+                _SelectExerciseViewModel = value;
+                _SelectExerciseViewModel.ValueChosen += SelectExercise_ValueChosen;
+            }
+        }
+
         public CreateRoutineViewModel(INavigationService navigationService, IPOLDatabase database)
         {
             this.navigationService = navigationService;
             this.Database = database;
-
-            ViewModelLocator.Default.SelectExercise.ValueChosen += SelectExercise_ValueChosen;
         }
 
         IRoutine RoutineToDeleteIfDifferent;
@@ -71,7 +83,7 @@ namespace POLift.Core.ViewModel
         public readonly ObservableCollection<IExerciseSets> ExerciseSets =
             new ObservableCollection<IExerciseSets>();
 
-        void Reset()
+        public void Reset()
         {
             RoutineToDeleteIfDifferent = null;
             RoutineNameInput = "";
@@ -82,6 +94,18 @@ namespace POLift.Core.ViewModel
 
         private void SelectExercise_ValueChosen(IExercise exercise)
         {
+            System.Diagnostics.Debug.WriteLine($"RoutineNameInput={RoutineNameInput} {String.IsNullOrWhiteSpace(RoutineNameInput)}");
+            System.Diagnostics.Debug.WriteLine($"exercise.Category={exercise.Category} {!String.IsNullOrWhiteSpace(exercise.Category)}");
+
+            if (String.IsNullOrWhiteSpace(RoutineNameInput)
+                   && !String.IsNullOrWhiteSpace(exercise.Category))
+            {
+                Toaster?.DisplayMessage("Routine title set to \"" + exercise.Category +
+                    "\" based on the added exercise's category");
+
+                RoutineNameInput = exercise.Category;
+            }
+
             // add exercise to ExerciseSets list
 
             ExerciseSets es = new ExerciseSets(exercise);

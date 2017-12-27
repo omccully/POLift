@@ -19,7 +19,7 @@ namespace POLift.iOS.Controllers
         {
             get
             {
-                return Application.Locator.CreateExercise;
+                return ViewModelLocator.Default.CreateExercise;
             }
         }
 
@@ -28,18 +28,62 @@ namespace POLift.iOS.Controllers
         {
         }
 
+        MathTypePickerViewModel PickerVM;
+        MathTypePickerDelegate PickerDelegate;
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
 
             CreateExerciseButton.SetCommand(Vm.CreateExerciseCommand);
 
-            MathTypePicker.Model = new MathTypePickerViewModel();
+            PickerVM = new MathTypePickerViewModel();
+            PickerVM.MathTypeSelected += PickerVM_MathTypeSelected;
+            MathTypePicker.Model = PickerVM;
+
+            PickerDelegate = new MathTypePickerDelegate();
+            PickerDelegate.MathTypeSelected += PickerVM_MathTypeSelected;
+            MathTypePicker.Delegate = PickerDelegate;
+
+
+            if(Vm.PlateMathID > 0)
+            {
+                MathTypePicker.Select(Vm.PlateMathID, 0, false);
+            }
             
-            MathTypePicker.Delegate = new MathTypePickerDelegate();
 
             ExerciseNameTextField.EditingChanged += (s, e) => { };
 
+            bindings.Add(this.SetBinding(
+               () => Vm.ExerciseNameInput,
+               () => ExerciseNameTextField.Text,
+               BindingMode.TwoWay)
+               .ObserveTargetEvent("EditingChanged"));
+
+            bindings.Add(this.SetBinding(
+              () => Vm.RepCountInput,
+              () => RepCountTextField.Text,
+              BindingMode.TwoWay)
+              .ObserveTargetEvent("EditingChanged"));
+
+            bindings.Add(this.SetBinding(
+              () => Vm.WeightIncrementInput,
+              () => WeightIncrementTextField.Text,
+              BindingMode.TwoWay)
+              .ObserveTargetEvent("EditingChanged"));
+
+            bindings.Add(this.SetBinding(
+                () => Vm.RestPeriodInput,
+                () => RestPeriodTextField.Text,
+                BindingMode.TwoWay)
+                .ObserveTargetEvent("EditingChanged"));
+
+            bindings.Add(this.SetBinding(
+               () => Vm.ConsecutiveSetsInput,
+               () => ConsecutiveSetsTextField.Text,
+               BindingMode.TwoWay)
+               .ObserveTargetEvent("EditingChanged"));
+
+            /*
             bindings.Add(this.SetBinding(
                 () => ExerciseNameTextField.Text,
                 () => Vm.ExerciseNameInput,
@@ -68,39 +112,56 @@ namespace POLift.iOS.Controllers
                 () => ConsecutiveSetsTextField.Text,
                 () => Vm.ConsecutiveSetsInput,
                 BindingMode.TwoWay)
-                .ObserveSourceEvent("EditingChanged"));
+                .ObserveSourceEvent("EditingChanged"));*/
 
             ExerciseNameTextField.ShouldReturn = AppleHelpers.DismissKeyboard;
             RepCountTextField.ShouldReturn = AppleHelpers.DismissKeyboard;
             WeightIncrementTextField.ShouldReturn = AppleHelpers.DismissKeyboard;
             RestPeriodTextField.ShouldReturn = AppleHelpers.DismissKeyboard;
             ConsecutiveSetsTextField.ShouldReturn = AppleHelpers.DismissKeyboard;
+        }
 
-            Vm.Reset();
+        private void PickerVM_MathTypeSelected(IPlateMath obj)
+        {
+            System.Diagnostics.Debug.WriteLine("PickerVM_MathTypeSelected");
+            Console.WriteLine("PickerVM_MathTypeSelected");
+            Vm.PlateMath = obj;
         }
 
         class MathTypePickerDelegate : UIPickerViewDelegate
         {
+            public event Action<IPlateMath> MathTypeSelected;
+
             public override UIView GetView(UIPickerView pickerView, nint row, nint component, UIView view)
-        {
-            UILabel label = view as UILabel;
-
-            if (label == null)
             {
-                label = new UILabel();
+                UILabel label = view as UILabel;
 
-                label.TextAlignment = UITextAlignment.Center;
-                label.AdjustsFontSizeToFitWidth = true;
+                if (label == null)
+                {
+                    label = new UILabel();
+
+                    label.TextAlignment = UITextAlignment.Center;
+                    label.AdjustsFontSizeToFitWidth = true;
+                }
+
+                label.Text = pickerView.Model.GetTitle(pickerView, row, component);
+
+                return label;
             }
 
-            label.Text = pickerView.Model.GetTitle(pickerView, row, component);
-
-            return label;
+            public override void Selected(UIPickerView pickerView, nint row, nint component)
+            {
+                System.Diagnostics.Debug.WriteLine("Selected in MathTypePickerDelegate");
+                Console.WriteLine("Selected in MathTypePickerDelegate");
+                PlateMath pm = PlateMath.PlateMathTypes[row];
+                MathTypeSelected?.Invoke(pm);
+            }
         }
-    }
 
-    class MathTypePickerViewModel : UIPickerViewModel
+        class MathTypePickerViewModel : UIPickerViewModel
         {
+            public event Action<IPlateMath> MathTypeSelected;
+
             public override nint GetComponentCount(UIPickerView pickerView)
             {
                 return 1;
@@ -122,6 +183,14 @@ namespace POLift.iOS.Controllers
                 {
                     return pm.ToString();
                 }
+            }
+
+            public override void Selected(UIPickerView pickerView, nint row, nint component)
+            {
+                System.Diagnostics.Debug.WriteLine("Selected");
+                Console.WriteLine("Selected");
+                PlateMath pm = PlateMath.PlateMathTypes[row];
+                MathTypeSelected?.Invoke(pm);
             }
         }
     }

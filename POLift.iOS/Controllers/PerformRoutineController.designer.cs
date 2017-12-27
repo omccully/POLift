@@ -16,6 +16,10 @@ namespace POLift.iOS.Controllers
     {
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
+        UIKit.UIView Container { get; set; }
+
+        [Outlet]
+        [GeneratedCode ("iOS Designer", "1.0")]
         UIKit.UILabel ExerciseDetailsLabel { get; set; }
 
         [Outlet]
@@ -44,6 +48,11 @@ namespace POLift.iOS.Controllers
 
         void ReleaseDesignerOutlets ()
         {
+            if (Container != null) {
+                Container.Dispose ();
+                Container = null;
+            }
+
             if (ExerciseDetailsLabel != null) {
                 ExerciseDetailsLabel.Dispose ();
                 ExerciseDetailsLabel = null;

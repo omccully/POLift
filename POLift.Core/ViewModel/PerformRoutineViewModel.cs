@@ -22,6 +22,9 @@ namespace POLift.Core.ViewModel
         public IDialogService DialogService;
         public IToaster Toaster;
 
+        public IPerformWarmupViewModel PerformWarmupViewModel;
+        public ITimerViewModel TimerViewModel;
+
         public PerformRoutineViewModel(INavigationService navigationService, IPOLDatabase database)
         {
             this.navigationService = navigationService;
@@ -119,7 +122,7 @@ namespace POLift.Core.ViewModel
                 WarmupKey, delegate
                 {
                     navigationService.NavigateTo(ViewModelLocator.PerformWarmupPageKey);
-                    ViewModelLocator.Default.PerformWarmup.WarmupExercise = CurrentExercise;
+                    PerformWarmupViewModel.WarmupExercise = CurrentExercise;
                 });
         }
 
@@ -164,6 +167,8 @@ namespace POLift.Core.ViewModel
 
                 if (is_different_from_previous)
                 {
+                    System.Diagnostics.Debug.WriteLine(
+                        "Call RefreshPreviousRepCountDetails");
                     RefreshPreviousRepCountDetails();
                 }
             }
@@ -199,6 +204,15 @@ namespace POLift.Core.ViewModel
                 {
                     if (CurrentPlateMath == null)
                     {
+                        System.Diagnostics.Debug.WriteLine("No Plate Math");
+
+                        if(CurrentExercise != null)
+                        {
+                            System.Diagnostics.Debug.WriteLine("Plate Math " + 
+                                CurrentExercise.PlateMathID);
+                        }
+                        
+
                         PlateMathDetails = "";
                     }
                     else
@@ -208,9 +222,9 @@ namespace POLift.Core.ViewModel
                         PlateMathDetails = $" ({plate_counts_str})";
                     }
                 }
-                catch
+                catch(Exception e)
                 {
-
+                    System.Diagnostics.Debug.WriteLine(e.ToString());
                 }
 
                 Set(() => WeightInputText, ref _WeightInputText, value);
@@ -245,6 +259,7 @@ namespace POLift.Core.ViewModel
             }
             set
             {
+                System.Diagnostics.Debug.WriteLine("PlateMathDetauls = " + value);
                 Set(ref _PlateMathDetails, value);
             }
         }
@@ -421,6 +436,10 @@ namespace POLift.Core.ViewModel
             // rest period is based on the NEXT exercise's rest period
 
             //StartRestPeriod();
+            if(CurrentExercise != null)
+            {
+                TimerViewModel.StartTimer(CurrentExercise.RestPeriodSeconds);
+            }
 
             //PromptUserForRating();
 

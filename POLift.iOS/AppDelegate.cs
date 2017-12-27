@@ -12,7 +12,6 @@ using Unity;
 using DialogService = POLift.Core.Service.DialogService;
 using IDialogService = POLift.Core.Service.IDialogService;
 
-
 namespace POLift.iOS
 {
     using Service;
@@ -66,7 +65,8 @@ namespace POLift.iOS
             ViewModelLocator.Default.CreateRoutine.Toaster = Toaster;
             ViewModelLocator.Default.PerformRoutine.DialogService = DialogService;
             ViewModelLocator.Default.PerformWarmup.DialogService = DialogService;
-
+            ViewModelLocator.Default.SelectExercise.DialogService = DialogService;
+            ViewModelLocator.Default.Timer.MainThreadInvoker = new MainThreadInvoker(application);
 
             //nav.GetAndRemoveParameter()
             return true;

@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\Xamarin.Forms.2.5.0.121934\build\netstandard1.0\Xamarin.Forms.props" Condition="Exists('..\packages\Xamarin.Forms.2.5.0.121934\build\netstandard1.0\Xamarin.Forms.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">iPhoneSimulator</Platform>
@@ -9,6 +10,8 @@
     <RootNamespace>POLift.iOS</RootNamespace>
     <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
     <AssemblyName>POLift</AssemblyName>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
     <DebugSymbols>true</DebugSymbols>
@@ -88,6 +91,15 @@
     <Compile Include="Controllers\PerformWarmupController.designer.cs">
       <DependentUpon>PerformWarmupController.cs</DependentUpon>
     </Compile>
+    <Compile Include="DataSources\DeleteTableViewSource.cs" />
+    <Compile Include="ExerciseCell.cs" />
+    <Compile Include="ExerciseCell.designer.cs">
+      <DependentUpon>ExerciseCell.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ExerciseSetsCell.cs" />
+    <Compile Include="ExerciseSetsCell.designer.cs">
+      <DependentUpon>ExerciseSetsCell.cs</DependentUpon>
+    </Compile>
     <Compile Include="Service\AppleHelpers.cs" />
     <Compile Include="ContainerBootstrapper.cs" />
     <Compile Include="Controllers\Base\PerformRoutineBaseController.cs" />
@@ -110,8 +122,13 @@
     <Compile Include="Controllers\SelectExerciseController.designer.cs">
       <DependentUpon>SelectExerciseController.cs</DependentUpon>
     </Compile>
+    <Compile Include="Service\MainThreadInvoker.cs" />
     <Compile Include="Service\Toaster.cs" />
     <Compile Include="Service\UserDefaultsKeyValueStorage.cs" />
+    <Compile Include="Controllers\TimerController.cs" />
+    <Compile Include="Controllers\TimerController.designer.cs">
+      <DependentUpon>TimerController.cs</DependentUpon>
+    </Compile>
     <None Include="GettingStarted.Xamarin" />
     <None Include="Info.plist" />
     <Compile Include="Controllers\PerformRoutineController.cs" />
@@ -213,4 +230,12 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Xamarin.Forms.2.5.0.121934\build\netstandard1.0\Xamarin.Forms.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Xamarin.Forms.2.5.0.121934\build\netstandard1.0\Xamarin.Forms.props'))" />
+    <Error Condition="!Exists('..\packages\Xamarin.Forms.2.5.0.121934\build\netstandard1.0\Xamarin.Forms.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Xamarin.Forms.2.5.0.121934\build\netstandard1.0\Xamarin.Forms.targets'))" />
+  </Target>
+  <Import Project="..\packages\Xamarin.Forms.2.5.0.121934\build\netstandard1.0\Xamarin.Forms.targets" Condition="Exists('..\packages\Xamarin.Forms.2.5.0.121934\build\netstandard1.0\Xamarin.Forms.targets')" />
 </Project>
