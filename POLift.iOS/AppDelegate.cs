@@ -65,6 +65,7 @@ namespace POLift.iOS
             ViewModelLocator.Default.CreateRoutine.Toaster = Toaster;
             ViewModelLocator.Default.PerformRoutine.DialogService = DialogService;
             ViewModelLocator.Default.PerformWarmup.DialogService = DialogService;
+            ViewModelLocator.Default.Main.DialogService = DialogService;
             ViewModelLocator.Default.SelectExercise.DialogService = DialogService;
             ViewModelLocator.Default.Timer.MainThreadInvoker = new MainThreadInvoker(application);
 

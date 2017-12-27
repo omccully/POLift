@@ -47,13 +47,19 @@ namespace POLift.iOS.DataSources
             return cell;
         }
 
+        public T DataFromIndexPath(NSIndexPath indexPath)
+        {
+            return Data[indexPath.Row];
+        }
+
         protected virtual string GetTextLabelText(NSIndexPath indexPath)
         {
-            return Data[indexPath.Row].ToString();
+            return DataFromIndexPath(indexPath).ToString();
         }
 
         public override void RowSelected(UITableView tableView, NSIndexPath indexPath)
         {
+            Console.WriteLine("DeleteTableViewSource.RowSelected");
             RowClicked?.Invoke(this, Data[indexPath.Row]);
         }
 
@@ -67,17 +73,20 @@ namespace POLift.iOS.DataSources
         {
             if (editingStyle == UITableViewCellEditingStyle.Delete)
             {
+                Console.WriteLine("click 1");
                 if (DeleteClicked != null)
                 {
+                    Console.WriteLine("click 2");
                     int start_count = Data.Count;
                     T item = Data[indexPath.Row];
                     DeleteClicked(item, delegate
                     {
+                        Console.WriteLine("callback a");
                         // ensure this delegate isn't called twice
                         // for when multiple event handlers are hooked up 
                         if (start_count == Data.Count)
                         {
-                          
+                            Console.WriteLine("callback b");
                             Data.RemoveAt(indexPath.Row);
 
                             tableView.DeleteRows(new NSIndexPath[] { indexPath },

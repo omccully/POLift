@@ -100,6 +100,10 @@
     <Compile Include="ExerciseSetsCell.designer.cs">
       <DependentUpon>ExerciseSetsCell.cs</DependentUpon>
     </Compile>
+    <Compile Include="RoutineCell.cs" />
+    <Compile Include="RoutineCell.designer.cs">
+      <DependentUpon>RoutineCell.cs</DependentUpon>
+    </Compile>
     <Compile Include="Service\AppleHelpers.cs" />
     <Compile Include="ContainerBootstrapper.cs" />
     <Compile Include="Controllers\Base\PerformRoutineBaseController.cs" />

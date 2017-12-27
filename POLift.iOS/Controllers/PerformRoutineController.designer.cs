@@ -24,6 +24,10 @@ namespace POLift.iOS.Controllers
 
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
+        UIKit.UIButton ModifyRestOfRoutineButton { get; set; }
+
+        [Outlet]
+        [GeneratedCode ("iOS Designer", "1.0")]
         UIKit.UILabel PlateMathLabel { get; set; }
 
         [Outlet]
@@ -56,6 +60,11 @@ namespace POLift.iOS.Controllers
             if (ExerciseDetailsLabel != null) {
                 ExerciseDetailsLabel.Dispose ();
                 ExerciseDetailsLabel = null;
+            }
+
+            if (ModifyRestOfRoutineButton != null) {
+                ModifyRestOfRoutineButton.Dispose ();
+                ModifyRestOfRoutineButton = null;
             }
 
             if (PlateMathLabel != null) {

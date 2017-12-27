@@ -118,11 +118,16 @@ namespace POLift.Core.ViewModel
         public RelayCommand EditRoutineNavigateCommand(IRoutine selection)
         {
             return new RelayCommand(() => {
-                ViewModelLocator.Default.CreateRoutine.EditRoutine(selection);
-
-                navigationService.NavigateTo(
-                        ViewModelLocator.CreateRoutinePageKey, selection);
+                EditRoutineNavigation(selection);
             });
+        }
+
+        public void EditRoutineNavigation(IRoutine selection)
+        {
+            ViewModelLocator.Default.CreateRoutine.EditRoutine(selection);
+
+            navigationService.NavigateTo(
+                    ViewModelLocator.CreateRoutinePageKey, selection);
         }
 
         public RelayCommand DeleteRoutineCommand(IRoutine selection, Action action_if_yes = null)
@@ -134,11 +139,12 @@ namespace POLift.Core.ViewModel
 
         public void DeleteRoutine(IRoutineWithLatestResult selection, Action action_if_yes = null)
         {
-            DeleteRoutine(selection.Routine);
+            DeleteRoutine(selection.Routine, action_if_yes);
         }
 
         public void DeleteRoutine(IRoutine selection, Action action_if_yes = null)
         {
+            System.Diagnostics.Debug.WriteLine("DeleteRoutine");
             DialogService?.DisplayConfirmation(
                     "Are you sure you want to delete the routine \"" +
                     selection.Name + "\"?",

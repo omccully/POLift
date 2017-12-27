@@ -50,6 +50,7 @@ namespace POLift.iOS.Controllers
                 "TouchUpInside",
                 Vm.SubmitResultCommand);
 
+           
             //WeightTextField.SetCommand(
               //  "ValueChanged",
               //  Vm.WeightInputChangedCommand);

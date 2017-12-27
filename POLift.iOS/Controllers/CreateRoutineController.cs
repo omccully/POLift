@@ -54,10 +54,10 @@ namespace POLift.iOS.Controllers
 
 
             bindings.Add(this.SetBinding(
-                () => RoutineNameTextField.Text,
                 () => Vm.RoutineNameInput,
+                () => RoutineNameTextField.Text, 
                 BindingMode.TwoWay)
-                .ObserveSourceEvent("EditingChanged"));
+                .ObserveTargetEvent("EditingChanged"));
 
             CreateRoutineButton.SetCommand(Vm.CreateRoutineCommand);
 

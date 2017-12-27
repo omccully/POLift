@@ -245,23 +245,35 @@ namespace POLift.Core.ViewModel
             get
             {
                 return _BackButtonCommand ??
-                    (_BackButtonCommand = new RelayCommand(delegate
-                    {
-                        if(WarmupSetIndex == 0)
-                        {
-                            navigationService.GoBack();
-                            return;
-                        }
+                    (_BackButtonCommand = new RelayCommand(SkipWarmup));
+            }
+        }
 
-                        DialogService?.DisplayConfirmationYesNoYesNeverShowAgain(
-                             "Are you sure you want to end this warmup session? " +
-                                " You will lose all of your progress in this warmup.",
-                             "ask_for_end_warmup",
-                             delegate
-                             {
-                                 navigationService.GoBack();
-                             });
-                    }));
+        public void SkipWarmup()
+        {
+            if (WarmupSetIndex == 0)
+            {
+                navigationService.GoBack();
+                return;
+            }
+
+            DialogService?.DisplayConfirmationYesNoYesNeverShowAgain(
+                 "Are you sure you want to end this warmup session? " +
+                    " You will lose all of your progress in this warmup.",
+                 "ask_for_end_warmup",
+                 delegate
+                 {
+                     navigationService.GoBack();
+                 });
+        }
+        
+        RelayCommand _SkipWarmupCommand;
+        public RelayCommand SkipWarmupCommand
+        {
+            get
+            {
+                return _SkipWarmupCommand ??
+                    (_SkipWarmupCommand = new RelayCommand(SkipWarmup));
             }
         }
     }

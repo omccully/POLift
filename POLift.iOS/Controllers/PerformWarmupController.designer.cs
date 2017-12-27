@@ -28,6 +28,10 @@ namespace POLift.iOS.Controllers
 
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
+        UIKit.UIButton SkipWarmupButton { get; set; }
+
+        [Outlet]
+        [GeneratedCode ("iOS Designer", "1.0")]
         UIKit.UIView TimerContainer { get; set; }
 
         [Outlet]
@@ -49,6 +53,11 @@ namespace POLift.iOS.Controllers
             if (SetCompletedButton != null) {
                 SetCompletedButton.Dispose ();
                 SetCompletedButton = null;
+            }
+
+            if (SkipWarmupButton != null) {
+                SkipWarmupButton.Dispose ();
+                SkipWarmupButton = null;
             }
 
             if (TimerContainer != null) {

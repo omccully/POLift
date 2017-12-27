@@ -24,6 +24,7 @@ namespace POLift.Core.ViewModel
 
         public IPerformWarmupViewModel PerformWarmupViewModel;
         public ITimerViewModel TimerViewModel;
+        public ICreateRoutineViewModel CreateRoutineViewModel;
 
         public PerformRoutineViewModel(INavigationService navigationService, IPOLDatabase database)
         {
@@ -487,6 +488,35 @@ namespace POLift.Core.ViewModel
                     {
                         SubmitResultFromInput();
                     }));
+            }
+        }
+
+        public void ModifyRestOfRoutine()
+        {
+            if (this.Routine == null) return;
+
+            int locked_sets;
+            if(this.RoutineResult == null)
+            {
+                locked_sets = 0;
+            }
+            else
+            {
+                locked_sets = this.RoutineResult.ResultCount;
+            }
+
+            CreateRoutineViewModel?.EditRoutine(this.Routine, locked_sets);
+
+            navigationService.NavigateTo(ViewModelLocator.CreateRoutinePageKey);
+        }
+
+        RelayCommand _ModifyRestOfRoutineCommand;
+        public RelayCommand ModifyRestOfRoutineCommand
+        {
+            get
+            {
+                return _ModifyRestOfRoutineCommand ??
+                    (_ModifyRestOfRoutineCommand = new RelayCommand(ModifyRestOfRoutine));
             }
         }
     }

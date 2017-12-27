@@ -144,8 +144,10 @@ namespace POLift.Core.ViewModel
                 delegate
                 {
                     Database.HideDeletable((Exercise)exercise);
-                    ExercisesChanged?.Invoke(this, new EventArgs());
+
                     action_if_yes?.Invoke();
+
+                    ExercisesChanged?.Invoke(this, new EventArgs()); 
                 });
         }
     }

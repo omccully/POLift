@@ -40,12 +40,11 @@ namespace POLift.iOS.Controllers
                 "TouchUpInside",
                 Vm.SetCompletedCommand);
 
+            SkipWarmupButton.SetCommand(
+                "TouchUpInside",
+                Vm.SkipWarmupCommand);
+
             WeightTextField.EditingChanged += (s, e) => { };
-
-            System.Diagnostics.Debug.WriteLine($"ViewDidLoad WeightInputText={Vm.WeightInputText}");
-            System.Diagnostics.Debug.WriteLine($"ViewDidLoad RoutineDetails={Vm.RoutineDetails}");
-            System.Diagnostics.Debug.WriteLine($"ViewDidLoad ExerciseDetails={Vm.ExerciseDetails}");
-
 
             bindings.Add(this.SetBinding(
                 () => Vm.WeightInputText,

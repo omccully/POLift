@@ -63,10 +63,11 @@ namespace POLift.iOS.Controllers
 
             routine_data_source.RowClicked += Routine_data_source_RoutineSelected;
             routine_data_source.DeleteClicked += Vm.DeleteRoutine;
+            routine_data_source.EditClicked += Vm.EditRoutineNavigation;
 
             RoutinesTableView.Source = routine_data_source;
-            RoutinesTableView.Delegate = new RoutinesTableViewDelegate();
         }
+
 
         private void Routine_data_source_RoutineSelected(object sender, IRoutineWithLatestResult e)
         {
@@ -74,25 +75,34 @@ namespace POLift.iOS.Controllers
             Vm.SelectRoutineNavigateCommand(e).Execute(e.Routine);
         }
 
-        class RoutinesTableViewDelegate : UITableViewDelegate
-        {
-            public override void RowSelected(UITableView tableView, NSIndexPath indexPath)
-            {
-                Console.WriteLine("RoutinesTableViewDelegate.RowSelected");
-            }
-        }
-
         class RoutinesDataSource : DeleteTableViewSource<IRoutineWithLatestResult>
         {
+            public event Action<IRoutine> EditClicked;
+
             public RoutinesDataSource(IList<IRoutineWithLatestResult> Data) : 
                 base(Data)
             {
 
             }
 
+            public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
+            {
+                RoutineCell cell = tableView.DequeueReusableCell("routine_cell")
+                    as RoutineCell;
+
+                IRoutineWithLatestResult routineinfo = DataFromIndexPath(indexPath);
+
+                cell.Setup(routineinfo, delegate
+                {
+                    EditClicked?.Invoke(routineinfo.Routine);
+                });
+
+                return cell;
+            }
+
             protected override string GetTextLabelText(NSIndexPath indexPath)
             {
-                return Data[indexPath.Row].Routine.ToString();
+                return DataFromIndexPath(indexPath).Routine.ToString();
             }
         }
     }

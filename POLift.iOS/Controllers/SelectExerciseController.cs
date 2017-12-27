@@ -42,7 +42,7 @@ namespace POLift.iOS.Controllers
             //ExerciseListTableView.RegisterClassForCellReuse(typeof(EditDeleteTableViewCell),
             //   ExercisesInCategoriesDataSource.ExerciseInCategoriesCellId);
 
-            //Vm.ExercisesChanged += Vm_ExercisesChanged;
+            Vm.ExercisesChanged += Vm_ExercisesChanged;
 
             CreateExerciseLink.TouchUpInside += delegate
             {
@@ -71,10 +71,13 @@ namespace POLift.iOS.Controllers
                 Vm.DeleteExercise(exercise, action);
             };
 
+            eds.RowClicked += delegate(object sender, IExercise exercise)
+            {
+                Vm.SelectExercise(exercise);
+            };
 
 
-
-           // eds.ExerciseDelete += Eds_ExerciseDelete;
+            //eds.ExerciseDelete += Eds_ExerciseDelete;
             ExercisesTableView.Source = eds;
             ExercisesTableView.ReloadData();
         }
@@ -181,7 +184,6 @@ namespace POLift.iOS.Controllers
                             if (start_count == exercises_in_section.Count)
                             {
                                 exercises_in_section.RemoveAt(indexPath.Row);
-
                                 tableView.DeleteRows(new NSIndexPath[] { indexPath },
                                     UITableViewRowAnimation.Fade);
                             }
