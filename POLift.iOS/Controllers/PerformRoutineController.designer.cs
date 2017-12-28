@@ -24,6 +24,10 @@ namespace POLift.iOS.Controllers
 
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
+        UIKit.UIButton IMadeAMistakeButton { get; set; }
+
+        [Outlet]
+        [GeneratedCode ("iOS Designer", "1.0")]
         UIKit.UIButton ModifyRestOfRoutineButton { get; set; }
 
         [Outlet]
@@ -60,6 +64,11 @@ namespace POLift.iOS.Controllers
             if (ExerciseDetailsLabel != null) {
                 ExerciseDetailsLabel.Dispose ();
                 ExerciseDetailsLabel = null;
+            }
+
+            if (IMadeAMistakeButton != null) {
+                IMadeAMistakeButton.Dispose ();
+                IMadeAMistakeButton = null;
             }
 
             if (ModifyRestOfRoutineButton != null) {

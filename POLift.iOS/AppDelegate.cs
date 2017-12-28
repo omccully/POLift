@@ -50,6 +50,7 @@ namespace POLift.iOS
             nav.Configure(ViewModelLocator.CreateExercisePageKey, "CreateExercisePage");
             nav.Configure(ViewModelLocator.PerformRoutinePageKey, "PerformRoutinePage");
             nav.Configure(ViewModelLocator.PerformWarmupPageKey, "PerformWarmupPage");
+            nav.Configure(ViewModelLocator.ViewRoutineResultsPageKey, "ViewRoutineResults");
 
 
             UserDefaultsKeyValueStorage storage =
@@ -59,15 +60,20 @@ namespace POLift.iOS
             DialogService DialogService = new DialogService(
                 new DialogBuilderFactory(), storage);
 
-            ViewModelLocator.Default.Main.Toaster = Toaster;
-            ViewModelLocator.Default.CreateExercise.KeyValueStorage = storage;
-            ViewModelLocator.Default.CreateExercise.Toaster = Toaster;
-            ViewModelLocator.Default.CreateRoutine.Toaster = Toaster;
-            ViewModelLocator.Default.PerformRoutine.DialogService = DialogService;
-            ViewModelLocator.Default.PerformWarmup.DialogService = DialogService;
-            ViewModelLocator.Default.Main.DialogService = DialogService;
-            ViewModelLocator.Default.SelectExercise.DialogService = DialogService;
-            ViewModelLocator.Default.Timer.MainThreadInvoker = new MainThreadInvoker(application);
+            ViewModelLocator l = ViewModelLocator.Default;
+
+            l.Main.Toaster = Toaster;
+            l.CreateExercise.KeyValueStorage = storage;
+            l.CreateExercise.Toaster = Toaster;
+            l.CreateRoutine.Toaster = Toaster;
+            l.PerformRoutine.CreateRoutineViewModel = l.CreateRoutine;
+            l.PerformRoutine.DialogService = DialogService;
+            l.PerformWarmup.DialogService = DialogService;
+            l.Main.DialogService = DialogService;
+            l.SelectExercise.DialogService = DialogService;
+            l.ViewRoutineResults.DialogService = DialogService;
+            l.ViewRoutineResults.EditRoutineResultViewModel = l.EditRoutineResult;
+            l.Timer.MainThreadInvoker = new MainThreadInvoker(application);
 
             //nav.GetAndRemoveParameter()
             return true;

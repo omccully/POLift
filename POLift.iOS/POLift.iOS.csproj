@@ -92,16 +92,24 @@
       <DependentUpon>PerformWarmupController.cs</DependentUpon>
     </Compile>
     <Compile Include="DataSources\DeleteTableViewSource.cs" />
-    <Compile Include="ExerciseCell.cs" />
-    <Compile Include="ExerciseCell.designer.cs">
+    <Compile Include="Controllers\EditRoutineResultController.cs" />
+    <Compile Include="Controllers\EditRoutineResultController.designer.cs">
+      <DependentUpon>EditRoutineResultController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="RoutineResultCell.cs" />
+    <Compile Include="RoutineResultCell.designer.cs">
+      <DependentUpon>RoutineResultCell.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TableCells\ExerciseCell.cs" />
+    <Compile Include="TableCells\ExerciseCell.designer.cs">
       <DependentUpon>ExerciseCell.cs</DependentUpon>
     </Compile>
-    <Compile Include="ExerciseSetsCell.cs" />
-    <Compile Include="ExerciseSetsCell.designer.cs">
+    <Compile Include="TableCells\ExerciseSetsCell.cs" />
+    <Compile Include="TableCells\ExerciseSetsCell.designer.cs">
       <DependentUpon>ExerciseSetsCell.cs</DependentUpon>
     </Compile>
-    <Compile Include="RoutineCell.cs" />
-    <Compile Include="RoutineCell.designer.cs">
+    <Compile Include="TableCells\RoutineCell.cs" />
+    <Compile Include="TableCells\RoutineCell.designer.cs">
       <DependentUpon>RoutineCell.cs</DependentUpon>
     </Compile>
     <Compile Include="Service\AppleHelpers.cs" />
@@ -132,6 +140,10 @@
     <Compile Include="Controllers\TimerController.cs" />
     <Compile Include="Controllers\TimerController.designer.cs">
       <DependentUpon>TimerController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controllers\ViewRoutineResultsController.cs" />
+    <Compile Include="Controllers\ViewRoutineResultsController.designer.cs">
+      <DependentUpon>ViewRoutineResultsController.cs</DependentUpon>
     </Compile>
     <None Include="GettingStarted.Xamarin" />
     <None Include="Info.plist" />

@@ -50,7 +50,14 @@ namespace POLift.iOS.Controllers
                 "TouchUpInside",
                 Vm.SubmitResultCommand);
 
-           
+            ModifyRestOfRoutineButton.SetCommand(
+                "TouchUpInside",
+                Vm.ModifyRestOfRoutineCommand);
+
+            IMadeAMistakeButton.SetCommand(
+                "TouchUpInside",
+                Vm.IMadeAMistakeCommand);
+
             //WeightTextField.SetCommand(
               //  "ValueChanged",
               //  Vm.WeightInputChangedCommand);

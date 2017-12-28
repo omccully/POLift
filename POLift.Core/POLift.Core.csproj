@@ -80,6 +80,8 @@
     <Compile Include="Service\PclTimer.cs" />
     <Compile Include="ViewModel\CreateExerciseViewModel.cs" />
     <Compile Include="ViewModel\CreateRoutineViewModel.cs" />
+    <Compile Include="ViewModel\EditRoutineResultViewModel.cs" />
+    <Compile Include="ViewModel\Interfaces\EditRoutineResultViewModel.cs" />
     <Compile Include="ViewModel\Interfaces\ICreateExerciseViewModel.cs" />
     <Compile Include="ViewModel\Interfaces\ICreateRoutineViewModel.cs" />
     <Compile Include="ViewModel\Interfaces\IPerformWarmupViewModel.cs" />
@@ -91,6 +93,7 @@
     <Compile Include="ViewModel\SelectExerciseViewModel.cs" />
     <Compile Include="ViewModel\TimerViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
+    <Compile Include="ViewModel\ViewRoutineResultsViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="GalaSoft.MvvmLight, Version=5.3.0.19026, Culture=neutral, PublicKeyToken=e7570ab207bcb616, processorArchitecture=MSIL">

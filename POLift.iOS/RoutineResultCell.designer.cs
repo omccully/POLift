@@ -11,27 +11,27 @@ using UIKit;
 
 namespace POLift.iOS
 {
-    [Register ("RoutineCell")]
-    partial class RoutineCell
+    [Register ("RoutineResultCell")]
+    partial class RoutineResultCell
     {
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
-        UIKit.UIButton EditRoutinebutton { get; set; }
+        UIKit.UIButton EditRoutineResultButton { get; set; }
 
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
-        UIKit.UILabel RoutineLabel { get; set; }
+        UIKit.UILabel RoutineResultLabel { get; set; }
 
         void ReleaseDesignerOutlets ()
         {
-            if (EditRoutinebutton != null) {
-                EditRoutinebutton.Dispose ();
-                EditRoutinebutton = null;
+            if (EditRoutineResultButton != null) {
+                EditRoutineResultButton.Dispose ();
+                EditRoutineResultButton = null;
             }
 
-            if (RoutineLabel != null) {
-                RoutineLabel.Dispose ();
-                RoutineLabel = null;
+            if (RoutineResultLabel != null) {
+                RoutineResultLabel.Dispose ();
+                RoutineResultLabel = null;
             }
         }
     }

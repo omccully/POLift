@@ -48,6 +48,9 @@ namespace POLift.iOS.Controllers
                 "TouchUpInside",
                 Vm.CreateRoutineNavigateCommand);
 
+            RoutinesTableView.RowHeight = UITableView.AutomaticDimension;
+            RoutinesTableView.EstimatedRowHeight = 40f;
+
             Vm.RoutinesListChanged += Vm_RoutinesListChanged;
         }
 

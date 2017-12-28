@@ -14,8 +14,6 @@ using GalaSoft.MvvmLight.Views;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Helpers;
 
-
-
 namespace POLift.iOS.Controllers
 {
     public partial class CreateRoutineController : DatabaseController
@@ -83,10 +81,10 @@ namespace POLift.iOS.Controllers
 
             Vm.ExerciseSets.CollectionChanged += ExerciseSets_CollectionChanged;
         }
+
         UIBarButtonItem done;
         UIBarButtonItem edit;
         ExerciseSetsDataSource es_data_source;
-
 
         private void ExerciseSets_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
@@ -97,7 +95,7 @@ namespace POLift.iOS.Controllers
         {
 
             ExerciseSetsTableView.Source = es_data_source =
-                new ExerciseSetsDataSource(Vm.ExerciseSets);
+                new ExerciseSetsDataSource(Vm.ExerciseSets, Vm.LockedExerciseSets);
         }
 
         class ExerciseSetsDataSource : UITableViewSource
@@ -106,10 +104,13 @@ namespace POLift.iOS.Controllers
             public static NSString ExerciseSetsDeleteCellId = new NSString("ExerciseSetsDeleteCell");
 
             public ObservableCollection<IExerciseSets> ExerciseSets;
+            int LockedExerciseSets;
 
-            public ExerciseSetsDataSource(ObservableCollection<IExerciseSets> exercise_sets)
+            public ExerciseSetsDataSource(ObservableCollection<IExerciseSets> exercise_sets,
+                int locked_exercise_sets = 0)
             {
                 this.ExerciseSets = exercise_sets;
+                this.LockedExerciseSets = locked_exercise_sets;
             }
 
             public override nint RowsInSection(UITableView tableview, nint section)
@@ -127,11 +128,15 @@ namespace POLift.iOS.Controllers
                 return cell;
             }
 
+            bool CanEditRow(int row)
+            {
+                return (row >= LockedExerciseSets);
+            }
+
             public override bool CanEditRow(UITableView tableView, NSIndexPath indexPath)
             {
                 // return false for locked rows
-                
-                return true;
+                return CanEditRow(indexPath.Row);
             }
 
             public override void CommitEditingStyle(UITableView tableView,
@@ -148,7 +153,7 @@ namespace POLift.iOS.Controllers
 
             public override bool CanMoveRow(UITableView tableView, NSIndexPath indexPath)
             {
-                return true;
+                return CanEditRow(tableView, indexPath);
             }
 
             public override UITableViewCellEditingStyle EditingStyleForRow(UITableView tableView, NSIndexPath indexPath)
@@ -156,11 +161,21 @@ namespace POLift.iOS.Controllers
                 return UITableViewCellEditingStyle.Delete;
             }
 
-            public override void MoveRow(UITableView tableView, NSIndexPath sourceIndexPath, NSIndexPath destinationIndexPath)
+            public override NSIndexPath CustomizeMoveTarget(UITableView tableView, NSIndexPath sourceIndexPath, NSIndexPath proposedIndexPath)
             {
+                if(CanEditRow(proposedIndexPath.Row))
+                {
+                    return proposedIndexPath;
+                }
+                return sourceIndexPath;
+            }
+
+            public override void MoveRow(UITableView tableView, NSIndexPath sourceIndexPath, NSIndexPath destinationIndexPath)
+            { 
                 var item = ExerciseSets[sourceIndexPath.Row];
                 var deleteAt = sourceIndexPath.Row;
                 var insertAt = destinationIndexPath.Row;
+                System.Diagnostics.Debug.WriteLine($"try [{deleteAt}] -> [{insertAt}]");
 
                 // are we inserting 
                 if (destinationIndexPath.Row < sourceIndexPath.Row)

@@ -19,6 +19,27 @@ namespace POLift.iOS
             EditRoutinebutton.TouchUpInside += EditClicked;
 
             RoutineLabel.Text = routineinfo.Routine.ToString();
+
+            IRoutineResult latest = routineinfo.LatestResult;
+
+            if (latest == null)
+            {
+                LastPerformTimeLabel.Text = "Never performed";
+            }
+            else
+            {
+                LastPerformTimeLabel.Text = latest.RelativeTimeDetails;
+            }
+
+            if (LastPerformTimeLabel.Text.Contains("Uncompleted") &&
+                !LastPerformTimeLabel.Text.Contains("day"))
+            {
+                LastPerformTimeLabel.TextColor = UIColor.Red;
+            }
+            else
+            {
+                LastPerformTimeLabel.TextColor = UIColor.Black;
+            }
         }
 
         public override void PrepareForReuse()

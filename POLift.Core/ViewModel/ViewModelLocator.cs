@@ -18,6 +18,8 @@ namespace POLift.Core.ViewModel
         public const string CreateExercisePageKey = "CreateExercise";
         public const string PerformRoutinePageKey = "PerformRoutine";
         public const string PerformWarmupPageKey = "PerformWarmup";
+        public const string ViewRoutineResultsPageKey = "ViewRoutineResults";
+        public const string EditRoutineResultPageKey = "EditRoutineResult";
 
         public ViewModelLocator()
         {
@@ -29,7 +31,9 @@ namespace POLift.Core.ViewModel
             SimpleIoc.Default.Register<CreateExerciseViewModel>();
             SimpleIoc.Default.Register<CreateRoutineViewModel>();
             SimpleIoc.Default.Register<PerformWarmupViewModel>();
+            SimpleIoc.Default.Register<ViewRoutineResultsViewModel>();
             SimpleIoc.Default.Register<TimerViewModel>();
+            SimpleIoc.Default.Register<EditRoutineResultViewModel>();
 
             SelectExercise.CreateExerciseViewModel = CreateExercise;
             CreateRoutine.SelectExerciseViewModel = SelectExercise;
@@ -101,6 +105,21 @@ namespace POLift.Core.ViewModel
             }
         }
 
+        public ViewRoutineResultsViewModel ViewRoutineResults
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<ViewRoutineResultsViewModel>();
+            }
+        }
+
+        public EditRoutineResultViewModel EditRoutineResult
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<EditRoutineResultViewModel>();
+            }
+        }
 
         private static ViewModelLocator _default_locator;
         public static ViewModelLocator Default

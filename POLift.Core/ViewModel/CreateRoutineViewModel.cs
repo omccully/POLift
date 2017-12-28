@@ -14,7 +14,7 @@ namespace POLift.Core.ViewModel
     using Service;
     using Model;
 
-    public class CreateRoutineViewModel : ViewModelBase, IValueReturner<IRoutine>
+    public class CreateRoutineViewModel : ViewModelBase, ICreateRoutineViewModel, IValueReturner<IRoutine>
     {
         private readonly INavigationService navigationService;
         private readonly IPOLDatabase Database;
@@ -64,6 +64,7 @@ namespace POLift.Core.ViewModel
             if (routine != null)
             {
                 RoutineToDeleteIfDifferent = routine;
+                System.Diagnostics.Debug.WriteLine("routine.Name = " + routine.Name);
                 RoutineNameInput = routine.Name;
 
                 ExerciseSets.Clear();
@@ -124,6 +125,7 @@ namespace POLift.Core.ViewModel
             }
             set
             {
+                System.Diagnostics.Debug.WriteLine($"RoutineNameInput={RoutineNameInput}");
                 Set(() => RoutineNameInput, ref _RoutineNameInput, value);
             }
         }

@@ -31,7 +31,7 @@ namespace POLift.iOS
             }
         }
 
-        public void Setup(IExerciseSets exercise_sets)
+        public void Setup(IExerciseSets exercise_sets, bool EditEnabled=true)
         {
             SetCountTextField.EditingChanged -= SetCountTextField_EditingChanged;
             SetCountTextField.EditingChanged += SetCountTextField_EditingChanged;
@@ -39,6 +39,8 @@ namespace POLift.iOS
             this.ExerciseSets = exercise_sets;
             SetCountTextField.Text = ExerciseSets.SetCount.ToString();
             ExerciseNameLabel.Text = "sets of " + ExerciseSets.Exercise.Name;
+
+            SetCountTextField.Enabled = EditEnabled;
         }
     }
 }

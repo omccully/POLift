@@ -505,9 +505,36 @@ namespace POLift.Core.ViewModel
                 locked_sets = this.RoutineResult.ResultCount;
             }
 
-            CreateRoutineViewModel?.EditRoutine(this.Routine, locked_sets);
-
+            if(CreateRoutineViewModel != null)
+            {
+                CreateRoutineViewModel.ValueChosen += CreateRoutineViewModel_ValueChosen;
+                CreateRoutineViewModel.EditRoutine(this.Routine, locked_sets);
+            }
+            
             navigationService.NavigateTo(ViewModelLocator.CreateRoutinePageKey);
+        }
+
+        private void CreateRoutineViewModel_ValueChosen(IRoutine new_routine)
+        {
+            if (Routine.Equals(new_routine)) return;
+
+            if (this.RoutineResult.ResultCount == 0)
+            {
+                // routine wasn't started
+                this.RoutineResult = new RoutineResult(new_routine, Database);
+            }
+            else
+            {
+                IRoutineResult old_rr = this.RoutineResult;
+                this.RoutineResult = this.RoutineResult.Transform(new_routine);
+
+                Database.HideDeletable((RoutineResult)old_rr);
+
+                Database.Insert((RoutineResult)this.RoutineResult);
+            }
+
+            // CreateRoutineViewModel "deletes" old routine (edit operation)
+            Routine = new_routine;
         }
 
         RelayCommand _ModifyRestOfRoutineCommand;
@@ -519,5 +546,21 @@ namespace POLift.Core.ViewModel
                     (_ModifyRestOfRoutineCommand = new RelayCommand(ModifyRestOfRoutine));
             }
         }
+
+        public void IMadeAMistake()
+        {
+            Toaster?.DisplayError("IMadeAMistake not implemented");
+        }
+
+        RelayCommand _IMadeAMistakeCommand;
+        public RelayCommand IMadeAMistakeCommand
+        {
+            get
+            {
+                return _IMadeAMistakeCommand ??
+                    (_IMadeAMistakeCommand = new RelayCommand(IMadeAMistake));
+            }
+        }
+
     }
 }
