@@ -19,6 +19,13 @@ namespace POLift.Core.Model
             this.IconResourceID = icon_resource_id;
         }
 
+        public Navigation(string Text, Action event_handler, int icon_resource_id = 0)
+        {
+            this.Text = Text;
+            Click += delegate { event_handler(); };
+            this.IconResourceID = icon_resource_id;
+        }
+
         public void OnClick(EventArgs e = null)
         {
             if (e == null) e = new EventArgs();

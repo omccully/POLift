@@ -37,5 +37,9 @@ namespace POLift.Core.Model
 
         IRoutineResult Transform(IRoutine new_routine);
 
+        string TimeDetails { get; }
+
+        //void SaveEdits(Dictionary<int, float> WeightEdits, Dictionary<int, int> RepsEdits);
+
     }
 }

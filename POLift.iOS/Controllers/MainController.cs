@@ -14,6 +14,8 @@ using POLift.Core.ViewModel;
 using POLift.iOS.DataSources;
 using System.Threading.Tasks;
 
+using SidebarNavigation;
+
 namespace POLift.iOS.Controllers
 {
     public partial class MainController : DatabaseController
@@ -29,8 +31,14 @@ namespace POLift.iOS.Controllers
             }
         }
 
-        public MainController(IntPtr handle) : base(handle)
+        public MainController(IntPtr intptr) : base(intptr)
         {
+
+        }
+
+        public MainController() 
+        {
+
         }
 
         public override void ViewDidLoad()
@@ -43,7 +51,11 @@ namespace POLift.iOS.Controllers
 
             RefreshRoutinesList();
 
-            CreateNewRoutineLink.TouchUpInside += (s, e) => { };
+            /*CreateNewRoutineLink.TouchUpInside += (s, e) => {
+                this.NavigationController.PushViewController(
+                    this.Storyboard.InstantiateViewController(
+                    "CreateRoutinePage"), true);
+            };*/
             CreateNewRoutineLink.SetCommand(
                 "TouchUpInside",
                 Vm.CreateRoutineNavigateCommand);
@@ -53,6 +65,8 @@ namespace POLift.iOS.Controllers
 
             Vm.RoutinesListChanged += Vm_RoutinesListChanged;
         }
+
+
 
         private void Vm_RoutinesListChanged(object sender, EventArgs e)
         {

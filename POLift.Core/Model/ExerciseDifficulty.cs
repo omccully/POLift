@@ -227,6 +227,8 @@ namespace POLift.Core.Model
             return ret;
         }
 
+
+
         public static List<KeyValuePair<string, List<IExerciseDifficulty>>> InCategories(
             IPOLDatabase Database,
             string DefaultCategory = "other")
@@ -257,6 +259,14 @@ namespace POLift.Core.Model
             return dict.OrderByDescending(kvp =>
                 kvp.Value.Count
             ).ToList();
+        }
+
+        public static List<ExerciseDifficultyCategory> InEdCategories(IPOLDatabase Database,
+            string DefaultCategory = "other")
+        {
+            return InCategories(Database, DefaultCategory).Select(kvp =>
+                new ExerciseDifficultyCategory(kvp.Key, kvp.Value))
+                .ToList();
         }
     }
 }

@@ -18,6 +18,10 @@ namespace POLift.iOS.Controllers
         {
         }
 
+        public DatabaseController()
+        {
+        }
+
         public override void PrepareForSegue(UIStoryboardSegue segue, NSObject sender)
         {
             base.PrepareForSegue(segue, sender);

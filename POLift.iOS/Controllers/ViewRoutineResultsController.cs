@@ -30,7 +30,25 @@ namespace POLift.iOS.Controllers
 
         public ViewRoutineResultsController (IntPtr handle) : base (handle)
         {
-            RefreshRoutineResults();
+           
+        }
+
+        public override void ViewDidLoad()
+        {
+            base.ViewDidLoad();
+
+            RoutineResultsTableView.RowHeight = UITableView.AutomaticDimension;
+            RoutineResultsTableView.EstimatedRowHeight = 70f;
+
+            try
+            {
+                Console.WriteLine("try");
+                RefreshRoutineResults();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
         }
 
         RoutineResultsDataSource rrds;

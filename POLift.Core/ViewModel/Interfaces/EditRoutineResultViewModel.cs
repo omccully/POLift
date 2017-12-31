@@ -10,7 +10,8 @@ namespace POLift.Core.ViewModel
 {
     public interface IEditRoutineResultViewModel
     {
-        IRoutineResult RoutineResult { get; set; }
+        event Action DoneEditing;
 
+        IRoutineResult RoutineResult { get; set; }
     }
 }

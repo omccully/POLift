@@ -14,6 +14,7 @@ using IDialogService = POLift.Core.Service.IDialogService;
 
 namespace POLift.iOS
 {
+    using Controllers;
     using Service;
 
     // The UIApplicationDelegate for the application. This class is responsible for launching the 
@@ -44,38 +45,33 @@ namespace POLift.iOS
             var nav = new NavigationService();
             SimpleIoc.Default.Register<INavigationService>(() => nav);
 
-            nav.Initialize((UINavigationController)Window.RootViewController);
+            RootController root = (RootController)Window.RootViewController;
+
+            //nav.Initialize((RootController)Window.RootViewController);
+            nav.Initialize(root.NavController);
+            nav.Configure(ViewModelLocator.MainPageKey, "MainPage");
             nav.Configure(ViewModelLocator.CreateRoutinePageKey, "CreateRoutinePage");
             nav.Configure(ViewModelLocator.SelectExercisePageKey, "SelectExercisePage");
             nav.Configure(ViewModelLocator.CreateExercisePageKey, "CreateExercisePage");
             nav.Configure(ViewModelLocator.PerformRoutinePageKey, "PerformRoutinePage");
             nav.Configure(ViewModelLocator.PerformWarmupPageKey, "PerformWarmupPage");
-            nav.Configure(ViewModelLocator.ViewRoutineResultsPageKey, "ViewRoutineResults");
+            nav.Configure(ViewModelLocator.ViewRoutineResultsPageKey, "ViewRoutineResultsPage");
+            nav.Configure(ViewModelLocator.EditRoutineResultPageKey, "EditRoutineResultPage");
+            nav.Configure(ViewModelLocator.OrmGraphPageKey, "OrmGraphPage");
+            nav.Configure(ViewModelLocator.SelectExerciseDifficultyPageKey, "SelectExerciseDifficultyPage");
+            nav.Configure(ViewModelLocator.SelectProgramToDownloadPageKey, "SelectProgramToDownloadPage");
 
-
-            UserDefaultsKeyValueStorage storage =
-                new UserDefaultsKeyValueStorage();
-                //new DatabaseKeyValueStorage(database);
-            Toaster Toaster = new Toaster();
-            DialogService DialogService = new DialogService(
-                new DialogBuilderFactory(), storage);
 
             ViewModelLocator l = ViewModelLocator.Default;
+            l.KeyValueStorage = new UserDefaultsKeyValueStorage();
+            //new DatabaseKeyValueStorage(database);
 
-            l.Main.Toaster = Toaster;
-            l.CreateExercise.KeyValueStorage = storage;
-            l.CreateExercise.Toaster = Toaster;
-            l.CreateRoutine.Toaster = Toaster;
-            l.PerformRoutine.CreateRoutineViewModel = l.CreateRoutine;
-            l.PerformRoutine.DialogService = DialogService;
-            l.PerformWarmup.DialogService = DialogService;
-            l.Main.DialogService = DialogService;
-            l.SelectExercise.DialogService = DialogService;
-            l.ViewRoutineResults.DialogService = DialogService;
-            l.ViewRoutineResults.EditRoutineResultViewModel = l.EditRoutineResult;
-            l.Timer.MainThreadInvoker = new MainThreadInvoker(application);
+            l.DialogService = new DialogService(
+                new DialogBuilderFactory(), l.KeyValueStorage);
+            l.Toaster = new Toaster();
 
-            //nav.GetAndRemoveParameter()
+            l.MainThreadInvoker = new MainThreadInvoker(application);
+
             return true;
         }
 

@@ -23,7 +23,6 @@ namespace POLift.iOS.Controllers
             }
         }
 
-
         public CreateExerciseController (IntPtr handle) : base (handle)
         {
         }
@@ -114,7 +113,7 @@ namespace POLift.iOS.Controllers
                 BindingMode.TwoWay)
                 .ObserveSourceEvent("EditingChanged"));*/
 
-            ExerciseNameTextField.ShouldReturn = AppleHelpers.DismissKeyboard;
+        ExerciseNameTextField.ShouldReturn = AppleHelpers.DismissKeyboard;
             RepCountTextField.ShouldReturn = AppleHelpers.DismissKeyboard;
             WeightIncrementTextField.ShouldReturn = AppleHelpers.DismissKeyboard;
             RestPeriodTextField.ShouldReturn = AppleHelpers.DismissKeyboard;

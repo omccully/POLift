@@ -13,6 +13,7 @@ namespace POLift.Core.ViewModel
 
     public class ViewModelLocator
     {
+        public const string MainPageKey = "Main";
         public const string CreateRoutinePageKey = "CreateRoutine";
         public const string SelectExercisePageKey = "SelectExercise";
         public const string CreateExercisePageKey = "CreateExercise";
@@ -20,6 +21,10 @@ namespace POLift.Core.ViewModel
         public const string PerformWarmupPageKey = "PerformWarmup";
         public const string ViewRoutineResultsPageKey = "ViewRoutineResults";
         public const string EditRoutineResultPageKey = "EditRoutineResult";
+        public const string OrmGraphPageKey = "OrmGraph";
+        public const string SelectExerciseDifficultyPageKey = "SelectExerciseDifficulty";
+        public const string SelectProgramToDownloadPageKey = "SelectProgramToDownload";
+
 
         public ViewModelLocator()
         {
@@ -34,6 +39,10 @@ namespace POLift.Core.ViewModel
             SimpleIoc.Default.Register<ViewRoutineResultsViewModel>();
             SimpleIoc.Default.Register<TimerViewModel>();
             SimpleIoc.Default.Register<EditRoutineResultViewModel>();
+            SimpleIoc.Default.Register<OrmGraphViewModel>();
+            SimpleIoc.Default.Register<SelectExerciseDifficultyViewModel>();
+            SimpleIoc.Default.Register<SideMenuViewModel>();
+            SimpleIoc.Default.Register<SelectProgramToDownloadViewModel>();
 
             SelectExercise.CreateExerciseViewModel = CreateExercise;
             CreateRoutine.SelectExerciseViewModel = SelectExercise;
@@ -43,10 +52,81 @@ namespace POLift.Core.ViewModel
 
             PerformRoutine.PerformWarmupViewModel = PerformWarmup;
             PerformRoutine.TimerViewModel = Timer;
-
+            PerformRoutine.EditRoutineResultViewModel = EditRoutineResult;
+            PerformRoutine.CreateRoutineViewModel = CreateRoutine;
+            
             PerformWarmup.TimerViewModel = Timer;
 
+            ViewRoutineResults.EditRoutineResultViewModel = EditRoutineResult;
+
+            OrmGraph.SelectExerciseDifficultyViewModel = SelectExerciseDifficulty;
+
             Timer.Timer = new PclTimer();
+        }
+
+        DialogService _DialogService;
+        public DialogService DialogService
+        {
+            get
+            {
+                return _DialogService;
+            }
+            set
+            {
+                _DialogService = value;
+
+                PerformRoutine.DialogService = value;
+                PerformWarmup.DialogService = value;
+                SelectExercise.DialogService = value;
+                ViewRoutineResults.DialogService = value;
+            }
+        }
+
+        IToaster _Toaster;
+        public IToaster Toaster
+        {
+            get
+            {
+                return _Toaster;
+            }
+            set
+            {
+                _Toaster = value;
+
+                Main.Toaster = value;
+                CreateExercise.Toaster = value;
+                CreateRoutine.Toaster = value;
+            }
+        }
+
+        KeyValueStorage _KeyValueStorage;
+        public KeyValueStorage KeyValueStorage
+        {
+            get
+            {
+                return _KeyValueStorage;
+            }
+            set
+            {
+                _KeyValueStorage = value;
+
+                CreateExercise.KeyValueStorage = value;
+            }
+        }
+
+        IMainThreadInvoker _MainThreadInvoker;
+        public IMainThreadInvoker MainThreadInvoker
+        {
+            get
+            {
+                return _MainThreadInvoker;
+            }
+            set
+            {
+                _MainThreadInvoker = value;
+
+                Timer.MainThreadInvoker = value;
+            }
         }
 
         public MainViewModel Main
@@ -118,6 +198,38 @@ namespace POLift.Core.ViewModel
             get
             {
                 return ServiceLocator.Current.GetInstance<EditRoutineResultViewModel>();
+            }
+        }
+
+        public OrmGraphViewModel OrmGraph
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<OrmGraphViewModel>();
+            }
+        }
+
+        public SelectExerciseDifficultyViewModel SelectExerciseDifficulty
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<SelectExerciseDifficultyViewModel>();
+            }
+        }
+
+        public SideMenuViewModel SideMenu
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<SideMenuViewModel>();
+            }
+        }
+
+        public SelectProgramToDownloadViewModel SelectProgramToDownload
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<SelectProgramToDownloadViewModel>();
             }
         }
 

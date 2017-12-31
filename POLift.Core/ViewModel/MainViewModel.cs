@@ -94,9 +94,20 @@ namespace POLift.Core.ViewModel
             {
                 return navigateCommand
                     ?? (navigateCommand =
-                        new RelayCommand(()
-                        => navigationService.NavigateTo(
-                            ViewModelLocator.CreateRoutinePageKey)));
+                        new RelayCommand(CreateRoutineNavigate));
+            }
+        }
+
+        void CreateRoutineNavigate()
+        {
+            try
+            {
+                navigationService.NavigateTo(
+                    ViewModelLocator.CreateRoutinePageKey);
+            }
+            catch(Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine(e.ToString());
             }
         }
 

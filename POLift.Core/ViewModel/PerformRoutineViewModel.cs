@@ -1,18 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Views;
-using GalaSoft.MvvmLight;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace POLift.Core.ViewModel
 {
     using Model;
     using Service;
-    using Helpers;
 
     public class PerformRoutineViewModel : ViewModelBase, IValueReturner<IRoutineResult>
     {
@@ -25,6 +21,7 @@ namespace POLift.Core.ViewModel
         public IPerformWarmupViewModel PerformWarmupViewModel;
         public ITimerViewModel TimerViewModel;
         public ICreateRoutineViewModel CreateRoutineViewModel;
+        public IEditRoutineResultViewModel EditRoutineResultViewModel;
 
         public PerformRoutineViewModel(INavigationService navigationService, IPOLDatabase database)
         {
@@ -549,7 +546,23 @@ namespace POLift.Core.ViewModel
 
         public void IMadeAMistake()
         {
-            Toaster?.DisplayError("IMadeAMistake not implemented");
+            try
+            {
+                EditRoutineResultViewModel.DoneEditing += EditRoutineResultViewModel_DoneEditing;
+                EditRoutineResultViewModel.RoutineResult = this.RoutineResult;
+                navigationService.NavigateTo(ViewModelLocator.EditRoutineResultPageKey);
+            }
+            catch(Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine(e.ToString());
+            }
+        }
+
+        private void EditRoutineResultViewModel_DoneEditing()
+        {
+            RefreshRoutineDetails();
+
+            EditRoutineResultViewModel.DoneEditing -= EditRoutineResultViewModel_DoneEditing;
         }
 
         RelayCommand _IMadeAMistakeCommand;

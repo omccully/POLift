@@ -39,6 +39,7 @@
     <Compile Include="Model\Exercise.cs" />
     <Compile Include="Model\ExerciseCategory.cs" />
     <Compile Include="Model\ExerciseDifficulty.cs" />
+    <Compile Include="Model\ExerciseDifficultyCategory.cs" />
     <Compile Include="Model\ExerciseResult.cs" />
     <Compile Include="Model\ExerciseSets.cs" />
     <Compile Include="Model\ExternalProgram.cs" />
@@ -88,9 +89,13 @@
     <Compile Include="ViewModel\Interfaces\ITimerViewModel.cs" />
     <Compile Include="ViewModel\IValueReturner.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
+    <Compile Include="ViewModel\OrmGraphViewModel.cs" />
     <Compile Include="ViewModel\PerformRoutineViewModel.cs" />
     <Compile Include="ViewModel\PerformWarmupViewModel.cs" />
+    <Compile Include="ViewModel\SelectExerciseDifficultyViewModel.cs" />
     <Compile Include="ViewModel\SelectExerciseViewModel.cs" />
+    <Compile Include="ViewModel\SelectProgramToDownloadViewModel.cs" />
+    <Compile Include="ViewModel\SideMenuViewModel.cs" />
     <Compile Include="ViewModel\TimerViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Compile Include="ViewModel\ViewRoutineResultsViewModel.cs" />
