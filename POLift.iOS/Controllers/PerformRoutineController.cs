@@ -12,7 +12,7 @@ using GalaSoft.MvvmLight.Helpers;
 
 namespace POLift.iOS.Controllers
 {
-    public partial class PerformRoutineController : DatabaseController, IValueReturner<IRoutineResult>
+    public partial class PerformRoutineController : UIViewController, IValueReturner<IRoutineResult>
     {
         // Keep track of bindings to avoid premature garbage collection
         private readonly List<Binding> bindings = new List<Binding>();

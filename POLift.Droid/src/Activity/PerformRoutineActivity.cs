@@ -65,8 +65,8 @@ namespace POLift.Droid
             System.Diagnostics.Debug.WriteLine("PerformRoutineActivity.OnCreate()");
             
             base.OnCreate(savedInstanceState);
-            System.Diagnostics.Debug.WriteLine("base finish " + sw.ElapsedMilliseconds + "ms");
-            Log.Debug("POLift", "base finish " + sw.ElapsedMilliseconds + "ms");
+            //System.Diagnostics.Debug.WriteLine("base finish " + sw.ElapsedMilliseconds + "ms");
+            //Log.Debug("POLift", "base finish " + sw.ElapsedMilliseconds + "ms");
             Database = C.ontainer.Resolve<IPOLDatabase>();
 
             /*if (IsTaskRoot)
@@ -201,10 +201,10 @@ namespace POLift.Droid
             // var toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
             //SetActionBar(toolbar);
             //ActionBar.Title = $"Perform {Routine.Name} routine";
-            Log.Debug("POLift", "perform_0 finish " + sw.ElapsedMilliseconds + "ms");
+            //Log.Debug("POLift", "perform_0 finish " + sw.ElapsedMilliseconds + "ms");
             RefreshGUI();
 
-            Log.Debug("POLift", "perform finish " + sw.ElapsedMilliseconds + "ms");
+            //Log.Debug("POLift", "perform finish " + sw.ElapsedMilliseconds + "ms");
         }
 
         

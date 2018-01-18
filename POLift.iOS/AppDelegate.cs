@@ -1,6 +1,8 @@
 ﻿using Foundation;
 using UIKit;
 
+using System.IO;
+
 using POLift.Core.Service;
 using POLift.Core.ViewModel;
 
@@ -11,6 +13,7 @@ using GalaSoft.MvvmLight.Views;
 using Unity;
 using DialogService = POLift.Core.Service.DialogService;
 using IDialogService = POLift.Core.Service.IDialogService;
+using SQLite.Net.Platform.XamarinIOS;
 
 namespace POLift.iOS
 {
@@ -31,6 +34,10 @@ namespace POLift.iOS
             set;
         }
 
+        static string DatabaseFileName = "database.db3";
+        static string DatabaseDirectory = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
+        static string DatabasePath = Path.Combine(DatabaseDirectory, DatabaseFileName);
+
         public override bool FinishedLaunching(UIApplication application, NSDictionary launchOptions)
         {
             // Override point for customization after application launch.
@@ -38,9 +45,11 @@ namespace POLift.iOS
 
             DispatcherHelper.Initialize(application);
 
-            IPOLDatabase database = C.ontainer.Resolve<IPOLDatabase>();
-            SimpleIoc.Default.Register<IPOLDatabase>(() =>
-                database);
+            IPOLDatabase database = new POLDatabase(
+                new SQLitePlatformIOS(),
+                DatabasePath);
+
+            SimpleIoc.Default.Register<IPOLDatabase>(() => database);
 
             var nav = new NavigationService();
             SimpleIoc.Default.Register<INavigationService>(() => nav);
@@ -61,7 +70,6 @@ namespace POLift.iOS
             nav.Configure(ViewModelLocator.SelectExerciseDifficultyPageKey, "SelectExerciseDifficultyPage");
             nav.Configure(ViewModelLocator.SelectProgramToDownloadPageKey, "SelectProgramToDownloadPage");
 
-
             ViewModelLocator l = ViewModelLocator.Default;
             l.KeyValueStorage = new UserDefaultsKeyValueStorage();
             //new DatabaseKeyValueStorage(database);
@@ -71,6 +79,15 @@ namespace POLift.iOS
             l.Toaster = new Toaster();
 
             l.MainThreadInvoker = new MainThreadInvoker(application);
+
+            string device_id = UIDevice
+                .CurrentDevice.IdentifierForVendor.AsString();
+            System.Console.WriteLine("device_id = " + device_id);
+            l.LicenseManager = new LicenseManager(device_id, l.KeyValueStorage);
+
+            l.CheckLicenseAndPrompt();
+
+            //l.PromptUserForStartingNextRoutine(database, nav);
 
             return true;
         }

@@ -2,27 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.IO;
 using System.Net;
-using System.Threading.Tasks;
 
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
-using Android.Provider;
-using Plugin.CurrentActivity;
 using Plugin.InAppBilling;
 using Plugin.InAppBilling.Abstractions;
 
-using ILicenseManager = POLift.Droid.Service.ILicenseManager;
-
-namespace POLift.Droid.Service
+namespace POLift.Core.Service
 {
-    using Core.Service;
-
     public class LicenseManager : ILicenseManager
     {
         public static readonly string ProductID = "polift_license";
@@ -40,30 +28,36 @@ namespace POLift.Droid.Service
             get
             {
                 string device_id_encoded = WebUtility.UrlEncode(DeviceID);
-                string domain = "polift-app.com";
+                string domain = "crystalmathlabs.com";
                 string path = $"polift/check_license.php?device_id={device_id_encoded}";
                 return $"http://{domain}/{path}";
             }
         }
 
-        ISharedPreferences _BackupPreferences;
-        public ISharedPreferences BackupPreferences
+        KeyValueStorage _KeyValueStorage;
+        public KeyValueStorage KeyValueStorage
         {
             get
             {
-                return _BackupPreferences;
+                return _KeyValueStorage;
             }
             set
             {
-                _BackupPreferences = value;
-                if(value != null && !value.Contains(TimeOfFirstLaunchKey))
+                _KeyValueStorage = value;
+                if (value != null)
                 {
-                    value.Edit().PutLong(TimeOfFirstLaunchKey, Core.Service.Helpers.UnixTimeStamp()).Apply();
+                    if(value.GetInteger(TimeOfFirstLaunchKey, 0) == 0)
+                    {
+                        // first launch time was never set
+
+                        value.SetValue(TimeOfFirstLaunchKey,
+                            (int)Helpers.UnixTimeStamp());
+                    }
                 }
             }
         }
 
-        public LicenseManager(string device_id, ISharedPreferences backup_preferences = null)
+        public LicenseManager(string device_id, KeyValueStorage kvs = null)
         {
             this.DeviceID = device_id;
 
@@ -72,6 +66,8 @@ namespace POLift.Droid.Service
 
             lazy_CheckLicense = new Lazy<Task<bool>>(
                 CheckLicenseStrict_NotCached);
+
+            KeyValueStorage = kvs;
         }
 
         public async Task<bool> IsInTrialPeriod()
@@ -83,7 +79,7 @@ namespace POLift.Droid.Service
         private async Task<int> SecondsRemainingInTrialFromServer_NotCached()
         {
             WebRequest web_request = HttpWebRequest.Create(LicenseLookupURL);
-            web_request.Timeout = 3000;
+            //web_request.Timeout = 3000;
             web_request.Proxy = null;
 
             System.Diagnostics.Debug.WriteLine("Querying license server");
@@ -117,9 +113,9 @@ namespace POLift.Droid.Service
             }
             catch (Exception e)
             {
-                if (BackupPreferences != null)
+                if (KeyValueStorage != null)
                 {
-                    long first_launch = BackupPreferences.GetLong(TimeOfFirstLaunchKey, 0);
+                    long first_launch = KeyValueStorage.GetInteger(TimeOfFirstLaunchKey, 0);
 
                     if (first_launch != 0)
                     {
@@ -127,7 +123,7 @@ namespace POLift.Droid.Service
                         int sec_left = (int)(trial_end_time - Core.Service.Helpers.UnixTimeStamp());
 
                         return sec_left;
-                    }    
+                    }
                 }
 
                 throw e;
@@ -157,7 +153,7 @@ namespace POLift.Droid.Service
             }
             catch
             {
-                return BackupPreferences.GetBoolean(HasLicenseConfirmedKey, default_result);
+                return KeyValueStorage.GetBoolean(HasLicenseConfirmedKey, default_result);
             }
         }
 
@@ -184,17 +180,17 @@ namespace POLift.Droid.Service
                     System.Diagnostics.Debug.WriteLine($"{purchase.ProductId} purchase = " + purchase);
                     if (purchase.ProductId == ProductID)
                     {
-                        if(BackupPreferences != null)
+                        if (KeyValueStorage != null)
                         {
-                            BackupPreferences.Edit().PutBoolean(HasLicenseConfirmedKey, true).Apply();
+                            KeyValueStorage.SetValue(HasLicenseConfirmedKey, true);
                         }
-                        
+
                         return true;
                     }
                 }
-                if (BackupPreferences != null)
+                if (KeyValueStorage != null)
                 {
-                    BackupPreferences.Edit().PutBoolean(HasLicenseConfirmedKey, false).Apply();
+                    KeyValueStorage.SetValue(HasLicenseConfirmedKey, false);
                 }
                 return false;
             }
@@ -225,9 +221,9 @@ namespace POLift.Droid.Service
 
                 if (purchase != null)
                 {
-                    if (BackupPreferences != null)
+                    if (KeyValueStorage != null)
                     {
-                        BackupPreferences.Edit().PutBoolean(HasLicenseConfirmedKey, true).Apply();
+                        KeyValueStorage.SetValue(HasLicenseConfirmedKey, true);
                     }
                     return true;
                 }

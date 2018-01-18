@@ -34,7 +34,7 @@ namespace POLift.iOS.Controllers
 
             side_menu.SidebarController = SidebarController;
 
-            SidebarController.MenuWidth = 220;
+            SidebarController.MenuWidth = 280;
             SidebarController.ReopenOnRotate = false;
             SidebarController.MenuLocation = MenuLocations.Left;
         }

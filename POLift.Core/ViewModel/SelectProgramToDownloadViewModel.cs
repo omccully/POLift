@@ -50,7 +50,13 @@ namespace POLift.Core.ViewModel
             try
             {
                 // TODO: notify view of programs list changed
-                Programs = await ExternalProgram.QueryProgramsList();
+                //Service.Helpers.HttpQueryAsync("https://apple.com");
+
+                //Programs = await ExternalProgram.QueryProgramsList(
+                //    "https://crystalmathlabs.com/polift/programs_list.php");
+                Programs = await ExternalProgram.QueryProgramsList(
+                    ExternalProgram.ProgramsListUrl);
+
             }
             catch
             {
@@ -73,7 +79,7 @@ namespace POLift.Core.ViewModel
             try
             {
                 string url = ProgramToUrl(program);
-
+                System.Diagnostics.Debug.WriteLine("ImportFromUrlAsync(" + url);
                 await Service.Helpers.ImportFromUrlAsync(url, Database, "", FileOperations, false);
 
                 navigationService.GoBack();
@@ -87,7 +93,7 @@ namespace POLift.Core.ViewModel
 
         string ProgramToUrl(ExternalProgram program)
         {
-            return "http://crystalmathlabs.com/polift/programs/" + program.file;
+            return "https://crystalmathlabs.com/polift/programs/" + program.file;
         }
 
 

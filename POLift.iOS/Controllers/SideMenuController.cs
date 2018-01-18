@@ -25,6 +25,7 @@ namespace POLift.iOS.Controllers
         public SideMenuController (IntPtr handle) : base (handle)
         {
         }
+        List<INavigation> Navigations;
 
         public override void ViewDidLoad()
         {
@@ -33,7 +34,7 @@ namespace POLift.iOS.Controllers
             NavigationLinkTableView.RegisterClassForCellReuse(
                 typeof(UITableViewCell), NavigationDataSource.NavigationCellId);
 
-            List<INavigation> Navigations = new List<INavigation>()
+            Navigations = new List<INavigation>()
             {
                 new Navigation("Select routine", Vm.SelectRoutineNavigate),
                 new Navigation("View recent sessions", Vm.ViewRecentSessionsNavigate),
@@ -41,18 +42,16 @@ namespace POLift.iOS.Controllers
 
                 new Navigation("Get free lifting programs", Vm.GetFreeWeightliftingPrograms),
                 //    Resource.Mipmap.ic_cloud_download_white_24dp),
-                /*new Navigation("Backup data", BackupData_Click,
-                    Resource.Mipmap.ic_backup_white_24dp),
-                new Navigation("Import data from backup", RestoreData_Click,
+                //new Navigation("Backup data", BackupData_Click),
+                /*new Navigation("Import data from backup", RestoreData_Click,
                     Resource.Mipmap.ic_cloud_download_white_24dp),
                 new Navigation("Import routines and exercises only", ImportRoutinesAndExercises_Click,
                     Resource.Mipmap.ic_cloud_download_white_24dp),*/
                 //
 
                 /*new Navigation("Settings", Settings_Click,
-                    Resource.Mipmap.ic_settings_white_24dp),
-                new Navigation("Help & feedback", HelpAndFeedback_Click,
-                    Resource.Mipmap.ic_help_white_24dp)*/
+                    Resource.Mipmap.ic_settings_white_24dp),*/
+                new Navigation("Help & feedback", HelpAndFeedback_Click)
 
                     /*,
                      * TODO: export data as text
@@ -60,12 +59,47 @@ namespace POLift.iOS.Controllers
                     Resource.Mipmap.ic_backup_white_24dp)*/
             };
 
+            if(Vm.ShowRateApp)
+            {
+                Navigations.Add(new Navigation("Rate app", RateApp_Click));
+            }
+
             NavigationDataSource nds = 
                 new NavigationDataSource(Navigations);
 
             NavigationLinkTableView.Source = nds;
 
             nds.RowClicked += Nds_RowClicked;
+
+            AddPurchaseLicenseNavigation();
+        }
+
+        async void AddPurchaseLicenseNavigation()
+        {
+            Navigation purchase_license_nav =
+                await Vm.GetPurchaseLicenseNavigationLink();
+            if (purchase_license_nav != null)
+            {
+                Navigations.Add(purchase_license_nav);
+                NavigationLinkTableView.ReloadData();
+            }
+        }
+
+        private void RateApp_Click(object sender, EventArgs e)
+        {
+           
+        }
+
+        private void HelpAndFeedback_Click(object sender, EventArgs e)
+        {
+            UIApplication.SharedApplication.OpenUrl(
+                new NSUrl(SideMenuViewModel.HelpUrl));
+        }
+
+        private void BackupData_Click(object sender, EventArgs e)
+        {
+            //UIActivityViewController uiavc = new UIActivityViewController()
+            
         }
 
         private void Nds_RowClicked(INavigation nav)
@@ -91,8 +125,9 @@ namespace POLift.iOS.Controllers
                 UITableViewCell cell = 
                     tableView.DequeueReusableCell(NavigationCellId);
 
+                cell.BackgroundColor = UIColor.Clear;
                 cell.TextLabel.Text = Navigations[indexPath.Row].Text;
-
+                cell.TextLabel.TextColor = UIColor.White;
                 return cell;
             }
 

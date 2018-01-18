@@ -74,7 +74,7 @@ namespace POLift.Droid
             Log.Debug("POLift", "WarmupRoutineActivity.OnCreate()");
 
             base.OnCreate(savedInstanceState);
-            Log.Debug("POLift", "Warmup after base " + sw.ElapsedMilliseconds + "ms");
+           // Log.Debug("POLift", "Warmup after base " + sw.ElapsedMilliseconds + "ms");
 
 
             // Create your application here
@@ -139,6 +139,18 @@ namespace POLift.Droid
         }
 
 
+        protected override void OnRestoreInstanceState(Bundle savedInstanceState)
+        {
+            int warmup_set_index_intent = Intent.GetIntExtra("warmup_set_index", 0);
+            if (savedInstanceState != null)
+            {
+                Log.Debug("POLift", "Restoring WarmupRoutine from saved state in OnRestoreInstanceState. state[warmup_set_index] = " +
+                    savedInstanceState.GetInt("warmup_set_index", -9999));
+                WarmupSetIndex = savedInstanceState.GetInt("warmup_set_index", warmup_set_index_intent);
+            }
+
+            base.OnRestoreInstanceState(savedInstanceState);
+        }
 
         private void IMadeAMistakeButton_Click(object sender, EventArgs e)
         {

@@ -74,6 +74,12 @@ namespace POLift.iOS.Controllers
             return _SectionIndexTitles;
         }
 
+        public override string TitleForHeader(UITableView tableView, nint section)
+        {
+            return SectionIndexTitles(tableView)[section];
+        }
+
+
         public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
         {
             UITableViewCell cell = TableView.DequeueReusableCell(ExerciseDifficultyCellId);

@@ -16,6 +16,7 @@ using Plugin.CurrentActivity;
 using Android.Util;
 using Plugin.InAppBilling;
 using Plugin.InAppBilling.Abstractions;
+using ILicenseManager = POLift.Droid.Service.ILicenseManager;
 
 using Microsoft.Practices.Unity;
 
@@ -35,7 +36,7 @@ namespace POLift.Droid
     public class MainApplication : Application, Application.IActivityLifecycleCallbacks
     {
         Handler handler;
-        ILicenseManager license_manager;
+        Service.ILicenseManager license_manager;
         IPOLDatabase Database;
 
         public MainApplication(IntPtr handle, JniHandleOwnership transer)
@@ -58,7 +59,7 @@ namespace POLift.Droid
             C.DeviceID = Settings.Secure.GetString(
                     ApplicationContext.ContentResolver,
                     Settings.Secure.AndroidId);
-            license_manager = C.ontainer.Resolve<ILicenseManager>();
+            license_manager = C.ontainer.Resolve<Service.ILicenseManager>();
 
             license_manager.BackupPreferences = 
                 PreferenceManager.GetDefaultSharedPreferences(this);

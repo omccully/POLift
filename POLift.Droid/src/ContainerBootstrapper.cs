@@ -13,6 +13,8 @@ using Android.Widget;
 using Android.Provider;
 
 using Microsoft.Practices.Unity;
+using ILicenseManager = POLift.Droid.Service.ILicenseManager;
+using LicenseManager = POLift.Droid.Service.LicenseManager;
 
 namespace POLift.Droid
 {
@@ -37,8 +39,8 @@ namespace POLift.Droid
             set
             {
                 _DeviceID = value;
-                ontainer.RegisterInstance<ILicenseManager>(
-                    new LicenseManager(value));
+                ontainer.RegisterInstance<Service.ILicenseManager>(
+                    new Service.LicenseManager(value));
             }
         }
 

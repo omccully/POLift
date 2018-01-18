@@ -70,7 +70,7 @@ namespace POLift.iOS.Controllers
             if (ViewControllers.Length == 0)
             {
                 viewController.NavigationItem.SetLeftBarButtonItem(
-                    new UIBarButtonItem("nav",
+                    new UIBarButtonItem("nava",
                     UIBarButtonItemStyle.Plain,
                     delegate
                     {

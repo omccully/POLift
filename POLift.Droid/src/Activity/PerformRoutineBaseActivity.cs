@@ -15,7 +15,7 @@ using Android.Support.Compat;
 using Android.Support.V4.App;
 
 using Microsoft.Practices.Unity;
-
+using ILicenseManager = POLift.Droid.Service.ILicenseManager;
 using TaskStackBuilder = Android.Support.V4.App.TaskStackBuilder;
 
 namespace POLift.Droid
@@ -133,7 +133,9 @@ namespace POLift.Droid
 
             parent_intent = (Intent)Intent.GetParcelableExtra("parent_intent");
 
-            LicenseManager = C.ontainer.Resolve<ILicenseManager>();
+            LicenseManager = C.ontainer.Resolve<Service.ILicenseManager>();
+
+            Window.SetSoftInputMode(SoftInput.StateHidden);
 
             if (LicenseManager.ShowAds)
             {
@@ -274,6 +276,15 @@ namespace POLift.Droid
         {
             SaveTimerState(outState);
             base.OnSaveInstanceState(outState);
+        }
+
+        protected override void OnRestoreInstanceState(Bundle savedInstanceState)
+        {
+            Log.Debug("POLift", "PerformRoutineBaseActivity.OnRestoreInstanceState()");
+
+            RestoreTimerState(savedInstanceState);
+
+            base.OnRestoreInstanceState(savedInstanceState);
         }
 
         const string Add30SecCountKey = "add_30_sec_count";

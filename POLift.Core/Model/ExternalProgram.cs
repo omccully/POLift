@@ -23,9 +23,10 @@ namespace POLift.Core.Model
         public string description;
         public string file;
 
-        public static async Task<ExternalProgram[]> QueryProgramsList()
+        public static async Task<ExternalProgram[]> QueryProgramsList(string url = null)
         {
-            string response = await Helpers.HttpQueryAsync(ProgramsListUrl);
+            string response = await Helpers.HttpQueryAsync(
+                url == null ? ProgramsListUrl : url);
 
             return JsonConvert.DeserializeObject<ExternalProgram[]>(response);
         }

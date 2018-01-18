@@ -7,8 +7,11 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
 using Microsoft.Practices.ServiceLocation;
 
+
 namespace POLift.Core.ViewModel
 {
+    using GalaSoft.MvvmLight.Views;
+    using Model;
     using Service;
 
     public class ViewModelLocator
@@ -25,10 +28,22 @@ namespace POLift.Core.ViewModel
         public const string SelectExerciseDifficultyPageKey = "SelectExerciseDifficulty";
         public const string SelectProgramToDownloadPageKey = "SelectProgramToDownload";
 
-
         public ViewModelLocator()
         {
             ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
+
+            if (ViewModelBase.IsInDesignModeStatic)
+            {
+                // Create design time view services and models
+                var nav = new DesignNavigationService();
+                SimpleIoc.Default.Register<INavigationService>(() => nav);
+               
+            }
+            else
+            {
+                // Create run time view services and models
+                
+            }
 
             SimpleIoc.Default.Register<MainViewModel>();
             SimpleIoc.Default.Register<PerformRoutineViewModel>();
@@ -111,6 +126,12 @@ namespace POLift.Core.ViewModel
                 _KeyValueStorage = value;
 
                 CreateExercise.KeyValueStorage = value;
+                SideMenu.KeyValueStorage = value;
+
+                if(LicenseManager != null)
+                {
+                    LicenseManager.KeyValueStorage = value;
+                }
             }
         }
 
@@ -127,6 +148,131 @@ namespace POLift.Core.ViewModel
 
                 Timer.MainThreadInvoker = value;
             }
+        }
+
+        ILicenseManager _LicenseManager;
+        public ILicenseManager LicenseManager
+        {
+            get
+            {
+                return _LicenseManager;
+            }
+            set
+            {
+                _LicenseManager = value;
+
+                if(_LicenseManager != null &&
+                    _LicenseManager.KeyValueStorage == null &&
+                    KeyValueStorage != null)
+                {
+                    _LicenseManager.KeyValueStorage = KeyValueStorage;
+                }
+
+                SideMenu.LicenseManager = value;
+            }
+        }
+
+        public void PromptUserForStartingNextRoutine(IPOLDatabase Database, INavigationService nav)
+        {
+            System.Diagnostics.Debug.WriteLine("finding next routine...");
+            var rrs = Database.Table<RoutineResult>().OrderByDescending(rr => rr.StartTime);
+            RoutineResult latest_routine_result = rrs.ElementAtOrDefault(0);
+            if (latest_routine_result == null)
+            {
+                System.Diagnostics.Debug.WriteLine("no recent routine result");
+                return;
+            }
+            if (!latest_routine_result.Completed)
+            {
+                int ec = latest_routine_result.ExerciseCount;
+                int erc = latest_routine_result.ExerciseResults.Count();
+                System.Diagnostics.Debug.WriteLine($"latest routine result was uncompleted. ec={ec}, erc={erc}");
+                //
+                return;
+            }
+
+            if ((DateTime.Now - latest_routine_result.StartTime) < TimeSpan.FromHours(20))
+            {
+                System.Diagnostics.Debug.WriteLine($"latest routine result was started less than 20 hours ago");
+                return;
+            }
+
+            int latest_routine_id = latest_routine_result.RoutineID;
+            string latest_routine_name = latest_routine_result.Routine.Name;
+
+            int previous_routine_id = -1;
+            foreach (RoutineResult rr in rrs)
+            {
+                System.Diagnostics.Debug.WriteLine("checking " + rr);
+                if (previous_routine_id != -1 &&
+                    (rr.RoutineID == latest_routine_id || rr.Routine.Name == latest_routine_name))
+                {
+                    Routine next_routine = Database.ReadByID<Routine>(previous_routine_id);
+
+                    System.Diagnostics.Debug.WriteLine("next routine found");
+
+                    DialogService.DisplayConfirmationNeverShowAgain(
+                        "Based on your history, it looks like your next routine is " +
+                        $"\"{next_routine.Name}\". Would you like to do this routine now?",
+                        "start_next_routine",
+                        delegate
+                        {
+                            PerformRoutine.Routine = next_routine;
+                            nav.NavigateTo(PerformRoutinePageKey);
+                        });
+
+                    break;
+                }
+
+                previous_routine_id = rr.RoutineID;
+            }
+        }
+
+        public async Task CheckLicenseAndPrompt()
+        {
+            try
+            {
+                const int TimeDay = 86400;
+                const int TimeWeek = 7 * TimeDay;
+                const int WarningPeriod = 7 * TimeDay;
+
+                bool has_license = await LicenseManager.CheckLicense();
+                System.Diagnostics.Debug.WriteLine($"has_license = {has_license}");
+                if (!has_license)
+                {
+                    int seconds_left_in_trial = await LicenseManager.SecondsRemainingInTrial();
+                    bool is_in_trial = seconds_left_in_trial > 0;
+
+                    System.Diagnostics.Debug.WriteLine
+                        ($"is_in_trial = {is_in_trial}, {seconds_left_in_trial} seconds left");
+
+                    if (!is_in_trial)
+                    {
+                        bool bought = await LicenseManager.PromptToBuyLicense();
+                        if (!bought)
+                        {
+                            MainThreadInvoker.Invoke(delegate
+                            {
+                                Toaster.DisplayMessage("Please consider purchasing a lifetime license to remove ads.");
+
+                            });
+                        }
+                        System.Diagnostics.Debug.WriteLine($"bought = {bought}");
+                    }
+                    else if (seconds_left_in_trial < WarningPeriod)
+                    {
+                        int days_left = seconds_left_in_trial / TimeDay;
+
+                        MainThreadInvoker.Invoke(delegate
+                        {
+                            Toaster.DisplayMessage($"You have {days_left} days left in your free trial. ");
+                        });
+
+                        System.Diagnostics.Debug.WriteLine($"You have {days_left} days left in your free trial. ");
+                    }
+                }
+            }
+            catch { }
         }
 
         public MainViewModel Main

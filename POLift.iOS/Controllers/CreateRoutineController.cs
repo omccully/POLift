@@ -16,7 +16,7 @@ using GalaSoft.MvvmLight.Helpers;
 
 namespace POLift.iOS.Controllers
 {
-    public partial class CreateRoutineController : DatabaseController
+    public partial class CreateRoutineController : UIViewController
     {
         private readonly List<Binding> bindings = new List<Binding>();
 

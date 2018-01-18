@@ -11,7 +11,7 @@ using POLift.Core.Service;
 
 namespace POLift.iOS.Controllers
 {
-    public class PerformRoutineBaseController : DatabaseController
+    public class PerformRoutineBaseController : UIViewController
     {
         protected IExercise CurrentExercise;
 

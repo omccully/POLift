@@ -18,7 +18,7 @@ using SidebarNavigation;
 
 namespace POLift.iOS.Controllers
 {
-    public partial class MainController : DatabaseController
+    public partial class MainController : UIViewController
     {
         // Keep track of bindings to avoid premature garbage collection
         private readonly List<Binding> bindings = new List<Binding>();

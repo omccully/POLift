@@ -37,8 +37,7 @@ namespace POLift.iOS.Controllers
         {
             base.ViewDidLoad();
 
-            RoutineResultsTableView.RowHeight = UITableView.AutomaticDimension;
-            RoutineResultsTableView.EstimatedRowHeight = 70f;
+           
 
             try
             {
@@ -60,6 +59,10 @@ namespace POLift.iOS.Controllers
             rrds.DeleteClicked += Vm.DeleteRoutineResult;
 
             RoutineResultsTableView.Source = rrds;
+
+            RoutineResultsTableView.RowHeight = UITableView.AutomaticDimension;
+            RoutineResultsTableView.EstimatedRowHeight = 120f;
+            RoutineResultsTableView.ReloadData();
         }
 
         class RoutineResultsDataSource : DeleteTableViewSource<IRoutineResult>

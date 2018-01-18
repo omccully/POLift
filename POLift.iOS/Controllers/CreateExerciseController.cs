@@ -10,7 +10,7 @@ using GalaSoft.MvvmLight.Helpers;
 
 namespace POLift.iOS.Controllers
 {
-    public partial class CreateExerciseController : DatabaseController
+    public partial class CreateExerciseController : UIViewController
     {
         // Keep track of bindings to avoid premature garbage collection
         private readonly List<Binding> bindings = new List<Binding>();

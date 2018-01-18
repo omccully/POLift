@@ -15,7 +15,7 @@ using GalaSoft.MvvmLight.Helpers;
 
 namespace POLift.iOS.Controllers
 {
-    public partial class SelectExerciseController : DatabaseController
+    public partial class SelectExerciseController : UIViewController
     {
         private SelectExerciseViewModel Vm
         {

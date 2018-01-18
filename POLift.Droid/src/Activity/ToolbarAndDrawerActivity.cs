@@ -25,6 +25,7 @@ using Toolbar = Android.Support.V7.Widget.Toolbar;
 using ActionBarDrawerToggle = Android.Support.V7.App.ActionBarDrawerToggle;
 using FragmentManager = Android.App.FragmentManager;
 using FragmentTransaction = Android.App.FragmentTransaction;
+using ILicenseManager = POLift.Droid.Service.ILicenseManager;
 
 using Microsoft.Practices.Unity;
 
@@ -44,7 +45,7 @@ namespace POLift.Droid
         NavigationAdapter _NavigationAdapter;
 
         protected IPOLDatabase Database;
-        protected ILicenseManager LicenseManager;
+        protected Service.ILicenseManager LicenseManager;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -54,7 +55,7 @@ namespace POLift.Droid
             SetContentView(Resource.Layout.Drawer);
 
             Database = C.ontainer.Resolve<IPOLDatabase>();
-            LicenseManager = C.ontainer.Resolve<ILicenseManager>();
+            LicenseManager = C.ontainer.Resolve<Service.ILicenseManager>();
 
             _DrawerLayout = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
             DrawerListView = FindViewById<ListView>(Resource.Id.left_drawer);
