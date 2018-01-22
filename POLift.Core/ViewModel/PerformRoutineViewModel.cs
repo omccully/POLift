@@ -519,6 +519,7 @@ namespace POLift.Core.ViewModel
             {
                 // routine wasn't started
                 this.RoutineResult = new RoutineResult(new_routine, Database);
+                System.Diagnostics.Debug.WriteLine("Routine wasn't started yet, so starting new one with new_routine");
             }
             else
             {
@@ -531,7 +532,9 @@ namespace POLift.Core.ViewModel
             }
 
             // CreateRoutineViewModel "deletes" old routine (edit operation)
-            Routine = new_routine;
+            
+            // this isn't needed because setting RoutineResult also sets Routine
+            //Routine = new_routine;
         }
 
         RelayCommand _ModifyRestOfRoutineCommand;

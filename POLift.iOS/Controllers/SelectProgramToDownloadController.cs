@@ -69,6 +69,8 @@ namespace POLift.iOS.Controllers
             {
                 UITableViewCell cell = tableView.DequeueReusableCell(CellId);
 
+                cell.TextLabel.LineBreakMode = UILineBreakMode.WordWrap;
+                cell.TextLabel.Lines = 2;
                 cell.TextLabel.Text = programs
                     .ElementAt((int)indexPath.Row)
                     .title;
