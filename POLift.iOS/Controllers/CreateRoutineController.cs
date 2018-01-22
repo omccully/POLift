@@ -123,7 +123,8 @@ namespace POLift.iOS.Controllers
                 var cell = tableView.DequeueReusableCell("exercise_sets_cell")
                      as ExerciseSetsCell;
 
-                cell.Setup(ExerciseSets.ElementAt(indexPath.Row));
+                cell.Setup(ExerciseSets.ElementAt(indexPath.Row), 
+                    CanEditRow(tableView, indexPath));
 
                 return cell;
             }

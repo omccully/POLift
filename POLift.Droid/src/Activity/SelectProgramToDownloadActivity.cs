@@ -83,7 +83,7 @@ namespace POLift.Droid
         {
             try
             {
-                string url = "http://crystalmathlabs.com/polift/programs/" + program.file;
+                string url = ExternalProgram.FileUrl(program.file);
 
                 Log.Debug("POLift", $"Selected program: {program.title}, {program.description}, {program.file}");
                 //Helpers.ImportFromUri(Android.Net.Uri.Parse(url), Database, this.ContentResolver, FilesDir.Path, false);

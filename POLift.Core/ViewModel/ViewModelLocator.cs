@@ -94,6 +94,7 @@ namespace POLift.Core.ViewModel
                 PerformWarmup.DialogService = value;
                 SelectExercise.DialogService = value;
                 ViewRoutineResults.DialogService = value;
+                SelectProgramToDownload.DialogService = value;
             }
         }
 

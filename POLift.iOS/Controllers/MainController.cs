@@ -41,6 +41,8 @@ namespace POLift.iOS.Controllers
 
         }
 
+       
+
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
@@ -49,7 +51,7 @@ namespace POLift.iOS.Controllers
             RoutinesTableView.RegisterClassForCellReuse(typeof(UITableViewCell),
                 RoutinesDataSource.GetCellId<IRoutineWithLatestResult>());
 
-            RefreshRoutinesList();
+            //RefreshRoutinesList();
 
             /*CreateNewRoutineLink.TouchUpInside += (s, e) => {
                 this.NavigationController.PushViewController(
@@ -64,18 +66,30 @@ namespace POLift.iOS.Controllers
             RoutinesTableView.EstimatedRowHeight = 40f;
 
             Vm.RoutinesListChanged += Vm_RoutinesListChanged;
+            Console.WriteLine("load");
         }
 
+        public override void ViewDidAppear(bool animated)
+        {
+            base.ViewDidAppear(animated);
 
+            RefreshRoutinesList(true);
+            Console.WriteLine("appear");
+        }
 
         private void Vm_RoutinesListChanged(object sender, EventArgs e)
         {
-            RefreshRoutinesList();
+            RefreshRoutinesList(false);
         }
 
         RoutinesDataSource routine_data_source;
-        void RefreshRoutinesList()
+        void RefreshRoutinesList(bool refresh_source = false)
         {
+            if (refresh_source)
+            {
+                Vm.RefreshRoutinesList(false);
+            }
+
             routine_data_source = new RoutinesDataSource(Vm.RoutinesList.ToList());
 
             routine_data_source.RowClicked += Routine_data_source_RoutineSelected;
@@ -83,6 +97,7 @@ namespace POLift.iOS.Controllers
             routine_data_source.EditClicked += Vm.EditRoutineNavigation;
 
             RoutinesTableView.Source = routine_data_source;
+            RoutinesTableView.ReloadData();
         }
 
 

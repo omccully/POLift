@@ -17,7 +17,7 @@ namespace POLift.iOS.DataSources
 
         public event EventHandler<T> RowClicked;
         
-        protected IList<T> Data;
+        public IList<T> Data;
 
         public readonly string CellId;
 

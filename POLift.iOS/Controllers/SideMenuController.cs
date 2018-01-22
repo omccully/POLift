@@ -49,8 +49,7 @@ namespace POLift.iOS.Controllers
                     Resource.Mipmap.ic_cloud_download_white_24dp),*/
                 //
 
-                /*new Navigation("Settings", Settings_Click,
-                    Resource.Mipmap.ic_settings_white_24dp),*/
+                new Navigation("Settings", Settings_Click),
                 new Navigation("Help & feedback", HelpAndFeedback_Click)
 
                     /*,
@@ -72,6 +71,12 @@ namespace POLift.iOS.Controllers
             nds.RowClicked += Nds_RowClicked;
 
             AddPurchaseLicenseNavigation();
+        }
+
+        private void Settings_Click(object sender, EventArgs e)
+        {
+            NSUrl url = new NSUrl(UIApplication.OpenSettingsUrlString);
+            UIApplication.SharedApplication.OpenUrl(url);
         }
 
         async void AddPurchaseLicenseNavigation()

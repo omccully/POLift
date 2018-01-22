@@ -54,8 +54,9 @@ namespace POLift.Core.ViewModel
 
                 //Programs = await ExternalProgram.QueryProgramsList(
                 //    "https://crystalmathlabs.com/polift/programs_list.php");
-                Programs = await ExternalProgram.QueryProgramsList(
-                    ExternalProgram.ProgramsListUrl);
+                Programs = await ExternalProgram.QueryProgramsList();
+
+                
 
             }
             catch
@@ -66,6 +67,7 @@ namespace POLift.Core.ViewModel
 
         public void SelectExternalProgram(ExternalProgram program)
         {
+            System.Diagnostics.Debug.WriteLine("SelectExternalProgram");
             DialogService?.DisplayConfirmation("Are you sure you want to import the routines " +
                 "and exercises for the " + program.title + " lifting program?",
                 delegate
@@ -84,8 +86,9 @@ namespace POLift.Core.ViewModel
 
                 navigationService.GoBack();
             }
-            catch
+            catch(Exception e)
             {
+                System.Diagnostics.Debug.WriteLine(e);
                 Toaster?.DisplayError("Error importing program");
             }
 

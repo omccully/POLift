@@ -81,10 +81,13 @@ namespace POLift.Core.ViewModel
             }
         }
 
-        void RefreshRoutinesList()
+        public void RefreshRoutinesList(bool raise_event = false)
         {
             _RoutinesList = Helpers.MainPageRoutinesList(database);
-            RoutinesListChanged?.Invoke(this, new EventArgs());
+            if(raise_event)
+            {
+                RoutinesListChanged?.Invoke(this, new EventArgs());
+            }
         }
 
         private RelayCommand navigateCommand;

@@ -50,6 +50,7 @@ namespace POLift.iOS.Controllers
             ptvs = new ProgramsTableViewSource(Vm.Programs);
             ptvs.RowClicked += Vm.SelectExternalProgram;
             ProgramsTableView.Source = ptvs;
+            ProgramsTableView.ReloadData();
         }
 
         class ProgramsTableViewSource : UITableViewSource

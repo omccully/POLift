@@ -66,7 +66,7 @@ namespace POLift.iOS
             nav.Configure(ViewModelLocator.PerformWarmupPageKey, "PerformWarmupPage");
             nav.Configure(ViewModelLocator.ViewRoutineResultsPageKey, "ViewRoutineResultsPage");
             nav.Configure(ViewModelLocator.EditRoutineResultPageKey, "EditRoutineResultPage");
-            nav.Configure(ViewModelLocator.OrmGraphPageKey, "OrmGraphPage");
+            nav.Configure(ViewModelLocator.OrmGraphPageKey, "OrmGraphRootPage");
             nav.Configure(ViewModelLocator.SelectExerciseDifficultyPageKey, "SelectExerciseDifficultyPage");
             nav.Configure(ViewModelLocator.SelectProgramToDownloadPageKey, "SelectProgramToDownloadPage");
 
@@ -84,6 +84,8 @@ namespace POLift.iOS
                 .CurrentDevice.IdentifierForVendor.AsString();
             System.Console.WriteLine("device_id = " + device_id);
             l.LicenseManager = new LicenseManager(device_id, l.KeyValueStorage);
+
+            l.SelectProgramToDownload.FileOperations = new FileOperations();
 
             l.CheckLicenseAndPrompt();
 

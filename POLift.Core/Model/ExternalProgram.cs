@@ -14,10 +14,10 @@ namespace POLift.Core.Model
     {
         public static string FileUrl(string file)
         {
-            return "http://crystalmathlabs.com/polift/programs/" + file;
+            return "http://polift-app.com/polift/programs/" + file;
         }
 
-        public static string ProgramsListUrl = "http://crystalmathlabs.com/polift/programs_list.php";
+        public static string ProgramsListUrl = "http://polift-app.com/polift/programs_list.php";
 
         public string title;
         public string description;

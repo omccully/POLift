@@ -28,23 +28,14 @@ namespace POLift.iOS.Controllers
             //Console.WriteLine("ViewDidLoad, this.TopViewController= " + this.TopViewController);
         }
 
-        public override UIViewController[] ViewControllers { get => base.ViewControllers;
-            set
-            {
-                base.ViewControllers = value;
-                Console.WriteLine("ViewControllers.Set");
-            }
-                
-               
-
-        }
         public override void PushViewController(UIViewController viewController, bool animated)
         {
-            Console.WriteLine("before push, ViewControllers.Length=" + ViewControllers.Length);
+
+           /* Console.WriteLine("before push, ViewControllers.Length=" + ViewControllers.Length);
             for(int i = 0; i < ViewControllers.Length; i++)
             {
                 Console.WriteLine(i + ". " + ViewControllers[i].GetType().FullName);
-            }
+            }*/
 
             Type vc_type = viewController.GetType();
 
@@ -69,13 +60,28 @@ namespace POLift.iOS.Controllers
             //new UIBarButtonItem()
             if (ViewControllers.Length == 0)
             {
-                viewController.NavigationItem.SetLeftBarButtonItem(
-                    new UIBarButtonItem("nava",
+                UIImage image = UIImage.FromBundle("NavigationIcon");
+
+                EventHandler action = delegate
+                {
+                    NavigationMenuButtonClicked?.Invoke(viewController, new EventArgs());
+                };
+
+                UIButton button = new UIButton(UIButtonType.Custom);
+                button.SetImage(image, UIControlState.Normal);
+                button.AddTarget(action, UIControlEvent.TouchUpInside);
+                button.Frame = new CoreGraphics.CGRect(0, 0, 30, 30);
+
+                UIBarButtonItem bar_button = new UIBarButtonItem(button);
+
+                /* new UIBarButtonItem("nava",
                     UIBarButtonItemStyle.Plain,
                     delegate
                     {
                         NavigationMenuButtonClicked?.Invoke(viewController, new EventArgs());
-                    }), true);
+                    })*/
+
+                viewController.NavigationItem.SetLeftBarButtonItem(bar_button, true);
             }
             
 
@@ -88,3 +94,4 @@ namespace POLift.iOS.Controllers
 
     }
 }
+ 

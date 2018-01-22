@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 namespace POLift.Core.Service
 {
     using Model;
+    using System.Net.Http;
 
     public static class Helpers
     {
@@ -178,8 +179,19 @@ namespace POLift.Core.Service
             return num == 1 ? "" : "s";
         }
 
+        public static async Task<string> HttpClientQueryAsync(string url)
+        {
+            HttpClient client = new HttpClient();
+
+            HttpResponseMessage resp = await client.GetAsync(url);
+            return await resp.Content.ReadAsStringAsync();
+        }
+
         public static async Task<string> HttpQueryAsync(string url)
         {
+            //return await HttpClientQueryAsync(url);
+
+            
             WebRequest web_request = HttpWebRequest.Create(url);
             //web_request.Timeout = 4000;
             web_request.Proxy = null;
@@ -188,21 +200,24 @@ namespace POLift.Core.Service
             Task<WebResponse> response_task = web_request.GetResponseAsync();
 
             // force a 4000 ms timeout because something weird was happening
-            if (await Task.WhenAny(response_task, Task.Delay(5000)) != response_task)
+            /*if (await Task.WhenAny(response_task, Task.Delay(5000)) != response_task)
             {
                 // timeout
                 System.Diagnostics.Debug.WriteLine("Timeout " + url);
                 throw new TimeoutException();
-            }
-            System.Diagnostics.Debug.WriteLine("Received response from server  " + url);
-
+            }*/
+            
             WebResponse web_response = await response_task;
+            System.Diagnostics.Debug.WriteLine("Received response from server  " + url);
 
             using (Stream response_stream = web_response.GetResponseStream())
             {
                 using (StreamReader reponse_reader = new StreamReader(response_stream))
                 {
-                    return reponse_reader.ReadToEnd();
+                    string str = reponse_reader.ReadToEnd();
+                    System.Diagnostics.Debug.WriteLine(str);
+
+                    return str;
                 }
             }
         }

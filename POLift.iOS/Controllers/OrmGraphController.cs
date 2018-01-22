@@ -25,6 +25,8 @@ namespace POLift.iOS.Controllers
 
         public OrmGraphController (IntPtr handle) : base (handle)
         {
+            Console.WriteLine("constructing new OrmGraphController");
+
         }
 
         PlotView plot_view;
@@ -33,21 +35,43 @@ namespace POLift.iOS.Controllers
         {
             base.ViewDidLoad();
 
+            Console.WriteLine("plot_view = " + plot_view);
+
+            
+
+            Vm.PropertyChanged += Vm_PropertyChanged;
+
+            Vm.PromptUser();
+        }
+
+        bool plot_view_created = false;
+        private void Vm_PropertyChanged(object sender, 
+            System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (plot_view_created) return;
+            if (e.PropertyName != "PlotModel") return;
+
+            InitializePlot();
+        }
+
+        void InitializePlot()
+        {
             plot_view = new PlotView();
 
             CGRect frame = this.View.Frame;
             frame.Y += 10;
             frame.Height -= 10;
-
+            frame.Width -= 10;
             plot_view.Frame = frame;
 
-            bindings.Add(this.SetBinding(
-                () => Vm.PlotModel,
-                () => plot_view.Model));
+            plot_view.Model = Vm.PlotModel;
+            //bindings.Add(this.SetBinding(
+            //    () => Vm.PlotModel,
+            //    () => plot_view.Model));
 
             this.View.AddSubview(plot_view);
 
-            Vm.PromptUser();
+            plot_view_created = true;
         }
     }
 }
