@@ -33,7 +33,7 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>XSAppIconAssets</key>
-	<string>Resources/Media.xcassets/AppIcons.appiconset</string>
+	<string>Resources/Media.xcassets/PoliftAppIcons.appiconset</string>
 	<key>XSLaunchImageAssets</key>
 	<string>Resources/Media.xcassets/LaunchImages.launchimage</string>
 </dict>

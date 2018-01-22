@@ -177,10 +177,6 @@
     <Compile Include="Controllers\ViewRoutineResultsController.designer.cs">
       <DependentUpon>ViewRoutineResultsController.cs</DependentUpon>
     </Compile>
-    <Compile Include="TestController.cs" />
-    <Compile Include="TestController.designer.cs">
-      <DependentUpon>TestController.cs</DependentUpon>
-    </Compile>
     <None Include="GettingStarted.Xamarin" />
     <None Include="Info.plist" />
     <Compile Include="Controllers\PerformRoutineController.cs" />
@@ -301,6 +297,30 @@
       <InProject>false</InProject>
     </ImageAsset>
     <ImageAsset Include="Resources\Media.xcassets\NavigationIcon.imageset\Contents.json">
+      <InProject>false</InProject>
+    </ImageAsset>
+    <ImageAsset Include="Resources\Media.xcassets\PoliftAppIcons.appiconset\120.png">
+      <InProject>false</InProject>
+    </ImageAsset>
+    <ImageAsset Include="Resources\Media.xcassets\PoliftAppIcons.appiconset\180.png">
+      <InProject>false</InProject>
+    </ImageAsset>
+    <ImageAsset Include="Resources\Media.xcassets\PoliftAppIcons.appiconset\40.png">
+      <InProject>false</InProject>
+    </ImageAsset>
+    <ImageAsset Include="Resources\Media.xcassets\PoliftAppIcons.appiconset\58.png">
+      <InProject>false</InProject>
+    </ImageAsset>
+    <ImageAsset Include="Resources\Media.xcassets\PoliftAppIcons.appiconset\60.png">
+      <InProject>false</InProject>
+    </ImageAsset>
+    <ImageAsset Include="Resources\Media.xcassets\PoliftAppIcons.appiconset\80.png">
+      <InProject>false</InProject>
+    </ImageAsset>
+    <ImageAsset Include="Resources\Media.xcassets\PoliftAppIcons.appiconset\87.png">
+      <InProject>false</InProject>
+    </ImageAsset>
+    <ImageAsset Include="Resources\Media.xcassets\PoliftAppIcons.appiconset\Contents.json">
       <InProject>false</InProject>
     </ImageAsset>
   </ItemGroup>
