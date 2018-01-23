@@ -90,6 +90,7 @@ namespace POLift.Core.ViewModel
             {
                 _DialogService = value;
 
+                Main.DialogService = value;
                 PerformRoutine.DialogService = value;
                 PerformWarmup.DialogService = value;
                 SelectExercise.DialogService = value;

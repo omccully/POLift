@@ -158,8 +158,7 @@ namespace POLift.Core.ViewModel
 
         public void DeleteRoutine(IRoutine selection, Action action_if_yes = null)
         {
-            System.Diagnostics.Debug.WriteLine("DeleteRoutine");
-            DialogService?.DisplayConfirmation(
+            DialogService.DisplayConfirmation(
                     "Are you sure you want to delete the routine \"" +
                     selection.Name + "\"?",
                     delegate

@@ -20,6 +20,8 @@ namespace POLift.iOS
             EditRoutineResultButton.TouchUpInside += EditClicked;
 
             RoutineResultLabel.Text = rr.ToString();
+
+            
         }
     }
 }
