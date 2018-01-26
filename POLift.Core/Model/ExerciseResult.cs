@@ -131,6 +131,34 @@ namespace POLift.Core.Model
             return $"exercise #{ExerciseID}, {Weight} weight, {RepCount} reps on {Time}";
         }
 
+        public override bool Equals(object obj)
+        {
+            // If parameter is null return false.
+            if (obj == null)
+            {
+                return false;
+            }
+
+            // If parameter cannot be cast to Routine return false.
+            ExerciseResult er = obj as ExerciseResult;
+
+            return this.Equals(er);
+        }
+
+        public bool Equals(ExerciseResult r)
+        {
+            if ((System.Object)r == null)
+            {
+                return false;
+            }
+
+            // Return true if the fields match:
+            return (this.ExerciseID == r.ExerciseID &&
+                this.RepCount == r.RepCount &&
+                this.Time == r.Time &&
+                this.Weight == r.Weight);
+        }
+
         public static Dictionary<int, int> Import(IEnumerable<ExerciseResult> exercise_results,
            IPOLDatabase destination, Dictionary<int, int> ExercisesLookup)
         {

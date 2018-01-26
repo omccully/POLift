@@ -20,6 +20,10 @@ namespace POLift.iOS.Controllers
 
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
+        UIKit.UIButton EditCurrentExerciseButton { get; set; }
+
+        [Outlet]
+        [GeneratedCode ("iOS Designer", "1.0")]
         UIKit.UILabel ExerciseDetailsLabel { get; set; }
 
         [Outlet]
@@ -59,6 +63,11 @@ namespace POLift.iOS.Controllers
             if (Container != null) {
                 Container.Dispose ();
                 Container = null;
+            }
+
+            if (EditCurrentExerciseButton != null) {
+                EditCurrentExerciseButton.Dispose ();
+                EditCurrentExerciseButton = null;
             }
 
             if (ExerciseDetailsLabel != null) {

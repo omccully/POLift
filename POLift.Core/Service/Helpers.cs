@@ -97,6 +97,32 @@ namespace POLift.Core.Service
             return maxObj;
         }
 
+        public static int CountConsecutive<T>(this ICollection<T> source, int start_index, 
+            Func<T, bool> selector)
+        {
+            // start_index does not match selector, so result is 0
+            if (!selector(source.ElementAt(start_index))) return 0;
+
+            int after = CountConsecutivePastIncrement(source, start_index, 1, selector);
+            int before = CountConsecutivePastIncrement(source, start_index, -1, selector);
+
+            return 1 + after + before;
+        }
+
+        static int CountConsecutivePastIncrement<T>(this ICollection<T> source, int start_index, 
+            int increment, Func<T, bool> selector)
+        {
+            int next_index = start_index + increment;
+
+            System.Diagnostics.Debug.WriteLine($"{source.Count}[{next_index}]");
+
+            if (0 > next_index || next_index >= source.Count) return 0;
+
+            if (!selector(source.ElementAt(next_index))) return 0;
+
+            return 1 + CountConsecutivePastIncrement(source, next_index, increment, selector);
+        }
+
         public static string ToIDString(this IEnumerable<IIdentifiable> obj)
         {
             return String.Join(",", obj.Select(e => e.ID).ToArray());

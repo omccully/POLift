@@ -7,6 +7,7 @@ using System.Linq;
 
 namespace POLift.Core.ViewModel
 {
+    using Helpers;
     using Model;
     using Service;
 
@@ -22,6 +23,7 @@ namespace POLift.Core.ViewModel
         public ITimerViewModel TimerViewModel;
         public ICreateRoutineViewModel CreateRoutineViewModel;
         public IEditRoutineResultViewModel EditRoutineResultViewModel;
+        public ICreateExerciseViewModel CreateExerciseViewModel;
 
         public PerformRoutineViewModel(INavigationService navigationService, IPOLDatabase database)
         {
@@ -34,7 +36,8 @@ namespace POLift.Core.ViewModel
         public event Action<IRoutineResult> ValueChosen;
 
         IRoutine _Routine;
-        public IRoutine Routine {
+        public IRoutine Routine
+        {
             get
             {
                 return _Routine;
@@ -71,7 +74,7 @@ namespace POLift.Core.ViewModel
 
             RoutineResult = new RoutineResult(_Routine);
 
-            if(recent_uncompleted != null &&
+            if (recent_uncompleted != null &&
                 (DateTime.Now - recent_uncompleted.EndTime) < TimeSpan.FromDays(1))
             {
                 // there is a uncompleted routine result within the last 1 day for this routine
@@ -136,7 +139,7 @@ namespace POLift.Core.ViewModel
                 if (value.RoutineID != Routine.ID)
                 {
                     _Routine = value.Routine;
-                }      
+                }
 
                 _routine_result = value;
                 _routine_result.Database = Database;
@@ -172,6 +175,8 @@ namespace POLift.Core.ViewModel
             }
         }
 
+
+
         public void ResetWeightInput()
         {
             if (CurrentExercise != null)
@@ -204,12 +209,12 @@ namespace POLift.Core.ViewModel
                     {
                         System.Diagnostics.Debug.WriteLine("No Plate Math");
 
-                        if(CurrentExercise != null)
+                        if (CurrentExercise != null)
                         {
-                            System.Diagnostics.Debug.WriteLine("Plate Math " + 
+                            System.Diagnostics.Debug.WriteLine("Plate Math " +
                                 CurrentExercise.PlateMathID);
                         }
-                        
+
 
                         PlateMathDetails = "";
                     }
@@ -220,7 +225,7 @@ namespace POLift.Core.ViewModel
                         PlateMathDetails = $" ({plate_counts_str})";
                     }
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     System.Diagnostics.Debug.WriteLine(e.ToString());
                 }
@@ -434,7 +439,7 @@ namespace POLift.Core.ViewModel
             // rest period is based on the NEXT exercise's rest period
 
             //StartRestPeriod();
-            if(CurrentExercise != null)
+            if (CurrentExercise != null)
             {
                 TimerViewModel.StartTimer(CurrentExercise.RestPeriodSeconds);
             }
@@ -493,7 +498,7 @@ namespace POLift.Core.ViewModel
             if (this.Routine == null) return;
 
             int locked_sets;
-            if(this.RoutineResult == null)
+            if (this.RoutineResult == null)
             {
                 locked_sets = 0;
             }
@@ -502,18 +507,30 @@ namespace POLift.Core.ViewModel
                 locked_sets = this.RoutineResult.ResultCount;
             }
 
-            if(CreateRoutineViewModel != null)
+            if (CreateRoutineViewModel != null)
             {
                 CreateRoutineViewModel.ValueChosen += CreateRoutineViewModel_ValueChosen;
                 CreateRoutineViewModel.EditRoutine(this.Routine, locked_sets);
             }
-            
+
             navigationService.NavigateTo(ViewModelLocator.CreateRoutinePageKey);
         }
 
         private void CreateRoutineViewModel_ValueChosen(IRoutine new_routine)
         {
+            TranslateToRoutine(new_routine);
+        }
+
+        void TranslateToRoutine(IRoutine new_routine, bool delete_old_routine = false,
+            bool safe = true)
+        {
             if (Routine.Equals(new_routine)) return;
+
+            // CreateRoutineViewModel "deletes" old routine (edit operation)
+            if (delete_old_routine)
+            {
+                Database.HideDeletable((Routine)Routine);
+            }
 
             if (this.RoutineResult.ResultCount == 0)
             {
@@ -524,17 +541,99 @@ namespace POLift.Core.ViewModel
             else
             {
                 IRoutineResult old_rr = this.RoutineResult;
-                this.RoutineResult = this.RoutineResult.Transform(new_routine);
+                this.RoutineResult = this.RoutineResult.Transform(new_routine, safe);
 
                 Database.HideDeletable((RoutineResult)old_rr);
 
                 Database.Insert((RoutineResult)this.RoutineResult);
             }
 
-            // CreateRoutineViewModel "deletes" old routine (edit operation)
-            
             // this isn't needed because setting RoutineResult also sets Routine
             //Routine = new_routine;
+        }
+
+        public void EditThisExercise()
+        {
+            if (this.Routine == null) return;
+
+            if (CreateExerciseViewModel != null)
+            {
+                CreateExerciseViewModel.ValueChosen += CreateExercise_ValueChosen;
+                CreateExerciseViewModel.EditExercise(this.CurrentExercise);
+            }
+
+            navigationService.NavigateTo(ViewModelLocator.CreateExercisePageKey);
+        }
+
+
+        private void CreateExercise_ValueChosen(IExercise obj)
+        {
+            const string ShowReplaceExercisesWarning = "show_replace_exercises_warning";
+            System.Diagnostics.Debug.WriteLine("PerformRoutineViewModel.CreateExercise_ValueChosen");
+            if (navigationService.CurrentPageKey !=
+                ViewModelLocator.PerformRoutinePageKey)
+            {
+                System.Diagnostics.Debug.WriteLine("PerformRoutineViewModel.CreateExercise_ValueChosen skipped; CurrentPageKey = "
+                     + navigationService.CurrentPageKey);
+                return;
+            }
+
+            if (CurrentExercise.Name != obj.Name)
+            {
+                DialogService.DisplayConfirmationNeverShowAgain(
+                    $"You are about to replace ALL of the \"{CurrentExercise.Name}\" exercises" +
+                    $" in this routine with {obj.Name}", ShowReplaceExercisesWarning,
+                    delegate
+                    {
+                        ReplaceAllOfCurrentExerciseWith(obj);
+                    });
+            }
+            else
+            {
+                ReplaceAllOfCurrentExerciseWith(obj);
+            }
+        }
+
+        void ReplaceAllOfCurrentExerciseWith(IExercise obj)
+        {
+            try
+            {
+                System.Diagnostics.Debug.WriteLine($"ReplaceAllOfCurrentExerciseWith({obj.ID} {obj})");
+
+                System.Diagnostics.Debug.WriteLine($"Routine.ExerciseSetIDs = {Routine.ExerciseSetIDs}");
+
+                // ExerciseSets es = new ExerciseSets(obj, )
+
+                IExerciseSets current_es = RoutineResult.CurrentExerciseSets;
+                System.Diagnostics.Debug.WriteLine($"current_es = #{current_es.ID} {current_es.SetCount} {current_es.Exercise}");
+
+
+                ExerciseSets new_es = new ExerciseSets(obj.ID,
+                    current_es.SetCount, current_es.Database);
+
+                Database.InsertOrUpdateNoID(new_es);
+
+                System.Diagnostics.Debug.WriteLine($"new_es = #{new_es.ID} {new_es.SetCount} {new_es.Exercise}");
+
+
+                string new_id_str = Helpers.ToIDIntegers(Routine.ExerciseSetIDs)
+                    .Select(old_es_id =>
+                        old_es_id == current_es.ID ? new_es.ID : old_es_id
+                    ).ToIDString();
+
+                System.Diagnostics.Debug.WriteLine($"new_id_str = {new_id_str}");
+
+                Routine new_routine = new Routine(Routine.Name, new_id_str);
+                new_routine.Database = Routine.Database;
+                Database.InsertOrUpdateNoID(new_routine);
+
+                TranslateToRoutine(new_routine, true, false);
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine(e);
+                throw e;
+            }
         }
 
         RelayCommand _ModifyRestOfRoutineCommand;
@@ -547,6 +646,17 @@ namespace POLift.Core.ViewModel
             }
         }
 
+        RelayCommand _EditThisExerciseCommand;
+        public RelayCommand EditThisExerciseCommand
+        {
+            get
+            {
+                return _EditThisExerciseCommand ??
+                    (_EditThisExerciseCommand = new RelayCommand(EditThisExercise));
+            }
+        }
+
+
         public void IMadeAMistake()
         {
             try
@@ -555,7 +665,7 @@ namespace POLift.Core.ViewModel
                 EditRoutineResultViewModel.RoutineResult = this.RoutineResult;
                 navigationService.NavigateTo(ViewModelLocator.EditRoutineResultPageKey);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 System.Diagnostics.Debug.WriteLine(e.ToString());
             }

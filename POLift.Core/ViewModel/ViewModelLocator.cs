@@ -69,6 +69,7 @@ namespace POLift.Core.ViewModel
             PerformRoutine.TimerViewModel = Timer;
             PerformRoutine.EditRoutineResultViewModel = EditRoutineResult;
             PerformRoutine.CreateRoutineViewModel = CreateRoutine;
+            PerformRoutine.CreateExerciseViewModel = CreateExercise;
             
             PerformWarmup.TimerViewModel = Timer;
 

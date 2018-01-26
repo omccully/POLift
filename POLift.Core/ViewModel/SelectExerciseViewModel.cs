@@ -46,6 +46,14 @@ namespace POLift.Core.ViewModel
 
         private void CreateExercise_ValueChosen(IExercise obj)
         {
+            if(navigationService.CurrentPageKey != 
+                ViewModelLocator.SelectExercisePageKey)
+            {
+                System.Diagnostics.Debug.WriteLine("SelectExerciseViewModel.CreateExercise_ValueChosen skipped; CurrentPageKey = "
+                     + navigationService.CurrentPageKey);
+                return;
+            }
+
             ValueChosen?.Invoke(obj);
             navigationService.GoBack();
         }

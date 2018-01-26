@@ -239,8 +239,8 @@ namespace POLift.Core.ViewModel
                             Exercise result = CreateExerciseFromInput();
                             if (result != null)
                             {
-                                ValueChosen?.Invoke(result);
                                 navigationService.GoBack();
+                                ValueChosen?.Invoke(result);
                             }
                         }));
             }

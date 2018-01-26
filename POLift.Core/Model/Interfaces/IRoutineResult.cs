@@ -23,6 +23,8 @@ namespace POLift.Core.Model
 
         bool Completed { get; }
 
+        IExerciseSets CurrentExerciseSets { get; }
+
         IExercise NextExercise { get; }
 
         int ExerciseCount { get; }
@@ -35,7 +37,7 @@ namespace POLift.Core.Model
 
         void ReportExerciseResult(IExerciseResult ex_result);
 
-        IRoutineResult Transform(IRoutine new_routine);
+        IRoutineResult Transform(IRoutine new_routine, bool safe=true);
 
         string TimeDetails { get; }
 

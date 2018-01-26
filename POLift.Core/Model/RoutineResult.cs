@@ -188,6 +188,56 @@ namespace POLift.Core.Model
             }
         }
 
+        public IExerciseSets CurrentExerciseSets
+        {
+            get
+            {
+                if (Completed)
+                {
+                    return null;
+                }
+
+                IExercise current = this.NextExercise;
+
+                int consec = Helpers.CountConsecutive(Exercises, 
+                    ResultCount, ex => ex.ID == current.ID);
+                System.Diagnostics.Debug.WriteLine($"consec = {consec}");
+
+                ExerciseSets current_es = new ExerciseSets(current, consec, Database);
+
+                foreach(IExerciseSets es in Routine.ExerciseSets)
+                {
+                    if(es.Equals(current_es))
+                    {
+                        System.Diagnostics.Debug.WriteLine("Returning " + es);
+                        return es;
+                    }
+                }
+
+
+                System.Diagnostics.Debug.WriteLine("RoutineResult.CurrentExerciseSets failed");
+                //throw new Exception("RoutineResult.CurrentExerciseSets failed");
+                return null;
+               /* IExercise last_ex = null;
+                int ex_count = 0;
+                int i = 0;
+                foreach(IExercise ex in Exercises)
+                {
+                    if (last_ex == ex) ex_count++;
+                    else ex_count = 1;
+
+
+
+                    last_ex = ex;
+                    i++;
+                }*/
+
+                //ExerciseSets.Group(Exercises, Database));
+
+                //return ;
+            }
+        }
+
         public void ReportExerciseResult(IExerciseResult ex_result)
         {
             if (Completed)
@@ -337,6 +387,16 @@ namespace POLift.Core.Model
                     if(i < ResultCount)
                     {
                         IExerciseResult exr = ExerciseResults[i];
+                        if(exr.ExerciseID != exercises[i].ID)
+                        {
+                            System.Diagnostics.Debug.WriteLine(
+                                "ERROR: " + exr + " != " + exercises[i]);
+
+                            exr.ExerciseID = exercises[i].ID;
+
+                            Database.Update((ExerciseResult)exr);
+                        }
+
                         builder.Append($"{exr.Weight}x{exr.RepCount}");
                     }
                     else
@@ -387,45 +447,66 @@ namespace POLift.Core.Model
 
 
 
-        public IRoutineResult Transform(IRoutine new_routine)
+        public IRoutineResult Transform(IRoutine new_routine, bool safe = true)
         {
-            // 
-
-            if (Routine == new_routine) return this;
+            if (Routine.Equals(new_routine)) return this;
 
             RoutineResult new_rr = new RoutineResult(new_routine, Database);
-
-            int same_count = 0;
-            int old_exercise_count = Exercises.Length;
-            int new_exercise_count = new_rr.Exercises.Length;
-            int max_ex_len = Math.Min(old_exercise_count, new_exercise_count);
-            for (int i = 0; i < max_ex_len; i++)
+            
+           /* if(safe)
             {
-                if (Exercises[i].Equals(new_rr.Exercises[i]))
+                int same_count = 0;
+                int old_exercise_count = Exercises.Length;
+                int new_exercise_count = new_routine.Exercises.Count;
+                int max_ex_len = Math.Min(old_exercise_count, new_exercise_count);
+                for (int i = 0; i < max_ex_len; i++)
                 {
-                    same_count++;
+                    if (Exercises[i].Equals(new_routine.Exercises[i]))
+                    {
+                        same_count++;
+                    }
+                    else
+                    {
+                        break;
+                    }
                 }
-                else
+
+                System.Diagnostics.Debug.WriteLine(
+                    $"same_count = {same_count}, ResultCount = {ResultCount}");
+
+                if (same_count < ResultCount)
                 {
-                    break;
+                    throw new InvalidOperationException(
+                        "This routine result cannot be transformed into new_routine");
                 }
-            }
+            }*/
 
-            if (same_count < ResultCount)
+            int j = 0;
+            foreach (ExerciseResult er in ExerciseResults)
             {
-                throw new InvalidOperationException(
-                    "This routine result cannot be transformed into new_routine");
-            }
+                int intended_ex_id = new_routine.Exercises[j].ID;
+                if (er.ExerciseID != intended_ex_id)
+                {
+                    if(safe)
+                    {
+                        throw new InvalidOperationException(
+                            "This routine result cannot be transformed into new_routine");
+                    }
+                    else
+                    {
+                        er.ExerciseID = intended_ex_id;
+                        Database.Update(er);
+                    }
+                }
 
-            foreach (ExerciseResult er in ExerciseResults.Take(same_count))
-            {
                 new_rr.ReportExerciseResult(er);
+
+                j++;
             }
 
             return new_rr;
         }
-
-
+        
         public static Dictionary<int, int> Import(IEnumerable<RoutineResult> routine_results,
             IPOLDatabase destination, Dictionary<int, int> RoutineLookup, Dictionary<int, int> ExerciseResultLookup)
         {
