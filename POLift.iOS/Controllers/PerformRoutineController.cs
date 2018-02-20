@@ -12,12 +12,10 @@ using GalaSoft.MvvmLight.Helpers;
 
 namespace POLift.iOS.Controllers
 {
-    public partial class PerformRoutineController : UIViewController, IValueReturner<IRoutineResult>
+    public partial class PerformRoutineController : UIViewController
     {
         // Keep track of bindings to avoid premature garbage collection
         private readonly List<Binding> bindings = new List<Binding>();
-
-        public event Action<IRoutineResult> ValueChosen;
 
         private PerformRoutineViewModel Vm
         {
@@ -45,6 +43,8 @@ namespace POLift.iOS.Controllers
             Console.WriteLine("PerformRoutineController");
 
             WeightTextField.EditingChanged += WeightTextField_ValueChanged;
+            WeightTextField.ShouldReturn = AppleHelpers.DismissKeyboard;
+            RepCountTextField.ShouldReturn = AppleHelpers.DismissKeyboard;
 
             ReportResultButton.SetCommand(
                 "TouchUpInside",

@@ -19,6 +19,7 @@ namespace POLift.iOS
 {
     using Controllers;
     using Service;
+    using UserNotifications;
 
     // The UIApplicationDelegate for the application. This class is responsible for launching the 
     // User Interface of the application, as well as listening (and optionally responding) to 
@@ -34,8 +35,8 @@ namespace POLift.iOS
             set;
         }
 
-        static string DatabaseFileName = "database.db3";
-        static string DatabaseDirectory = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
+        static string DatabaseFileName = "polift-database.db3";
+        public static string DatabaseDirectory = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
         static string DatabasePath = Path.Combine(DatabaseDirectory, DatabaseFileName);
 
         public override bool FinishedLaunching(UIApplication application, NSDictionary launchOptions)
@@ -86,6 +87,19 @@ namespace POLift.iOS
             l.LicenseManager = new LicenseManager(device_id, l.KeyValueStorage);
 
             l.SelectProgramToDownload.FileOperations = new FileOperations();
+
+            l.Vibrator = new AppleVibrator();
+
+            l.TimerService = new BackgroundTimer();
+
+
+            l.TimerFinishedNotificationService = new NotificationService();
+            
+            // Request notification permissions from the user
+            UNUserNotificationCenter.Current.RequestAuthorization(UNAuthorizationOptions.Alert | UNAuthorizationOptions.Sound, (approved, err) => {
+                // Handle approval
+               
+            });
 
             l.CheckLicenseAndPrompt();
 

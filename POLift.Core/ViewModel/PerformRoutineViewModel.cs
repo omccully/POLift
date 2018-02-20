@@ -598,30 +598,17 @@ namespace POLift.Core.ViewModel
         {
             try
             {
-                System.Diagnostics.Debug.WriteLine($"ReplaceAllOfCurrentExerciseWith({obj.ID} {obj})");
-
-                System.Diagnostics.Debug.WriteLine($"Routine.ExerciseSetIDs = {Routine.ExerciseSetIDs}");
-
-                // ExerciseSets es = new ExerciseSets(obj, )
-
                 IExerciseSets current_es = RoutineResult.CurrentExerciseSets;
-                System.Diagnostics.Debug.WriteLine($"current_es = #{current_es.ID} {current_es.SetCount} {current_es.Exercise}");
-
 
                 ExerciseSets new_es = new ExerciseSets(obj.ID,
                     current_es.SetCount, current_es.Database);
 
                 Database.InsertOrUpdateNoID(new_es);
 
-                System.Diagnostics.Debug.WriteLine($"new_es = #{new_es.ID} {new_es.SetCount} {new_es.Exercise}");
-
-
                 string new_id_str = Helpers.ToIDIntegers(Routine.ExerciseSetIDs)
                     .Select(old_es_id =>
                         old_es_id == current_es.ID ? new_es.ID : old_es_id
                     ).ToIDString();
-
-                System.Diagnostics.Debug.WriteLine($"new_id_str = {new_id_str}");
 
                 Routine new_routine = new Routine(Routine.Name, new_id_str);
                 new_routine.Database = Routine.Database;

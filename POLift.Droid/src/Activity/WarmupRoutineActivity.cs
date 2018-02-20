@@ -132,6 +132,8 @@ namespace POLift.Droid
             //SetActionBar(toolbar);
             //ActionBar.Title = $"{FirstExercise.Name} warmup";
 
+            EditThisExerciseButton.Visibility = ViewStates.Gone;
+
             RepDetailsTextView.Visibility = ViewStates.Gone;
 
             Log.Debug("POLift", "Warmup final " + sw.ElapsedMilliseconds + "ms");

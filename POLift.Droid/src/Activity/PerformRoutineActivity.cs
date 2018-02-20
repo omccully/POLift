@@ -43,6 +43,11 @@ namespace POLift.Droid
             }
             set
             {
+                if (value.RoutineID != Routine.ID)
+                {
+                    this.Routine = value.Routine;
+                }
+
                 _routine_result = value;
                 _routine_result.Database = Database;
 
@@ -88,6 +93,8 @@ namespace POLift.Droid
             NextWarmupView.Visibility = ViewStates.Gone;
 
             ModifyRestOfRoutineButton.Click += ModifyRestOfRoutineButton_Click;
+
+            EditThisExerciseButton.Click += EditThisExerciseButton_Click;
 
             int routine_id;
             if(savedInstanceState == null)
@@ -207,7 +214,16 @@ namespace POLift.Droid
             //Log.Debug("POLift", "perform finish " + sw.ElapsedMilliseconds + "ms");
         }
 
-        
+        const int EditExerciseRequestCode = 9851;
+        private void EditThisExerciseButton_Click(object sender, EventArgs e)
+        {
+            if (this.Routine == null) return;
+
+
+            Intent intent = new Intent(this, typeof(CreateExerciseActivity));
+            intent.PutExtra("edit_exercise_id", this.CurrentExercise.ID);
+            StartActivityForResult(intent, EditExerciseRequestCode);
+        }
 
         private void IMadeAMistakeButton_Click(object sender, EventArgs e)
         {
@@ -303,9 +319,94 @@ namespace POLift.Droid
                 {
                     RefreshRoutineDetails();
                 }
+                else if(requestCode == EditExerciseRequestCode)
+                {
+                    Log.Debug("POLift", "(requestCode == EditExerciseRequestCode)");
+                    int id = data.GetIntExtra("exercise_id", -1);
+                    if (id == -1) return;
+
+                    Exercise new_exercise = Database.ReadByID<Exercise>(id);
+                    const string ShowReplaceExercisesWarning = "show_replace_exercises_warning";
+
+                    if(this.CurrentExercise.Name != new_exercise.Name)
+                    {
+                        AndroidHelpers.DisplayConfirmationNeverShowAgain(this,
+                            $"You are about to replace ALL of the \"{CurrentExercise.Name}\" exercises" +
+                            $" in this routine with {new_exercise.Name}", ShowReplaceExercisesWarning,
+                            delegate
+                            {
+                                ReplaceAllOfCurrentExerciseWith(new_exercise);
+                            });
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine(
+                            "ReplaceAllOfCurrentExerciseWith(new_exercise);");
+                        ReplaceAllOfCurrentExerciseWith(new_exercise);
+                    }
+                }
             }
         }
 
+        void TranslateToRoutine(IRoutine new_routine, bool delete_old_routine = false,
+            bool safe = true)
+        {
+            if (Routine.Equals(new_routine)) return;
+
+            // CreateRoutineViewModel "deletes" old routine (edit operation)
+            if (delete_old_routine)
+            {
+                Database.HideDeletable((Routine)Routine);
+            }
+
+            if (this._RoutineResult.ResultCount == 0)
+            {
+                // routine wasn't started
+                this._RoutineResult = new RoutineResult(new_routine, Database);
+                System.Diagnostics.Debug.WriteLine("Routine wasn't started yet, so starting new one with new_routine");
+            }
+            else
+            {
+                IRoutineResult old_rr = this._RoutineResult;
+                this._RoutineResult = this._RoutineResult.Transform(new_routine, safe);
+
+                Database.HideDeletable((RoutineResult)old_rr);
+
+                Database.Insert((RoutineResult)this._RoutineResult);
+            }
+
+            // this isn't needed because setting RoutineResult also sets Routine
+            //Routine = new_routine;
+        }
+
+        void ReplaceAllOfCurrentExerciseWith(IExercise obj)
+        {
+            try
+            {
+                IExerciseSets current_es = _RoutineResult.CurrentExerciseSets;
+
+                ExerciseSets new_es = new ExerciseSets(obj.ID,
+                    current_es.SetCount, current_es.Database);
+
+                Database.InsertOrUpdateNoID(new_es);
+
+                string new_id_str = Helpers.ToIDIntegers(Routine.ExerciseSetIDs)
+                    .Select(old_es_id =>
+                        old_es_id == current_es.ID ? new_es.ID : old_es_id
+                    ).ToIDString();
+
+                Routine new_routine = new Routine(Routine.Name, new_id_str);
+                new_routine.Database = Routine.Database;
+                Database.InsertOrUpdateNoID(new_routine);
+
+                TranslateToRoutine(new_routine, true, false);
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine(e);
+                throw e;
+            }
+        }
 
         protected override void ReportResultButton_Click(object sender, EventArgs e)
         {

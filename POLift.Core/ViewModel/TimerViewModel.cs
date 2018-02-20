@@ -20,6 +20,10 @@ namespace POLift.Core.ViewModel
         public Timer Timer;
         // public Action<Action> MainThreadInvoker;
         public IMainThreadInvoker MainThreadInvoker;
+        public INotificationService TimerFinishedNotificationService;
+
+        public const string NotificationText = "Lifting rest period finished";
+        public const string NotificationSubText = "Start your next set whenever you are ready";
 
         public TimerViewModel()
         {
@@ -50,6 +54,11 @@ namespace POLift.Core.ViewModel
             }
             set
             {
+                if(value < -600)
+                {
+                    TimerEnabled = false;
+                }
+
                 Set(ref _SecondsLeft, value);
 
                 UpdateGUIByTimerState();
@@ -233,6 +242,7 @@ namespace POLift.Core.ViewModel
             //});
 
             //StartTimerNotification
+            TimerFinishedNotificationService?.Notify();
         }
 
         void SkipTimer()

@@ -159,6 +159,15 @@ namespace POLift.Core.Model
                 this.Weight == r.Weight);
         }
 
+        public override int GetHashCode()
+        {
+            return this.ExerciseID.GetHashCode() ^
+                this.ID.GetHashCode() ^
+                this.Weight.GetHashCode() ^
+                this.RepCount.GetHashCode() ^
+                this.Time.GetHashCode();
+        }
+
         public static Dictionary<int, int> Import(IEnumerable<ExerciseResult> exercise_results,
            IPOLDatabase destination, Dictionary<int, int> ExercisesLookup)
         {

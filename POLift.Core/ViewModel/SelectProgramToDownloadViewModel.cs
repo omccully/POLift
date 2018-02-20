@@ -65,24 +65,29 @@ namespace POLift.Core.ViewModel
             }
         }
 
-        public void SelectExternalProgram(ExternalProgram program)
+        public void SelectExternalProgram(ExternalProgram program, string temp_dir = "")
         {
             System.Diagnostics.Debug.WriteLine("SelectExternalProgram");
             DialogService?.DisplayConfirmation("Are you sure you want to import the routines " +
                 "and exercises for the " + program.title + " lifting program?",
                 delegate
                 {
-                    ImportProgramAsync(program);
+                    ImportProgramAsync(program, temp_dir);
+                    /*MainThreadInvoker.Invoke(delegate
+                    {
+                        Toaster.DisplayMessage("Lifting program finished downloading");
+                    });*/
                 });
         }
 
-        async Task ImportProgramAsync(ExternalProgram program)
+        async Task ImportProgramAsync(ExternalProgram program, string temp_dir = "")
         {
             try
             {
                 string url = ProgramToUrl(program);
                 System.Diagnostics.Debug.WriteLine("ImportFromUrlAsync(" + url);
-                await Service.Helpers.ImportFromUrlAsync(url, Database, "", FileOperations, false);
+                
+                await Service.Helpers.ImportFromUrlAsync(url, Database, temp_dir, FileOperations, false);
 
                 navigationService.GoBack();
             }

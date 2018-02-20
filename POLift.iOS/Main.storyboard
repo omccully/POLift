@@ -18,7 +18,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Select routine to start a session:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="225" translatesAutoresizingMaskIntoConstraints="NO">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Select routine to start a session:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="225" translatesAutoresizingMaskIntoConstraints="NO" misplaced="YES">
                                 <rect key="frame" x="16" y="74" width="351" height="44"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
@@ -36,13 +36,13 @@
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="11038" customClass="RoutineCell" reuseIdentifier="routine_cell" rowHeight="85">
-                                        <rect key="frame" x="0.0" y="28" width="406" height="85"/>
+                                        <rect key="frame" x="0.0" y="28" width="375" height="85"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="11038" id="11039">
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="84"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="11040" translatesAutoresizingMaskIntoConstraints="NO">
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="11040" translatesAutoresizingMaskIntoConstraints="NO" misplaced="YES">
                                                     <rect key="frame" x="15" y="3" width="255" height="21"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
@@ -70,7 +70,7 @@
                                                         </mask>
                                                     </variation>
                                                 </button>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="11573" translatesAutoresizingMaskIntoConstraints="NO">
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="11573" translatesAutoresizingMaskIntoConstraints="NO" misplaced="YES">
                                                     <rect key="frame" x="15" y="20" width="245" height="21"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
@@ -711,7 +711,7 @@
                                     </mask>
                                 </variation>
                             </label>
-                            <pickerView contentMode="scaleToFill" id="3854" translatesAutoresizingMaskIntoConstraints="NO">
+                            <pickerView contentMode="scaleToFill" id="3854" translatesAutoresizingMaskIntoConstraints="NO" misplaced="YES">
                                 <rect key="frame" x="20" y="385" width="378" height="294"/>
                             </pickerView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="5771" translatesAutoresizingMaskIntoConstraints="NO">
@@ -938,60 +938,61 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="10134" translatesAutoresizingMaskIntoConstraints="NO" numberOfLines="2">
-                                                    <rect key="frame" x="16" y="11" width="265" height="45"/>
+                                                    <rect key="frame" x="7" y="11" width="312" height="45"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 </label>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="10179" translatesAutoresizingMaskIntoConstraints="NO">
-                                                    <rect key="frame" x="298" y="11" width="46" height="30"/>
+                                                    <rect key="frame" x="318" y="11" width="46" height="30"/>
                                                     <state key="normal" title="Edit">
                                                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                     </state>
                                                     <constraints>
-                                                        <constraint id="34055" firstItem="10179" firstAttribute="height" constant="30"/>
-                                                        <constraint id="34056" firstItem="10179" firstAttribute="width" constant="46"/>
+                                                        <constraint id="45122" firstItem="10179" firstAttribute="height" constant="30"/>
+                                                        <constraint id="45123" firstItem="10179" firstAttribute="width" constant="46"/>
                                                     </constraints>
                                                     <variation key="default">
                                                         <mask key="constraints">
-                                                            <exclude reference="34055"/>
-                                                            <exclude reference="34056"/>
+                                                            <exclude reference="45122"/>
+                                                            <exclude reference="45123"/>
                                                         </mask>
                                                     </variation>
                                                     <variation key="heightClass=regular-widthClass=compact">
                                                         <mask key="constraints">
-                                                            <include reference="34055"/>
-                                                            <include reference="34056"/>
+                                                            <include reference="45122"/>
+                                                            <include reference="45123"/>
                                                         </mask>
                                                     </variation>
                                                 </button>
                                             </subviews>
                                             <constraints>
-                                                <constraint id="34050" firstItem="10134" firstAttribute="top" secondItem="10133" secondAttribute="top"/>
-                                                <constraint id="34051" firstItem="10134" firstAttribute="leading" secondItem="10133" secondAttribute="leading" constant="16"/>
-                                                <constraint id="34052" firstItem="10133" firstAttribute="bottom" secondItem="10134" secondAttribute="bottom" constant="23"/>
-                                                <constraint id="34053" firstItem="10133" firstAttribute="trailing" secondItem="10179" secondAttribute="trailing" constant="31"/>
-                                                <constraint id="34054" firstItem="10179" firstAttribute="top" secondItem="10133" secondAttribute="top" constant="11"/>
-                                                <constraint id="34057" firstItem="10179" firstAttribute="leading" secondItem="10134" secondAttribute="trailing" constant="17"/>
+                                                <constraint id="45117" firstItem="10134" firstAttribute="leading" secondItem="10133" secondAttribute="leading" constant="7"/>
+                                                <constraint id="45118" firstItem="10134" firstAttribute="top" secondItem="10133" secondAttribute="top" constant="11"/>
+                                                <constraint id="45119" firstItem="10133" firstAttribute="bottom" secondItem="10134" secondAttribute="bottom" constant="23"/>
+                                                <constraint id="45120" firstItem="10133" firstAttribute="trailing" secondItem="10179" secondAttribute="trailing" constant="11"/>
+                                                <constraint id="45121" firstItem="10179" firstAttribute="top" secondItem="10133" secondAttribute="top" constant="11"/>
+                                                <constraint id="45124" firstItem="10134" firstAttribute="trailing" secondItem="10179" secondAttribute="leading" constant="1"/>
                                             </constraints>
                                             <variation key="default">
                                                 <mask key="constraints">
-                                                    <exclude reference="34050"/>
-                                                    <exclude reference="34051"/>
-                                                    <exclude reference="34052"/>
-                                                    <exclude reference="34053"/>
-                                                    <exclude reference="34054"/>
-                                                    <exclude reference="34057"/>
+                                                    <exclude reference="45117"/>
+                                                    <exclude reference="45118"/>
+                                                    <exclude reference="45119"/>
+                                                    <exclude reference="45120"/>
+                                                    <exclude reference="45121"/>
+                                                    <exclude reference="45124"/>
                                                 </mask>
                                             </variation>
                                             <variation key="heightClass=regular-widthClass=compact">
                                                 <mask key="constraints">
-                                                    <include reference="34050"/>
-                                                    <include reference="34051"/>
-                                                    <include reference="34052"/>
-                                                    <include reference="34053"/>
-                                                    <include reference="34054"/>
-                                                    <include reference="34057"/>
+                                                    <include reference="45117"/>
+                                                    <include reference="45118"/>
+                                                    <include reference="45119"/>
+                                                    <include reference="45120"/>
+                                                    <include reference="45121"/>
+                                                    <include reference="45124"/>
                                                 </mask>
                                             </variation>
                                         </tableViewCellContentView>
@@ -1062,7 +1063,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Routine details" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="6663" translatesAutoresizingMaskIntoConstraints="NO" numberOfLines="4">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Routine details" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="6663" translatesAutoresizingMaskIntoConstraints="NO" numberOfLines="4" misplaced="YES">
                                 <rect key="frame" x="11" y="44" width="364" height="27"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
@@ -1075,7 +1076,7 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Exercise details" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="7005" translatesAutoresizingMaskIntoConstraints="NO" numberOfLines="2">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Exercise details" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="7005" translatesAutoresizingMaskIntoConstraints="NO" numberOfLines="2" misplaced="YES">
                                 <rect key="frame" x="11" y="79" width="364" height="31"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
@@ -1106,7 +1107,7 @@
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="5" borderStyle="roundedRect" minimumFontSize="17" id="7007" translatesAutoresizingMaskIntoConstraints="NO">
                                 <rect key="frame" x="76" y="105" width="60" height="30"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
+                                <textInputTraits key="textInputTraits" returnKeyType="done"/>
                                 <constraints>
                                     <constraint id="37592" firstItem="7007" firstAttribute="width" constant="60"/>
                                     <constraint id="37593" firstItem="7007" firstAttribute="height" constant="30"/>
@@ -1213,10 +1214,10 @@
                                     </mask>
                                 </variation>
                             </label>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" id="7351" translatesAutoresizingMaskIntoConstraints="NO">
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" id="7351" translatesAutoresizingMaskIntoConstraints="NO" misplaced="YES">
                                 <rect key="frame" x="76" y="159" width="60" height="30"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
+                                <textInputTraits key="textInputTraits" returnKeyType="done"/>
                             </textField>
                             <containerView contentMode="scaleToFill" id="8396" translatesAutoresizingMaskIntoConstraints="NO">
                                 <rect key="frame" x="0.0" y="532" width="375" height="100"/>
@@ -1485,19 +1486,19 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Routine details" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="7649" translatesAutoresizingMaskIntoConstraints="NO" numberOfLines="0">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Routine details" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="7649" translatesAutoresizingMaskIntoConstraints="NO" numberOfLines="0" misplaced="YES">
                                 <rect key="frame" x="16" y="45" width="331" height="31"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Exercise details" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" id="7675" translatesAutoresizingMaskIntoConstraints="NO" numberOfLines="3" minimumScaleFactor="0.5" adjustsLetterSpacingToFitWidth="YES">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Exercise details" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" id="7675" translatesAutoresizingMaskIntoConstraints="NO" numberOfLines="3" minimumScaleFactor="0.5" adjustsLetterSpacingToFitWidth="YES" misplaced="YES">
                                 <rect key="frame" x="16" y="94" width="331" height="34"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="7676" translatesAutoresizingMaskIntoConstraints="NO" text="Working set weight:">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="7676" translatesAutoresizingMaskIntoConstraints="NO" text="Working set weight:" misplaced="YES">
                                 <rect key="frame" x="16" y="150" width="169" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
@@ -1506,7 +1507,7 @@
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" id="7677" translatesAutoresizingMaskIntoConstraints="NO">
                                 <rect key="frame" x="176" y="123" width="97" height="30"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
+                                <textInputTraits key="textInputTraits" returnKeyType="done"/>
                                 <constraints>
                                     <constraint id="32125" firstItem="7677" firstAttribute="width" constant="97"/>
                                 </constraints>
@@ -1540,13 +1541,24 @@
                                     </mask>
                                 </variation>
                             </button>
-                            <containerView contentMode="scaleToFill" id="8943" translatesAutoresizingMaskIntoConstraints="NO" fixedFrame="YES">
+                            <containerView contentMode="scaleToFill" id="8943" translatesAutoresizingMaskIntoConstraints="NO">
                                 <rect key="frame" x="0.0" y="533" width="375" height="100"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <connections>
                                     <segue id="9219" destination="8005" kind="embed"/>
                                 </connections>
-                                <variation key="heightClass=regular-widthClass=compact"/>
+                                <variation key="heightClass=regular-widthClass=compact">
+                                    <mask key="constraints">
+                                        <include reference="44824"/>
+                                    </mask>
+                                </variation>
+                                <constraints>
+                                    <constraint id="44824" firstItem="8943" firstAttribute="height" constant="100"/>
+                                </constraints>
+                                <variation key="default">
+                                    <mask key="constraints">
+                                        <exclude reference="44824"/>
+                                    </mask>
+                                </variation>
                             </containerView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="11430" translatesAutoresizingMaskIntoConstraints="NO">
                                 <rect key="frame" x="16" y="215" width="343" height="30"/>
@@ -1595,6 +1607,9 @@
                                 <exclude reference="32134"/>
                                 <exclude reference="32135"/>
                                 <exclude reference="32136"/>
+                                <exclude reference="44821"/>
+                                <exclude reference="44822"/>
+                                <exclude reference="44823"/>
                             </mask>
                         </variation>
                         <variation key="heightClass=regular-widthClass=compact">
@@ -1624,6 +1639,9 @@
                                 <include reference="32134"/>
                                 <include reference="32135"/>
                                 <include reference="32136"/>
+                                <include reference="44821"/>
+                                <include reference="44822"/>
+                                <include reference="44823"/>
                             </mask>
                         </variation>
                         <constraints>
@@ -1643,6 +1661,9 @@
                             <constraint id="32134" firstItem="11430" firstAttribute="top" secondItem="7705" secondAttribute="bottom" constant="8"/>
                             <constraint id="32135" firstItem="11430" firstAttribute="trailing" secondItem="7640" secondAttribute="trailingMargin"/>
                             <constraint id="32136" firstItem="11430" firstAttribute="leading" secondItem="7640" secondAttribute="leadingMargin"/>
+                            <constraint id="44821" firstItem="7637" firstAttribute="top" secondItem="8943" secondAttribute="bottom" constant="34"/>
+                            <constraint id="44822" firstItem="8943" firstAttribute="trailing" secondItem="7640" secondAttribute="trailingMargin" constant="16"/>
+                            <constraint id="44823" firstItem="7640" firstAttribute="leadingMargin" secondItem="8943" secondAttribute="leading" constant="16"/>
                         </constraints>
                     </view>
                     <connections>
@@ -1666,12 +1687,12 @@
                         <viewControllerLayoutGuide type="bottom" id="8003"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="8006">
-                        <rect key="frame" x="0.0" y="0.0" width="406" height="100"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="100"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Status" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="8015" translatesAutoresizingMaskIntoConstraints="NO" numberOfLines="3">
-                                <rect key="frame" x="12" y="8" width="374" height="32"/>
+                                <rect key="frame" x="8" y="8" width="351" height="32"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -1689,7 +1710,7 @@
                                     </mask>
                                 </variation>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="8045" translatesAutoresizingMaskIntoConstraints="NO">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="8045" translatesAutoresizingMaskIntoConstraints="NO" misplaced="YES">
                                 <rect key="frame" x="8" y="50" width="120" height="30"/>
                                 <state key="normal" title="-30 sec">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -1702,13 +1723,13 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="8047" translatesAutoresizingMaskIntoConstraints="NO">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="8047" translatesAutoresizingMaskIntoConstraints="NO" misplaced="YES">
                                 <rect key="frame" x="255" y="50" width="120" height="30"/>
                                 <state key="normal" title="+30 sec">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="8048" translatesAutoresizingMaskIntoConstraints="NO">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="8048" translatesAutoresizingMaskIntoConstraints="NO" misplaced="YES">
                                 <rect key="frame" x="136" y="50" width="120" height="30"/>
                                 <state key="normal" title="Skip timer">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -2136,7 +2157,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="35981" translatesAutoresizingMaskIntoConstraints="NO" numberOfLines="0">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="35981" translatesAutoresizingMaskIntoConstraints="NO" numberOfLines="0" misplaced="YES">
                                 <rect key="frame" x="16" y="71" width="343" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                 <nil key="textColor"/>

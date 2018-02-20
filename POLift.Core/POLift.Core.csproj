@@ -72,6 +72,7 @@
     <Compile Include="Service\Interfaces\IFileOperations.cs" />
     <Compile Include="Service\Interfaces\ILicenseManager.cs" />
     <Compile Include="Service\Interfaces\IMainThreadInvoker.cs" />
+    <Compile Include="Service\Interfaces\INotificationService.cs" />
     <Compile Include="Service\LicenseManager.cs" />
     <Compile Include="Service\Timer.cs" />
     <Compile Include="Service\Interfaces\IToaster.cs" />

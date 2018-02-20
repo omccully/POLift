@@ -114,9 +114,9 @@ namespace POLift.Core.Service
         public void ApplyConstraints()
         {
             throw new NotImplementedException();
-            TryExecute("CREATE UNIQUE INDEX \"UniqueGroupExercise\" on \"Exercise\"(\"Name\", \"MaxRepCount\", \"WeightIncrement\", \"RestPeriodSeconds\")");
-            TryExecute("CREATE UNIQUE INDEX \"UniqueGroupExerciseSets\" on \"ExerciseSets\"(\"SetCount\", \"ExerciseID\")");
-            TryExecute("CREATE UNIQUE INDEX \"UniqueGroupRoutine\" on \"Routine\"(\"Name\", \"ExerciseSetIDs\")");
+            //TryExecute("CREATE UNIQUE INDEX \"UniqueGroupExercise\" on \"Exercise\"(\"Name\", \"MaxRepCount\", \"WeightIncrement\", \"RestPeriodSeconds\")");
+            //TryExecute("CREATE UNIQUE INDEX \"UniqueGroupExerciseSets\" on \"ExerciseSets\"(\"SetCount\", \"ExerciseID\")");
+            //TryExecute("CREATE UNIQUE INDEX \"UniqueGroupRoutine\" on \"Routine\"(\"Name\", \"ExerciseSetIDs\")");
         }
 
 
@@ -153,7 +153,7 @@ namespace POLift.Core.Service
                     Connection.Execute(s);
                 }
             }
-            catch(Exception e)
+            catch
             {
             }
         }

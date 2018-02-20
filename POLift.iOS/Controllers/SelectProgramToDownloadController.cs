@@ -23,7 +23,6 @@ namespace POLift.iOS.Controllers
         }
 
         ExternalProgram[] Programs = new ExternalProgram[0];
-        IPOLDatabase Database;
 
         public SelectProgramToDownloadController (IntPtr handle) : base (handle)
         {
@@ -48,7 +47,11 @@ namespace POLift.iOS.Controllers
         {
             //Vm.Programs
             ptvs = new ProgramsTableViewSource(Vm.Programs);
-            ptvs.RowClicked += Vm.SelectExternalProgram;
+            ptvs.RowClicked += delegate (ExternalProgram ep)
+            {
+                Vm.SelectExternalProgram(ep, AppDelegate.DatabaseDirectory);
+            };
+
             ProgramsTableView.Source = ptvs;
             ProgramsTableView.ReloadData();
         }

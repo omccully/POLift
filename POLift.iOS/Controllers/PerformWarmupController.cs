@@ -44,8 +44,9 @@ namespace POLift.iOS.Controllers
                 "TouchUpInside",
                 Vm.SkipWarmupCommand);
 
+            WeightTextField.ShouldReturn = AppleHelpers.DismissKeyboard;
             WeightTextField.EditingChanged += (s, e) => { };
-
+            
             bindings.Add(this.SetBinding(
                 () => Vm.WeightInputText,
                 () => WeightTextField.Text,

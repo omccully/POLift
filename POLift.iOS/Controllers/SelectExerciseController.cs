@@ -125,7 +125,7 @@ namespace POLift.iOS.Controllers
             }
 
             string[] _SectionIndexTitles;
-            public override string[] SectionIndexTitles(UITableView tableView)
+            public string[] sit(UITableView tableView)
             {
                 if (_SectionIndexTitles == null)
                 {
@@ -139,7 +139,7 @@ namespace POLift.iOS.Controllers
 
             public override string TitleForHeader(UITableView tableView, nint section)
             {
-                return SectionIndexTitles(tableView)[section];
+                return sit(tableView)[section];
             }
 
             public override nint RowsInSection(UITableView tableview, nint section)

@@ -54,6 +54,7 @@ namespace POLift.Droid
         protected Button ModifyRestOfRoutineButton;
 
         protected Button IMadeAMistakeButton;
+        protected Button EditThisExerciseButton;
 
         protected LinearLayout PerformRoutineMainContent;
 
@@ -112,6 +113,7 @@ namespace POLift.Droid
             ModifyRestOfRoutineButton = FindViewById<Button>(Resource.Id.ModifyRestOfRoutineButton);
             NextWarmupView = FindViewById<TextView>(Resource.Id.NextWarmupView);
             IMadeAMistakeButton = FindViewById<Button>(Resource.Id.IMadeAMistakeButton);
+            EditThisExerciseButton = FindViewById<Button>(Resource.Id.EditThisExerciseButton);
 
 #if DEBUG
             //Button debug = new Button(this);

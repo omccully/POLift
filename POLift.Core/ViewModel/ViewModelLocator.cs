@@ -77,7 +77,7 @@ namespace POLift.Core.ViewModel
 
             OrmGraph.SelectExerciseDifficultyViewModel = SelectExerciseDifficulty;
 
-            Timer.Timer = new PclTimer();
+            TimerService = new PclTimer();
         }
 
         DialogService _DialogService;
@@ -100,6 +100,35 @@ namespace POLift.Core.ViewModel
             }
         }
 
+        Timer _TimerService;
+        public Timer TimerService
+        {
+            get
+            {
+                return _TimerService;
+            }
+            set
+            {
+                _TimerService = value;
+
+                Timer.Timer = value;
+            }
+        }
+
+        INotificationService _TimerFinishedNotificationService;
+        public INotificationService TimerFinishedNotificationService
+        {
+            get
+            {
+                return _TimerFinishedNotificationService;
+            }
+            set
+            {
+                _TimerFinishedNotificationService = value;
+                Timer.TimerFinishedNotificationService = value;
+            }
+        }
+
         IToaster _Toaster;
         public IToaster Toaster
         {
@@ -116,6 +145,22 @@ namespace POLift.Core.ViewModel
                 CreateRoutine.Toaster = value;
             }
         }
+
+        IVibrator _Vibrator;
+        public IVibrator Vibrator
+        {
+            get
+            {
+                return _Vibrator;
+            }
+            set
+            {
+                _Vibrator = value;
+
+                Timer.Vibrator = value;
+            }
+        }
+
 
         KeyValueStorage _KeyValueStorage;
         public KeyValueStorage KeyValueStorage
