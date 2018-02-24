@@ -96,6 +96,7 @@ namespace POLift.iOS.Controllers
             UITextField weight_text_field = new UITextField();
             weight_text_field.BorderStyle = UITextBorderStyle.RoundedRect;
             weight_text_field.Frame = new CGRect(x, y, weight_text_box_width, line_height);
+            weight_text_field.KeyboardType = UIKeyboardType.NumberPad;
             weight_text_field.Text = exercise_result.Weight.ToString();
 
             weight_text_field.EditingChanged += delegate
@@ -126,6 +127,7 @@ namespace POLift.iOS.Controllers
             reps_text_field.BorderStyle = UITextBorderStyle.RoundedRect;
             reps_text_field.Frame = new CGRect(x, y, reps_text_box_width, line_height);
             reps_text_field.Text = exercise_result.RepCount.ToString();
+            reps_text_field.KeyboardType = UIKeyboardType.NumberPad;
 
             reps_text_field.EditingChanged += delegate
             {

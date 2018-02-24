@@ -46,6 +46,9 @@ namespace POLift.iOS.Controllers
             WeightTextField.ShouldReturn = AppleHelpers.DismissKeyboard;
             RepCountTextField.ShouldReturn = AppleHelpers.DismissKeyboard;
 
+            WeightTextField.AddDoneButtonToNumericKeyboard();
+            RepCountTextField.AddDoneButtonToNumericKeyboard();
+
             ReportResultButton.SetCommand(
                 "TouchUpInside",
                 Vm.SubmitResultCommand);

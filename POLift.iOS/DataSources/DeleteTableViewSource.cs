@@ -71,6 +71,7 @@ namespace POLift.iOS.DataSources
         public override void CommitEditingStyle(UITableView tableView,
             UITableViewCellEditingStyle editingStyle, NSIndexPath indexPath)
         {
+            System.Diagnostics.Debug.WriteLine("CommitEditingStyle");
             if (editingStyle == UITableViewCellEditingStyle.Delete)
             {
                 Console.WriteLine("click 1");

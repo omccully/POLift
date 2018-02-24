@@ -60,7 +60,7 @@ namespace POLift.iOS.Controllers
 
             if(Vm.ShowRateApp)
             {
-                Navigations.Add(new Navigation("Rate app", RateApp_Click));
+                //Navigations.Add(new Navigation("Rate app", RateApp_Click));
             }
 
             NavigationDataSource nds = 
@@ -104,7 +104,11 @@ namespace POLift.iOS.Controllers
         private void BackupData_Click(object sender, EventArgs e)
         {
             //UIActivityViewController uiavc = new UIActivityViewController()
-            
+            NSObject[] obs = new NSObject[] { new NSUrl(AppDelegate.DatabasePath, true) };
+            UIActivityViewController uiavc = new UIActivityViewController(obs, null);
+
+            PresentViewController(uiavc, true, null);
+           
         }
 
         private void Nds_RowClicked(INavigation nav)

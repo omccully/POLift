@@ -1,11 +1,6 @@
-﻿using Foundation;
-using System;
-using UIKit;
+﻿using System;
 using System.Linq;
-
-using System.Collections.Generic;
-
-using SidebarNavigation;
+using UIKit;
 
 namespace POLift.iOS.Controllers
 {
@@ -67,12 +62,17 @@ namespace POLift.iOS.Controllers
                     NavigationMenuButtonClicked?.Invoke(viewController, new EventArgs());
                 };
 
+                const int NavigationIconSize = 30;
+
                 UIButton button = new UIButton(UIButtonType.Custom);
                 button.SetImage(image, UIControlState.Normal);
                 button.AddTarget(action, UIControlEvent.TouchUpInside);
-                button.Frame = new CoreGraphics.CGRect(0, 0, 30, 30);
-
+                button.Frame = new CoreGraphics.CGRect(0, 0, NavigationIconSize, NavigationIconSize);
+                
                 UIBarButtonItem bar_button = new UIBarButtonItem(button);
+
+                bar_button.CustomView.WidthAnchor.ConstraintLessThanOrEqualTo(NavigationIconSize).Active = true;
+                bar_button.CustomView.HeightAnchor.ConstraintLessThanOrEqualTo(NavigationIconSize).Active = true;
 
                 /* new UIBarButtonItem("nava",
                     UIBarButtonItemStyle.Plain,
@@ -80,7 +80,7 @@ namespace POLift.iOS.Controllers
                     {
                         NavigationMenuButtonClicked?.Invoke(viewController, new EventArgs());
                     })*/
-
+                //viewController.NavigationItem.
                 viewController.NavigationItem.SetLeftBarButtonItem(bar_button, true);
             }
             

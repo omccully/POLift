@@ -46,7 +46,8 @@ namespace POLift.iOS.Controllers
 
             WeightTextField.ShouldReturn = AppleHelpers.DismissKeyboard;
             WeightTextField.EditingChanged += (s, e) => { };
-            
+            WeightTextField.AddDoneButtonToNumericKeyboard();
+
             bindings.Add(this.SetBinding(
                 () => Vm.WeightInputText,
                 () => WeightTextField.Text,

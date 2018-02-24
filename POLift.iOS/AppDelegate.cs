@@ -37,7 +37,7 @@ namespace POLift.iOS
 
         static string DatabaseFileName = "polift-database.db3";
         public static string DatabaseDirectory = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
-        static string DatabasePath = Path.Combine(DatabaseDirectory, DatabaseFileName);
+        public static string DatabasePath = Path.Combine(DatabaseDirectory, DatabaseFileName);
 
         public override bool FinishedLaunching(UIApplication application, NSDictionary launchOptions)
         {

@@ -60,7 +60,8 @@
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
     <MtouchArch>ARMv7, ARM64</MtouchArch>
     <ConsolePause>false</ConsolePause>
-    <CodesignKey>iPhone Developer</CodesignKey>
+    <CodesignKey>iPhone Distribution: Oscar McCully (S327K8X9MS)</CodesignKey>
+    <CodesignProvision>POLift iOS Distribution Profile</CodesignProvision>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Ad-Hoc|iPhone' ">
     <DebugType>none</DebugType>
@@ -72,8 +73,9 @@
     <MtouchArch>ARMv7, ARM64</MtouchArch>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
     <BuildIpa>True</BuildIpa>
-    <CodesignProvision>iPhone Development Prevision</CodesignProvision>
+    <CodesignProvision>POLift iOS Distribution Profile</CodesignProvision>
     <CodesignKey>iPhone Distribution: Oscar McCully (S327K8X9MS)</CodesignKey>
+    <OptimizePNGs>true</OptimizePNGs>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|iPhone' ">
     <DebugType>none</DebugType>
@@ -84,10 +86,13 @@
     <ConsolePause>False</ConsolePause>
     <MtouchArch>ARMv7, ARM64</MtouchArch>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
-    <CodesignProvision>Automatic:AppStore</CodesignProvision>
-    <CodesignKey>iPhone Distribution</CodesignKey>
+    <CodesignProvision>POLift iOS Distribution Profile</CodesignProvision>
+    <CodesignKey>iPhone Distribution: Oscar McCully (S327K8X9MS)</CodesignKey>
+    <OptimizePNGs>true</OptimizePNGs>
+    <BuildIpa>true</BuildIpa>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Controllers\Base\NumericKeyboardViewController.cs" />
     <Compile Include="Controllers\PerformWarmupController.cs" />
     <Compile Include="Controllers\PerformWarmupController.designer.cs">
       <DependentUpon>PerformWarmupController.cs</DependentUpon>

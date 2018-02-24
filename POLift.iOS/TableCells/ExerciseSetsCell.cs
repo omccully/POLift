@@ -35,6 +35,7 @@ namespace POLift.iOS
         {
             SetCountTextField.EditingChanged -= SetCountTextField_EditingChanged;
             SetCountTextField.EditingChanged += SetCountTextField_EditingChanged;
+            SetCountTextField.AddDoneButtonToNumericKeyboard();
 
             this.ExerciseSets = exercise_sets;
             SetCountTextField.Text = ExerciseSets.SetCount.ToString();

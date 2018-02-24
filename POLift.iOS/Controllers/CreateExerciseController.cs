@@ -113,12 +113,19 @@ namespace POLift.iOS.Controllers
                 BindingMode.TwoWay)
                 .ObserveSourceEvent("EditingChanged"));*/
 
-        ExerciseNameTextField.ShouldReturn = AppleHelpers.DismissKeyboard;
+            ExerciseNameTextField.ShouldReturn = AppleHelpers.DismissKeyboard;
             RepCountTextField.ShouldReturn = AppleHelpers.DismissKeyboard;
             WeightIncrementTextField.ShouldReturn = AppleHelpers.DismissKeyboard;
             RestPeriodTextField.ShouldReturn = AppleHelpers.DismissKeyboard;
             ConsecutiveSetsTextField.ShouldReturn = AppleHelpers.DismissKeyboard;
+
+            RepCountTextField.AddDoneButtonToNumericKeyboard();
+            WeightIncrementTextField.AddDoneButtonToNumericKeyboard();
+            RestPeriodTextField.AddDoneButtonToNumericKeyboard();
+            ConsecutiveSetsTextField.AddDoneButtonToNumericKeyboard();
         }
+
+
 
         private void PickerVM_MathTypeSelected(IPlateMath obj)
         {

@@ -2,6 +2,7 @@
 using System;
 using UIKit;
 using POLift.Core.Model;
+using System.Text.RegularExpressions;
 
 namespace POLift.iOS
 {
@@ -18,7 +19,11 @@ namespace POLift.iOS
             EditClicked = edit_handler;
             EditRoutinebutton.TouchUpInside += EditClicked;
 
-            RoutineLabel.Text = routineinfo.Routine.ToString();
+            //
+
+            Regex regex = new Regex(@"\[.*\]");
+            string routine_txt = routineinfo.Routine.ToString();
+            RoutineLabel.Text = regex.Replace(routine_txt, "").Trim();
 
             IRoutineResult latest = routineinfo.LatestResult;
 
