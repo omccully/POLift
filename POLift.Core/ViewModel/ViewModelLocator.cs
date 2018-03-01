@@ -97,6 +97,7 @@ namespace POLift.Core.ViewModel
                 SelectExercise.DialogService = value;
                 ViewRoutineResults.DialogService = value;
                 SelectProgramToDownload.DialogService = value;
+                SideMenu.DialogService = value;
             }
         }
 
@@ -195,6 +196,7 @@ namespace POLift.Core.ViewModel
                 _MainThreadInvoker = value;
 
                 Timer.MainThreadInvoker = value;
+                SideMenu.MainThreadInvoker = value;
             }
         }
 

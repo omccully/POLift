@@ -7,6 +7,7 @@ using UIKit;
 using POLift.Core.ViewModel;
 
 using SidebarNavigation;
+using POLift.Core.Service;
 
 namespace POLift.iOS.Controllers
 {
@@ -86,9 +87,14 @@ namespace POLift.iOS.Controllers
             if (purchase_license_nav != null)
             {
                 Navigations.Add(purchase_license_nav);
+
+                Navigations.Add(new Navigation("Restore license", Vm.RecheckLicense));
+
                 NavigationLinkTableView.ReloadData();
             }
         }
+
+
 
         private void RateApp_Click(object sender, EventArgs e)
         {

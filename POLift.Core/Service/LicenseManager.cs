@@ -68,6 +68,10 @@ namespace POLift.Core.Service
                 CheckLicenseStrict_NotCached);
 
             KeyValueStorage = kvs;
+
+#if DEBUG
+            CrossInAppBilling.Current.InTestingMode = true;
+#endif
         }
 
         public async Task<bool> IsInTrialPeriod()

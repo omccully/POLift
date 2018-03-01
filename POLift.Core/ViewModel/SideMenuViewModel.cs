@@ -22,6 +22,7 @@ namespace POLift.Core.ViewModel
         public ILicenseManager LicenseManager;
         public DialogService DialogService;
         public IToaster Toaster;
+        public IMainThreadInvoker MainThreadInvoker;
 
         public SideMenuViewModel(INavigationService navigationService, IPOLDatabase database)
         {
@@ -49,7 +50,7 @@ namespace POLift.Core.ViewModel
 
         const string FirstLaunchForExternalProgramsStorageKey =
             "first_launch_for_external_programs";
-        void PromptUserForExternalProgramsIfFirstLaunch()
+        public void PromptUserForExternalProgramsIfFirstLaunch()
         {
             bool first_launch =
                 KeyValueStorage.GetBoolean(FirstLaunchForExternalProgramsStorageKey, true);
@@ -153,6 +154,38 @@ namespace POLift.Core.ViewModel
         {
             navigationService.NavigateTo(
                 ViewModelLocator.SelectProgramToDownloadPageKey);
+        }
+
+        public void RecheckLicense()
+        {
+            RecheckLicenseAsync();
+        }
+
+        async void RecheckLicenseAsync()
+        {
+            bool has_license_confirmed = await LicenseManager.CheckLicense(false);
+
+            string message = "";
+            if(has_license_confirmed)
+            {
+                message = "Your license has been verified.";
+            }
+            else
+            {
+                message = "Your license failed to verify.";
+            }
+
+            if(MainThreadInvoker == null)
+            {
+                DialogService.DisplayAcknowledgement(message);
+            }
+            else
+            {
+                MainThreadInvoker.Invoke(delegate
+                {
+                    DialogService.DisplayAcknowledgement(message);
+                });
+            }
         }
     }
 }

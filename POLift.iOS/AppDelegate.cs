@@ -44,6 +44,8 @@ namespace POLift.iOS
             // Override point for customization after application launch.
             // If not required for your application you can safely delete this method
 
+            System.Diagnostics.Debug.WriteLine("DatabasePath = " + DatabasePath);
+
             DispatcherHelper.Initialize(application);
 
             IPOLDatabase database = new POLDatabase(
@@ -104,7 +106,7 @@ namespace POLift.iOS
             l.CheckLicenseAndPrompt();
 
             //l.PromptUserForStartingNextRoutine(database, nav);
-
+            //l.SideMenu.PromptUserForExternalProgramsIfFirstLaunch();
             return true;
         }
 
