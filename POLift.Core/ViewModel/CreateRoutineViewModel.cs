@@ -42,8 +42,25 @@ namespace POLift.Core.ViewModel
             this.Database = database;
         }
 
-        IRoutine RoutineToDeleteIfDifferent;
-        public int LockedSets { get; set; }
+        public int RoutineToDeleteIfDifferentId
+        {
+            get
+            {
+                return RoutineToDeleteIfDifferent.ID;
+            }
+            set
+            {
+                if(value > 0)
+                {
+                    RoutineToDeleteIfDifferent =
+                        Database.ReadByID<Routine>(value);
+                }
+               
+            }
+        }
+        public IRoutine RoutineToDeleteIfDifferent;
+
+        public int LockedExercises { get; private set; }
 
         int _LockedExerciseSets;
         public int LockedExerciseSets {
@@ -51,13 +68,21 @@ namespace POLift.Core.ViewModel
             {
                 return _LockedExerciseSets;
             }
-            set
+            private set
             {
                 _LockedExerciseSets = value;
             }
         }
 
-        public void EditRoutine(IRoutine routine, int locked_sets = 0)
+        public Routine EditRoutine(int routine_id, int locked_sets = 0)
+        {
+            Routine routine = Database.ReadByID<Routine>(routine_id);
+            EditRoutine(routine, locked_sets);
+
+            return routine;
+        }
+
+        public void EditRoutine(IRoutine routine, int locked_exercises = 0)
         {
             Reset();
 
@@ -67,20 +92,29 @@ namespace POLift.Core.ViewModel
                 System.Diagnostics.Debug.WriteLine("routine.Name = " + routine.Name);
                 RoutineNameInput = routine.Name;
 
-                ExerciseSets.Clear();
-
-                LockedSets = locked_sets;
-                IEnumerable<IExerciseSets> exercise_sets = 
-                    Model.ExerciseSets.Expand(routine.ExerciseSets)
-                    .SplitLockedSets(locked_sets, out _LockedExerciseSets);
-
-                foreach (IExerciseSets es in exercise_sets)
-                {
-                    ExerciseSets.Add(es);
-                }
+                SetExerciseSets(routine.Exercises, locked_exercises);
             }
         }
-           
+
+        public void SetExerciseSets(IEnumerable<IExerciseSets> exercise_sets, int exercises_locked)
+        {
+            if(exercises_locked == 0)
+            {
+                ExerciseSets.SetCollection(exercise_sets);
+                LockedExercises = LockedExerciseSets = 0;
+            }
+
+            SetExerciseSets(Model.ExerciseSets.Expand(exercise_sets), exercises_locked);
+        }
+
+        public void SetExerciseSets(IEnumerable<IExercise> exercises, int exercises_locked)
+        {
+            ExerciseSets.SetCollection(
+                exercises.SplitLockedSets(exercises_locked, out _LockedExerciseSets));
+
+            LockedExercises = exercises_locked;
+        }
+
         public readonly ObservableCollection<IExerciseSets> ExerciseSets =
             new ObservableCollection<IExerciseSets>();
 
@@ -89,11 +123,18 @@ namespace POLift.Core.ViewModel
             RoutineToDeleteIfDifferent = null;
             RoutineNameInput = "";
             ExerciseSets.Clear();
-            LockedSets = 0;
+            LockedExercises = 0;
             LockedExerciseSets = 0;
         }
 
-        private void SelectExercise_ValueChosen(IExercise exercise)
+        public void SelectExercise_ValueChosen(int exercise_id)
+        {
+            Exercise selected_exercise = Database.ReadByID<Exercise>(exercise_id);
+
+            SelectExercise_ValueChosen(selected_exercise);
+        }
+
+        public void SelectExercise_ValueChosen(IExercise exercise)
         {
             System.Diagnostics.Debug.WriteLine($"RoutineNameInput={RoutineNameInput} {String.IsNullOrWhiteSpace(RoutineNameInput)}");
             System.Diagnostics.Debug.WriteLine($"exercise.Category={exercise.Category} {!String.IsNullOrWhiteSpace(exercise.Category)}");
@@ -130,40 +171,57 @@ namespace POLift.Core.ViewModel
             }
         }
 
-        Routine CreateRoutineFromInput()
+        public List<IExerciseSets> SaveExerciseSets()
         {
-            if (this.ExerciseSets.Count == 0)
+            return ExerciseSets.SaveExerciseSets(Database);
+        }
+
+        public Routine CreateRoutineFromInput()
+        {
+            try
             {
-                Toaster.DisplayError(
-                    "You must have exercises in your routine. ");
+                if (this.ExerciseSets.Count == 0)
+                {
+                    Toaster.DisplayError(
+                        "You must have exercises in your routine. ");
+                    return null;
+                }
+
+                List<IExerciseSets> normalized = SaveExerciseSets();
+
+                Routine routine = new Routine(RoutineNameInput,
+                       normalized);
+                routine.Database = Database;
+
+                Database.InsertOrUndeleteAndUpdate(routine);
+
+                // if this routine is being edited, then delete the old one
+                if (RoutineToDeleteIfDifferent != null &&
+                    !routine.Equals(RoutineToDeleteIfDifferent))
+                {
+                    Database.HideDeletable<Routine>((Routine)RoutineToDeleteIfDifferent);
+                }
+
+                // set the category for all of the exercises in this routine
+                foreach (IExerciseSets ex_sets in normalized)
+                {
+                    Exercise ex = ex_sets.Exercise;
+                    ex.Category = routine.Name;
+                    Database.Update(ex);
+                }
+
+                return routine;
+            }
+            catch(ArgumentException ae)
+            {
+                Toaster.DisplayError(ae.Message);
                 return null;
             }
+        }
 
-            List<IExerciseSets> normalized =
-                this.ExerciseSets.SaveExerciseSets(Database);
-
-            Routine routine = new Routine(RoutineNameInput,
-                   normalized);
-            routine.Database = Database;
-
-            Database.InsertOrUndeleteAndUpdate(routine);
-
-            // if this routine is being edited, then delete the old one
-            if (RoutineToDeleteIfDifferent != null &&
-                !routine.Equals(RoutineToDeleteIfDifferent))
-            {
-                Database.HideDeletable<Routine>((Routine)RoutineToDeleteIfDifferent);
-            }
-
-            // set the category for all of the exercises in this routine
-            foreach (IExerciseSets ex_sets in normalized)
-            {
-                Exercise ex = ex_sets.Exercise;
-                ex.Category = routine.Name;
-                Database.Update(ex);
-            }
-
-            return routine;
+        public List<IExerciseSets> IdsToExerciseSets(int[] ids)
+        {
+            return new List<IExerciseSets>(Database.ParseIDs<ExerciseSets>(ids));
         }
 
         RelayCommand _AddExerciseCommand;
@@ -188,24 +246,51 @@ namespace POLift.Core.ViewModel
                     (_CreateRoutineCommand =
                     new RelayCommand(
                         () => {
-                            try
-                            {
-                                Routine result = CreateRoutineFromInput();
+                            Routine result = CreateRoutineFromInput();
 
-                                if (result != null)
-                                {
-                                    ValueChosen?.Invoke(result);
-                                    navigationService.GoBack();
-                                }
-                            }
-                            catch (ArgumentException ae)
+                            if (result != null)
                             {
-                                Toaster.DisplayError(ae.Message);
+                                ValueChosen?.Invoke(result);
+                                navigationService.GoBack();
                             }
                         }));
             }
         }
 
+        public const string RoutineIDToDeleteIfDifferentKey = "routine_id_to_delete_if_different";
+        public const string ExerciseSetsIdsKey = "exercise_sets_ids";
+        public const string ExercisesLockedKey = "exercises_locked";
 
+        public void SaveState(KeyValueStorage kvs)
+        {
+            SaveExerciseSets();
+
+            int[] ids = ExerciseSets.Select(es => es.ID).ToArray();
+            System.Diagnostics.Debug.WriteLine("ids during save: " + ids.ToIDString());
+
+            kvs.SetValue(ExerciseSetsIdsKey, ids);
+
+            kvs.SetValue(ExercisesLockedKey, LockedExercises);
+
+            if(RoutineToDeleteIfDifferent != null)
+            {
+                kvs.SetValue(RoutineIDToDeleteIfDifferentKey,
+                    RoutineToDeleteIfDifferent.ID);
+            }
+        }
+
+        public void RestoreState(KeyValueStorage kvs)
+        {
+            int[] ids = kvs.GetIntArray(ExerciseSetsIdsKey);
+
+            int exercises_locked = kvs.GetInteger(ExercisesLockedKey);
+
+            if (ids != null)
+            {
+                SetExerciseSets(IdsToExerciseSets(ids), exercises_locked);
+            }
+
+            RoutineToDeleteIfDifferentId = kvs.GetInteger(RoutineIDToDeleteIfDifferentKey);
+        }
     }
 }

@@ -19,21 +19,29 @@ using OxyPlot.Xamarin.Android;
 
 using Microsoft.Practices.Unity;
 
+using GalaSoft.MvvmLight.Helpers;
+
 namespace POLift.Droid
 {
     using Core.Model;
     using Core.Service;
     using Core.Helpers;
+    using Core.ViewModel;
 
     public class GraphFragment : Fragment
     {
+        private OrmGraphViewModel Vm
+        {
+            get
+            {
+                return ViewModelLocator.Default.OrmGraph; 
+            }
+        }
+
         const int SelectExerciseDifficultyRequestCode = 0;
 
         PlotView plot_view;
         TextView GraphDataTextView;
-        OrmGraph orm_graph;
-
-        IPOLDatabase Database;
 
         int ExerciseDifficultyID = 0;
 
@@ -42,10 +50,11 @@ namespace POLift.Droid
             base.OnCreate(savedInstanceState);
 
             // Create your fragment here
-            Database = C.ontainer.Resolve<IPOLDatabase>();
-            orm_graph = new OrmGraph(Database);
+            //Database = C.ontainer.Resolve<IPOLDatabase>();
+            //orm_graph = new OrmGraph(Database);
 
-            ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(this.Activity);
+
+            /*ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(this.Activity);
 
             if(prefs.GetBoolean("exercise_created_since_last_difficulty_regeneration", true))
             {
@@ -54,7 +63,7 @@ namespace POLift.Droid
                 ISharedPreferencesEditor editor = prefs.Edit();
                 editor.PutBoolean("exercise_created_since_last_difficulty_regeneration", false);
                 editor.Apply();
-            }
+            }*/
 
             plot_view = new PlotView(this.Activity);
             plot_view.Background = Resources.GetDrawable(
@@ -79,7 +88,6 @@ namespace POLift.Droid
 
             base.OnSaveInstanceState(outState);
         }
-
 
         FrameLayout frame_layout = null;
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -116,15 +124,16 @@ namespace POLift.Droid
         void InitializePlot(int exercise_difficulty_id)
         {
             if (exercise_difficulty_id > 0 && frame_layout != null)
-            {
-                ExerciseDifficulty ex = Database.ReadByID<ExerciseDifficulty>(exercise_difficulty_id);
-                IEnumerable<ExerciseResult> data = orm_graph.GetPlotData(exercise_difficulty_id);
-                plot_view.Model = orm_graph.CreatePlotModel(ex, data);
+            { 
+                Vm.InitializePlot(exercise_difficulty_id);
+
+                plot_view.Model = Vm.PlotModel;
+
                 frame_layout.RemoveAllViews();
                 frame_layout.AddView(plot_view);
 
                 // generate list of values for sidebar
-                GraphDataTextView.Text = OrmGraph.DataSourceText(data);
+                GraphDataTextView.Text = Vm.DataText;
             }
         }
     }

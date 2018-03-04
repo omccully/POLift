@@ -5,11 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
-using Microsoft.Practices.ServiceLocation;
-
+using CommonServiceLocator;
 
 namespace POLift.Core.ViewModel
 {
+    
     using GalaSoft.MvvmLight.Views;
     using Model;
     using Service;
@@ -222,62 +222,6 @@ namespace POLift.Core.ViewModel
             }
         }
 
-        public void PromptUserForStartingNextRoutine(IPOLDatabase Database, INavigationService nav)
-        {
-            System.Diagnostics.Debug.WriteLine("finding next routine...");
-            var rrs = Database.Table<RoutineResult>().OrderByDescending(rr => rr.StartTime);
-            RoutineResult latest_routine_result = rrs.ElementAtOrDefault(0);
-            if (latest_routine_result == null)
-            {
-                System.Diagnostics.Debug.WriteLine("no recent routine result");
-                return;
-            }
-            if (!latest_routine_result.Completed)
-            {
-                int ec = latest_routine_result.ExerciseCount;
-                int erc = latest_routine_result.ExerciseResults.Count();
-                System.Diagnostics.Debug.WriteLine($"latest routine result was uncompleted. ec={ec}, erc={erc}");
-                //
-                return;
-            }
-
-            if ((DateTime.Now - latest_routine_result.StartTime) < TimeSpan.FromHours(20))
-            {
-                System.Diagnostics.Debug.WriteLine($"latest routine result was started less than 20 hours ago");
-                return;
-            }
-
-            int latest_routine_id = latest_routine_result.RoutineID;
-            string latest_routine_name = latest_routine_result.Routine.Name;
-
-            int previous_routine_id = -1;
-            foreach (RoutineResult rr in rrs)
-            {
-                System.Diagnostics.Debug.WriteLine("checking " + rr);
-                if (previous_routine_id != -1 &&
-                    (rr.RoutineID == latest_routine_id || rr.Routine.Name == latest_routine_name))
-                {
-                    Routine next_routine = Database.ReadByID<Routine>(previous_routine_id);
-
-                    System.Diagnostics.Debug.WriteLine("next routine found");
-
-                    DialogService.DisplayConfirmationNeverShowAgain(
-                        "Based on your history, it looks like your next routine is " +
-                        $"\"{next_routine.Name}\". Would you like to do this routine now?",
-                        "start_next_routine",
-                        delegate
-                        {
-                            PerformRoutine.Routine = next_routine;
-                            nav.NavigateTo(PerformRoutinePageKey);
-                        });
-
-                    break;
-                }
-
-                previous_routine_id = rr.RoutineID;
-            }
-        }
-
         public async Task CheckLicenseAndPrompt()
         {
             try
@@ -329,7 +273,7 @@ namespace POLift.Core.ViewModel
         {
             get
             {
-                return ServiceLocator.Current.GetInstance<MainViewModel>();
+                return SimpleIoc.Default.GetInstance<MainViewModel>();
             }
         }
 
@@ -337,7 +281,7 @@ namespace POLift.Core.ViewModel
         {
             get
             {
-                return ServiceLocator.Current.GetInstance<PerformRoutineViewModel>();
+                return SimpleIoc.Default.GetInstance<PerformRoutineViewModel>();
             }
         }
 
@@ -345,7 +289,7 @@ namespace POLift.Core.ViewModel
         {
             get
             {
-                return ServiceLocator.Current.GetInstance<PerformWarmupViewModel>();
+                return SimpleIoc.Default.GetInstance<PerformWarmupViewModel>();
             }
         }
 
@@ -353,7 +297,7 @@ namespace POLift.Core.ViewModel
         {
             get
             {
-                return ServiceLocator.Current.GetInstance<SelectExerciseViewModel>();
+                return SimpleIoc.Default.GetInstance<SelectExerciseViewModel>();
             }
         }
 
@@ -361,7 +305,7 @@ namespace POLift.Core.ViewModel
         {
             get
             {
-                return ServiceLocator.Current.GetInstance<CreateExerciseViewModel>();
+                return SimpleIoc.Default.GetInstance<CreateExerciseViewModel>();
             }
         }
 
@@ -369,7 +313,7 @@ namespace POLift.Core.ViewModel
         {
             get
             {
-                return ServiceLocator.Current.GetInstance<CreateRoutineViewModel>();
+                return SimpleIoc.Default.GetInstance<CreateRoutineViewModel>();
             }
         }
 
@@ -377,7 +321,7 @@ namespace POLift.Core.ViewModel
         {
             get
             {
-                return ServiceLocator.Current.GetInstance<TimerViewModel>();
+                return SimpleIoc.Default.GetInstance<TimerViewModel>();
             }
         }
 
@@ -385,7 +329,7 @@ namespace POLift.Core.ViewModel
         {
             get
             {
-                return ServiceLocator.Current.GetInstance<ViewRoutineResultsViewModel>();
+                return SimpleIoc.Default.GetInstance<ViewRoutineResultsViewModel>();
             }
         }
 
@@ -393,7 +337,7 @@ namespace POLift.Core.ViewModel
         {
             get
             {
-                return ServiceLocator.Current.GetInstance<EditRoutineResultViewModel>();
+                return SimpleIoc.Default.GetInstance<EditRoutineResultViewModel>();
             }
         }
 
@@ -401,7 +345,7 @@ namespace POLift.Core.ViewModel
         {
             get
             {
-                return ServiceLocator.Current.GetInstance<OrmGraphViewModel>();
+                return SimpleIoc.Default.GetInstance<OrmGraphViewModel>();
             }
         }
 
@@ -409,7 +353,7 @@ namespace POLift.Core.ViewModel
         {
             get
             {
-                return ServiceLocator.Current.GetInstance<SelectExerciseDifficultyViewModel>();
+                return SimpleIoc.Default.GetInstance<SelectExerciseDifficultyViewModel>();
             }
         }
 
@@ -417,7 +361,7 @@ namespace POLift.Core.ViewModel
         {
             get
             {
-                return ServiceLocator.Current.GetInstance<SideMenuViewModel>();
+                return SimpleIoc.Default.GetInstance<SideMenuViewModel>();
             }
         }
 
@@ -425,7 +369,7 @@ namespace POLift.Core.ViewModel
         {
             get
             {
-                return ServiceLocator.Current.GetInstance<SelectProgramToDownloadViewModel>();
+                return SimpleIoc.Default.GetInstance<SelectProgramToDownloadViewModel>();
             }
         }
 

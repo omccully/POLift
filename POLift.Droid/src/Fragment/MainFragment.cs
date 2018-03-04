@@ -19,6 +19,7 @@ namespace POLift.Droid
     using Service;
     using Core.Model;
     using Core.Service;
+    using Core.ViewModel;
 
     [Activity(Label = "Progressive Overload Lifting", MainLauncher = true)]
     class MainFragment : Fragment
@@ -31,28 +32,26 @@ namespace POLift.Droid
         Button CreateRoutineLink;
         RoutineAdapter routine_adapter;
 
-        IPOLDatabase Database;
+        private MainViewModel Vm
+        {
+            get
+            {
+                return ViewModelLocator.Default.Main;
+            }
+        }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-
             return inflater.Inflate(Resource.Layout.Main, container, false);
-
         }
-
-        
 
         public override void OnViewCreated(View view, Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
 
-            //SetContentView(Resource.Layout.Main);
-
-            Database = C.ontainer.Resolve<IPOLDatabase>();
-
             RoutinesList = view.FindViewById<ListView>(Resource.Id.RoutinesList);
-
             CreateRoutineLink = view.FindViewById<Button>(Resource.Id.CreateRoutineLink);
+
             CreateRoutineLink.Click += CreateRoutineButton_Click;
 
             RoutinesList.ItemClick += RoutinesList_ItemClick;
@@ -61,6 +60,11 @@ namespace POLift.Droid
             RoutinesList.Focusable = true;
             RoutinesList.Clickable = true;
             RoutinesList.ItemsCanFocus = true;
+
+            //ViewModelLocator.Detauls.Toaster = new Toaster(this.Activity);
+            ViewModelLocator.Default.DialogService = new DialogService(
+                new DialogBuilderFactory(this.Activity),
+                ViewModelLocator.Default.KeyValueStorage);
 
             RefreshRoutineList();
         }
@@ -74,10 +78,7 @@ namespace POLift.Droid
 
         void RefreshRoutineList()
         {
-            var data = Helpers.MainPageRoutinesList(Database);
-
-            routine_adapter = new RoutineAdapter(Activity,
-                data);
+            routine_adapter = new RoutineAdapter(Activity, Vm.RoutinesList);
             RoutinesList.Adapter = routine_adapter;
 
             routine_adapter.DeleteButtonClicked += Routine_adapter_DeleteButtonClicked;
@@ -93,18 +94,10 @@ namespace POLift.Droid
 
         private void Routine_adapter_DeleteButtonClicked(object sender, RoutineEventArgs e)
         {
-            AndroidHelpers.DisplayConfirmation(Activity, "Are you sure you want to delete this routine?",
-                delegate
-                {
-                    // yes
-                    IRoutine routine_to_delete = e.Routine;
-
-                    routine_to_delete.Deleted = true;
-
-                    Database.Update(routine_to_delete);
-
-                    RefreshRoutineList();
-                });
+            Vm.DeleteRoutine(e.Routine, delegate
+            {
+                RefreshRoutineList();
+            });
         }
 
         private void RoutinesList_ItemClick(object sender, AdapterView.ItemClickEventArgs e)
@@ -112,9 +105,8 @@ namespace POLift.Droid
             var intent = new Intent(Activity, typeof(PerformRoutineActivity));
 
             IRoutine routine = routine_adapter[e.Position].Routine;
-            int id = routine.ID;
 
-            intent.PutExtra("routine_id", id);
+            intent.PutExtra("routine_id", routine.ID);
     
             StartActivityForResult(intent, PerformRoutineRequestCode);
         }

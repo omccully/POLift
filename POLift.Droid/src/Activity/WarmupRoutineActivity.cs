@@ -15,57 +15,28 @@ using Microsoft.Practices.Unity;
 
 using System.Diagnostics;
 
+using GalaSoft.MvvmLight.Helpers;
+
 namespace POLift.Droid
 {
     using Service;
     using Android.Text;
     using Core.Model;
     using Core.Service;
+    using Core.ViewModel;
 
     [Activity(Label = "Warmup", ParentActivity = typeof(PerformRoutineActivity))]
     public class WarmupRoutineActivity : PerformRoutineBaseActivity
     {
-        IExercise FirstExercise = null;
-
-        const string WarmupSetIndexKey = "warmup_set_index";
-
-        IWarmupSet[] WarmupSets = WarmupSet.Default;
-
-        IWarmupSet NextWarmupSet
+        private PerformWarmupViewModel Vm
         {
-            get
-            {
-                if (WarmupFinished) return null;
-                return WarmupSets[WarmupSetIndex];
-            }
+            get => ViewModelLocator.Default.PerformWarmup;
         }
 
-        int _warmup_set_index = 0;
-        int WarmupSetIndex
+        protected override PerformBaseViewModel BaseVm
         {
-            get
-            {
-                return _warmup_set_index;
-            }
-            set
-            {
-                _warmup_set_index = value;
-                RefreshWarmupInfo();
-            }
+            get => Vm;
         }
-
-        bool WarmupFinished
-        {
-            get
-            {
-                return WarmupSetIndex >= WarmupSets.Length;
-            }
-        }
-
-        Dialog error_dialog;
-        Dialog back_button_dialog;
-
-        IPOLDatabase Database;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -73,48 +44,28 @@ namespace POLift.Droid
             sw.Start();
             Log.Debug("POLift", "WarmupRoutineActivity.OnCreate()");
 
+            AndroidHelpers.SetActivityDepth(this, 2);
+
             base.OnCreate(savedInstanceState);
-           // Log.Debug("POLift", "Warmup after base " + sw.ElapsedMilliseconds + "ms");
 
+            Vm.DialogService = new DialogService(
+                new DialogBuilderFactory(this),
+                ViewModelLocator.Default.KeyValueStorage);
 
-            // Create your application here
+            bindings.Add(this.SetBinding(
+              () => BaseVm.ExerciseDetails,
+              () => NextWarmupView.Text));
 
-            Database = C.ontainer.Resolve<IPOLDatabase>();
+            
 
-            int id = Intent.GetIntExtra("exercise_id", -1);
-            if (id != -1)
-            {
-                FirstExercise = Database.ReadByID<Exercise>(id);
+            List<KeyValueStorage> storages = new List<KeyValueStorage>();
+            if(savedInstanceState != null)
+            {   // prefer saved state
+                storages.Add(new BundleKeyValueStorage(savedInstanceState));
             }
+            storages.Add(new BundleKeyValueStorage(Intent.Extras));
 
-            WeightInput = Intent.GetFloatExtra("working_set_weight", 0);
-
-            if (FirstExercise == null)
-            {
-                error_dialog = AndroidHelpers.DisplayError(this, "Error (" + id + ")",
-                    delegate
-                    {
-                        Finish();
-                    });
-
-                return;
-            }
-
-            int warmup_set_index_intent = Intent.GetIntExtra("warmup_set_index", 0);
-            if (savedInstanceState == null)
-            {
-                Log.Debug("POLift", "Starting WarmupRoutine from intent. intent[warmup_set_index] = " +
-                    warmup_set_index_intent);
-                WarmupSetIndex = warmup_set_index_intent;
-            }
-            else
-            {
-                Log.Debug("POLift", "Restoring WarmupRoutine from saved state. state[warmup_set_index] = " +
-                    savedInstanceState.GetInt("warmup_set_index", -9999));
-                WarmupSetIndex = savedInstanceState.GetInt("warmup_set_index", warmup_set_index_intent);
-            }
-
-            // set index and display the stuff
+            Vm.InitializeFromState(new ChainedKeyValueStorage(storages));
 
             //RoutineDetails.Visibility = ViewStates.Gone;
             WeightLabel.Text = "Working set weight: ";
@@ -124,175 +75,42 @@ namespace POLift.Droid
             ModifyRestOfRoutineButton.Visibility = ViewStates.Gone;
             NextExerciseView.Visibility = ViewStates.Gone;
 
-            //IMadeAMistakeButton.Visibility = ViewStates.Gone;
             IMadeAMistakeButton.Text = "Skip warmup routine";
             IMadeAMistakeButton.Click += IMadeAMistakeButton_Click;
-
-            //var toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
-            //SetActionBar(toolbar);
-            //ActionBar.Title = $"{FirstExercise.Name} warmup";
 
             EditThisExerciseButton.Visibility = ViewStates.Gone;
 
             RepDetailsTextView.Visibility = ViewStates.Gone;
 
+
+
             Log.Debug("POLift", "Warmup final " + sw.ElapsedMilliseconds + "ms");
 
         }
 
-
-        protected override void OnRestoreInstanceState(Bundle savedInstanceState)
-        {
-            int warmup_set_index_intent = Intent.GetIntExtra("warmup_set_index", 0);
-            if (savedInstanceState != null)
-            {
-                Log.Debug("POLift", "Restoring WarmupRoutine from saved state in OnRestoreInstanceState. state[warmup_set_index] = " +
-                    savedInstanceState.GetInt("warmup_set_index", -9999));
-                WarmupSetIndex = savedInstanceState.GetInt("warmup_set_index", warmup_set_index_intent);
-            }
-
-            base.OnRestoreInstanceState(savedInstanceState);
-        }
-
         private void IMadeAMistakeButton_Click(object sender, EventArgs e)
         {
-            SetResult(Result.Canceled);
-            Finish();
+            Vm.SkipWarmup(delegate
+            {
+                SetResult(Result.Canceled);
+                Finish();
+            });
         }
 
         public override void OnBackPressed()
         {
-            if(WarmupSetIndex == 0)
+            Vm.SkipWarmup(delegate
             {
                 base.OnBackPressed();
-                return;
-            }
-
-            back_button_dialog = AndroidHelpers.DisplayConfirmation(this,
-                "Are you sure you want to end this warmup session? " +
-                " You will lose all of your progress in this warmup.",
-                delegate
-                {
-                    base.OnBackPressed();
-                });
-        }
-
-        protected override void WeightEditText_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            // base.WeightEditText_TextChanged(sender, e);
-
-            RefreshWarmupInfo();
-        }
-
-        void RefreshWarmupInfo()
-        {
-            RefreshCurrentWarmupDetails();
-
-            RefreshFullWarmupDetails();
-        }
-
-        void RefreshCurrentWarmupDetails()
-        {
-            if (WarmupFinished)
-            {
-                NextExerciseView.Text = "Finished";
-                return;
-            }
-
-            string txt = $"Warmup exercise {WarmupSetIndex + 1}/{WarmupSets.Count()}: ";
-            txt += $"{NextWarmupSet.Reps} reps of {FirstExercise.Name} at a weight of ";
-
-            try
-            {
-                float weight = NextWarmupSet.GetWeight(FirstExercise, WeightInput);
-                txt += weight.ToString();
-
-                if (FirstExercise.PlateMath != null)
-                {
-                    txt += " (" + FirstExercise.PlateMath.PlateCountsToString(weight) + ")";
-                }
-            }
-            catch (FormatException)
-            {
-                txt += "??";
-            }
-
-
-            if (!String.IsNullOrEmpty(NextWarmupSet.Notes))
-            {
-                txt += $" ({NextWarmupSet.Notes})";
-            }
-
-            NextWarmupView.Text = txt;
-        }
-
-        void RefreshFullWarmupDetails()
-        {
-            StringBuilder builder = new StringBuilder();
-
-            try
-            {
-                float weight = WeightInput;
-
-                int i = 0;
-                foreach (IWarmupSet ws in WarmupSets)
-                {
-                    if (i == WarmupSetIndex)
-                    {
-                        builder.Append("> ");
-                    }
-
-                    builder.Append("Weight of ");
-                    builder.Append(ws.GetWeight(FirstExercise, weight).ToString());
-                    builder.Append(", rest ");
-                    builder.Append(ws.GetRestPeriod(FirstExercise).ToString());
-
-                    if (i < WarmupSetIndex)
-                    {
-                        builder.Append(" (done)");
-                    }
-
-                    if(i < WarmupSets.Length - 1)
-                    {
-                        builder.AppendLine();
-                    }
-
-                    i++;
-                }
-
-                RoutineDetails.Text = builder.ToString();
-            }
-            catch (FormatException)
-            {
-                RoutineDetails.Text = "??";
-            }
+            });
         }
 
         protected override void ReportResultButton_Click(object sender, EventArgs e)
         {
-            // warmup set completed button clicked
-            WarmupSetIndex++;
-
-            if (WarmupFinished)
+            if (!Vm.WarmupSetFinished())
             {
-                SurpressTimerCallbackCleanup = true;
-                SetResult(Result.Ok);
-                Finish();
-                return;
+                TryShowFullScreenAd();
             }
-
-            StartTimer(NextWarmupSet.GetRestPeriod(FirstExercise));
-
-            TryShowFullScreenAd();
-        }
-
-        protected override void OnSaveInstanceState(Bundle outState)
-        {
-            outState.PutInt("warmup_set_index", WarmupSetIndex);
-
-            SaveTimerState(outState);
-
-            base.OnSaveInstanceState(outState);
         }
 
         protected override void OnPause()
@@ -300,8 +118,7 @@ namespace POLift.Droid
             Log.Debug("POLift", "WarmupRoutineActivity.OnPause()");
 
             // dismiss dialog boxes to prevent window leaks
-            error_dialog?.Dismiss();
-            back_button_dialog?.Dismiss();
+            Vm.DialogService.Dispose();
 
             base.OnPause();
         }
@@ -325,17 +142,7 @@ namespace POLift.Droid
         {
             base.SaveStateToIntent(intent);
 
-            intent.PutExtra("exercise_id", FirstExercise.ID);
-
-            try
-            {
-                intent.PutExtra("working_set_weight", WeightInput);
-            }
-            catch (FormatException)
-            {
-            }
-
-            intent.PutExtra("warmup_set_index", WarmupSetIndex);
+            Vm.SaveState(new BundleKeyValueStorage(intent.Extras));
         }  
     }
 }

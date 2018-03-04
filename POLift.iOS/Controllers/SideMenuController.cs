@@ -59,10 +59,7 @@ namespace POLift.iOS.Controllers
                     Resource.Mipmap.ic_backup_white_24dp)*/
             };
 
-            if(Vm.ShowRateApp)
-            {
-                //Navigations.Add(new Navigation("Rate app", RateApp_Click));
-            }
+            
 
             NavigationDataSource nds = 
                 new NavigationDataSource(Navigations);

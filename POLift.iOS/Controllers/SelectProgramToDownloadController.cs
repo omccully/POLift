@@ -4,7 +4,7 @@ using System;
 using UIKit;
 using System.Linq;
 using Unity;
-using Microsoft.Practices.ServiceLocation;
+using CommonServiceLocator;
 using POLift.Core.Service;
 using POLift.Core.ViewModel;
 using System.Collections.Generic;

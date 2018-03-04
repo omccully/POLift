@@ -94,7 +94,6 @@ namespace POLift.iOS
 
             l.TimerService = new BackgroundTimer();
 
-
             l.TimerFinishedNotificationService = new NotificationService();
             
             // Request notification permissions from the user

@@ -100,7 +100,9 @@ namespace POLift.Core.ViewModel
             }
             set
             {
+                System.Diagnostics.Debug.WriteLine("ExerciseNameInput");
                 Set(() => ExerciseNameInput, ref _ExerciseNameInput, value);
+                UpdateExerciseDetails();
             }
         }
 
@@ -113,7 +115,9 @@ namespace POLift.Core.ViewModel
             }
             set
             {
+                System.Diagnostics.Debug.WriteLine("RepCountInput");
                 Set(() => RepCountInput, ref _RepCountInput, value);
+                UpdateExerciseDetails();
             }
         }
 
@@ -126,7 +130,9 @@ namespace POLift.Core.ViewModel
             }
             set
             {
+                System.Diagnostics.Debug.WriteLine("RepCountInput");
                 Set(() => WeightIncrementInput, ref _WeightIncrementInput, value);
+                UpdateExerciseDetails();
             }
         }
 
@@ -139,7 +145,9 @@ namespace POLift.Core.ViewModel
             }
             set
             {
+                System.Diagnostics.Debug.WriteLine("RestPeriodInput");
                 Set(() => RestPeriodInput, ref _RestPeriodInput, value);
+                UpdateExerciseDetails();
             }
         }
 
@@ -152,7 +160,9 @@ namespace POLift.Core.ViewModel
             }
             set
             {
+                System.Diagnostics.Debug.WriteLine("ConsecutiveSetsInput");
                 Set(() => ConsecutiveSetsInput, ref _ConsecutiveSetsInput, value);
+                UpdateExerciseDetails();
             }
         }
 
@@ -183,9 +193,20 @@ namespace POLift.Core.ViewModel
             }
         }
 
+        string _ExerciseDetails;
+        public string ExerciseDetails
+        {
+            get
+            {
+                return _ExerciseDetails;
+            }
+            set
+            {
+                Set(() => ExerciseDetails, ref _ExerciseDetails, value);
+            }
+        }
 
-
-        Exercise CreateExerciseFromInput()
+        public Exercise CreateExerciseFromInput()
         {
             try
             {
@@ -225,6 +246,84 @@ namespace POLift.Core.ViewModel
             }
 
             return null;
+        }
+
+        void UpdateExerciseDetails()
+        {
+            // You will as many reps of <exercise name>
+            // as you can for each set. If you get <max reps> reps,
+            // you will increase the weight by <weight increment>
+
+            int cs = -1;
+            bool cs_success = Int32.TryParse(ConsecutiveSetsInput, out cs);
+
+            StringBuilder builder = new StringBuilder();
+
+            builder.Append("Explanation of your input: ");
+
+            if (!cs_success || cs >= 1)
+            {
+                builder.Append("You will try to get as many reps of ")
+                .Append(EnsureString(ExerciseNameInput, "<exercise name>"))
+                .Append(" as you can for each set. If you get ")
+                .Append(EnsureInt(RepCountInput, "<reps>"))
+                .Append(" reps");
+
+                if (cs > 1)
+                {
+                    builder.Append(" for ")
+                        .Append(EnsureInt(ConsecutiveSetsInput, "<consecutive sets>"))
+                        .Append(" sets in a row");
+                }
+
+                builder.Append(", you will increase the weight by ")
+                   .Append(EnsureFloat(WeightIncrementInput, "<weight increment>"))
+                   .Append(" for your next set. ");
+            }
+            else if (cs == 0)
+            {
+                builder.Append("You will try to get ")
+                    .Append(EnsureInt(RepCountInput, "<reps>"))
+                    .Append(" reps for each set. You will increase the weight manually ")
+                    .Append("(it's normally recommended to let the app increase weight automatically")
+                    .Append(" using setting \"consecutive sets\" to a number greater than 0). ");
+            }
+
+
+            builder.Append("You will rest for ")
+                 .Append(EnsureInt(RestPeriodInput, "<rest period seconds>"))
+                 .Append(" seconds in between sets.");
+
+            ExerciseDetails = builder.ToString();
+        }
+
+        string EnsureString(string input_text, string fail_text = "?")
+        {
+            return String.IsNullOrWhiteSpace(input_text) ? fail_text : input_text;
+        }
+
+        string EnsureInt(string input_text, string fail_text = "?")
+        {
+            try
+            {
+                return Int32.Parse(input_text).ToString();
+            }
+            catch
+            {
+                return fail_text;
+            }
+        }
+
+        string EnsureFloat(string input_text, string fail_text = "?")
+        {
+            try
+            {
+                return Single.Parse(input_text).ToString();
+            }
+            catch
+            {
+                return fail_text;
+            }
         }
 
         RelayCommand _CreateExerciseCommand;

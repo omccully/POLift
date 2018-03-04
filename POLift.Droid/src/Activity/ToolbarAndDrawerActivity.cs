@@ -25,7 +25,6 @@ using Toolbar = Android.Support.V7.Widget.Toolbar;
 using ActionBarDrawerToggle = Android.Support.V7.App.ActionBarDrawerToggle;
 using FragmentManager = Android.App.FragmentManager;
 using FragmentTransaction = Android.App.FragmentTransaction;
-using ILicenseManager = POLift.Droid.Service.ILicenseManager;
 
 using Microsoft.Practices.Unity;
 
@@ -34,18 +33,26 @@ namespace POLift.Droid
     using Service;
     using Core.Model;
     using Core.Service;
+    using Core.ViewModel;
 
     [Activity(Label = "ToolbarAndDrawerActivity")]
     public class ToolbarAndDrawerActivity : AppCompatActivity
     {
+        SideMenuViewModel Vm
+        {
+            get
+            {
+                return ViewModelLocator.Default.SideMenu;
+            }
+        }
+
         const int GetFreeLiftingProgramsRequestCode = 54392;
 
         DrawerLayout _DrawerLayout;
         ListView DrawerListView;
         NavigationAdapter _NavigationAdapter;
 
-        protected IPOLDatabase Database;
-        protected Service.ILicenseManager LicenseManager;
+        IPOLDatabase Database;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -55,7 +62,6 @@ namespace POLift.Droid
             SetContentView(Resource.Layout.Drawer);
 
             Database = C.ontainer.Resolve<IPOLDatabase>();
-            LicenseManager = C.ontainer.Resolve<Service.ILicenseManager>();
 
             _DrawerLayout = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
             DrawerListView = FindViewById<ListView>(Resource.Id.left_drawer);
@@ -94,8 +100,8 @@ namespace POLift.Droid
                     Resource.Mipmap.ic_backup_white_24dp)*/
             };
 
-            ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(this);
-            if (!prefs.GetBoolean("has_rated_app", false))
+
+            if (Vm.ShowRateApp)
             {
                 Navigations.Add(new Navigation("Rate app",
                     RateApp_Click, Resource.Mipmap.ic_rate_review_white_18dp));
@@ -119,42 +125,11 @@ namespace POLift.Droid
 
             DrawerListView.ItemClick += DrawerListView_ItemClick;
 
-            PromptUserForExternalProgramsIfFirstLaunch();
+            Vm.PromptUserForExternalProgramsIfFirstLaunch();
 
             AddPurchaseLicenseNavigationIfNotPurchased();
         }
 
-        void PromptUserForExternalProgramsIfFirstLaunch()
-        {
-            ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(this);
-
-            bool first_launch = 
-                prefs.GetBoolean("first_launch_for_external_programs", true);
-            Log.Debug("POLift", $"first_launch_for_external_programs = {first_launch}");
-
-            if(first_launch)
-            {
-                AndroidHelpers.DisplayConfirmation(this, 
-                    "You can get started with the app right away " +
-                    "by using one of the built-in weightlifting programs. " +
-                    "They focus on compound lifts that have withstood " +
-                    "the test of time. Would you like to select a " +
-                    "built-in program now?",
-                    delegate
-                    {
-                        FlagExternalProgramsResponse(prefs);
-                        GetFreeLiftingPrograms();
-                    },
-                    delegate
-                    {
-                        FlagExternalProgramsResponse(prefs);
-                        Toast.MakeText(this, "If you change your mind, you " +
-                            "can get one of the built-in working programs " +
-                            "at any time from the navigation drawer by swiping " +
-                            "from the left.", ToastLength.Long).Show();
-                    });
-            }
-        }
 
         void FlagExternalProgramsResponse(ISharedPreferences prefs)
         {
@@ -167,49 +142,12 @@ namespace POLift.Droid
         {
             try
             {
-                if (!(await LicenseManager.CheckLicense(false)))
-                {
-                    // could hide this button until like 14 days are left
-
-                    Navigation LicenseNavigation =
-                        new Navigation("Purchase lifetime license",
-                        PurchaseLicense_Click,
-                        Resource.Mipmap.ic_shopping_basket_white_24dp);
-
-                    _NavigationAdapter.Navigations.Add(LicenseNavigation);
-
-                    PutDaysLeftAtEndOfNavigation(LicenseNavigation);
-                }
+                Navigation nav = await Vm.GetPurchaseLicenseNavigationLink();
+                if (nav == null) return;
+                nav.IconResourceID = Resource.Mipmap.ic_shopping_basket_white_24dp;
+                _NavigationAdapter.Navigations.Add(nav);
             }
             catch { }
-        }
-
-        async Task PutDaysLeftAtEndOfNavigation(Navigation navigation)
-        {
-            try
-            {
-                int sec_left = await LicenseManager.SecondsRemainingInTrial();
-                int days_left = Math.Abs(sec_left / 86400);
-                string plur = days_left == 1 ? "" : "s";
-
-                RunOnUiThread(delegate
-                {
-                    if (sec_left > 0)
-                    {
-                        navigation.Text += $" ({days_left} day{plur} left)";
-                    }
-                    else
-                    {
-                        navigation.Text += $" (expired {days_left} day{plur} ago)";
-                    }
-                });
-
-                _NavigationAdapter.NotifyDataSetChanged();
-            }
-            catch
-            {
-
-            }
         }
 
         protected void RestoreLastFragment()
@@ -353,14 +291,7 @@ namespace POLift.Droid
 
         private void PurchaseLicense_Click(object sender, EventArgs e)
         {
-            PurchaseLicense();
-        }
-
-        async void PurchaseLicense()
-        {
-            bool bought = await LicenseManager.PromptToBuyLicense();
-
-            System.Diagnostics.Debug.WriteLine($"bought = {bought}");
+            Vm.PromptToBuyLicense();
         }
 
         protected override void OnActivityResult(int requestCode, [GeneratedEnum] Result resultCode, Intent data)

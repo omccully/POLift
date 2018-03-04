@@ -6,8 +6,12 @@ using System.Threading.Tasks;
 
 namespace POLift.Core.Service
 {
-    public interface IDialogService
+    public interface IDialogService : IDisposable
     {
+        KeyValueStorage KeyValueStorage { get; }
+
+        IDialogBuilderFactory Factory { get; }
+
         void DisplayAcknowledgement(string message, Action action_when_ok = null);
 
         void DisplayConfirmation(string message, Action action_if_yes, Action action_if_no = null);

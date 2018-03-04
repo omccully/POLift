@@ -8,38 +8,69 @@ using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Views;
 using GalaSoft.MvvmLight;
 
+using GalaSoft.MvvmLight.Helpers;
 
 namespace POLift.Core.ViewModel
 {
     using Service;
     using Model;
+    using System.Runtime.CompilerServices;
 
-    public class PerformWarmupViewModel : ViewModelBase, IPerformWarmupViewModel
+    public class PerformWarmupViewModel : PerformBaseViewModel, IPerformWarmupViewModel
     {
-        private readonly INavigationService navigationService;
-        private readonly IPOLDatabase Database;
-
-        public IDialogService DialogService;
-        public ITimerViewModel TimerViewModel;
-
-        public PerformWarmupViewModel(INavigationService navigationService, IPOLDatabase database)
+        public PerformWarmupViewModel(INavigationService navigationService, IPOLDatabase database) 
+            : base(navigationService, database)
         {
-            this.navigationService = navigationService;
-            this.Database = database;
+           
+            
         }
 
-        IExercise _WarmupExercise;
+        public override void RaisePropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            base.RaisePropertyChanged(propertyName);
+
+            if(propertyName == "WeightInputText")
+            {
+                RefreshDetails();
+            }
+        }
+
+        public override IExercise CurrentExercise
+        {
+            get
+            {
+                return base.CurrentExercise;
+            }
+            set
+            {
+                base.CurrentExercise = value;
+                WeightInputText = value.NextWeight.ToString();
+                WarmupSetIndex = 0;
+            }
+        }
+
         public IExercise WarmupExercise
         {
             get
             {
-                return _WarmupExercise;
+                return CurrentExercise;
             }
             set
             {
-                _WarmupExercise = value;
-                WeightInputText = value.NextWeight.ToString();
-                WarmupSetIndex = 0;
+                CurrentExercise = value;
+            }
+        }
+
+        public int WarmupExerciseId
+        {
+            get
+            {
+                return CurrentExercise.ID;
+            }
+            set 
+            {
+                if (WarmupExercise != null && WarmupExerciseId == value) return;
+                WarmupExercise = Database.ReadByID<Exercise>(value);
             }
         }
 
@@ -64,7 +95,7 @@ namespace POLift.Core.ViewModel
             set
             {
                 _warmup_set_index = value;
-                RefreshWarmupDetails();
+                RefreshDetails();
             }
         }
 
@@ -76,63 +107,7 @@ namespace POLift.Core.ViewModel
             }
         }
 
-        IPlateMath CurrentPlateMath
-        {
-            get
-            {
-                if (WarmupExercise == null) return null;
-                return PlateMath.PlateMathTypes[WarmupExercise.PlateMathID];
-            }
-        }
-
-        void RefreshWarmupDetails()
-        {
-            RefreshCurrentWarmupDetails();
-
-            RefreshFullWarmupDetails();
-        }
-
-        string _RoutineDetails;
-        public string RoutineDetails
-        {
-            get
-            {
-                return _RoutineDetails;
-            }
-            set
-            {
-                Set(ref _RoutineDetails, value);
-            }
-        }
-
-        string _ExerciseDetails;
-        public string ExerciseDetails
-        {
-            get
-            {
-                return _ExerciseDetails;
-            }
-            set
-            {
-                Set(ref _ExerciseDetails, value);
-            }
-        }
-
-        string _WeightInputText;
-        public string WeightInputText
-        {
-            get
-            {
-                return _WeightInputText;
-            }
-            set
-            {
-                Set(() => WeightInputText, ref _WeightInputText, value);
-                RefreshWarmupDetails();
-            }
-        }
-
-        void RefreshCurrentWarmupDetails()
+        protected override void RefreshExerciseDetails()
         {
             if (WarmupFinished)
             {
@@ -149,10 +124,7 @@ namespace POLift.Core.ViewModel
                 float weight = NextWarmupSet.GetWeight(WarmupExercise, Single.Parse(WeightInputText));
                 builder.Append(weight.ToString());
 
-                if (WarmupExercise.PlateMath != null)
-                {
-                    builder.Append(" (" + WarmupExercise.PlateMath.PlateCountsToString(weight) + ")");
-                }
+                builder.Append(PlateMathDetails);
             }
             catch
             {
@@ -167,7 +139,7 @@ namespace POLift.Core.ViewModel
             ExerciseDetails = builder.ToString();
         }
 
-        void RefreshFullWarmupDetails()
+        public override void RefreshRoutineDetails()
         {
             StringBuilder builder = new StringBuilder();
 
@@ -209,20 +181,28 @@ namespace POLift.Core.ViewModel
             }
         }
 
-        void WarmupSetFinished()
+        public bool WarmupSetFinished(Action warmup_finished_action = null)
         {
             WarmupSetIndex++;
 
             if (WarmupFinished)
             {
-                navigationService.GoBack();
+                if(warmup_finished_action == null)
+                {
+                    navigationService.GoBack();
+                }
+                else
+                {
+                    warmup_finished_action();
+                }
+                
                 TimerViewModel.StartTimer(WarmupExercise.RestPeriodSeconds);
-                return;
+                return true;
             }
-
 
             TimerViewModel.StartTimer(NextWarmupSet.GetRestPeriod(WarmupExercise));
 
+            return false;
             // TryShowFullScreenAd();
         }
 
@@ -239,21 +219,31 @@ namespace POLift.Core.ViewModel
             }
         }
 
-        RelayCommand _BackButtonCommand;
         public RelayCommand BackButtonCommand
         {
             get
             {
-                return _BackButtonCommand ??
-                    (_BackButtonCommand = new RelayCommand(SkipWarmup));
+                return SkipWarmupCommand;
             }
         }
 
-        public void SkipWarmup()
+        void GoBackAction(Action go_back_action = null)
+        {
+            if (go_back_action == null)
+            {
+                navigationService.GoBack();
+            }
+            else
+            {
+                go_back_action();
+            }
+        }
+
+        public void SkipWarmup(Action go_back_action = null)
         {
             if (WarmupSetIndex == 0)
             {
-                navigationService.GoBack();
+                GoBackAction(go_back_action);
                 return;
             }
 
@@ -263,7 +253,7 @@ namespace POLift.Core.ViewModel
                  "ask_for_end_warmup",
                  delegate
                  {
-                     navigationService.GoBack();
+                     GoBackAction(go_back_action);
                  });
         }
         
@@ -273,8 +263,37 @@ namespace POLift.Core.ViewModel
             get
             {
                 return _SkipWarmupCommand ??
-                    (_SkipWarmupCommand = new RelayCommand(SkipWarmup));
+                    (_SkipWarmupCommand = new RelayCommand(delegate {
+                        SkipWarmup();
+                    }));
             }
+        }
+
+
+        public const string ExerciseIdKey = "exercise_id";
+        public const string WorkingSetWeightKey = "working_set_weight";
+        public const string WarmupSetIndexKey = "warmup_set_index";
+
+        public void InitializeFromState(KeyValueStorage kvs)
+        {
+            WarmupExerciseId = kvs.GetInteger(ExerciseIdKey, -1);
+
+            if(WarmupExercise == null)
+            {
+                DialogService.DisplayAcknowledgement(
+                    "Error: Invalid exercise ID (" + WarmupExerciseId + ")");
+            }
+
+            WeightInputText = kvs.GetString(WorkingSetWeightKey, "");
+
+            WarmupSetIndex = kvs.GetInteger(WarmupSetIndexKey, 0);
+        }
+
+        public void SaveState(KeyValueStorage kvs)
+        {
+            kvs.SetValue(ExerciseIdKey, WarmupExercise.ID);
+            kvs.SetValue(WorkingSetWeightKey, WeightInputText);
+            kvs.SetValue(WarmupSetIndexKey, WarmupSetIndex);
         }
     }
 }

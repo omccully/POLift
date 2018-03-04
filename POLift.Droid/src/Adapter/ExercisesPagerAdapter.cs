@@ -37,10 +37,10 @@ namespace POLift.Droid
         }
 
         Activity context;
-        List<KeyValuePair<string, List<IExercise>>> exercises_in_categories;
+        List<ExerciseCategory> exercises_in_categories;
 
         public ExercisesPagerAdapter(Activity context, 
-            List<KeyValuePair<string, List<IExercise>>> exercises_in_categories)
+            List<ExerciseCategory> exercises_in_categories)
         {
             this.context = context;
             this.exercises_in_categories = exercises_in_categories;
@@ -64,7 +64,7 @@ namespace POLift.Droid
         public override Java.Lang.Object InstantiateItem(View container, int position)
         { 
             
-            List<IExercise> exercises = exercises_in_categories[position].Value;
+            List<IExercise> exercises = exercises_in_categories[position].Exercises;
 
             ListView list_view = new ListView(context);
 
@@ -114,7 +114,7 @@ namespace POLift.Droid
 
         public string GetPageTitleFormattedCLI(int position)
         {
-            return exercises_in_categories[position].Key;
+            return exercises_in_categories[position].Name;
         }
 
         public string GetCurrentCategory(ViewPager view_pager)
@@ -125,7 +125,7 @@ namespace POLift.Droid
 
         public int IndexOfCategory(string category)
         {
-            return exercises_in_categories.FindIndex(kvp => category == kvp.Key);
+            return exercises_in_categories.FindIndex(kvp => category == kvp.Name);
         }
 
         public void GoToCategory(string category, ViewPager view_pager)

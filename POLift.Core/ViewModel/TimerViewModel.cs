@@ -9,7 +9,6 @@ using GalaSoft.MvvmLight.Views;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
 
-using Xamarin.Forms;
 using POLift.Core.Service;
 
 namespace POLift.Core.ViewModel
@@ -45,23 +44,23 @@ namespace POLift.Core.ViewModel
             }
         }
 
-        int _SecondsLeft;
+        DateTime EndTime { get; set; }
+
         public int SecondsLeft
         {
             get
             {
-                return _SecondsLeft;
+                TimeSpan span = EndTime - DateTime.Now;
+
+                return (int)span.TotalSeconds + 
+                    (AddSecCount * 30) + (SubSecCount * -30);
             }
             set
             {
-                if(value < -600)
-                {
-                    TimerEnabled = false;
-                }
+                EndTime = DateTime.Now.AddSeconds(value);
 
-                Set(ref _SecondsLeft, value);
-
-                UpdateGUIByTimerState();
+                AddSecCount = 0;
+                SubSecCount = 0;
             }
         }
 
@@ -192,6 +191,7 @@ namespace POLift.Core.ViewModel
         public void StartTimer(int seconds_left)
         {
             SecondsLeft = seconds_left;
+
             TimerEnabled = true;
 
             if (!Timer.IsRunning)
@@ -202,9 +202,6 @@ namespace POLift.Core.ViewModel
             SetCountDownText(seconds_left);
 
             UpdateGUIByTimerState();
-
-            AddSecCount = 0;
-            SubSecCount = 0;
         }
 
         void TimerTicked()
@@ -222,8 +219,6 @@ namespace POLift.Core.ViewModel
 
             this.MainThreadInvoker.Invoke(delegate
             {
-                SecondsLeft--;
-
                 if (SecondsLeft == 0) TimerElapsed();
 
                 SetCountDownText(SecondsLeft);
@@ -245,7 +240,7 @@ namespace POLift.Core.ViewModel
             TimerFinishedNotificationService?.Notify();
         }
 
-        void SkipTimer()
+        public void SkipTimer()
         {
             TimerEnabled = false;
             Timer.Cancel();
@@ -264,10 +259,18 @@ namespace POLift.Core.ViewModel
             get
             {
                 return _SkipTimerCommand ??
-                    (_SkipTimerCommand = new RelayCommand(delegate
-                    {
-                        SkipTimer();
-                    }));
+                    (_SkipTimerCommand = new RelayCommand(SkipTimer));
+            }
+        }
+
+        public void Add30Sec()
+        {
+            AddSecCount++;
+
+            if (SecondsLeft <= 0)
+            {
+                UpdateGUIByTimerState();
+                Vibrator?.Vibrate();
             }
         }
 
@@ -277,17 +280,18 @@ namespace POLift.Core.ViewModel
             get
             {
                 return _Add30SecCommand ??
-                    (_Add30SecCommand = new RelayCommand(delegate
-                    {
-                        SecondsLeft += 30;
-                        if (SecondsLeft <= 0)
-                        {
-                            UpdateGUIByTimerState();
-                            Vibrator?.Vibrate();
-                        }
+                    (_Add30SecCommand = new RelayCommand(Add30Sec));
+            }
+        }
 
-                        AddSecCount++;
-                    }));
+        public void Sub30Sec()
+        {
+            SubSecCount++;
+
+            if (SecondsLeft <= 0)
+            {
+                UpdateGUIByTimerState();
+                Vibrator?.Vibrate();
             }
         }
 
@@ -297,17 +301,7 @@ namespace POLift.Core.ViewModel
             get
             {
                 return _Sub30SecCommand ??
-                    (_Sub30SecCommand = new RelayCommand(delegate
-                    {
-                        SecondsLeft -= 30;
-                        if (SecondsLeft <= 0)
-                        {
-                            UpdateGUIByTimerState();
-                            Vibrator?.Vibrate();
-                        }
-
-                        SubSecCount++;
-                    }));
+                    (_Sub30SecCommand = new RelayCommand(Sub30Sec));
             }
         }
 
@@ -419,7 +413,35 @@ namespace POLift.Core.ViewModel
             }
         }
 
+        public const string RestPeriodSecondsRemainingKey = "rest_period_seconds_remaining";
+        public const string Add30SecCountKey = "add_30_sec_count";
+        public const string Sub30SecCountKey = "sub_30_sec_count";
+        public const string EndTimeKey = "end_time";
 
+        public void RestoreState(KeyValueStorage kvs)
+        {
+            if (!this.Timer.IsRunning)
+            {
+                this.AddSecCount = 0;
+                this.SubSecCount = 0;
+                return;
+            }
 
+            string end_time_str = kvs.GetString(EndTimeKey, null);
+            if(end_time_str != null)
+            {
+                this.EndTime = DateTime.Parse(end_time_str);
+            }
+
+            this.AddSecCount = kvs.GetInteger(Add30SecCountKey);
+            this.SubSecCount = kvs.GetInteger(Sub30SecCountKey);
+        }
+
+        public void SaveState(KeyValueStorage kvs)
+        {
+            kvs.SetValue(EndTimeKey, EndTime.ToString());
+            kvs.SetValue(Add30SecCountKey, this.AddSecCount);
+            kvs.SetValue(Sub30SecCountKey, this.SubSecCount);
+        }
     }
 }

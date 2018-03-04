@@ -72,6 +72,8 @@ namespace POLift.Core.ViewModel
         {
             get
             {
+                Exercise.RefreshAllUsages(Database);
+
                 return Exercise.InExCategories(Database,
                    DefaultCategory, DeletedCategory);
             }

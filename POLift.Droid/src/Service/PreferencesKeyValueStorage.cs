@@ -41,7 +41,14 @@ namespace POLift.Droid.Service
 
         public override int GetInteger(string key, int default_val = 0)
         {
-            return Prefs.GetInt(key, default_val);
+            try
+            {
+                return Prefs.GetInt(key, default_val);
+            }
+            catch
+            {
+                return (int)Prefs.GetLong(key, default_val);
+            }
         }
 
         public override string GetString(string key, string default_val = null)

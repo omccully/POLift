@@ -41,6 +41,31 @@ namespace POLift.Core.Service
             return (stored_int != 0);
         }
 
+        public virtual KeyValueStorage SetValue(string key, int[] val)
+        {
+            return SetValue(key, val.ToIDString());
+        }
 
+        public virtual int[] GetIntArray(string key, int[] default_val = null)
+        {
+            string str = GetString(key, null);
+
+            if (str == null) return default_val;
+
+            return str.ToIDIntegers();
+        }
+
+        public virtual KeyValueStorage SetValue(string key, float val)
+        {
+            return SetValue(key, val.ToString());
+        }
+
+        public virtual float GetFloat(string key, float default_val = 0.0f)
+        {
+            string str = GetString(key);
+
+            if (str == null) return default_val;
+            return Single.Parse(str);
+        }
     }
 }

@@ -13,6 +13,7 @@ using Android.Content.PM;
 using Android.Support.V4.Content;
 using Android.Telephony;
 using Android.Provider;
+using Android.Preferences;
 
 using Microsoft.Practices.Unity;
 
@@ -22,6 +23,7 @@ namespace POLift.Droid
 {
     using Core.Model;
     using Core.Service;
+    using Droid.Service;
 
     [Activity(Label = "POLift", MainLauncher = true /*, Icon ="@mipmap/polift"*/)]
     class MainActivity : ToolbarAndDrawerActivity
@@ -49,11 +51,13 @@ namespace POLift.Droid
                     ApplicationContext.ContentResolver,
                     Settings.Secure.AndroidId);
             Helpers.DisplayError(this, id);*/
+        }
 
+        protected override void OnStart()
+        {
+            base.OnStart();
 
-            
-
-
+            AndroidHelpers.SetActivityDepth(this, 0);
         }
 
         protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)

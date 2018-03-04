@@ -22,9 +22,19 @@ namespace POLift.Droid
     using Core.Model;
     using Core.Service;
 
+    using POLift.Core.ViewModel;
+
     [Activity(Label = "Select Exercise")]
     public class SelectExerciseActivity : Activity
     {
+        private SelectExerciseViewModel Vm
+        {
+            get
+            {
+                return ViewModelLocator.Default.SelectExercise;
+            }
+        }
+
         const string DefaultCategory = "other";
         const string DeletedCategory = "DELETED";
 
@@ -48,7 +58,6 @@ namespace POLift.Droid
             SetContentView(Resource.Layout.SelectExercise);
 
             CreateExerciseLink = FindViewById<Button>(Resource.Id.CreateExerciseLink);
-
             ExercisesViewPager = FindViewById<ViewPager>(Resource.Id.ExercisesViewPager);
 
             RefreshExerciseList();
@@ -78,12 +87,10 @@ namespace POLift.Droid
 
         void RefreshExerciseList()
         {
-            Exercise.RefreshAllUsages(Database);
             string category = CurrentCategory();
 
             exercises_pager_adapter = new ExercisesPagerAdapter(this,
-                Exercise.InCategories(Database, 
-                    DefaultCategory, DeletedCategory));
+                Vm.ExercisesInCategories);
             exercises_pager_adapter.ListItemClicked += Exercises_pager_adapter_ListItemClicked;
             exercises_pager_adapter.EditButtonClicked += Exercises_pager_adapter_EditButtonClicked;
             exercises_pager_adapter.DeleteButtonClicked += Exercises_pager_adapter_DeleteButtonClicked;
@@ -101,13 +108,10 @@ namespace POLift.Droid
 
         private void Exercises_pager_adapter_DeleteButtonClicked(object sender, ExerciseEventArgs e)
         {
-            AndroidHelpers.DisplayConfirmation(this, "Are you sure you want to remove the \"" +
-                e.Exercise.ToString() + "\" exercise? (this won't have any effect" +
-                " on any routines that use this exercise)", delegate
-                {
-                    Database.HideDeletable((Exercise)e.Exercise);
-                    RefreshExerciseList();
-                });
+            Vm.DeleteExercise(e.Exercise, delegate
+            {
+                RefreshExerciseList(); // refresh if confirmed
+            });
         }
 
         private void Exercises_pager_adapter_EditButtonClicked(object sender, ExerciseEventArgs e)
@@ -133,29 +137,18 @@ namespace POLift.Droid
                 if (requestCode == CreateExerciseRequestCode ||
                     requestCode == ExerciseEditedRequestCode)
                 {
-                    //Exercise new_exercise = Exercise.FromXml(data.GetStringExtra("exercise"));
                     int id = data.GetIntExtra("exercise_id", -1);
                     if (id == -1) return;
 
                     ReturnExercise(id);
-                    //Exercise new_exercise = POLDatabase.ReadByID<Exercise>(id);
-
-                    //exercise_adapter.Add(new_exercise);
-
-                    // if the user just created an exercise, just return it back to the CreateRoutineActivity
-                    //ReturnExercise(new_exercise);
                 }
                 else
                 {
-                    // optionally, we could return the exercise_id
-
                     // refresh ExerciseListView
                     RefreshExerciseList();
                 }
             }
         }
-
-        
 
         void ReturnExercise(IExercise exercise)
         {
@@ -171,7 +164,5 @@ namespace POLift.Droid
 
             Finish();
         }
-
-        
     }
 }

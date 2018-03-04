@@ -30,6 +30,8 @@ namespace POLift.Core.ViewModel
             get
             {
                 ExerciseDifficulty.Regenerate(Database);
+                ExerciseDifficulty.RefreshAllUsages(Database);
+
                 return ExerciseDifficulty.InEdCategories(Database);
             }
         }

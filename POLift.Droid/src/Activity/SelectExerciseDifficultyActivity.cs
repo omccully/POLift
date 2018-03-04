@@ -17,12 +17,20 @@ namespace POLift.Droid
 {
     using Core.Service;
     using Core.Model;
+    using Core.ViewModel;
 
     [Activity(Label = "Select Exercise Difficulty")]
     public class SelectExerciseDifficultyActivity : Activity
     {
+        private SelectExerciseDifficultyViewModel Vm
+        {
+            get
+            {
+                return ViewModelLocator.Default.SelectExerciseDifficulty;
+            }
+        }
+
         const string DefaultCategory = "other";
-        IPOLDatabase Database;
 
         ViewPager ExercisesDifficultyViewPager;
         ExerciseDifficultyPagerAdapter exercise_difficulty_pager_adapter;
@@ -34,15 +42,13 @@ namespace POLift.Droid
             // Create your application here
             SetContentView(Resource.Layout.SelectExerciseDifficulty);
 
-            Database = C.ontainer.Resolve<IPOLDatabase>();
-
-            ExerciseDifficulty.RefreshAllUsages(Database);
+            //ExerciseDifficulty.RefreshAllUsages(Database);
 
             ExercisesDifficultyViewPager = 
                 FindViewById<ViewPager>(Resource.Id.ExercisesDifficultyViewPager);
 
             exercise_difficulty_pager_adapter = new ExerciseDifficultyPagerAdapter(this,
-                ExerciseDifficulty.InCategories(Database, DefaultCategory));
+                Vm.ExerciseDifficultyCategories);
             exercise_difficulty_pager_adapter.ListItemClicked += Exercise_difficulty_pager_adapter_ListItemClicked;
             ExercisesDifficultyViewPager.Adapter = exercise_difficulty_pager_adapter;
         }

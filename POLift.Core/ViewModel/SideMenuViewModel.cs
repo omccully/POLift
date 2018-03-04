@@ -97,7 +97,30 @@ namespace POLift.Core.ViewModel
 
         public void PromptToBuyLicense()
         {
-            LicenseManager.PromptToBuyLicense();
+            PromptToBuyLicenseAsync();
+        }
+
+        public async void PromptToBuyLicenseAsync()
+        {
+            try
+            {
+                bool success = await LicenseManager.PromptToBuyLicense();
+                DisplayMessage("Success = " + success);
+            }
+            catch (Exception e)
+            {
+                DisplayMessage(e.Message);
+            }
+        }
+
+        void DisplayMessage(string msg )
+        {
+            System.Diagnostics.Debug.WriteLine("ERROR : " + msg);
+
+            MainThreadInvoker.Invoke(delegate
+            {
+                DialogService.DisplayAcknowledgement(msg);
+            });
         }
 
         async Task<string> DaysLeftText()

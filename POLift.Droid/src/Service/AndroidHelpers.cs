@@ -198,5 +198,17 @@ namespace POLift.Droid.Service
             }
             catch { }
         }
+
+        public static void SetActivityDepth(Context context, int val)
+        {
+            ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(context);
+            prefs.Edit().PutInt("perform_routine_activity_depth", val).Apply();
+        }
+
+        public static int GetActivityDepth(Context context)
+        {
+            ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(context);
+            return prefs.GetInt("perform_routine_activity_depth", 0);
+        }
     }
 }

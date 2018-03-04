@@ -17,18 +17,34 @@ namespace POLift.Droid.Adapter
     using Core.Model;
     using Core.Service;
 
-    class ExerciseSetsAdapter : BaseAdapter<IExerciseSets>
+    class ExerciseSetsAdapter : BaseAdapter<IExerciseSets>, IDisposable
     {
         public ObservableCollection<IExerciseSets> ExerciseSets;
         Context context;
         int locked_sets;
 
-        public ExerciseSetsAdapter(Context context, IEnumerable<IExerciseSets> exercise_sets, int locked_sets=0)
+        /*public ExerciseSetsAdapter(Context context, IEnumerable<IExerciseSets> exercise_sets, int locked_sets=0)
         {
             this.context = context;
             this.ExerciseSets = new ObservableCollection<IExerciseSets>(exercise_sets);
             this.locked_sets = locked_sets;
             ExerciseSets.CollectionChanged += ExerciseSets_CollectionChanged;
+        }*/
+
+        public ExerciseSetsAdapter(Context context, 
+            ObservableCollection<IExerciseSets> exercise_sets, int locked_sets=0)
+        {
+            this.context = context;
+            this.ExerciseSets = exercise_sets;
+            this.locked_sets = locked_sets;
+            ExerciseSets.CollectionChanged += ExerciseSets_CollectionChanged;
+        }
+
+        public void Dispose()
+        {
+            ExerciseSets.CollectionChanged -= ExerciseSets_CollectionChanged;
+            ExerciseSets = null;
+            context = null;
         }
 
         void ExerciseSets_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -43,7 +59,6 @@ namespace POLift.Droid.Adapter
                 return ExerciseSets[position];
             }
         }
-
 
         public override Java.Lang.Object GetItem(int position)
         {
@@ -125,25 +140,6 @@ namespace POLift.Droid.Adapter
             }
             
             return view;
-        }
-
-        public void RemoveZeroSets()
-        {
-            ExerciseSets.RemoveAll(ex_sets => ex_sets.SetCount == 0);
-        }
-
-        public void Regroup(IPOLDatabase database)
-        {
-            List<IExerciseSets> new_exercise_sets =
-                POLift.Core.Model.ExerciseSets.Regroup(
-                    this.ExerciseSets,
-                    database);
-
-            this.ExerciseSets.Clear();
-            foreach (IExerciseSets es in new_exercise_sets)
-            {
-                this.ExerciseSets.Add(es);
-            }
         }
 
         //Fill in cound here, currently 0

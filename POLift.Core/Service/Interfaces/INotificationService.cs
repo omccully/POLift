@@ -9,5 +9,7 @@ namespace POLift.Core.Service
     public interface INotificationService
     {
         void Notify();
+
+        void Cancel();
     }
 }

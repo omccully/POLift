@@ -71,6 +71,13 @@ namespace POLift.Core.ViewModel
             InitializePlot(ed);
         }
 
+        public void InitializePlot(int ed_id)
+        {
+            ExerciseDifficulty ed = Database.ReadByID<ExerciseDifficulty>(ed_id);
+
+            InitializePlot(ed);
+        }
+
         public void InitializePlot(IExerciseDifficulty ed)
         {
             IEnumerable<ExerciseResult> data = orm_graph.GetPlotData(ed);

@@ -232,10 +232,10 @@ namespace POLift.Core.Service
                     return true;
                 }
             }
-            catch (Exception e)
+            /*catch (Exception e)
             {
                 System.Diagnostics.Debug.WriteLine(e.ToString());
-            }
+            }*/
             finally
             {
                 await CrossInAppBilling.Current.DisconnectAsync();

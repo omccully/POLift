@@ -13,8 +13,6 @@ using Android.Widget;
 using Android.Provider;
 
 using Microsoft.Practices.Unity;
-using ILicenseManager = POLift.Droid.Service.ILicenseManager;
-using LicenseManager = POLift.Droid.Service.LicenseManager;
 
 namespace POLift.Droid
 {
@@ -28,21 +26,6 @@ namespace POLift.Droid
         static string DatabaseFileName = "database.db3";
         static string DatabaseDirectory = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
         public static string DatabasePath = Path.Combine(DatabaseDirectory, DatabaseFileName);
-
-        static string _DeviceID;
-        public static string DeviceID
-        {
-            get
-            {
-                return _DeviceID;
-            }
-            set
-            {
-                _DeviceID = value;
-                ontainer.RegisterInstance<Service.ILicenseManager>(
-                    new Service.LicenseManager(value));
-            }
-        }
 
         static C()
         {

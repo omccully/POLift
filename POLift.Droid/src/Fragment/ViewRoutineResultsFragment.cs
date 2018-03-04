@@ -18,6 +18,7 @@ namespace POLift.Droid
     using Service;
     using Core.Service;
     using Core.Model;
+    using Core.ViewModel;
 
     public class ViewRoutineResultsFragment : ListFragment
     {
@@ -25,32 +26,35 @@ namespace POLift.Droid
 
         RoutineResultAdapter RoutineResultAdapter;
 
-        IPOLDatabase Database;
+        private ViewRoutineResultsViewModel Vm
+        {
+            get
+            {
+                return ViewModelLocator.Default.ViewRoutineResults;
+            }
+        }
 
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
 
-            // Create your fragment here
-            // Create your application here
-            Database = C.ontainer.Resolve<IPOLDatabase>();
+            ViewModelLocator.Default.DialogService = new DialogService(
+                new DialogBuilderFactory(this.Activity),
+                ViewModelLocator.Default.KeyValueStorage);
 
             RefreshRoutineResults();
         }
 
         void RefreshRoutineResults()
         {
-            RoutineResultAdapter = new RoutineResultAdapter(this.Activity, Database.Table<RoutineResult>()
-                .Where(rr => !rr.Deleted)
-                .OrderByDescending(rr => rr.EndTime));
+            RoutineResultAdapter = new RoutineResultAdapter(this.Activity, 
+                Vm.RoutineResults);
 
             RoutineResultAdapter.DeleteButtonClicked += RoutineResultAdapter_DeleteButtonClicked;
             RoutineResultAdapter.EditButtonClicked += RoutineResultAdapter_EditButtonClicked;
 
             this.ListAdapter = RoutineResultAdapter;
         }
-
-        
 
         private void RoutineResultAdapter_EditButtonClicked(object sender, ContainerEventArgs<IRoutineResult> e)
         {
@@ -61,14 +65,11 @@ namespace POLift.Droid
 
         private void RoutineResultAdapter_DeleteButtonClicked(object sender, ContainerEventArgs<IRoutineResult> e)
         {
-            IRoutineResult rr = e.Contents;
-
-            AndroidHelpers.DisplayConfirmation(this.Activity, "Are you sure you want to delete this workout session? " +
-                $"{rr.Routine.Name} at {rr.StartTime}",
-               delegate
-               {
-                   DeleteRoutineResult(rr);
-               });
+            IRoutineResult to_delete = e.Contents;
+            Vm.DeleteRoutineResult(to_delete, delegate
+            {
+                RoutineResultAdapter.RoutineResults.RemoveAll(rr => rr.Equals(to_delete));
+            });
         }
 
         public override void OnActivityResult(int requestCode, [GeneratedEnum] Result resultCode, Intent data)
@@ -78,42 +79,6 @@ namespace POLift.Droid
             if (resultCode == Result.Ok && requestCode == EditRoutineResultRequestCode)
             {
                 RefreshRoutineResults();
-            }
-        }
-
-        public override void OnViewCreated(View view, Bundle savedInstanceState)
-        {
-            base.OnViewCreated(view, savedInstanceState);
-            //this.ListView.ItemLongClick += ListView_ItemLongClick;
-        }
-
-        /*private void ListView_ItemLongClick(object sender, AdapterView.ItemLongClickEventArgs e)
-        {
-            Helpers.DisplayConfirmation(this.Activity, "Do you want to delete this workout session?",
-                delegate
-                {
-                    IRoutineResult to_delete = RoutineResultAdapter[e.Position];
-                    RoutineResultAdapter.RoutineResults.RemoveAt(e.Position);
-
-                    Database.HideDeletable((RoutineResult)to_delete);
-
-                    foreach (IExerciseResult ex_r in to_delete.ExerciseResults)
-                    {
-                        Database.HideDeletable((ExerciseResult)ex_r);
-                    }
-                });
-        }*/
-
-
-        void DeleteRoutineResult(IRoutineResult to_delete)
-        {
-            RoutineResultAdapter.RoutineResults.RemoveAll(rr => rr.Equals(to_delete));
-            Database.HideDeletable((RoutineResult)to_delete);
-
-            // delete all child ExerciseResults
-            foreach (IExerciseResult ex_r in to_delete.ExerciseResults)
-            {
-                Database.HideDeletable((ExerciseResult)ex_r);
             }
         }
     }

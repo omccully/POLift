@@ -466,15 +466,29 @@ namespace POLift.Core.Service
             return exercise_sets;
         }
 
-        public static List<IExerciseSets> RemoveZeroSets(this IEnumerable<IExerciseSets> exercise_sets)
+        public static List<IExerciseSets> WhereNotZeroSets(this IEnumerable<IExerciseSets> exercise_sets)
         {
             return exercise_sets.Where(es => es.SetCount != 0).ToList();
+        }
+
+        public static void RemoveZeroSets(this ObservableCollection<IExerciseSets> exercise_sets)
+        {
+            exercise_sets.RemoveAll(ex_sets => ex_sets.SetCount == 0);
+        }
+
+        public static void SetCollection<T>(this Collection<T> collection, IEnumerable<T> new_data)
+        {
+            collection.Clear();
+            foreach (T item in new_data)
+            {
+                collection.Add(item);
+            }
         }
 
         public static List<IExerciseSets> NormalizeExerciseSets(this IEnumerable<IExerciseSets> exercise_sets, 
             IPOLDatabase database)
         {
-            return ExerciseSets.Regroup(exercise_sets.RemoveZeroSets(), database);
+            return ExerciseSets.Regroup(exercise_sets.WhereNotZeroSets(), database);
         }
 
         public static List<IExerciseSets> SaveExerciseSets(this IEnumerable<IExerciseSets> exercise_sets,

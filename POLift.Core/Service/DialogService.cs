@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace POLift.Core.Service
 {
-    public class DialogService : IDialogService, IDisposable
+    public class DialogService : IDialogService
     {
         public IDialogBuilderFactory Factory { get; private set; }
         public KeyValueStorage KeyValueStorage { get; private set; }
@@ -170,6 +170,9 @@ namespace POLift.Core.Service
             }
 
             builders = null;
+
+            Factory.Dispose();
+            Factory = null;
         }
 
         public static string AskForKey(string key)

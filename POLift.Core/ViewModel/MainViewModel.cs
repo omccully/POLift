@@ -75,7 +75,8 @@ namespace POLift.Core.ViewModel
         {
             get
             {
-                if (_RoutinesList == null) RefreshRoutinesList();
+                //if (_RoutinesList == null)
+                RefreshRoutinesList();
 
                 return _RoutinesList;
             }
@@ -170,5 +171,69 @@ namespace POLift.Core.ViewModel
                     });
         }
 
+
+        public void PromptUserForStartingNextRoutine(Action<IRoutine> navigate_to_routine = null)
+        {
+            System.Diagnostics.Debug.WriteLine("finding next routine...");
+            var rrs = database.Table<RoutineResult>().OrderByDescending(rr => rr.StartTime);
+            RoutineResult latest_routine_result = rrs.ElementAtOrDefault(0);
+            if (latest_routine_result == null)
+            {
+                System.Diagnostics.Debug.WriteLine("no recent routine result");
+                return;
+            }
+            if (!latest_routine_result.Completed)
+            {
+                int ec = latest_routine_result.ExerciseCount;
+                int erc = latest_routine_result.ExerciseResults.Count();
+                System.Diagnostics.Debug.WriteLine($"latest routine result was uncompleted. ec={ec}, erc={erc}");
+                //
+                return;
+            }
+
+            if ((DateTime.Now - latest_routine_result.StartTime) < TimeSpan.FromHours(20))
+            {
+                System.Diagnostics.Debug.WriteLine($"latest routine result was started less than 20 hours ago");
+                return;
+            }
+
+            int latest_routine_id = latest_routine_result.RoutineID;
+            string latest_routine_name = latest_routine_result.Routine.Name;
+
+            int previous_routine_id = -1;
+            foreach (RoutineResult rr in rrs)
+            {
+                System.Diagnostics.Debug.WriteLine("checking " + rr);
+                if (previous_routine_id != -1 &&
+                    (rr.RoutineID == latest_routine_id || rr.Routine.Name == latest_routine_name))
+                {
+                    Routine next_routine = database.ReadByID<Routine>(previous_routine_id);
+
+                    System.Diagnostics.Debug.WriteLine("next routine found");
+
+                    DialogService.DisplayConfirmationNeverShowAgain(
+                        "Based on your history, it looks like your next routine is " +
+                        $"\"{next_routine.Name}\". Would you like to do this routine now?",
+                        "start_next_routine",
+                        delegate
+                        {
+                            if(navigate_to_routine == null)
+                            {
+                                ViewModelLocator.Default.PerformRoutine.Routine = next_routine;
+                                navigationService.NavigateTo(
+                                    ViewModelLocator.PerformRoutinePageKey);
+                            }
+                            else
+                            {
+                                navigate_to_routine(next_routine);
+                            }
+                        });
+
+                    break;
+                }
+
+                previous_routine_id = rr.RoutineID;
+            }
+        }
     }
 }
