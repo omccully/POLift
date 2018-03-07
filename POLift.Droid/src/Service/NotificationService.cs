@@ -21,16 +21,17 @@ namespace POLift.Droid.Service
     {
         public int NotificationID = 500;
         Context context;
-        Func<Bundle> GetTimerState;
+        Func<Bundle> GetActivityState;
         Intent parent_intent;
 
         NotificationManager mNotificationManager;
 
-        public NotificationService(Context context, Intent parent_intent, Func<Bundle> GetTimerState)
+        public NotificationService(Context context, Intent parent_intent, 
+            Func<Bundle> GetActivityState)
         {
             this.context = context;
             this.parent_intent = parent_intent;
-            this.GetTimerState = GetTimerState;
+            this.GetActivityState = GetActivityState;
 
             mNotificationManager =
                 (NotificationManager)context.GetSystemService(
@@ -39,38 +40,38 @@ namespace POLift.Droid.Service
 
         public void Notify()
         {
-            Intent result_intent = new Intent(context, this.GetType());
+            System.Diagnostics.Debug.WriteLine("NotificationService.Notify()");
+            Intent result_intent = new Intent(context, context.GetType());
 
-            result_intent.PutExtras(GetTimerState());
+            result_intent.PutExtras(GetActivityState());
 
             TaskStackBuilder tsb = TaskStackBuilder.Create(context)
-               //.AddParentStack(this.GetType())
-               //.AddParentStack(this)
                .AddParentStack(Java.Lang.Class.FromType(context.GetType()))
                .AddNextIntent(result_intent);
 
             Intent new_pi = tsb.EditIntentAt(tsb.IntentCount - 2);
             System.Diagnostics.Debug.WriteLine("IntentAt(0) is " + tsb.EditIntentAt(0).Component.ClassName);
             System.Diagnostics.Debug.WriteLine("IntentAt(1) is " + tsb.EditIntentAt(1).Component.ClassName);
+
+            try
+            {
+                System.Diagnostics.Debug.WriteLine("IntentAt(2) is " + tsb.EditIntentAt(2).Component.ClassName);
+            }
+            catch { }
+
             System.Diagnostics.Debug.WriteLine("parent is " + new_pi.Component.ClassName);
+
             if (parent_intent != null) new_pi.PutExtras(parent_intent);
 
-            //new_pi.PutExtra("backed_into", true);
-
-            new_pi.PutExtra("resume_routine_result_id", 0);
+            new_pi.PutExtra("warmup_prompted", true);
 
             System.Diagnostics.Debug.WriteLine(tsb.ToString());
             System.Diagnostics.Debug.WriteLine("count = " + tsb.ToEnumerable<Intent>().Count());
 
             PendingIntent resultPendingIntent = tsb
-                //.AddNextIntentWithParentStack(result_intent)
-                //.GetPendingIntent();
                 .GetPendingIntent(500, (int)PendingIntentFlags.UpdateCurrent);
-            // PendingIntent.
 
-            //resultPendingIntent
             NotificationCompat.Builder n_builder = new NotificationCompat.Builder(context)
-               //.SetSmallIcon(Resource.Drawable.timer_white)
                .SetSmallIcon(Resource.Drawable.abc_ab_share_pack_mtrl_alpha)
                .SetContentTitle("Lifting rest period finished")
                .SetContentText("Start your next set whenever you are ready")

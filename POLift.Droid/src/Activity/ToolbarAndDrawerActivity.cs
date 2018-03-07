@@ -218,11 +218,7 @@ namespace POLift.Droid
 
         private void RateApp_Click(object sender, EventArgs e)
         {
-            ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(this);
-
-            StartActivity(new Intent(Intent.ActionView,
-                Android.Net.Uri.Parse("market://details?id=com.cml.polift")));
-            prefs.Edit().PutBoolean("has_rated_app", true).Apply();
+            AndroidHelpers.NavigateToAppRating(this);
         }
 
         private void Metricize_Click(object sender, EventArgs e)

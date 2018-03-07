@@ -162,7 +162,7 @@ namespace POLift.Core.Service
 
         public void Dispose()
         {
-            if (builders == null) return;
+            if (builders == null) return; // already disposed
 
             foreach(IDialogBuilder builder in builders)
             {
@@ -170,8 +170,6 @@ namespace POLift.Core.Service
             }
 
             builders = null;
-
-            Factory.Dispose();
             Factory = null;
         }
 

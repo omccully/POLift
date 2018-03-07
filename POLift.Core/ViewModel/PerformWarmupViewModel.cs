@@ -25,6 +25,8 @@ namespace POLift.Core.ViewModel
             
         }
 
+
+
         public override void RaisePropertyChanged([CallerMemberName] string propertyName = null)
         {
             base.RaisePropertyChanged(propertyName);
@@ -74,14 +76,14 @@ namespace POLift.Core.ViewModel
             }
         }
 
-        IWarmupSet[] WarmupSets = WarmupSet.Default;
+        IWarmupRoutine WarmupRoutine = Model.WarmupRoutine.Default;
 
         IWarmupSet NextWarmupSet
         {
             get
             {
                 if (WarmupFinished) return null;
-                return WarmupSets[WarmupSetIndex];
+                return WarmupRoutine.WarmupSets[WarmupSetIndex];
             }
         }
 
@@ -103,7 +105,7 @@ namespace POLift.Core.ViewModel
         {
             get
             {
-                return WarmupSetIndex >= WarmupSets.Length;
+                return WarmupSetIndex >= WarmupRoutine.WarmupSets.Count();
             }
         }
 
@@ -116,7 +118,7 @@ namespace POLift.Core.ViewModel
             }
 
             StringBuilder builder = new StringBuilder();
-            builder.AppendLine($"Warmup exercise {WarmupSetIndex + 1}/{WarmupSets.Count()}: ")
+            builder.AppendLine($"Warmup exercise {WarmupSetIndex + 1}/{WarmupRoutine.WarmupSets.Count()}: ")
                 .Append($"{NextWarmupSet.Reps} reps of {WarmupExercise.Name} at a weight of ");
 
             try
@@ -148,7 +150,7 @@ namespace POLift.Core.ViewModel
                 float weight = Single.Parse(WeightInputText);
 
                 int i = 0;
-                foreach (IWarmupSet ws in WarmupSets)
+                foreach (IWarmupSet ws in WarmupRoutine.WarmupSets)
                 {
                     if (i == WarmupSetIndex)
                     {
@@ -165,7 +167,7 @@ namespace POLift.Core.ViewModel
                         builder.Append(" (done)");
                     }
 
-                    if (i < WarmupSets.Length - 1)
+                    if (i < WarmupRoutine.WarmupSets.Count() - 1)
                     {
                         builder.AppendLine();
                     }
@@ -190,13 +192,22 @@ namespace POLift.Core.ViewModel
                 if(warmup_finished_action == null)
                 {
                     navigationService.GoBack();
+
+                    float weight;
+                    if (Single.TryParse(this.WeightInputText, out weight))
+                    {
+                        ValueChosen?.Invoke(weight);
+                    }
                 }
                 else
                 {
                     warmup_finished_action();
                 }
-                
-                TimerViewModel.StartTimer(WarmupExercise.RestPeriodSeconds);
+
+                int last_rest_period = WarmupRoutine.GetLastRestPeriod(WarmupExercise);
+                TimerViewModel.StartTimer(last_rest_period);
+                System.Diagnostics.Debug.WriteLine("StartTimer(" + last_rest_period);
+
                 return true;
             }
 
@@ -274,7 +285,9 @@ namespace POLift.Core.ViewModel
         public const string WorkingSetWeightKey = "working_set_weight";
         public const string WarmupSetIndexKey = "warmup_set_index";
 
-        public void InitializeFromState(KeyValueStorage kvs)
+        public event Action<float> ValueChosen;
+
+        public override void RestoreState(KeyValueStorage kvs)
         {
             WarmupExerciseId = kvs.GetInteger(ExerciseIdKey, -1);
 
@@ -289,11 +302,17 @@ namespace POLift.Core.ViewModel
             WarmupSetIndex = kvs.GetInteger(WarmupSetIndexKey, 0);
         }
 
-        public void SaveState(KeyValueStorage kvs)
+        public override void SaveState(KeyValueStorage kvs)
         {
-            kvs.SetValue(ExerciseIdKey, WarmupExercise.ID);
-            kvs.SetValue(WorkingSetWeightKey, WeightInputText);
+            InitializationState(kvs, WarmupExercise, WeightInputText);
             kvs.SetValue(WarmupSetIndexKey, WarmupSetIndex);
+        }
+
+        public static void InitializationState(KeyValueStorage kvs, 
+            IExercise warmup_exercise, string working_set_weight)
+        {
+            kvs.SetValue(ExerciseIdKey, warmup_exercise.ID);
+            kvs.SetValue(WorkingSetWeightKey, working_set_weight);
         }
     }
 }

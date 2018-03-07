@@ -31,16 +31,16 @@ namespace POLift.Core.Service
 
         protected virtual async Task TimerLoop(Action callback, int time_period_ms)
         {
-            System.Diagnostics.Debug.WriteLine("TimerLoop");
+            //System.Diagnostics.Debug.WriteLine("TimerLoop");
             while (true)
             {
                 await Task.Delay(time_period_ms);
-                System.Diagnostics.Debug.WriteLine("TimerLoop 1");
+                //System.Diagnostics.Debug.WriteLine("TimerLoop 1");
                 if (!IsRunning)
                     break;
-                System.Diagnostics.Debug.WriteLine("TimerLoop 2");
+                //System.Diagnostics.Debug.WriteLine("TimerLoop 2");
                 Task.Run(() => callback());
-                System.Diagnostics.Debug.WriteLine("TimerLoop 3");
+                //System.Diagnostics.Debug.WriteLine("TimerLoop 3");
             }
         }
     }

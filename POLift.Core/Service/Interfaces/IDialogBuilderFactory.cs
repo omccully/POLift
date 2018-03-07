@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace POLift.Core.Service
 {
-    public interface IDialogBuilderFactory : IDisposable
+    public interface IDialogBuilderFactory
     {
         IDialogBuilder CreateDialogBuilder();
     }

@@ -42,6 +42,7 @@ namespace POLift.Droid
         {
             Stopwatch sw = new Stopwatch();
             sw.Start();
+            Log.Debug("POLift", "**************************************");
             Log.Debug("POLift", "WarmupRoutineActivity.OnCreate()");
 
             AndroidHelpers.SetActivityDepth(this, 2);
@@ -52,11 +53,9 @@ namespace POLift.Droid
                 new DialogBuilderFactory(this),
                 ViewModelLocator.Default.KeyValueStorage);
 
-            bindings.Add(this.SetBinding(
+            Bindings.Add(this.SetBinding(
               () => BaseVm.ExerciseDetails,
               () => NextWarmupView.Text));
-
-            
 
             List<KeyValueStorage> storages = new List<KeyValueStorage>();
             if(savedInstanceState != null)
@@ -65,7 +64,9 @@ namespace POLift.Droid
             }
             storages.Add(new BundleKeyValueStorage(Intent.Extras));
 
-            Vm.InitializeFromState(new ChainedKeyValueStorage(storages));
+            
+
+            Vm.RestoreState(new ChainedKeyValueStorage(storages));
 
             //RoutineDetails.Visibility = ViewStates.Gone;
             WeightLabel.Text = "Working set weight: ";
@@ -105,9 +106,25 @@ namespace POLift.Droid
             });
         }
 
+        public const string NewWorkingWeightKey = "new_working_weight";
         protected override void ReportResultButton_Click(object sender, EventArgs e)
         {
-            if (!Vm.WarmupSetFinished())
+            bool finished = Vm.WarmupSetFinished(delegate
+            { 
+                // warmup finished action
+                Intent result_intent = new Intent();
+
+                float weight;
+                if (Single.TryParse(Vm.WeightInputText, out weight))
+                {
+                    result_intent.PutExtra(NewWorkingWeightKey, weight);
+                }
+               
+                SetResult(Result.Ok, result_intent);
+                Finish();
+            });
+
+            if (!finished)
             {
                 TryShowFullScreenAd();
             }
@@ -130,19 +147,11 @@ namespace POLift.Droid
             base.OnStop();
         }
 
-
         protected override void OnDestroy()
         {
             Log.Debug("POLift", "WarmupRoutineActivity.OnDestroy()");
 
             base.OnDestroy();
         }
-
-        protected override void SaveStateToIntent(Intent intent)
-        {
-            base.SaveStateToIntent(intent);
-
-            Vm.SaveState(new BundleKeyValueStorage(intent.Extras));
-        }  
     }
 }

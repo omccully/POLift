@@ -30,5 +30,13 @@ namespace POLift.Core.Model
 
             return JsonConvert.DeserializeObject<ExternalProgram[]>(response);
         }
+
+        public string DownloadUrl
+        {
+            get
+            {
+                return FileUrl(file);
+            }
+        }
     }
 }

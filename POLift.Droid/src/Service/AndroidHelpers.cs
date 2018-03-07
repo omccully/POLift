@@ -23,6 +23,48 @@ namespace POLift.Droid.Service
 
     public static class AndroidHelpers
     {
+        //public static Intent 
+
+        public static void NavigateToAppRating(Context context)
+        {
+            try
+            {
+                ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(context);
+
+                context.StartActivity(new Intent(Intent.ActionView,
+                    Android.Net.Uri.Parse("market://details?id=com.cml.polift")));
+
+                prefs.Edit().PutBoolean("has_rated_app", true).Apply();
+            }
+            catch(Exception e)
+            {
+                Toast.MakeText(context, "Error: " + e.Message,
+                    ToastLength.Long);
+            }
+        }
+
+        public static string Inspect(this Bundle bundle)
+        {
+            if (bundle == null) return "null";
+
+            StringBuilder sb = new StringBuilder();
+
+            foreach (string key in bundle.KeySet())
+            {
+                Java.Lang.Object obj = bundle.Get(key);
+                if(obj == null)
+                {
+                    sb.AppendLine($"{key} = null");
+                }
+                else
+                {
+                    sb.AppendLine($"{key} = {obj.ToString()}  ({obj.GetType()})");
+                }
+            }
+
+            return sb.ToString();
+        }
+
         public static AlertDialog DisplayError(Context context, string message,
             EventHandler<DialogClickEventArgs> action_when_ok = null)
         {

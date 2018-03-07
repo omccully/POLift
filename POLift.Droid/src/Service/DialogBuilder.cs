@@ -87,8 +87,13 @@ namespace POLift.Droid.Service
 
         public void Dispose()
         {
-            dialog?.Dismiss();
-            dialog?.Dispose();
+            try
+            {
+                dialog?.Dismiss();
+                dialog?.Dispose();
+            }
+            catch { }
+           
             builder?.Dispose();
             builder = null;
             NeverShowAgainCheckBox = null;

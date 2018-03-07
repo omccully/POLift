@@ -12,6 +12,7 @@ namespace POLift.Core.Service
 
         public ChainedKeyValueStorage(IEnumerable<KeyValueStorage> storages)
         {
+            if (storages == null) throw new ArgumentNullException("Storages is null");
             this.storages = new List<KeyValueStorage>(storages);
         }
 

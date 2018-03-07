@@ -17,6 +17,7 @@ namespace POLift.Droid.Service
     class AndroidVibrator : IVibrator
     {
         Vibrator vibrator;
+
         public AndroidVibrator(Context context)
         {
             vibrator = (Vibrator)
@@ -25,11 +26,15 @@ namespace POLift.Droid.Service
 
         public void Vibrate()
         {
-            vibrator.Vibrate(200);
-            System.Threading.Thread.Sleep(300);
-            vibrator.Vibrate(200);
-            System.Threading.Thread.Sleep(300);
-            vibrator.Vibrate(200);
+            const int On = 200;
+            const int Off = 300;
+            for (int i = 0; i < 2; i++)
+            {
+                vibrator.Vibrate(On);
+                System.Threading.Thread.Sleep(Off);
+            }
+
+            vibrator.Vibrate(On);
         }
     }
 }

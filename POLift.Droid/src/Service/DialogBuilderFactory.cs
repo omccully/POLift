@@ -14,11 +14,10 @@ using POLift.Core.Service;
 
 namespace POLift.Droid.Service
 {
-    class DialogBuilderFactory : IDialogBuilderFactory, IDisposable
+    class DialogBuilderFactory : IDialogBuilderFactory
     {
-        List<DialogBuilder> dialog_builders = new List<DialogBuilder>();
-
         Activity activity;
+
         public DialogBuilderFactory(Activity activity)
         {
             this.activity = activity;
@@ -26,19 +25,7 @@ namespace POLift.Droid.Service
 
         public IDialogBuilder CreateDialogBuilder()
         {
-            DialogBuilder db = new DialogBuilder(activity);
-            dialog_builders.Add(db);
-            return db;
-        }
-
-        public void Dispose()
-        {
-            foreach(DialogBuilder db in dialog_builders)
-            {
-                db.Dispose();
-            }
-
-            dialog_builders = null;
+            return new DialogBuilder(activity);
         }
     }
 }

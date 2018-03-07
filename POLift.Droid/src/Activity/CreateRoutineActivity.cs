@@ -63,9 +63,12 @@ namespace POLift.Droid
                () => RoutineTitleText.Text,
                BindingMode.TwoWay));
 
-            Vm.Reset();
+            var kvs = BundleKeyValueStorage.ChainedFromStates(savedInstanceState, Intent);
+            Vm.RestoreState(kvs);
 
-            int edit_routine_id = Intent.GetIntExtra("edit_routine_id", -1);
+            //Vm.Reset();
+
+            /*int edit_routine_id = Intent.GetIntExtra("edit_routine_id", -1);
 
             if (savedInstanceState != null)
             {
@@ -76,7 +79,7 @@ namespace POLift.Droid
                 // edit routine
                 // sets LockedSets, LockedExerciseSets, RoutineToDeleteIfDifferent
                 Vm.EditRoutine(edit_routine_id, Intent.GetIntExtra("exercises_locked", 0));
-            }
+            }*/
 
             InitializeExerciseSetsAdapter();
 

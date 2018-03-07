@@ -22,6 +22,8 @@ namespace POLift.Core.ViewModel
 
         public event EventHandler ProgramsChanged;
 
+        public bool Secure = true;
+
         public SelectProgramToDownloadViewModel(INavigationService navigationService,
             IPOLDatabase database)
         {
@@ -30,7 +32,7 @@ namespace POLift.Core.ViewModel
             this.Programs = new ExternalProgram[0];
         }
 
-        ExternalProgram[] _Programs;
+        ExternalProgram[] _Programs = new ExternalProgram[0];
         public ExternalProgram[] Programs
         {
             get
@@ -49,15 +51,7 @@ namespace POLift.Core.ViewModel
         {
             try
             {
-                // TODO: notify view of programs list changed
-                //Service.Helpers.HttpQueryAsync("https://apple.com");
-
-                //Programs = await ExternalProgram.QueryProgramsList(
-                //    "https://crystalmathlabs.com/polift/programs_list.php");
                 Programs = await ExternalProgram.QueryProgramsList();
-
-                
-
             }
             catch
             {
@@ -65,45 +59,40 @@ namespace POLift.Core.ViewModel
             }
         }
 
-        public void SelectExternalProgram(ExternalProgram program, string temp_dir = "")
+        public void SelectExternalProgram(ExternalProgram program, string temp_dir = "", Action go_back_action = null)
         {
             System.Diagnostics.Debug.WriteLine("SelectExternalProgram");
             DialogService?.DisplayConfirmation("Are you sure you want to import the routines " +
                 "and exercises for the " + program.title + " lifting program?",
                 delegate
                 {
-                    ImportProgramAsync(program, temp_dir);
-                    /*MainThreadInvoker.Invoke(delegate
-                    {
-                        Toaster.DisplayMessage("Lifting program finished downloading");
-                    });*/
+                    ImportProgramAsync(program, temp_dir, go_back_action);
                 });
         }
 
-        async Task ImportProgramAsync(ExternalProgram program, string temp_dir = "")
+        async Task ImportProgramAsync(ExternalProgram program, string temp_dir = "", Action go_back_action = null)
         {
             try
             {
-                string url = ProgramToUrl(program);
-                System.Diagnostics.Debug.WriteLine("ImportFromUrlAsync(" + url);
+                System.Diagnostics.Debug.WriteLine("ImportFromUrlAsync(" + program.DownloadUrl);
                 
-                await Service.Helpers.ImportFromUrlAsync(url, Database, temp_dir, FileOperations, false);
+                await Service.Helpers.ImportFromUrlAsync(program.DownloadUrl, 
+                    Database, temp_dir, FileOperations, false);
 
-                navigationService.GoBack();
+                if(go_back_action == null)
+                {
+                    navigationService.GoBack();
+                }
+                else
+                {
+                    go_back_action();
+                }
             }
             catch(Exception e)
             {
                 System.Diagnostics.Debug.WriteLine(e);
-                Toaster?.DisplayError("Error importing program");
+                Toaster?.DisplayError("Error importing program: " + e.Message);
             }
-
         }
-
-        string ProgramToUrl(ExternalProgram program)
-        {
-            return "https://crystalmathlabs.com/polift/programs/" + program.file;
-        }
-
-
     }
 }

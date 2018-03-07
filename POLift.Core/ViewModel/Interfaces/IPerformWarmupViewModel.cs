@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace POLift.Core.ViewModel
 {
     using Model;
-    public interface IPerformWarmupViewModel
+    public interface IPerformWarmupViewModel : IValueReturner<float>
     {
         IExercise WarmupExercise { get; set; }
     }

@@ -15,21 +15,8 @@ namespace POLift.Core.Model
         public int Reps { get; private set; }
         public string Notes { get; private set; }
 
-        public static IWarmupSet[] Default
-        {
-            get
-            {
-                return new IWarmupSet[]
-                {
-                    new WarmupSet(8, 50, 50),
-                    new WarmupSet(8, 50, 50),
-                    new WarmupSet(4, 70, 50),
-                    new WarmupSet(1, 90, 50)
-                };
-            }
-        }
-
-        public WarmupSet(int reps, int percent_of_weight, int percent_of_rest_period, string notes = "")
+        public WarmupSet(int reps, int percent_of_weight, 
+            int percent_of_rest_period, string notes = "")
         {
             Reps = reps;
             PercentOfWeight = percent_of_weight;

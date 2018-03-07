@@ -14,6 +14,7 @@ namespace POLift.Core.Service
 
         public DatabaseKeyValueStorage(IPOLDatabase database)
         {
+            if (database == null) throw new ArgumentNullException("Database is null");
             this.Database = database;
         }
 

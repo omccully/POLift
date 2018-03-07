@@ -120,5 +120,9 @@ namespace POLift.Core.ViewModel
         protected abstract void RefreshExerciseDetails();
 
         public abstract void RefreshRoutineDetails();
+
+        public abstract void SaveState(KeyValueStorage kvs);
+
+        public abstract void RestoreState(KeyValueStorage kvs);
     }
 }

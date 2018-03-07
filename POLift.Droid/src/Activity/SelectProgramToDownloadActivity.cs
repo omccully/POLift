@@ -23,88 +23,76 @@ namespace POLift.Droid
     using Service;
     using Core.Service;
     using Core.Model;
+    using Core.ViewModel;
 
     [Activity(Label = "SelectProgramToDownloadActivity")]
     public class SelectProgramToDownloadActivity : ListActivity
     {
-        ExternalProgram[] Programs = new ExternalProgram[0];
-
-        IPOLDatabase Database;
+        private SelectProgramToDownloadViewModel Vm
+        {
+            get
+            {
+                return ViewModelLocator.Default.SelectProgramToDownload;
+            }
+        }
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
 
             // Create your application here
-            Database = C.ontainer.Resolve<IPOLDatabase>();
             ListView.ItemClick += ListView_ItemClick;
 
-            RefreshProgramsList();
+            Vm.DialogService = new DialogService(
+                new DialogBuilderFactory(this),
+                ViewModelLocator.Default.KeyValueStorage);
+
+            Vm.Toaster = new Toaster(this);
+
+            //SetProgramsListView();
+
+            Vm.ProgramsChanged += Vm_ProgramsChanged;
+            Vm.RefreshProgramsList();
+
+            //RefreshProgramsList();
         }
 
-        async Task RefreshProgramsList()
+        private void Vm_ProgramsChanged(object sender, EventArgs e)
         {
-            try
-            {
-                this.Programs = await ExternalProgram.QueryProgramsList();
-                Log.Debug("POLift", "programs deserialized");
-                string[] titles = this.Programs.Select(p => p.title).ToArray();
+            SetProgramsListView();
+        }
 
-                ArrayAdapter<string> adp = new ArrayAdapter<string>(this,
+        void SetProgramsListView()
+        {
+            string[] titles = Vm.Programs
+                .Select(p => p.title).ToArray();
+            ArrayAdapter<string> adp = new ArrayAdapter<string>(this,
                     Resource.Layout.ProgramItem, titles);
 
-                this.RunOnUiThread(delegate
-                {
-                    this.ListAdapter = adp;
-                });
-                
-                Log.Debug("POLift", "programs list adapter set");
-            }
-            catch(Exception e)
+            this.RunOnUiThread(delegate
             {
-                Toast.MakeText(this, "Error getting programs list", ToastLength.Long).Show();
-                Log.Debug("POLift", "Error getting programs list: " + e);
-            }
+                this.ListAdapter = adp;
+            });
         }
 
         private void ListView_ItemClick(object sender, AdapterView.ItemClickEventArgs e)
         {
-            ExternalProgram program = Programs[e.Position];
-
-            AndroidHelpers.DisplayConfirmation(this, "Are you sure you want to import the routines" +
-                $" and exercises for the \"{program.title}\" lifting program?",
+            Vm.SelectExternalProgram(Vm.Programs[e.Position], FilesDir.Path,
                 delegate
                 {
-                    ImportProgramAsync(program);
+                    RunOnUiThread(delegate
+                    {
+                        SetResult(Result.Ok);
+                        Finish();
+                    });
                 });
         }
 
-        async Task ImportProgramAsync(ExternalProgram program)
+        protected override void OnDestroy()
         {
-            try
-            {
-                string url = ExternalProgram.FileUrl(program.file);
+            Vm.ProgramsChanged -= Vm_ProgramsChanged;
 
-                Log.Debug("POLift", $"Selected program: {program.title}, {program.description}, {program.file}");
-                //Helpers.ImportFromUri(Android.Net.Uri.Parse(url), Database, this.ContentResolver, FilesDir.Path, false);
-
-                await Helpers.ImportFromUrlAsync(url, Database, FilesDir.Path, new FileOperations(), false);
-
-                RunOnUiThread(delegate
-                {
-                    SetResult(Result.Ok);
-                    Finish();
-                });
-            }
-            catch (Exception ex)
-            {
-                RunOnUiThread(delegate
-                {
-                    Toast.MakeText(this, "Error importing program", ToastLength.Long).Show();
-                });
-                
-                Log.Debug("POLift", "Error importing program: " + ex);
-            }
+            base.OnDestroy();
         }
     }
 }

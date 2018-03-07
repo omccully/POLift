@@ -30,9 +30,9 @@ namespace POLift.Droid
     public abstract class PerformRoutineBaseActivity : Activity
     {
         // Keep track of bindings to avoid premature garbage collection
-        protected readonly List<Binding> bindings = new List<Binding>();
+        protected readonly List<Binding> Bindings = new List<Binding>();
 
-        private TimerViewModel TimerVm
+        protected TimerViewModel TimerVm
         {
             get
             {
@@ -103,45 +103,72 @@ namespace POLift.Droid
             IMadeAMistakeButton = FindViewById<Button>(Resource.Id.IMadeAMistakeButton);
             EditThisExerciseButton = FindViewById<Button>(Resource.Id.EditThisExerciseButton);
 
-            RestoreTimerState(savedInstanceState);
+            System.Diagnostics.Debug.WriteLine(this.GetType() + " intent extras:");
+            System.Diagnostics.Debug.WriteLine(Intent.Extras.Inspect());
 
-            bindings.Add(this.SetBinding(
+            if(savedInstanceState != null)
+            {
+                System.Diagnostics.Debug.WriteLine(this.GetType() + " savedInstanceState:");
+                System.Diagnostics.Debug.WriteLine(savedInstanceState.Inspect());
+            }
+            
+
+
+
+
+            List<KeyValueStorage> storages = new List<KeyValueStorage>();
+            if (savedInstanceState != null)
+            {   // prefer saved state
+                storages.Add(new BundleKeyValueStorage(savedInstanceState));
+            }
+            storages.Add(new BundleKeyValueStorage(Intent.Extras));
+
+            TimerVm.RestoreState(new ChainedKeyValueStorage(storages));
+
+            Bindings.Add(this.SetBinding(
                () => BaseVm.RoutineDetails,
                () => RoutineDetails.Text));
 
-            bindings.Add(this.SetBinding(
+            Bindings.Add(this.SetBinding(
                () => BaseVm.WeightInputText,
                () => WeightEditText.Text,
                BindingMode.TwoWay));
 
-            bindings.Add(this.SetBinding(
+            Bindings.Add(this.SetBinding(
                () => TimerVm.TimerStatus,
                () => CountDownTextView.Text));
 
-            bindings.Add(this.SetBinding(
+            Bindings.Add(this.SetBinding(
                () => TimerVm.Add30SecButtonText,
                () => Add30SecButton.Text));
 
-            bindings.Add(this.SetBinding(
+            Bindings.Add(this.SetBinding(
                () => TimerVm.Sub30SecButtonText,
                () => Sub30SecButton.Text));
 
-            bindings.Add(this.SetBinding(
+            Bindings.Add(this.SetBinding(
               () => TimerVm.Add30SecEnabled,
               () => Add30SecButton.Enabled));
 
-            bindings.Add(this.SetBinding(
+            Bindings.Add(this.SetBinding(
               () => TimerVm.Sub30SecEnabled,
               () => Sub30SecButton.Enabled));
 
-            bindings.Add(this.SetBinding(
+            Bindings.Add(this.SetBinding(
              () => TimerVm.SkipTimerEnabled,
              () => SkipTimerButton.Enabled));
 
-            bindings.Add(this.SetBinding(
+            Bindings.Add(this.SetBinding(
               () => TimerVm.TimerIsStartable,
               () => ReportResultButton.Enabled));
 
+            Bindings.Add(this.SetBinding(
+               () => TimerVm.TimerState,
+               () => this.TimerState));
+
+            
+
+            //TimerVm.PropertyChanged += TimerVm_PropertyChanged;
 
             BaseVm.DialogService = new DialogService(
                 new DialogBuilderFactory(this),
@@ -153,9 +180,9 @@ namespace POLift.Droid
             Add30SecButton.Click += Add30SecButton_Click;
             SkipTimerButton.Click += SkipTimerButton_Click;
 
-            Intent parent_intent = (Intent)Intent.GetParcelableExtra("parent_intent");
+            parent_intent = (Intent)Intent.GetParcelableExtra("parent_intent");
             TimerVm.TimerFinishedNotificationService =
-                new NotificationService(this, parent_intent, GetTimerState);
+                new NotificationService(this, parent_intent, GetActivityState);
 
             LicenseManager = ViewModelLocator.Default.LicenseManager;
 
@@ -166,6 +193,48 @@ namespace POLift.Droid
                 InitializeAds();
             }
         }
+
+        TimerState _TimerState = TimerState.Skipped;
+        public TimerState TimerState
+        {
+            get
+            {
+                return _TimerState;
+            }
+            set
+            {
+                switch(value)
+                {
+                    case TimerState.Skipped:
+                        CountDownTextView.SetTextColor(Android.Graphics.Color.White);
+                        break;
+                    case TimerState.RunningPositive:
+                        CountDownTextView.SetTextColor(Android.Graphics.Color.Orange);
+                        break;
+                    case TimerState.Elapsed:
+                        CountDownTextView.SetTextColor(Android.Graphics.Color.Green);
+                        break;
+                }
+
+                _TimerState = value;
+            }
+        }
+
+       /* private void TimerVm_PropertyChanged(object sender, 
+            System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if(e.PropertyName == "TimerIsStartable")
+            {
+                if(TimerVm.TimerIsStartable)
+                {
+                    CountDownTextView.SetTextColor(Android.Graphics.Color.Green);
+                }
+                else
+                {
+                    CountDownTextView.SetTextColor(Android.Graphics.Color.Orange);
+                }
+            }
+        }*/
 
         void InitializeAds()
         {
@@ -221,33 +290,38 @@ namespace POLift.Droid
         {
             if (LicenseManager.ShowAds)
             {
+#if !DEBUG
                 mInterstitialAd.LoadAd(new AdRequest.Builder().Build());
+#endif
             }
         }
 
         protected abstract void ReportResultButton_Click(object sender, EventArgs e);
 
-        Bundle GetTimerState()
+        Bundle GetActivityState()
         {
             Bundle bundle = new Bundle();
-
-            BundleKeyValueStorage bkvs = 
-                new BundleKeyValueStorage(bundle);
-            TimerVm.SaveState(bkvs);
-
+            SaveActivityState(bundle);
             return bundle;
         }
 
-        protected virtual void SaveTimerState(Bundle outState)
+        void SaveActivityState(Bundle outState)
         {
+            // this relies on the ViewModels entirely
+            // if for some reason a child class decides to set 
+            // its own state variables, it would cause problems
+
             BundleKeyValueStorage bkvs =
                  new BundleKeyValueStorage(outState);
             TimerVm.SaveState(bkvs);
+            BaseVm.SaveState(bkvs);
+
+            outState.PutParcelable("parent_intent", parent_intent);
         }
 
         protected override void OnSaveInstanceState(Bundle outState)
         {
-            SaveTimerState(outState);
+            SaveActivityState(outState);
             base.OnSaveInstanceState(outState);
         }
 
@@ -269,12 +343,17 @@ namespace POLift.Droid
         protected virtual void SkipTimerButton_Click(object sender, EventArgs e)
         {
             TimerVm.SkipTimer();
-            CountDownTextView.SetTextColor(Android.Graphics.Color.White);
+            //CountDownTextView.SetTextColor(Android.Graphics.Color.White);
         }
-        
-        protected virtual void SaveStateToIntent(Intent intent)
+
+        protected override void OnDestroy()
         {
-            intent.PutExtras(GetTimerState());
+            foreach(Binding b in Bindings)
+            {
+                b.Detach();
+            }
+
+            base.OnDestroy();
         }
     }
 }

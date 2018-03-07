@@ -28,7 +28,7 @@ namespace POLift.Core.Service
             get
             {
                 string device_id_encoded = WebUtility.UrlEncode(DeviceID);
-                string domain = "crystalmathlabs.com";
+                string domain = "polift-app.com";
                 string path = $"polift/check_license.php?device_id={device_id_encoded}";
                 return $"http://{domain}/{path}";
             }

@@ -126,6 +126,7 @@ namespace POLift.Core.ViewModel
                     {
                         navigationService.NavigateTo(ViewModelLocator.PerformWarmupPageKey);
                         PerformWarmupViewModel.WarmupExercise = CurrentExercise;
+                        PerformWarmupViewModel.ValueChosen += PerformWarmupViewModel_ValueChosen;
                     }
                     else
                     {
@@ -133,6 +134,11 @@ namespace POLift.Core.ViewModel
                     }
                 });
             System.Diagnostics.Debug.WriteLine("PromptUserForWarmupRoutine end" + DialogService);
+        }
+
+        public void PerformWarmupViewModel_ValueChosen(float obj)
+        {
+            WeightInputText = obj.ToString();
         }
 
         IRoutineResult _routine_result;
@@ -532,12 +538,12 @@ namespace POLift.Core.ViewModel
 
         public void CreateExercise_ValueChosen(int exercise_id)
         {
-            CreateExercise_ValueChosen(Database.ReadByID<Exercise>(exercise_id));
+            PromptForReplaceExercise(Database.ReadByID<Exercise>(exercise_id));
         }
 
         private void CreateExercise_ValueChosen(IExercise obj)
         {
-            const string ShowReplaceExercisesWarning = "show_replace_exercises_warning";
+            
             System.Diagnostics.Debug.WriteLine("PerformRoutineViewModel.CreateExercise_ValueChosen");
             if (navigationService.CurrentPageKey !=
                 ViewModelLocator.PerformRoutinePageKey)
@@ -547,6 +553,12 @@ namespace POLift.Core.ViewModel
                 return;
             }
 
+            PromptForReplaceExercise(obj);
+        }
+
+        void PromptForReplaceExercise(IExercise obj)
+        {
+            const string ShowReplaceExercisesWarning = "show_replace_exercises_warning";
             if (CurrentExercise.Name != obj.Name)
             {
                 DialogService.DisplayConfirmationNeverShowAgain(
@@ -668,7 +680,7 @@ namespace POLift.Core.ViewModel
         public const string ResumeRoutineResultIdKey = "resume_routine_result_id";
         public const string WarmupPromptedKey = "warmup_prompted";
 
-        public void RestoreState(KeyValueStorage kvs)
+        public override void RestoreState(KeyValueStorage kvs)
         {
             // set Routine
             RoutineId = kvs.GetInteger(RoutineIdKey, -1);
@@ -676,58 +688,45 @@ namespace POLift.Core.ViewModel
             IRoutineResult recent_uncompleted = Model.RoutineResult
                 .MostRecentUncompleted(Database, Routine);
 
-            int resume_routine_result_id = kvs.GetInteger(ResumeRoutineResultIdKey);
+            int resume_routine_result_id = kvs.GetInteger(ResumeRoutineResultIdKey, -1);
 
             bool warmup_prompted = kvs.GetBoolean(WarmupPromptedKey, false);
 
-            /*if (resume_routine_result_id == 0)
-            {
-                System.Diagnostics.Debug.WriteLine("a");
-                // a routine result was started but has no contents
-                this.RoutineResult = new RoutineResult(Routine);
-            }
-            else */
-            
             if (recent_uncompleted != null && recent_uncompleted.ID == resume_routine_result_id)
             {
                 System.Diagnostics.Debug.WriteLine("b");
                 // only restore rr state if it's the most recent rr for the routine
                 this.RoutineResult = recent_uncompleted;
             }
-            else
+            else if (recent_uncompleted == null ||
+                    (DateTime.Now - recent_uncompleted.EndTime) > TimeSpan.FromDays(1) ||
+                    warmup_prompted)
             {
-                // FIRST LAUNCH
+                // if there is no recent uncompleted routine result for this routine 
+                // OR
+                // if the most recent uncompleted routine result is more than a day ago, 
+                // just start a new one without asking
 
-                System.Diagnostics.Debug.WriteLine("c");
-                // there was no saved state
+                this.RoutineResult = new RoutineResult(Routine);
 
-                if (recent_uncompleted == null ||
-                    (DateTime.Now - recent_uncompleted.EndTime) > TimeSpan.FromDays(1))
+                if (!warmup_prompted /*&& previous_activity_depth == 0*/)
                 {
-                    // if there is no recent uncompleted routine result for this routine 
-                    // OR
-                    // if the most recent uncompleted routine result is more than a day ago, 
-                    // just start a new one without asking
-
-                    this.RoutineResult = new RoutineResult(Routine);
-                    if (!warmup_prompted /*&& previous_activity_depth == 0*/)
-                    {
-                        PromptUserForWarmupRoutine();
-                    }
-                }
-                else
-                {
-                    System.Diagnostics.Debug.WriteLine("d");
-                    // there is a uncompleted routine result within the last 1 day for this routine
-                    // so ask user if they want to resume it
-
-                    // if no, prompts user for warmup as well
-                    PromptUserToResumeRoutine(recent_uncompleted);
+                    PromptUserForWarmupRoutine();
                 }
             }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine("d");
+                // there is a uncompleted routine result within the last 1 day for this routine
+                // so ask user if they want to resume it
+
+                // if no, prompts user for warmup as well
+                PromptUserToResumeRoutine(recent_uncompleted);
+            }
+            
         }
 
-        public void SaveState(KeyValueStorage kvs)
+        public override void SaveState(KeyValueStorage kvs)
         {
             if(this.RoutineResult != null)
                 kvs.SetValue(ResumeRoutineResultIdKey, this.RoutineResult.ID);

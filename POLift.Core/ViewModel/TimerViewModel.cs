@@ -13,6 +13,13 @@ using POLift.Core.Service;
 
 namespace POLift.Core.ViewModel
 {
+    public enum TimerState
+    {
+        Skipped,
+        RunningPositive,
+        Elapsed
+    }
+
     public class TimerViewModel : ViewModelBase, ITimerViewModel
     {
         public IVibrator Vibrator;
@@ -44,6 +51,7 @@ namespace POLift.Core.ViewModel
             }
         }
 
+        
         DateTime EndTime { get; set; }
 
         public int SecondsLeft
@@ -74,6 +82,8 @@ namespace POLift.Core.ViewModel
 
                 TimerRunningPositive = true;
 
+                TimerState = TimerState.RunningPositive;
+
                 TimerIsStartable = false;
                 System.Diagnostics.Debug.WriteLine("Timer unstartable");
             }
@@ -85,10 +95,26 @@ namespace POLift.Core.ViewModel
 
                 TimerRunningPositive = false;
 
+                TimerState = TimerState.Elapsed;
+
                 TimerIsStartable = true;
                 System.Diagnostics.Debug.WriteLine("Timer startable");
             }
         }
+
+        TimerState _TimerState = TimerState.Skipped;
+        public TimerState TimerState
+        {
+            get
+            {
+                return _TimerState;
+            }
+            set
+            {
+                Set(ref _TimerState, value);
+            }
+        }
+
 
         bool _TimerRunningPositive = false;
         public bool TimerRunningPositive
@@ -174,7 +200,6 @@ namespace POLift.Core.ViewModel
             }
         }
 
-
         bool _TimerIsStartable = true;
         public bool TimerIsStartable
         {
@@ -190,6 +215,7 @@ namespace POLift.Core.ViewModel
 
         public void StartTimer(int seconds_left)
         {
+            Notified = false;
             SecondsLeft = seconds_left;
 
             TimerEnabled = true;
@@ -198,46 +224,52 @@ namespace POLift.Core.ViewModel
             {
                 Timer.Start(TimerTicked, 1000);
             }
+
+            TimerFinishedNotificationService.Cancel();
             
             SetCountDownText(seconds_left);
 
             UpdateGUIByTimerState();
         }
 
+
+        bool Notified = false;
         void TimerTicked()
         {
             System.Diagnostics.Debug.WriteLine("TimerTicked()");
 
-            if (!TimerEnabled)
+            if (!TimerEnabled || SecondsLeft < -600)
             {
                 // this should never happen.
-                System.Diagnostics.Debug.WriteLine("Error: timer wasn't enabled");
+                System.Diagnostics.Debug.WriteLine("Error: disabling timer");
 
                 Timer?.Cancel();
                 return;
             }
 
+            bool notify = !Notified && SecondsLeft <= 0;
+
             this.MainThreadInvoker.Invoke(delegate
             {
-                if (SecondsLeft == 0) TimerElapsed();
-
                 SetCountDownText(SecondsLeft);
+
+                if (notify) TimerElapsed();
             });
         }
 
         void TimerElapsed()
         {
+            Notified = true; 
+
             System.Diagnostics.Debug.WriteLine("TimerElapsed()");
-            Vibrator?.Vibrate();
 
-            //this.MainThreadInvoker.Invoke(delegate
-            //{
-            //    UpdateGUIByTimerState();
-            //    System.Diagnostics.Debug.WriteLine("call UpdateGUIByTimerState()");
-            //});
-
+            UpdateGUIByTimerState();
+            System.Diagnostics.Debug.WriteLine("call UpdateGUIByTimerState()");
+           
             //StartTimerNotification
             TimerFinishedNotificationService?.Notify();
+
+            Vibrator?.Vibrate();
         }
 
         public void SkipTimer()
@@ -246,7 +278,9 @@ namespace POLift.Core.ViewModel
             Timer.Cancel();
             TimerStatus = "Timer skipped. " + System.Environment.NewLine +
                  "Start your next set whenever you're ready";
+            
             // set text color White
+            TimerState = TimerState.Skipped;
 
             SecondsLeft = 0;
 
@@ -344,8 +378,6 @@ namespace POLift.Core.ViewModel
                 UpdateAdd30SecButtonCounts();
             }
         }
-
-        
 
         void UpdateAdd30SecButtonCounts()
         {

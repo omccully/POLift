@@ -119,6 +119,7 @@ namespace POLift.Droid
 
         bool first_main_activity = true;
         volatile bool seen_activity = false;
+        //Activity last_activity_created = null;
         public void OnActivityCreated(Activity activity, Bundle savedInstanceState)
         {
             CrossCurrentActivity.Current.Activity = activity;
@@ -146,8 +147,14 @@ namespace POLift.Droid
                     PromptUserForStartingNextRoutine(activity);
                 }
                 catch { }
-               
             }
+
+            //if(last_activity_created.GetType == typeof(MainActivity))
+            //{
+            //
+            //}
+
+            //last_activity_created = activity;
         }
 
         void PromptUserForStartingNextRoutine(Activity activity)

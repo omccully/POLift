@@ -266,10 +266,10 @@
     <Compile Include="src\Service\FailedToConnectToBillingException.cs" />
     <Compile Include="src\Service\AndroidHelpers.cs" />
     <Compile Include="src\Service\FileOperations.cs" />
+    <Compile Include="src\Service\IntentKeyValueStorage.cs" />
     <Compile Include="src\Service\MainThreadInvoker.cs" />
     <Compile Include="src\Service\NotificationService.cs" />
     <Compile Include="src\Service\PreferencesKeyValueStorage.cs" />
-    <Compile Include="src\Service\StaticTimer.cs" />
     <Compile Include="src\Service\Toaster.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -23,6 +23,7 @@ using GalaSoft.MvvmLight.Helpers;
 namespace POLift.Droid
 {
     using Service;
+
     using Core.Service;
     using Core.Model;
     using Core.ViewModel;
@@ -30,9 +31,6 @@ namespace POLift.Droid
     [Activity(Label = "Perform routine", ParentActivity = typeof(MainActivity))]
     public class PerformRoutineActivity : PerformRoutineBaseActivity
     {
-        // Keep track of bindings to avoid premature garbage collection
-        private readonly List<Binding> bindings = new List<Binding>();
-
         private PerformRoutineViewModel Vm
         {
             get => ViewModelLocator.Default.PerformRoutine;
@@ -68,18 +66,22 @@ namespace POLift.Droid
 
             Vm.ResultSubmittedWithoutCompleting += Vm_ResultSubmittedWithoutCompleting;
 
-            bindings.Add(this.SetBinding(
+            Bindings.Add(this.SetBinding(
                () => BaseVm.ExerciseDetails,
                () => NextExerciseView.Text));
 
-            bindings.Add(this.SetBinding(
+            Bindings.Add(this.SetBinding(
                () => BaseVm.PlateMathDetails,
                () => PlateMathTextView.Text));
 
-            bindings.Add(this.SetBinding(
+            Bindings.Add(this.SetBinding(
                () => Vm.RepsInputText,
                () => RepResultEditText.Text,
                BindingMode.TwoWay));
+
+            Bindings.Add(this.SetBinding(
+               () => TimerVm.TimerIsStartable,
+               () => RepResultEditText.Enabled));
 
             Vm.StartWarmup = StartWarmupActivity;
 
@@ -129,14 +131,9 @@ namespace POLift.Droid
                 CreateRoutineViewModel.ExercisesLockedKey, 
                 Vm.RoutineResult.ResultCount);
 
-            StartActivityForResult(result_intent, ModifyRestOfRoutineResultCode);
-        }
-
-        protected override void OnSaveInstanceState(Bundle outState)
-        {
-            Vm.SaveState(new BundleKeyValueStorage(outState));
             
-            base.OnSaveInstanceState(outState);
+
+            StartActivityForResult(result_intent, ModifyRestOfRoutineResultCode);
         }
 
         protected override void OnActivityResult(int requestCode, [GeneratedEnum] Result resultCode, Intent data)
@@ -148,11 +145,12 @@ namespace POLift.Droid
             {
                 if (requestCode == WarmUpRoutineRequestCode)
                 {
-                    if (Vm.CurrentExercise != null)
-                    {
-                        // start timer once warmup routine is finished.
-                        Vm.StartTimer();
-                    }
+                    float new_weight = data.GetFloatExtra(
+                        WarmupRoutineActivity.NewWorkingWeightKey, 
+                        Single.MinValue);
+                    if (new_weight == Single.MinValue) return;
+
+                    Vm.PerformWarmupViewModel_ValueChosen(new_weight);
                 }
                 else if (requestCode == ModifyRestOfRoutineResultCode)
                 {
@@ -186,23 +184,21 @@ namespace POLift.Droid
         {
             Vm.PromptUserForRating(delegate
             {
-                try
-                {
-                    StartActivity(new Intent(Intent.ActionView,
-                        Android.Net.Uri.Parse("market://details?id=com.cml.polift")));
-                }
-                catch { }
+                AndroidHelpers.NavigateToAppRating(this);
             });
         }
 
-
         void StartWarmupActivity()
         {
-            System.Diagnostics.Debug.WriteLine("StartWarmupActivity");
+            System.Diagnostics.Debug.WriteLine("StartWarmupActivity --------------------");
             var intent = new Intent(this, typeof(WarmupRoutineActivity));
-            intent.PutExtra("exercise_id", Vm.CurrentExercise.ID);
-            intent.PutExtra("working_set_weight", Vm.WeightInputText);
+            //intent.PutExtra("exercise_id", Vm.CurrentExercise.ID);
+            //intent.PutExtra("working_set_weight", Vm.WeightInputText);
+
+            PerformWarmupViewModel.InitializationState(new IntentKeyValueStorage(intent),
+                Vm.CurrentExercise, Vm.WeightInputText);
             intent.PutExtra("parent_intent", this.Intent);
+
             StartActivityForResult(intent, WarmUpRoutineRequestCode);
         }
 
@@ -217,13 +213,6 @@ namespace POLift.Droid
             result_intent.PutExtra("routine_result_id", ID);
             SetResult(Result.Ok, result_intent);
             Finish();
-        }
-
-        protected override void SaveStateToIntent(Intent intent)
-        {
-            base.SaveStateToIntent(intent);
-
-            Vm.SaveState(new BundleKeyValueStorage(intent.Extras));
         }
 
         protected override void OnPause()

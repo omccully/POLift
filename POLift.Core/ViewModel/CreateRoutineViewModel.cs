@@ -55,7 +55,10 @@ namespace POLift.Core.ViewModel
                     RoutineToDeleteIfDifferent =
                         Database.ReadByID<Routine>(value);
                 }
-               
+                else
+                {
+                    RoutineToDeleteIfDifferent = null;
+                }
             }
         }
         public IRoutine RoutineToDeleteIfDifferent;
@@ -257,40 +260,54 @@ namespace POLift.Core.ViewModel
             }
         }
 
-        public const string RoutineIDToDeleteIfDifferentKey = "routine_id_to_delete_if_different";
+        //public const string RoutineIDToDeleteIfDifferentKey = "routine_id_to_delete_if_different";
+        public const string EditRoutineIdKey = "edit_routine_id";
         public const string ExerciseSetsIdsKey = "exercise_sets_ids";
         public const string ExercisesLockedKey = "exercises_locked";
 
-        public void SaveState(KeyValueStorage kvs)
-        {
-            SaveExerciseSets();
-
-            int[] ids = ExerciseSets.Select(es => es.ID).ToArray();
-            System.Diagnostics.Debug.WriteLine("ids during save: " + ids.ToIDString());
-
-            kvs.SetValue(ExerciseSetsIdsKey, ids);
-
-            kvs.SetValue(ExercisesLockedKey, LockedExercises);
-
-            if(RoutineToDeleteIfDifferent != null)
-            {
-                kvs.SetValue(RoutineIDToDeleteIfDifferentKey,
-                    RoutineToDeleteIfDifferent.ID);
-            }
-        }
-
         public void RestoreState(KeyValueStorage kvs)
         {
+            Reset();
+
             int[] ids = kvs.GetIntArray(ExerciseSetsIdsKey);
 
             int exercises_locked = kvs.GetInteger(ExercisesLockedKey);
 
-            if (ids != null)
+            RoutineToDeleteIfDifferentId = kvs.GetInteger(EditRoutineIdKey);
+
+            if (ids == null)
+            {
+                // no ES IDs, so 
+                if (RoutineToDeleteIfDifferent != null)
+                {
+                    // edit routine
+                    EditRoutine(RoutineToDeleteIfDifferent, exercises_locked);
+                }
+            }
+            else // ids != null
             {
                 SetExerciseSets(IdsToExerciseSets(ids), exercises_locked);
             }
+        }
 
-            RoutineToDeleteIfDifferentId = kvs.GetInteger(RoutineIDToDeleteIfDifferentKey);
+        public void SaveState(KeyValueStorage kvs)
+        {
+            List<IExerciseSets> saved_sets = SaveExerciseSets();
+
+            int[] ids = saved_sets.Select(es => es.ID).ToArray();
+            System.Diagnostics.Debug.WriteLine("ids during save: " + ids.ToIDString());
+
+            kvs.SetValue(ExerciseSetsIdsKey, ids);
+
+            InitializationState(kvs, RoutineToDeleteIfDifferent, LockedExercises);
+        }
+
+        public static void InitializationState(KeyValueStorage kvs,
+            IRoutine routine = null, int exercises_locked = 0)
+        {
+            if(routine != null) kvs.SetValue(EditRoutineIdKey, routine.ID);
+
+            if(exercises_locked != 0) kvs.SetValue(ExercisesLockedKey, exercises_locked);
         }
     }
 }
