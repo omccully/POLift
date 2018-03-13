@@ -80,7 +80,7 @@ namespace POLift.Core.Model
             this.ExerciseID = ExerciseID;
             this.Weight = Weight;
             this.RepCount = RepCount;
-            Time = DateTime.Now;
+            Time = DateTime.UtcNow;
         }
 
         public ExerciseResult()

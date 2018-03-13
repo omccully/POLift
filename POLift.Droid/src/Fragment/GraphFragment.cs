@@ -123,7 +123,8 @@ namespace POLift.Droid
 
         void InitializePlot(int exercise_difficulty_id)
         {
-            if (exercise_difficulty_id > 0 && frame_layout != null)
+            if (exercise_difficulty_id > 0 && frame_layout != null
+                && plot_view.Parent == null)
             { 
                 Vm.InitializePlot(exercise_difficulty_id);
 

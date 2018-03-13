@@ -325,7 +325,7 @@ namespace POLift.Core.Model
                 if (this.EndTime != null)
                 {
                     TimeSpan span = (this.EndTime - this.StartTime);
-                    return $"{this.StartTime} ({(int)span.TotalMinutes} mins) ";
+                    return $"{this.StartTime.ToLocalTime()} ({(int)span.TotalMinutes} mins) ";
                 }
                 return null;
             }
@@ -337,13 +337,11 @@ namespace POLift.Core.Model
             {
                 if (Completed)
                 {
-                    TimeSpan time_since_end = DateTime.Now - EndTime;
-
+                    TimeSpan time_since_end = DateTime.UtcNow - EndTime;
                     return $"Last completed {time_since_end.ToRoundedString()} ago";
                 }
 
-                TimeSpan time_since_start = DateTime.Now - StartTime;
-
+                TimeSpan time_since_start = DateTime.UtcNow - StartTime;
                 return $"Uncompleted {time_since_start.ToRoundedString()} ago";
             }
         }
@@ -352,7 +350,7 @@ namespace POLift.Core.Model
         {
             get
             {
-                TimeSpan time_since_last_exr = (DateTime.Now - this.EndTime);
+                TimeSpan time_since_last_exr = (DateTime.UtcNow - this.EndTime);
 
                 // for some reason this.EndTime is DateTime.MinValue sometimes
                 bool IsRecent =
@@ -398,6 +396,7 @@ namespace POLift.Core.Model
                         }
 
                         builder.Append($"{exr.Weight}x{exr.RepCount}");
+                        //builder.Append($" ({exr.Time})");
                     }
                     else
                     {

@@ -64,6 +64,10 @@ namespace POLift.Droid
 
             CreateExerciseLink.Click += CreateExerciseLink_Click;
 
+            Vm.DialogService = new DialogService(
+                new DialogBuilderFactory(this),
+                ViewModelLocator.Default.KeyValueStorage);
+
             string routine_name = Intent.GetStringExtra("routine_name");
 
             if(routine_name != null)

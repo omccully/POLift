@@ -62,9 +62,10 @@ namespace POLift.Droid
             RoutinesList.ItemsCanFocus = true;
 
             //ViewModelLocator.Detauls.Toaster = new Toaster(this.Activity);
-            ViewModelLocator.Default.DialogService = new DialogService(
+            Vm.DialogService = new DialogService(
                 new DialogBuilderFactory(this.Activity),
                 ViewModelLocator.Default.KeyValueStorage);
+            Vm.Toaster = new Toaster(this.Activity);
 
             RefreshRoutineList();
         }

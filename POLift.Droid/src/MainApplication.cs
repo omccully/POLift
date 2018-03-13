@@ -122,6 +122,8 @@ namespace POLift.Droid
         //Activity last_activity_created = null;
         public void OnActivityCreated(Activity activity, Bundle savedInstanceState)
         {
+            System.Diagnostics.Debug.WriteLine("Create " + activity.GetType());
+
             CrossCurrentActivity.Current.Activity = activity;
 
             if (!seen_activity)
@@ -148,6 +150,14 @@ namespace POLift.Droid
                 }
                 catch { }
             }
+
+            ViewModelLocator.Default.DialogService = new DialogService(
+                new DialogBuilderFactory(activity),
+                ViewModelLocator.Default.KeyValueStorage);
+
+            ViewModelLocator.Default.Vibrator = new AndroidVibrator(activity);
+
+
 
             //if(last_activity_created.GetType == typeof(MainActivity))
             //{

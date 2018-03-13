@@ -174,6 +174,8 @@ namespace POLift.Droid
                 new DialogBuilderFactory(this),
                 ViewModelLocator.Default.KeyValueStorage);
 
+            TimerVm.Vibrator = new AndroidVibrator(this);
+
             ReportResultButton.Click += ReportResultButton_Click;
 
             Sub30SecButton.Click += Sub30SecButton_Click;

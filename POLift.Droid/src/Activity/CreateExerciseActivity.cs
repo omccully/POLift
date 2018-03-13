@@ -17,6 +17,7 @@ namespace POLift.Droid
     using Core.ViewModel;
     using Core.Model;
     using Core.Service;
+    using Service;
 
     [Activity(Label = "Create Exercise")]
     public class CreateExerciseActivity : Activity
@@ -96,6 +97,8 @@ namespace POLift.Droid
                () => Vm.ExerciseDetails,
                () => ExerciseDetailsTextView.Text,
                BindingMode.TwoWay));
+
+            Vm.Toaster = new Toaster(this);
 
             int edit_exercise_id = Intent.GetIntExtra("edit_exercise_id", -1);
             if(edit_exercise_id == -1)

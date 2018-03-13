@@ -103,7 +103,8 @@ namespace POLift.Droid
             ex_edit_layout.AddView(Label("Weight = "));
 
             EditText weight_edit = new EditText(this);
-            weight_edit.InputType = Android.Text.InputTypes.NumberFlagDecimal;
+            weight_edit.InputType = Android.Text.InputTypes.ClassNumber;
+                //Android.Text.InputTypes.NumberFlagDecimal;
             weight_edit.Text = ex_result.Weight.ToString();
             
             weight_edit.TextChanged += delegate
@@ -124,7 +125,7 @@ namespace POLift.Droid
             ex_edit_layout.AddView(Label(", Reps = "));
 
             EditText reps_edit = new EditText(this);
-            reps_edit.InputType = Android.Text.InputTypes.NumberFlagDecimal;
+            reps_edit.InputType = Android.Text.InputTypes.ClassNumber;
             reps_edit.Text = ex_result.RepCount.ToString();
             reps_edit.TextChanged += delegate
             {

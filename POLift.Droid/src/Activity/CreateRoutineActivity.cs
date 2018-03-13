@@ -63,6 +63,8 @@ namespace POLift.Droid
                () => RoutineTitleText.Text,
                BindingMode.TwoWay));
 
+            Vm.Toaster = new Toaster(this);
+
             var kvs = BundleKeyValueStorage.ChainedFromStates(savedInstanceState, Intent);
             Vm.RestoreState(kvs);
 

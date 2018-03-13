@@ -69,6 +69,11 @@ namespace POLift.Droid
 
             SetSupportActionBar(toolbar);
 
+            Vm.DialogService = new DialogService(
+                new DialogBuilderFactory(this),
+                ViewModelLocator.Default.KeyValueStorage);
+            Vm.Toaster = new Toaster(this);
+
             List<INavigation> Navigations = new List<INavigation>()
             {
                 new Navigation("Select routine", SelectRoutine_Click,
@@ -107,6 +112,11 @@ namespace POLift.Droid
                     RateApp_Click, Resource.Mipmap.ic_rate_review_white_18dp));
             }
 
+            Vm.DialogService = new DialogService(
+                new DialogBuilderFactory(this),
+                ViewModelLocator.Default.KeyValueStorage);
+            Vm.Toaster = new Toaster(this);
+
 #if DEBUG
             //Navigations.Add(new Navigation("Metricize", Metricize_Click,
             //    Resource.Mipmap.ic_settings_white_24dp));
@@ -125,11 +135,10 @@ namespace POLift.Droid
 
             DrawerListView.ItemClick += DrawerListView_ItemClick;
 
-            Vm.PromptUserForExternalProgramsIfFirstLaunch();
+            Vm.PromptUserForExternalProgramsIfFirstLaunch(GetFreeLiftingPrograms);
 
             AddPurchaseLicenseNavigationIfNotPurchased();
         }
-
 
         void FlagExternalProgramsResponse(ISharedPreferences prefs)
         {
@@ -247,18 +256,25 @@ namespace POLift.Droid
 
         private void BackupData_Click(object sender, EventArgs e)
         {
-            Java.IO.File export_file = new Java.IO.File(C.DatabasePath);
-            Android.Net.Uri uri = FileProvider.GetUriForFile(this,
-                "com.cml.poliftprovider", export_file);
+            try
+            {
+                Java.IO.File export_file = new Java.IO.File(C.DatabasePath);
+                Android.Net.Uri uri = FileProvider.GetUriForFile(this,
+                    "com.cml.poliftprovider", export_file);
 
-            Intent share_intent = ShareCompat.IntentBuilder.From(this)
-                .SetType("application/octet-stream")
-                .SetStream(uri)
-                .Intent;
+                Intent share_intent = ShareCompat.IntentBuilder.From(this)
+                    .SetType("application/octet-stream")
+                    .SetStream(uri)
+                    .Intent;
 
-            share_intent.SetData(uri);
-            share_intent.AddFlags(ActivityFlags.GrantReadUriPermission);
-            StartActivity(share_intent);
+                share_intent.SetData(uri);
+                share_intent.AddFlags(ActivityFlags.GrantReadUriPermission);
+                StartActivity(share_intent);
+            }
+            catch(ActivityNotFoundException err)
+            {
+                AndroidHelpers.DisplayError(this, err.Message);
+            }
         }
 
 
@@ -273,7 +289,7 @@ namespace POLift.Droid
 
         }
 
-        const int PickFileForRoutineAndExerciseImportCode = 543261;
+        const int PickFileForRoutineAndExerciseImportCode = 54261;
         private void ImportRoutinesAndExercises_Click(object sender, EventArgs e)
         {
             Intent intent = new Intent(Intent.ActionGetContent);

@@ -50,7 +50,7 @@ namespace POLift.Core.ViewModel
 
         const string FirstLaunchForExternalProgramsStorageKey =
             "first_launch_for_external_programs";
-        public void PromptUserForExternalProgramsIfFirstLaunch()
+        public void PromptUserForExternalProgramsIfFirstLaunch(Action navigate_action = null)
         {
             bool first_launch =
                 KeyValueStorage.GetBoolean(FirstLaunchForExternalProgramsStorageKey, true);
@@ -66,7 +66,7 @@ namespace POLift.Core.ViewModel
                     delegate
                     {
                         FlagExternalProgramsResponse();
-                        GetFreeWeightliftingPrograms();
+                        GetFreeWeightliftingPrograms(navigate_action);
                     },
                     delegate
                     {
@@ -81,6 +81,7 @@ namespace POLift.Core.ViewModel
 
         //Lazy<Task<bool>> lazy_LicenseNotPurchased;
 
+        Navigation purchase_navigation = null;
         public async Task<Navigation> GetPurchaseLicenseNavigationLink()
         {
             if(await LicenseManager.CheckLicense(false))
@@ -91,8 +92,11 @@ namespace POLift.Core.ViewModel
 
             string days_left_text = await DaysLeftText();
             // lifetime license
-            return new Navigation("Purchase" + days_left_text,
+
+            purchase_navigation = new Navigation("Purchase" + days_left_text,
                 PromptToBuyLicense);
+
+            return purchase_navigation;
         }
 
         public void PromptToBuyLicense()
@@ -104,8 +108,19 @@ namespace POLift.Core.ViewModel
         {
             try
             {
-                bool success = await LicenseManager.PromptToBuyLicense();
-                DisplayMessage("Success = " + success);
+                if(await LicenseManager.PromptToBuyLicense())
+                {
+                    DisplayMessage("Purchase successful");
+
+                    if(purchase_navigation != null)
+                    {
+                        purchase_navigation.Text = "License purchased";
+                    }
+                }
+                else
+                {
+                    DisplayMessage("Purchase unsuccessful");
+                }
             }
             catch (Exception e)
             {
@@ -173,10 +188,17 @@ namespace POLift.Core.ViewModel
                 ViewModelLocator.OrmGraphPageKey);
         }
 
-        public void GetFreeWeightliftingPrograms()
+        public void GetFreeWeightliftingPrograms(Action navigate_action = null)
         {
-            navigationService.NavigateTo(
-                ViewModelLocator.SelectProgramToDownloadPageKey);
+            if(navigate_action == null)
+            {
+                navigationService.NavigateTo(
+                    ViewModelLocator.SelectProgramToDownloadPageKey);
+            }
+            else
+            {
+                navigate_action();
+            }
         }
 
         public void RecheckLicense()

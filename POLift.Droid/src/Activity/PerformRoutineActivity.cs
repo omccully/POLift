@@ -83,6 +83,7 @@ namespace POLift.Droid
                () => TimerVm.TimerIsStartable,
                () => RepResultEditText.Enabled));
 
+            Vm.Toaster = new Toaster(this);
             Vm.StartWarmup = StartWarmupActivity;
 
             List<KeyValueStorage> storages = new List<KeyValueStorage>();
@@ -161,6 +162,10 @@ namespace POLift.Droid
                 }
                 else if(requestCode == EditRoutineResultRequestCode)
                 {
+                    System.Diagnostics.Debug.WriteLine("EditRoutineResultRequestCode");
+
+                    // set ER to null so next they're reloaded
+                    Vm.RoutineResult.ExerciseResults = null;
                     Vm.RefreshRoutineDetails();
                 }
                 else if(requestCode == EditExerciseRequestCode)
