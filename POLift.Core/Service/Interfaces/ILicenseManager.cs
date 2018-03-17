@@ -8,6 +8,8 @@ namespace POLift.Core.Service
 {
     public interface ILicenseManager
     {
+        string ProductID { get; set; }
+
         bool ShowAds { get; set; }
 
         KeyValueStorage KeyValueStorage { get; set; }

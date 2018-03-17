@@ -41,7 +41,7 @@ namespace POLift.iOS.Controllers
                 new Navigation("View recent sessions", Vm.ViewRecentSessionsNavigate),
                 new Navigation("View 1RM graphs", Vm.ViewOrmGraphsNavigate),
 
-                new Navigation("Get free lifting programs", Vm.GetFreeWeightliftingPrograms),
+                new Navigation("Get free lifting programs", () => Vm.GetFreeWeightliftingPrograms()),
                 //    Resource.Mipmap.ic_cloud_download_white_24dp),
                 //new Navigation("Backup data", BackupData_Click),
                 /*new Navigation("Import data from backup", RestoreData_Click,

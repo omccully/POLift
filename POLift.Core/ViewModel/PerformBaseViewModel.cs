@@ -88,26 +88,34 @@ namespace POLift.Core.ViewModel
             }
             set
             {
-                try
-                {
-                    if (CurrentPlateMath == null)
-                    {
-                        PlateMathDetails = "";
-                    }
-                    else
-                    {
-                        float WeightInput = Single.Parse(value);
-                        string plate_counts_str = CurrentPlateMath.PlateCountsToString(WeightInput);
-                        PlateMathDetails = $" ({plate_counts_str})";
-                    }
-                }
-                catch
-                {
-                    PlateMathDetails = "";
-                }
+                SetPlateMath(value);
 
-                Set(() => WeightInputText, ref _WeightInputText, value);
-                
+                Set(() => WeightInputText, ref _WeightInputText, value); 
+            }
+        }
+
+        protected void SetPlateMath(string weight_input)
+        {
+            try
+            {
+                SetPlateMath(Single.Parse(weight_input));
+            }
+            catch
+            {
+                PlateMathDetails = "";
+            }
+        }
+        
+        protected virtual void SetPlateMath(float weight_input)
+        {
+            if (CurrentPlateMath == null)
+            {
+                PlateMathDetails = "";
+            }
+            else
+            {
+                string plate_counts_str = CurrentPlateMath.PlateCountsToString(weight_input);
+                PlateMathDetails = $" ({plate_counts_str})";
             }
         }
 

@@ -124,7 +124,7 @@ namespace POLift.Core.ViewModel
             }
             catch (Exception e)
             {
-                DisplayMessage(e.Message);
+                DisplayMessage("Purchase error: " + e.Message);
             }
         }
 

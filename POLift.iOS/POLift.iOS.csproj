@@ -49,7 +49,8 @@
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
     <CodesignKey>iPhone Developer: Oscar McCully (YSCZ24U4SG)</CodesignKey>
     <MtouchDebug>true</MtouchDebug>
-    <CodesignProvision>iPhone Development Provision</CodesignProvision>
+    <CodesignProvision>IAB POlift Development Profile</CodesignProvision>
+    <BuildIpa>true</BuildIpa>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
     <DebugType>none</DebugType>
@@ -86,7 +87,7 @@
     <ConsolePause>False</ConsolePause>
     <MtouchArch>ARMv7, ARM64</MtouchArch>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
-    <CodesignProvision>POLift iOS Distribution Profile</CodesignProvision>
+    <CodesignProvision>IAB POLift Distribution Profile</CodesignProvision>
     <CodesignKey>iPhone Distribution: Oscar McCully (S327K8X9MS)</CodesignKey>
     <OptimizePNGs>true</OptimizePNGs>
     <BuildIpa>true</BuildIpa>
@@ -138,6 +139,7 @@
     <Compile Include="Service\BackgroundTimer.cs" />
     <Compile Include="Service\FileOperations.cs" />
     <Compile Include="Service\NotificationService.cs" />
+    <Compile Include="Service\StoreKitLicenseManager.cs" />
     <Compile Include="TableCells\RoutineResultCell.cs" />
     <Compile Include="TableCells\RoutineResultCell.designer.cs">
       <DependentUpon>RoutineResultCell.cs</DependentUpon>

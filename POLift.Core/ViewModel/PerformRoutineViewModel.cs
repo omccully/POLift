@@ -173,7 +173,7 @@ namespace POLift.Core.ViewModel
             set
             {
                 bool is_different_from_previous =
-                    base.CurrentExercise != value;
+                    value != null && !value.Equals(base.CurrentExercise);
 
                 base.CurrentExercise = value;
 
@@ -227,6 +227,7 @@ namespace POLift.Core.ViewModel
             }
             set
             {
+                System.Diagnostics.Debug.WriteLine("RepDetails = " + value);
                 Set(ref _RepDetails, value);
             }
         }
@@ -267,9 +268,12 @@ namespace POLift.Core.ViewModel
 
         void RefreshPreviousRepCountDetails()
         {
-            IEnumerable<ExerciseResult> previous_ers = Database.Table<ExerciseResult>()
+            DateTime start_time = (RoutineResult.StartTime == DateTime.MinValue ?
+                DateTime.Now : RoutineResult.StartTime);
+
+            IEnumerable <ExerciseResult> previous_ers = Database.Table<ExerciseResult>()
                 .Where(er => er.ExerciseID == CurrentExercise?.ID &&
-                    er.Time < RoutineResult.StartTime)
+                    er.Time < start_time)
                 .TakeLastEx(3);
 
             if (previous_ers.Count() == 0)
@@ -346,7 +350,7 @@ namespace POLift.Core.ViewModel
             }
         }
 
-        bool ReportExerciseResult(float weight, int reps)
+        bool ReportExerciseResult(float weight, int reps, Action action_if_completed = null)
         {
             // report the exercise result
             ExerciseResult ex_result =
@@ -384,9 +388,16 @@ namespace POLift.Core.ViewModel
             if (RoutineResult.Completed)
             {
                 // no more exercises
-                //ReturnRoutineResult(_RoutineResult);
-                ValueChosen?.Invoke(RoutineResult);
-                navigationService.GoBack();
+
+                if(action_if_completed == null)
+                {
+                    ValueChosen?.Invoke(RoutineResult);
+                    navigationService.GoBack();
+                }
+                else
+                {
+                    action_if_completed?.Invoke();
+                }
 
                 //StaticTimer.StopTimer();
                 //CancelTimerNotification();
@@ -406,17 +417,13 @@ namespace POLift.Core.ViewModel
                 StartTimer();
             }
 
-            //PromptUserForRating();
+            // show ad, prompt user for rating
+            ResultSubmittedWithoutCompleting?.Invoke(this, new EventArgs());
 
             return true;
         }
 
-        public void StartTimer()
-        {
-            TimerViewModel.StartTimer(CurrentExercise.RestPeriodSeconds);
-        }
-
-        public void SubmitResultFromInput()
+        public void SubmitResultFromInput(Action action_if_completed = null)
         {
             // user submitted a result for this CurrentExercise
 
@@ -437,12 +444,12 @@ namespace POLift.Core.ViewModel
 
             RepsInputText = "";
 
-            if (ReportExerciseResult(weight, reps))
-            {
-                // if there's more exercises, try to show an ad
-                //TryShowFullScreenAd();
-                ResultSubmittedWithoutCompleting?.Invoke(this, new EventArgs());
-            }
+            ReportExerciseResult(weight, reps, action_if_completed);
+        }
+
+        public void StartTimer()
+        {
+            TimerViewModel.StartTimer(CurrentExercise.RestPeriodSeconds);
         }
 
         RelayCommand _SubmitResultCommand;

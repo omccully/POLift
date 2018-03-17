@@ -13,7 +13,7 @@ namespace POLift.Core.Service
 {
     public class LicenseManager : ILicenseManager
     {
-        public static readonly string ProductID = "polift_license";
+        public string ProductID { get; set; } = "polift_license";
         public const int TrialPeriodSeconds = 30 * 86400;
 
         const string HasLicenseConfirmedKey = "license_manager.has_licence_confirmed";
@@ -222,7 +222,7 @@ namespace POLift.Core.Service
                 System.Diagnostics.Debug.WriteLine("CONNECTED");
                 var purchase = await CrossInAppBilling.Current.PurchaseAsync(ProductID,
                     ItemType.InAppPurchase, "");
-
+                
                 if (purchase != null)
                 {
                     if (KeyValueStorage != null)

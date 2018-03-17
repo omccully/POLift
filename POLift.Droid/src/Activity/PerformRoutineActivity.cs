@@ -75,6 +75,10 @@ namespace POLift.Droid
                () => PlateMathTextView.Text));
 
             Bindings.Add(this.SetBinding(
+               () => Vm.RepDetails,
+               () => RepDetailsTextView.Text));
+
+            Bindings.Add(this.SetBinding(
                () => Vm.RepsInputText,
                () => RepResultEditText.Text,
                BindingMode.TwoWay));
@@ -182,7 +186,11 @@ namespace POLift.Droid
         protected override void ReportResultButton_Click(object sender, EventArgs e)
         {
             // user submitted a result for this CurrentExercise
-            Vm.SubmitResultFromInput();
+            Vm.SubmitResultFromInput(delegate
+            {
+                SetResult(Result.Ok);
+                Finish();
+            });
         }
 
         void PromptUserForRating()

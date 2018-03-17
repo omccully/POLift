@@ -97,6 +97,7 @@ namespace POLift.Core.ViewModel
             set
             {
                 _warmup_set_index = value;
+                SetPlateMath(base.WeightInputText);
                 RefreshDetails();
             }
         }
@@ -139,6 +140,14 @@ namespace POLift.Core.ViewModel
             }
 
             ExerciseDetails = builder.ToString();
+        }
+
+        protected override void SetPlateMath(float weight_input)
+        {
+            float warmup_weight = NextWarmupSet.GetWeight(WarmupExercise,
+                weight_input);
+
+            base.SetPlateMath(warmup_weight);
         }
 
         public override void RefreshRoutineDetails()
