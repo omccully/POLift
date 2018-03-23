@@ -348,6 +348,26 @@ namespace POLift.Droid
             //CountDownTextView.SetTextColor(Android.Graphics.Color.White);
         }
 
+        protected Bundle save_state;
+        protected override void OnPause()
+        {
+            save_state = GetActivityState();
+            base.OnPause();
+        }
+
+        protected override void OnResume()
+        {
+            if(save_state != null)
+            {
+                BundleKeyValueStorage bkvs = new BundleKeyValueStorage(save_state);
+                TimerVm.RestoreState(bkvs);
+                BaseVm.RestoreState(bkvs);
+                save_state = null;
+            }
+            
+            base.OnResume();
+        }
+
         protected override void OnDestroy()
         {
             foreach(Binding b in Bindings)

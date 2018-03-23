@@ -146,22 +146,35 @@ namespace POLift.Core.Service
 
         Lazy<Task<bool>> lazy_CheckLicense;
         /// <summary>
-        /// If fails, it gives the user the benefit of the doubt (returns true)
+        /// If fails, it gives the user the benefit of the doubt if default_result=true
         /// </summary>
         /// <returns></returns>
         public async Task<bool> CheckLicense(bool default_result = true)
         {
             try
             {
+                System.Diagnostics.Debug.WriteLine("Checking license...");
+                if (KeyValueStorage.GetBoolean(HasLicenseConfirmedKey, false))
+                {
+                    System.Diagnostics.Debug.WriteLine("Using license from preferences");
+                    return true;
+                }
                 return await lazy_CheckLicense.Value;
             }
-            catch
+            catch(Exception e)
             {
+                System.Diagnostics.Debug.WriteLine(e.Message);
+                System.Diagnostics.Debug.WriteLine("Using license from preferences, defaulting " + default_result);
                 return KeyValueStorage.GetBoolean(HasLicenseConfirmedKey, default_result);
             }
         }
 
-        async Task<bool> CheckLicenseStrict_NotCached()
+        public bool CheckLicenseCached(bool default_result = false)
+        {
+            return KeyValueStorage.GetBoolean(HasLicenseConfirmedKey, default_result);
+        }
+
+        protected virtual async Task<bool> CheckLicenseStrict_NotCached()
         {
             try
             {
@@ -208,7 +221,7 @@ namespace POLift.Core.Service
         /// 
         /// </summary>
         /// <returns>True if user bought the license</returns>
-        public async Task<bool> PromptToBuyLicense()
+        public virtual async Task<bool> PromptToBuyLicense()
         {
             try
             {

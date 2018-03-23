@@ -24,6 +24,8 @@ namespace POLift.Core.ViewModel
         public IToaster Toaster;
         public IMainThreadInvoker MainThreadInvoker;
 
+        public event EventHandler ShouldReloadMenu;
+
         public SideMenuViewModel(INavigationService navigationService, IPOLDatabase database)
         {
             this.navigationService = navigationService;
@@ -84,10 +86,11 @@ namespace POLift.Core.ViewModel
         Navigation purchase_navigation = null;
         public async Task<Navigation> GetPurchaseLicenseNavigationLink()
         {
-            if(await LicenseManager.CheckLicense(false))
+            if(LicenseManager.CheckLicenseCached(false))
             {
+                // await LicenseManager.CheckLicense(false)
                 // user already bought license
-                return null;
+                return new Navigation("License purchased", delegate() { });
             }
 
             string days_left_text = await DaysLeftText();
@@ -115,6 +118,8 @@ namespace POLift.Core.ViewModel
                     if(purchase_navigation != null)
                     {
                         purchase_navigation.Text = "License purchased";
+                        purchase_navigation.Click = null;
+                        ShouldReloadMenu?.Invoke(this, new EventArgs());
                     }
                 }
                 else
@@ -130,7 +135,7 @@ namespace POLift.Core.ViewModel
 
         void DisplayMessage(string msg )
         {
-            System.Diagnostics.Debug.WriteLine("ERROR : " + msg);
+            System.Diagnostics.Debug.WriteLine("SideMenuViewModel.ERROR : " + msg);
 
             MainThreadInvoker.Invoke(delegate
             {
@@ -143,11 +148,18 @@ namespace POLift.Core.ViewModel
             try
             {
                 int sec_left = await LicenseManager.SecondsRemainingInTrial();
+
+                bool is_in_trial = sec_left > 0;
+
+                System.Diagnostics.Debug.WriteLine
+                        ($"is_in_trial = {is_in_trial}, {sec_left} seconds left");
+
+
                 int days_left = Math.Abs(sec_left / 86400);
 
                 string plur = days_left == 1 ? "" : "s";
 
-                if (sec_left > 0)
+                if (is_in_trial)
                 {
                     return $" ({days_left} day{plur} left)";
                 }
@@ -222,15 +234,26 @@ namespace POLift.Core.ViewModel
 
             if(MainThreadInvoker == null)
             {
-                DialogService.DisplayAcknowledgement(message);
+                FinishRestore(message);
             }
             else
             {
                 MainThreadInvoker.Invoke(delegate
                 {
-                    DialogService.DisplayAcknowledgement(message);
+                    FinishRestore(message);
                 });
             }
+        }
+
+        void FinishRestore(string message)
+        {
+            if (purchase_navigation != null)
+            {
+                purchase_navigation.Text = "License purchased";
+                purchase_navigation.Click = null;
+                ShouldReloadMenu?.Invoke(this, new EventArgs());
+            }
+            DialogService.DisplayAcknowledgement(message);
         }
     }
 }

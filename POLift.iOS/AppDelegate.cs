@@ -87,6 +87,7 @@ namespace POLift.iOS
                 .CurrentDevice.IdentifierForVendor.AsString();
             System.Console.WriteLine("device_id = " + device_id);
             l.LicenseManager = new LicenseManager(device_id, l.KeyValueStorage);
+            //l.LicenseManager = new StoreKitLicenseManager(device_id, l.KeyValueStorage);
             l.LicenseManager.ProductID = "com.cml.POLift.license";
 
             l.SelectProgramToDownload.FileOperations = new FileOperations();

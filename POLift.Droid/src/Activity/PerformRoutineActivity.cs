@@ -146,6 +146,8 @@ namespace POLift.Droid
             System.Diagnostics.Debug.WriteLine("PerformRoutineActivity.OnActivityResult()");
             base.OnActivityResult(requestCode, resultCode, data);
 
+            base.save_state = null;
+
             if(resultCode == Result.Ok)
             {
                 if (requestCode == WarmUpRoutineRequestCode)

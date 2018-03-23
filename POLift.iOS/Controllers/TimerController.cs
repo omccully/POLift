@@ -58,6 +58,37 @@ namespace POLift.iOS.Controllers
                () => Vm.TimerStatus,
                () => TimerStatusLabel.Text));
 
+            bindings.Add(this.SetBinding(
+               () => Vm.TimerState,
+               () => this.TimerState));
+        }
+
+        TimerState _TimerState = TimerState.Skipped;
+        public TimerState TimerState
+        {
+            get
+            {
+                return _TimerState;
+            }
+            set
+            {
+                switch (value)
+                {
+                    case TimerState.Skipped:
+                        TimerStatusLabel.TextColor = UIColor.Black;
+                        break;
+                    case TimerState.RunningPositive:
+                        // dark orange
+                        TimerStatusLabel.TextColor = UIColor.FromRGBA(255, 140, 0, 255);
+                        break;
+                    case TimerState.Elapsed:
+                        // dark green
+                        TimerStatusLabel.TextColor = UIColor.FromRGBA(0, 100, 0, 255);
+                        break;
+                }
+
+                _TimerState = value;
+            }
         }
     }
 }

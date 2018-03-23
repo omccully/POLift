@@ -18,6 +18,8 @@ namespace POLift.Core.Service
 
         Task<int> SecondsRemainingInTrial();
 
+        bool CheckLicenseCached(bool default_result = false);
+
         Task<bool> CheckLicense(bool default_result = true);
 
         Task<bool> PromptToBuyLicense();

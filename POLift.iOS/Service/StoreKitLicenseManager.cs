@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 
 using Foundation;
 using UIKit;
@@ -13,68 +14,177 @@ using System.Threading.Tasks;
 
 namespace POLift.iOS.Service
 {
-    class StoreKitLicenseManager : ILicenseManager
+    public class StoreKitLicenseManager : LicenseManager 
     {
-        public string ProductID { get; set; } = "com.cml.POLift.license";
-        public bool ShowAds { get; set; }
-        public KeyValueStorage KeyValueStorage { get; set; }
-
-        public Task<bool> CheckLicense(bool default_result = true)
+        public StoreKitLicenseManager(string device_id, KeyValueStorage kvs = null)
+            : base(device_id, kvs)
         {
-            InAppPurchaseManager iap = new InAppPurchaseManager(ProductID);
-
-            
-            
-
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> IsInTrialPeriod()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> PromptToBuyLicense()
-        {
-            InAppPurchaseManager iap = new InAppPurchaseManager();
-
-            iap.PurchaseProduct(ProductID);
-
-            
 
         }
 
-        public Task<int> SecondsRemainingInTrial()
+        public Task<bool> RestoreLicense()
         {
-            throw new NotImplementedException();
-        }
+            EventWaitHandle waitHandle = new AutoResetEvent(false);
+            LicensePurchaseManager lrm = new LicensePurchaseManager(ProductID);
 
-        private class InAppPurchaseManager : PurchaseManager
-        {
-
-            public InAppPurchaseManager()
+            lrm.RestoreLicense += delegate
             {
+                waitHandle.Set();
+            };
 
+            lrm.Restore();
+
+            return Task.Run<bool>(delegate
+            {
+                LicensePurchaseManager lrm_safe = lrm;
+                return waitHandle.WaitOne(5000);
+            });
+        }
+
+        protected override Task<bool> CheckLicenseStrict_NotCached()
+        {
+            // don't check app store every time app is launched.
+            return Task.Run<bool>(delegate
+            {
+                throw new Exception();
+                return false;
+            });
+        }
+
+        public override Task<bool> PromptToBuyLicense()
+        {
+            System.Diagnostics.Debug.WriteLine("Sklm.PromptToBuyLicense");
+            EventWaitHandle waitHandle = new AutoResetEvent(false);
+
+            LicensePurchaseManager lmp = new LicensePurchaseManager(ProductID);
+
+            bool success = false;
+
+            lmp.PurchaseFailed += delegate
+            {
+                System.Diagnostics.Debug.WriteLine("Sklm.PurchaseFailed");
+                waitHandle.Set();
+            };
+
+            lmp.PurchaseSuccess += delegate
+            {
+                System.Diagnostics.Debug.WriteLine("Sklm.PurchaseSuccess");
+                success = true;
+                waitHandle.Set();
+            };
+
+            //lmp.PurchaseLicense();
+
+            //NSString prod_id_str = new NSString(ProductID);
+
+            NSString[] prod_id_arr = new NSString[] { new NSString("polift_license"),
+                new NSString("com.cml.POLift.license"),  new NSString("license") };
+            NSSet productIdentifiers = NSSet.MakeNSObjectSet<NSString>(prod_id_arr);
+
+            SKProductsRequest req = new SKProductsRequest(productIdentifiers);
+            req.Delegate = new Test();
+            req.Start();
+
+            
+            return Task.Run<bool>(() => false);
+
+            /*return Task.Run<bool>(delegate
+            {
+                LicensePurchaseManager lmp_safe = lmp;
+                System.Diagnostics.Debug.WriteLine("waiting for purchase response...");
+                if (!waitHandle.WaitOne(60000))
+                {
+                    System.Diagnostics.Debug.WriteLine("purchase timed out");
+                    return false;
+                }
+                System.Diagnostics.Debug.WriteLine("Purchase success = " + success);
+                return success;
+            });*/
+        }
+
+        class Test : NSObject, ISKProductsRequestDelegate
+        {
+            public void ReceivedResponse(SKProductsRequest request, SKProductsResponse response)
+            {
+                Console.WriteLine(request.DebugDescription);
+                //Console.WriteLine(request.);
+
+                foreach(string invalid in response.InvalidProducts)
+                {
+                    Console.WriteLine("invalid product: " + invalid);
+                }
+                
+                Console.WriteLine("StoreKitLicenseManager.ReceivedResponse");
+                foreach (SKProduct prod in response.Products)
+                {
+                    Console.WriteLine("product " + prod.DebugDescription);
+                }
+                Console.WriteLine("END products");
+            }
+        }
+
+        private class LicensePurchaseManager : PurchaseManager
+        {
+            public event EventHandler PurchaseFailed;
+            public event EventHandler PurchaseSuccess;
+
+            string productId;
+            public LicensePurchaseManager(string productId)
+            {
+                this.productId = productId;
             }
 
 
-           /* public void RequestProductData()
+            /* public void RequestProductData()
+             {
+                 NSSet productIdentifiers = NSSet.MakeNSObjectSet<NSString>(
+                     new NSString[] { new NSString(ProductID) });​​​
+                 SKProductsRequest rq = new SKProductsRequest(productIdentifiers);
+                 rq.Delegate = this;
+                 rq.Start();
+             }*/
+
+            public void PurchaseLicense()
             {
-                NSSet productIdentifiers = NSSet.MakeNSObjectSet<NSString>(
-                    new NSString[] { new NSString(ProductID) });​​​
-                SKProductsRequest rq = new SKProductsRequest(productIdentifiers);
-                rq.Delegate = this;
-                rq.Start();
-            }*/
+                base.PurchaseProduct(productId);
+            }
+
 
             protected override void CompleteTransaction(string productId)
             {
                 System.Diagnostics.Debug.WriteLine("CompleteTransaction(" + productId);
+
+                if (productId != this.productId)
+                {
+                    throw new InvalidOperationException(productId + " != " + this.productId);
+                }
+
+                PurchaseSuccess?.Invoke(this, null);
+            }
+
+            public override void RequestFailed(SKRequest request, NSError error)
+            {
+                System.Diagnostics.Debug.WriteLine("RequestFailed");
+                PurchaseFailed?.Invoke(this, null);
+
+                base.RequestFailed(request, error);
+            }
+
+
+
+            public event EventHandler RestoreLicense;
+
+            protected override void RestoreTransaction(string productId)
+            {
+                System.Diagnostics.Debug.WriteLine("RestoreTransaction(" + productId);
+                if (productId == this.productId)
+                {
+                    RestoreLicense?.Invoke(this, null);
+                }
             }
         }
 
-
-        public abstract class PurchaseManager : SKProductsRequestDelegate
+        abstract class PurchaseManager : SKProductsRequestDelegate
         {
             public static readonly NSString InAppPurchaseManagerProductsFetchedNotification = new NSString("InAppPurchaseManagerProductsFetchedNotification");
             public static readonly NSString InAppPurchaseManagerTransactionFailedNotification = new NSString("InAppPurchaseManagerTransactionFailedNotification");
@@ -82,6 +192,12 @@ namespace POLift.iOS.Service
             public static readonly NSString InAppPurchaseManagerRequestFailedNotification = new NSString("InAppPurchaseManagerRequestFailedNotification");
 
             protected SKProductsRequest ProductsRequest { get; set; }
+
+            public PurchaseManager()
+            {
+                CustomPaymentObserver theObserver = new CustomPaymentObserver(this);
+                SKPaymentQueue.DefaultQueue.AddTransactionObserver(theObserver);
+            }
 
             // Verify that the iTunes account can make this purchase for this application
             public bool CanMakePayments()
@@ -141,7 +257,10 @@ namespace POLift.iOS.Service
                 FinishTransaction(transaction, true);
             }
 
-            protected abstract void CompleteTransaction(string productId);
+            protected virtual void CompleteTransaction(string productId)
+            {
+
+            }
 
             public void FinishTransaction(SKPaymentTransaction transaction, bool wasSuccessful)
             {
@@ -191,12 +310,51 @@ namespace POLift.iOS.Service
             {
 
             }
+
+
+            class CustomPaymentObserver : SKPaymentTransactionObserver
+            {
+                private PurchaseManager theManager;
+
+                public CustomPaymentObserver(PurchaseManager manager)
+                {
+                    theManager = manager;
+                }
+
+                public override void UpdatedTransactions(SKPaymentQueue queue, SKPaymentTransaction[] transactions)
+                {
+                    Console.WriteLine("UpdatedTransactions");
+                    foreach (SKPaymentTransaction transaction in transactions)
+                    {
+                        switch (transaction.TransactionState)
+                        {
+                            case SKPaymentTransactionState.Purchased:
+                                theManager.CompleteTransaction(transaction);
+                                break;
+                            case SKPaymentTransactionState.Failed:
+                                theManager.FailedTransaction(transaction);
+                                break;
+                            case SKPaymentTransactionState.Restored:
+                                theManager.RestoreTransaction(transaction);
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                }
+
+                public override void PaymentQueueRestoreCompletedTransactionsFinished(SKPaymentQueue queue)
+                {
+                    // Restore succeeded
+                    Console.WriteLine(" ** RESTORE PaymentQueueRestoreCompletedTransactionsFinished ");
+                }
+
+                public override void RestoreCompletedTransactionsFailedWithError(SKPaymentQueue queue, NSError error)
+                {
+                    // Restore failed somewhere...
+                    Console.WriteLine(" ** RESTORE RestoreCompletedTransactionsFailedWithError " + error.LocalizedDescription);
+                }
+            }
         }
-
-
-
-
-
-
     }
 }

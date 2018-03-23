@@ -230,8 +230,9 @@ namespace POLift.Core.ViewModel
                 const int TimeWeek = 7 * TimeDay;
                 const int WarningPeriod = 7 * TimeDay;
 
-                bool has_license = await LicenseManager.CheckLicense();
-                System.Diagnostics.Debug.WriteLine($"has_license = {has_license}");
+                bool has_license = LicenseManager.CheckLicenseCached(false); 
+                //await LicenseManager.CheckLicense();
+                System.Diagnostics.Debug.WriteLine($"has_license(cached) = {has_license}");
                 if (!has_license)
                 {
                     int seconds_left_in_trial = await LicenseManager.SecondsRemainingInTrial();

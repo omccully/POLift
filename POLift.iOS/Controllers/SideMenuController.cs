@@ -8,6 +8,7 @@ using POLift.Core.ViewModel;
 
 using SidebarNavigation;
 using POLift.Core.Service;
+using POLift.iOS.Service;
 
 namespace POLift.iOS.Controllers
 {
@@ -59,7 +60,7 @@ namespace POLift.iOS.Controllers
                     Resource.Mipmap.ic_backup_white_24dp)*/
             };
 
-            
+            Vm.ShouldReloadMenu += Vm_ShouldReloadMenu;
 
             NavigationDataSource nds = 
                 new NavigationDataSource(Navigations);
@@ -69,6 +70,11 @@ namespace POLift.iOS.Controllers
             nds.RowClicked += Nds_RowClicked;
 
             AddPurchaseLicenseNavigation();
+        }
+
+        private void Vm_ShouldReloadMenu(object sender, EventArgs e)
+        {
+            NavigationLinkTableView.ReloadData();
         }
 
         private void Settings_Click(object sender, EventArgs e)
@@ -85,13 +91,34 @@ namespace POLift.iOS.Controllers
             {
                 Navigations.Add(purchase_license_nav);
 
-                Navigations.Add(new Navigation("Restore license", Vm.RecheckLicense));
+                Navigations.Add(new Navigation("Restore license", RecheckLicense));
 
                 NavigationLinkTableView.ReloadData();
             }
         }
 
+        void RecheckLicense()
+        {
+            StoreKitLicenseManager sklm =
+                ViewModelLocator.Default.LicenseManager as StoreKitLicenseManager;
 
+            if (sklm != null)
+            {
+                System.Diagnostics.Debug.WriteLine("Restoring license...");
+                RestoreSklmLicense(sklm);
+            }
+            else
+            {
+                Vm.RecheckLicense();
+            }
+        }
+
+        async void RestoreSklmLicense(StoreKitLicenseManager sklm)
+        {
+            bool result = await sklm.RestoreLicense();
+
+            System.Diagnostics.Debug.WriteLine("Restore License result = " + result);
+        }
 
         private void RateApp_Click(object sender, EventArgs e)
         {
@@ -118,6 +145,14 @@ namespace POLift.iOS.Controllers
         {
             nav.OnClick();
             SidebarController.CloseMenu(true);
+        }
+
+
+        public override void ViewDidUnload()
+        {
+            Vm.ShouldReloadMenu -= Vm_ShouldReloadMenu;
+
+            base.ViewDidUnload();
         }
 
         class NavigationDataSource : UITableViewSource
