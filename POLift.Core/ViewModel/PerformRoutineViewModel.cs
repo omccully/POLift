@@ -368,8 +368,9 @@ namespace POLift.Core.ViewModel
             {
                 Toaster?.DisplayMessage("Weight increase!");
             }
-            else
+            else if(CurrentExercise.MaxRepCount <= reps)
             {
+
                 int needed_succeeds_in_a_row = CurrentExercise.ConsecutiveSetsForWeightIncrease;
                 if (needed_succeeds_in_a_row > 1)
                 {
@@ -432,19 +433,36 @@ namespace POLift.Core.ViewModel
             float weight = 0;
             try
             {
-                weight = Int32.Parse(WeightInputText);
                 reps = Int32.Parse(RepsInputText);
             }
-            catch (FormatException)
+            catch
             {
                 Toaster?.DisplayError(
-                     "You must fill out the weight and rep count with integers");
+                     "Rep count must be an integer");
+                return;
+            }
+
+            try
+            {
+                weight = Single.Parse(WeightInputText);
+            }
+            catch
+            {
+                Toaster?.DisplayError(
+                     "Weight must be a valid number");
                 return;
             }
 
             RepsInputText = "";
 
-            ReportExerciseResult(weight, reps, action_if_completed);
+            try
+            {
+                ReportExerciseResult(weight, reps, action_if_completed);
+            }
+            catch(Exception e)
+            {
+                Toaster?.DisplayError(e.Message);
+            }
         }
 
         public void StartTimer()

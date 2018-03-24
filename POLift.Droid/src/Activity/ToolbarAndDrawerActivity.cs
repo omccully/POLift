@@ -138,6 +138,7 @@ namespace POLift.Droid
             Vm.PromptUserForExternalProgramsIfFirstLaunch(GetFreeLiftingPrograms);
 
             AddPurchaseLicenseNavigationIfNotPurchased();
+            
         }
 
         void FlagExternalProgramsResponse(ISharedPreferences prefs)
@@ -151,10 +152,16 @@ namespace POLift.Droid
         {
             try
             {
-                Navigation nav = await Vm.GetPurchaseLicenseNavigationLink();
-                if (nav == null) return;
-                nav.IconResourceID = Resource.Mipmap.ic_shopping_basket_white_24dp;
-                _NavigationAdapter.Navigations.Add(nav);
+                var navs = 
+                    await Vm.AddPurchaseLicenseNavigation(_NavigationAdapter.Navigations);
+                if (navs == null) return; 
+                navs.Item1.IconResourceID = Resource.Mipmap.ic_shopping_basket_white_24dp;
+                navs.Item2.IconResourceID = Resource.Mipmap.ic_shopping_basket_white_24dp;
+
+                //Navigation nav = await Vm.GetPurchaseLicenseNavigationLink();
+                // if (nav == null) return;
+                //nav
+                //_NavigationAdapter.Navigations.Add(nav);
             }
             catch { }
         }

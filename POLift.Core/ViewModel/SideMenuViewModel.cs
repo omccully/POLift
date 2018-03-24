@@ -12,6 +12,7 @@ namespace POLift.Core.ViewModel
 {
     using Model;
     using Service;
+    using System.Collections.ObjectModel;
 
     public class SideMenuViewModel : ViewModelBase
     {
@@ -211,6 +212,23 @@ namespace POLift.Core.ViewModel
             {
                 navigate_action();
             }
+        }
+
+        public async Task<Tuple<INavigation, INavigation>> AddPurchaseLicenseNavigation(Collection<INavigation> navs)
+        {
+            Navigation purchase_license_nav =
+                await GetPurchaseLicenseNavigationLink();
+            if (purchase_license_nav != null)
+            {
+                navs.Add(purchase_license_nav);
+
+                Navigation restore_nav = new Navigation("Restore license", RecheckLicense);
+
+                navs.Add(restore_nav);
+
+                return new Tuple<INavigation, INavigation>(purchase_license_nav, restore_nav);
+            }
+            return null;
         }
 
         public void RecheckLicense()

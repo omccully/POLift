@@ -227,7 +227,6 @@ namespace POLift.Core.ViewModel
             try
             {
                 const int TimeDay = 86400;
-                const int TimeWeek = 7 * TimeDay;
                 const int WarningPeriod = 7 * TimeDay;
 
                 bool has_license = LicenseManager.CheckLicenseCached(false); 
@@ -260,7 +259,7 @@ namespace POLift.Core.ViewModel
 
                         MainThreadInvoker.Invoke(delegate
                         {
-                            Toaster.DisplayMessage($"You have {days_left} days left in your free trial. ");
+                            Toaster.DisplayMessage($"You have {days_left} days left in your free trial before ads appear. ");
                         });
 
                         System.Diagnostics.Debug.WriteLine($"You have {days_left} days left in your free trial. ");

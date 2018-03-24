@@ -85,16 +85,9 @@ namespace POLift.iOS.Controllers
 
         async void AddPurchaseLicenseNavigation()
         {
-            Navigation purchase_license_nav =
-                await Vm.GetPurchaseLicenseNavigationLink();
-            if (purchase_license_nav != null)
-            {
-                Navigations.Add(purchase_license_nav);
+            await Vm.AddPurchaseLicenseNavigation(Navigations);
 
-                Navigations.Add(new Navigation("Restore license", RecheckLicense));
-
-                NavigationLinkTableView.ReloadData();
-            }
+            NavigationLinkTableView.ReloadData();
         }
 
         void RecheckLicense()

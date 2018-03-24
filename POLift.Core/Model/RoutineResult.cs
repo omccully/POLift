@@ -242,13 +242,13 @@ namespace POLift.Core.Model
         {
             if (Completed)
             {
-                throw new InvalidOperationException("Too many exercise results reported");
+                throw new InvalidOperationException("This routine is completed. " +
+                    "You cannot submit any more results.");
             }
 
             if (!NextExercise.Equals(ex_result.Exercise))
             {
-                throw new ArgumentException("ExerciseResult is not for the correct exercise. " +
-                    "Use NextExercise to retrieve the expected exercise.");
+                throw new ArgumentException("Exercise result is not for the correct exercise. ");
             }
 
             if (ResultCount == 0) StartTime = ex_result.Time;

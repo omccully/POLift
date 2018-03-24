@@ -439,7 +439,7 @@ namespace POLift.Core.Service
         {
             throw new NotSupportedException("not tested");
 
-            Dictionary<int, int> exercise_lookup = 
+            /*Dictionary<int, int> exercise_lookup = 
                 Exercise.PruneByConstaints(this);
             System.Diagnostics.Debug.WriteLine(exercise_lookup.Count());
 
@@ -456,6 +456,7 @@ namespace POLift.Core.Service
             ExerciseResult.TranslateExerciseIDs(this, exercise_lookup);
             System.Diagnostics.Debug.WriteLine("apply:");
             ApplyConstraints();
+            */
         }
 
         public void LowerCaseAllExercisesAndRoutines()
