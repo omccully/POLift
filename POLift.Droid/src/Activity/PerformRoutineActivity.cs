@@ -90,12 +90,21 @@ namespace POLift.Droid
             Vm.Toaster = new Toaster(this);
             Vm.StartWarmup = StartWarmupActivity;
 
-            List<KeyValueStorage> storages = new List<KeyValueStorage>();
-            if (savedInstanceState != null)
-                storages.Add(new BundleKeyValueStorage(savedInstanceState));
-            storages.Add(new BundleKeyValueStorage(Intent.Extras));
+            if (SavedState != null)
+            {
+                RestoreActivityState(SavedState);
+                SavedState = null;
+            }
+            else
+            {
+                List<KeyValueStorage> storages = new List<KeyValueStorage>();
+                if (savedInstanceState != null)
+                    storages.Add(new BundleKeyValueStorage(savedInstanceState));
+                storages.Add(new BundleKeyValueStorage(Intent.Extras));
 
-            Vm.RestoreState(new ChainedKeyValueStorage(storages));
+                Vm.RestoreState(new ChainedKeyValueStorage(storages));
+                Log.Debug("POLift", "Vm.RestoreState from PerformRoutineActivity.OnCreate");
+            }
 
             //Log.Debug("POLift", "perform finish " + sw.ElapsedMilliseconds + "ms");
         }
@@ -146,7 +155,8 @@ namespace POLift.Droid
             System.Diagnostics.Debug.WriteLine("PerformRoutineActivity.OnActivityResult()");
             base.OnActivityResult(requestCode, resultCode, data);
 
-            base.save_state = null;
+            // set this to null so we don't restore from saved state after state changed in this method
+            PerformRoutineActivity.SavedState = null;
 
             if(resultCode == Result.Ok)
             {
@@ -214,6 +224,8 @@ namespace POLift.Droid
                 Vm.CurrentExercise, Vm.WeightInputText);
             intent.PutExtra("parent_intent", this.Intent);
 
+            WarmupRoutineActivity.SavedState = null;
+
             StartActivityForResult(intent, WarmUpRoutineRequestCode);
         }
 
@@ -230,11 +242,26 @@ namespace POLift.Droid
             Finish();
         }
 
+        public static Bundle SavedState;
         protected override void OnPause()
         {
             Log.Debug("POLift", "PerformWarmupActivity.OnPause()");
 
+            SavedState = GetActivityState();
+
             base.OnPause();
+        }
+
+        protected override void OnResume()
+        {
+            Log.Debug("POLift", "WarmupRoutineActivity.OnResume()");
+            if (SavedState != null)
+            {
+                RestoreActivityState(SavedState);
+                SavedState = null;
+            }
+
+            base.OnResume();
         }
 
         protected override void OnStop()

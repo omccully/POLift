@@ -25,7 +25,7 @@ namespace POLift.Core.Service
             while (true)
             {
                 await Task.Delay(time_period_ms);
-
+                System.Diagnostics.Debug.WriteLine("Timer ticked");
                 if (!IsRunning)
                     break;
 

@@ -3275,19 +3275,22 @@ namespace POLift
 			public const int ic_timeline_white_24dp = 2130903049;
 			
 			// aapt resource value: 0x7f03000a
-			public const int ic_today_white_24dp = 2130903050;
+			public const int ic_timer_white_24dp = 2130903050;
 			
 			// aapt resource value: 0x7f03000b
-			public const int ic_track_changes_white_24dp = 2130903051;
+			public const int ic_today_white_24dp = 2130903051;
 			
 			// aapt resource value: 0x7f03000c
-			public const int ic_trending_up_white_24dp = 2130903052;
+			public const int ic_track_changes_white_24dp = 2130903052;
 			
 			// aapt resource value: 0x7f03000d
-			public const int ic_view_agenda_white_24dp = 2130903053;
+			public const int ic_trending_up_white_24dp = 2130903053;
 			
 			// aapt resource value: 0x7f03000e
-			public const int polift = 2130903054;
+			public const int ic_view_agenda_white_24dp = 2130903054;
+			
+			// aapt resource value: 0x7f03000f
+			public const int polift = 2130903055;
 			
 			static Mipmap()
 			{

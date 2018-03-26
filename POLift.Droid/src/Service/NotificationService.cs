@@ -71,8 +71,9 @@ namespace POLift.Droid.Service
             PendingIntent resultPendingIntent = tsb
                 .GetPendingIntent(500, (int)PendingIntentFlags.UpdateCurrent);
 
+            // Resource.Drawable.abc_ab_share_pack_mtrl_alpha
             NotificationCompat.Builder n_builder = new NotificationCompat.Builder(context)
-               .SetSmallIcon(Resource.Drawable.abc_ab_share_pack_mtrl_alpha)
+               .SetSmallIcon(Resource.Mipmap.ic_timer_white_24dp)
                .SetContentTitle("Lifting rest period finished")
                .SetContentText("Start your next set whenever you are ready")
                .SetContentIntent(resultPendingIntent);

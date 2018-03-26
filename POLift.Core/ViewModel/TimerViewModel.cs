@@ -220,9 +220,14 @@ namespace POLift.Core.ViewModel
 
             TimerEnabled = true;
 
+            System.Diagnostics.Debug.WriteLine("Trying to start timer...");
             if (!Timer.IsRunning)
             {
                 Timer.Start(TimerTicked, 1000);
+                System.Diagnostics.Debug.WriteLine("Started timer");
+            } else
+            {
+                System.Diagnostics.Debug.WriteLine("Timer already running");
             }
 
             TimerFinishedNotificationService.Cancel();

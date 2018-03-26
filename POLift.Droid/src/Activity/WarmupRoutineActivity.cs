@@ -57,16 +57,23 @@ namespace POLift.Droid
               () => BaseVm.ExerciseDetails,
               () => NextWarmupView.Text));
 
-            List<KeyValueStorage> storages = new List<KeyValueStorage>();
-            if(savedInstanceState != null)
-            {   // prefer saved state
-                storages.Add(new BundleKeyValueStorage(savedInstanceState));
+            if (SavedState != null)
+            {
+                RestoreActivityState(SavedState);
+                SavedState = null;
             }
-            storages.Add(new BundleKeyValueStorage(Intent.Extras));
+            else
+            {
+                List<KeyValueStorage> storages = new List<KeyValueStorage>();
+                if (savedInstanceState != null)
+                {   // prefer saved state
+                    storages.Add(new BundleKeyValueStorage(savedInstanceState));
+                }
+                storages.Add(new BundleKeyValueStorage(Intent.Extras));
 
-            
-
-            Vm.RestoreState(new ChainedKeyValueStorage(storages));
+                Vm.RestoreState(new ChainedKeyValueStorage(storages));
+                Log.Debug("POLift", "Vm.RestoreState from WarmupRoutineActivity.OnCreate");
+            }
 
             //RoutineDetails.Visibility = ViewStates.Gone;
             WeightLabel.Text = "Working set weight: ";
@@ -130,14 +137,26 @@ namespace POLift.Droid
             }
         }
 
+        public static Bundle SavedState;
         protected override void OnPause()
         {
             Log.Debug("POLift", "WarmupRoutineActivity.OnPause()");
 
-            // dismiss dialog boxes to prevent window leaks
-            Vm.DialogService.Dispose();
+            SavedState = GetActivityState();
 
             base.OnPause();
+        }
+
+        protected override void OnResume()
+        {
+            Log.Debug("POLift", "WarmupRoutineActivity.OnResume()");
+            if (SavedState != null)
+            {
+                RestoreActivityState(SavedState);
+                SavedState = null;
+            }
+
+            base.OnResume();
         }
 
         protected override void OnStop()

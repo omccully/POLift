@@ -108,7 +108,9 @@ namespace POLift.Droid
             IRoutine routine = routine_adapter[e.Position].Routine;
 
             intent.PutExtra("routine_id", routine.ID);
-    
+
+            PerformRoutineActivity.SavedState = null;
+
             StartActivityForResult(intent, PerformRoutineRequestCode);
         }
 

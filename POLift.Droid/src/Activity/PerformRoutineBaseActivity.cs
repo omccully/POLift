@@ -300,14 +300,14 @@ namespace POLift.Droid
 
         protected abstract void ReportResultButton_Click(object sender, EventArgs e);
 
-        Bundle GetActivityState()
+        protected Bundle GetActivityState()
         {
             Bundle bundle = new Bundle();
             SaveActivityState(bundle);
             return bundle;
         }
 
-        void SaveActivityState(Bundle outState)
+        protected void SaveActivityState(Bundle outState)
         {
             // this relies on the ViewModels entirely
             // if for some reason a child class decides to set 
@@ -342,13 +342,22 @@ namespace POLift.Droid
                 new BundleKeyValueStorage(savedInstanceState));
         }
 
+        protected virtual void RestoreActivityState(Bundle savedInstanceState)
+        {
+            Log.Debug("POLift", "PerformRoutineBaseActivity.RestoreActivityState");
+            BundleKeyValueStorage bkvs = new BundleKeyValueStorage(savedInstanceState);
+            TimerVm.RestoreState(bkvs);
+            BaseVm.RestoreState(bkvs);
+        }
+
+
         protected virtual void SkipTimerButton_Click(object sender, EventArgs e)
         {
             TimerVm.SkipTimer();
             //CountDownTextView.SetTextColor(Android.Graphics.Color.White);
         }
 
-        protected Bundle save_state;
+        /*protected static Bundle save_state;
         protected override void OnPause()
         {
             save_state = GetActivityState();
@@ -366,11 +375,14 @@ namespace POLift.Droid
             }
             
             base.OnResume();
-        }
+        }*/
 
         protected override void OnDestroy()
         {
-            foreach(Binding b in Bindings)
+            // dismiss dialog boxes to prevent window leaks
+            BaseVm.DialogService.Dispose();
+
+            foreach (Binding b in Bindings)
             {
                 b.Detach();
             }
