@@ -49,10 +49,6 @@ namespace POLift.Droid
 
             base.OnCreate(savedInstanceState);
 
-            Vm.DialogService = new DialogService(
-                new DialogBuilderFactory(this),
-                ViewModelLocator.Default.KeyValueStorage);
-
             Bindings.Add(this.SetBinding(
               () => BaseVm.ExerciseDetails,
               () => NextWarmupView.Text));
@@ -90,10 +86,13 @@ namespace POLift.Droid
 
             RepDetailsTextView.Visibility = ViewStates.Gone;
 
-
+            if (Vm.WarmupFinished)
+            {
+                SetResult(Result.Ok);
+                Finish();
+            }
 
             Log.Debug("POLift", "Warmup final " + sw.ElapsedMilliseconds + "ms");
-
         }
 
         private void IMadeAMistakeButton_Click(object sender, EventArgs e)

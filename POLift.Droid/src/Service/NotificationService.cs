@@ -83,7 +83,11 @@ namespace POLift.Droid.Service
 
         public void Cancel()
         {
-            mNotificationManager.Cancel(NotificationID);
+            try
+            {
+                mNotificationManager.Cancel(NotificationID);
+            }
+            catch { }
         }
     }
 }

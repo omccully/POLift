@@ -390,7 +390,13 @@ namespace POLift.Core.ViewModel
             {
                 // no more exercises
 
-                if(action_if_completed == null)
+                // normally the timer continues until StartTimer resets it
+                base.TimerViewModel.CancelTimer();
+                // normally StartTimer cancels notification
+                base.TimerViewModel
+                    .TimerFinishedNotificationService.Cancel();
+
+                if (action_if_completed == null)
                 {
                     ValueChosen?.Invoke(RoutineResult);
                     navigationService.GoBack();
@@ -400,8 +406,6 @@ namespace POLift.Core.ViewModel
                     action_if_completed?.Invoke();
                 }
 
-                //StaticTimer.StopTimer();
-                //CancelTimerNotification();
                 return false;
             }
 

@@ -102,7 +102,7 @@ namespace POLift.Core.ViewModel
             }
         }
 
-        bool WarmupFinished
+        public bool WarmupFinished
         {
             get
             {

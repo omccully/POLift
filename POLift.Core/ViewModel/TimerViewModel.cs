@@ -26,7 +26,8 @@ namespace POLift.Core.ViewModel
         public Timer Timer;
         // public Action<Action> MainThreadInvoker;
         public IMainThreadInvoker MainThreadInvoker;
-        public INotificationService TimerFinishedNotificationService;
+
+        public INotificationService TimerFinishedNotificationService { get; set; }
 
         public const string NotificationText = "Lifting rest period finished";
         public const string NotificationSubText = "Start your next set whenever you are ready";
@@ -37,7 +38,7 @@ namespace POLift.Core.ViewModel
         }
 
         bool _TimerEnabled = false;
-        bool TimerEnabled
+        public bool TimerEnabled
         {
             get
             {
@@ -277,17 +278,23 @@ namespace POLift.Core.ViewModel
             Vibrator?.Vibrate();
         }
 
-        public void SkipTimer()
+        public void CancelTimer(string msg = "")
         {
             TimerEnabled = false;
             Timer.Cancel();
-            TimerStatus = "Timer skipped. " + System.Environment.NewLine +
-                 "Start your next set whenever you're ready";
-            
+
+            TimerStatus = msg;
+
             // set text color White
             TimerState = TimerState.Skipped;
 
             SecondsLeft = 0;
+        }
+
+        public void SkipTimer()
+        {
+            CancelTimer("Timer skipped. " + System.Environment.NewLine +
+                 "Start your next set whenever you're ready");
 
             Vibrator?.Vibrate();
         }
