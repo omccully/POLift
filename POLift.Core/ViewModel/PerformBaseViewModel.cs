@@ -22,10 +22,19 @@ namespace POLift.Core.ViewModel
         public IDialogService DialogService;
         public ITimerViewModel TimerViewModel;
 
+        
+
         public PerformBaseViewModel(INavigationService navigationService, IPOLDatabase database)
         {
             this.navigationService = navigationService;
             this.Database = database;
+        }
+
+        public event EventHandler ResultSubmittedWithoutCompleting;
+        protected void OnResultSubmittedWithoutCompleting(EventArgs args = null)
+        {
+            ResultSubmittedWithoutCompleting?.Invoke(this, 
+                args == null ? new EventArgs() : args);
         }
 
         public virtual IExercise CurrentExercise { get; set; }

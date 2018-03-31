@@ -4,10 +4,11 @@ using UIKit;
 using System.Collections.Generic;
 using POLift.Core.ViewModel;
 using GalaSoft.MvvmLight.Helpers;
+using Google.MobileAds;
 
 namespace POLift.iOS.Controllers
 {
-    public partial class PerformWarmupController : UIViewController
+    public partial class PerformWarmupController : PerformRoutineBaseController
     {
         // Keep track of bindings to avoid premature garbage collection
         private readonly List<Binding> bindings = new List<Binding>();
@@ -20,13 +21,7 @@ namespace POLift.iOS.Controllers
             }
         }
 
-        private TimerViewModel TimerVm
-        {
-            get
-            {
-                return ViewModelLocator.Default.Timer;
-            }
-        }
+        protected override PerformBaseViewModel BaseVm => Vm;
 
         public PerformWarmupController (IntPtr handle) : base (handle)
         {
@@ -54,12 +49,6 @@ namespace POLift.iOS.Controllers
                 BindingMode.TwoWay)
                 .ObserveTargetEvent("EditingChanged"));
 
-            /*bindings.Add(this.SetBinding(
-                () => WeightTextField.Text,
-                () => Vm.WeightInputText,
-                BindingMode.TwoWay)
-                .ObserveSourceEvent("EditingChanged"));*/
-
             bindings.Add(
                 this.SetBinding(
                     () => Vm.RoutineDetails,
@@ -75,6 +64,32 @@ namespace POLift.iOS.Controllers
                 this.SetBinding(
                     () => TimerVm.TimerIsStartable,
                     () => SetCompletedButton.Enabled));
+
+            if (ShowAds)
+            {
+                Console.WriteLine("Showing ad");
+
+#if DEBUG
+                AdBanner.AdUnitID = "ca-app-pub-3940256099942544/2934735716";
+#else
+                 AdBanner.AdUnitID = "ca-app-pub-1015422455885077/4098077945";
+#endif
+
+                AdBanner.RootViewController = this;
+
+                Request req = Request.GetDefaultRequest();
+#if DEBUG
+                req.TestDevices = new string[]
+                {
+                    "5763FA36-B1DC-4B5A-8B3F-AD07DD5F988A"
+                };
+#endif
+                AdBanner.LoadRequest(req);
+            }
+            else
+            {
+                Console.WriteLine("Not showing ads");
+            }
         }
     }
 }

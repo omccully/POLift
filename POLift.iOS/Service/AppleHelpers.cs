@@ -14,6 +14,12 @@ namespace POLift.iOS
 {
     static class AppleHelpers
     {
+        public static void OpenRateApp()
+        {
+            NSUrl url = new NSUrl("itms-apps://itunes.apple.com/app/id1352415628");
+            UIApplication.SharedApplication.OpenUrl(url);
+        }
+
         public static bool DismissKeyboard(UITextField text_field)
         {
             text_field.ResignFirstResponder();

@@ -59,7 +59,8 @@ namespace POLift.iOS.Controllers
 
         void RefreshExerciseList()
         {
-            eds = new ExercisesInCategoriesDataSource(Vm.ExercisesInCategories);
+            List<ExerciseCategory> categories = Vm.ExercisesInCategories;
+            eds = new ExercisesInCategoriesDataSource(categories);
 
             eds.EditClicked += delegate (IExercise exercise) 
             {
@@ -76,10 +77,15 @@ namespace POLift.iOS.Controllers
                 Vm.SelectExercise(exercise);
             };
 
-
-            //eds.ExerciseDelete += Eds_ExerciseDelete;
             ExercisesTableView.Source = eds;
             ExercisesTableView.ReloadData();
+
+            if (categories.Sum(ec => ec.Exercises.Count()) == 0)
+            {
+                // if no exercises, just show the create exercise page
+
+                Vm.NavigateCreateExercise();
+            }
         }
 
 

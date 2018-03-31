@@ -214,7 +214,7 @@ namespace POLift.Core.ViewModel
             }
         }
 
-        public async Task<Tuple<INavigation, INavigation>> AddPurchaseLicenseNavigation(Collection<INavigation> navs)
+        public async Task<Tuple<INavigation, INavigation>> AddPurchaseLicenseNavigation(ICollection<INavigation> navs)
         {
             Navigation purchase_license_nav =
                 await GetPurchaseLicenseNavigationLink();

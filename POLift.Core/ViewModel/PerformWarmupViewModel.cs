@@ -222,8 +222,9 @@ namespace POLift.Core.ViewModel
 
             TimerViewModel.StartTimer(NextWarmupSet.GetRestPeriod(WarmupExercise));
 
+            OnResultSubmittedWithoutCompleting();
+
             return false;
-            // TryShowFullScreenAd();
         }
 
         RelayCommand _SetCompletedCommand;

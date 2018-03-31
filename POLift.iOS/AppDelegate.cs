@@ -18,7 +18,9 @@ using SQLite.Net.Platform.XamarinIOS;
 namespace POLift.iOS
 {
     using Controllers;
+    using Google.MobileAds;
     using Service;
+    using System;
     using UserNotifications;
 
     // The UIApplicationDelegate for the application. This class is responsible for launching the 
@@ -97,7 +99,17 @@ namespace POLift.iOS
             l.TimerService = new BackgroundTimer();
 
             l.TimerFinishedNotificationService = new NotificationService();
-            
+
+            //try
+            //{
+                Firebase.Core.App.Configure();
+                MobileAds.Configure("ca-app-pub-1015422455885077~4214037133");
+           // }
+           //catch(Exception e)
+           // {
+            //    System.Diagnostics.Debug.WriteLine(e.ToString());
+           // }
+
             // Request notification permissions from the user
             UNUserNotificationCenter.Current.RequestAuthorization(UNAuthorizationOptions.Alert | UNAuthorizationOptions.Sound, (approved, err) => {
                 // Handle approval

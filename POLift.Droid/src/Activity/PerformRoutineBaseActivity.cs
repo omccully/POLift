@@ -287,14 +287,18 @@ namespace POLift.Droid
             mInterstitialAd.Show();
         }
 
+        Random randy = new Random();
         InterstitialAd mInterstitialAd;
         protected void TryShowFullScreenAd()
         {
             if (LicenseManager.ShowAds)
             {
+                if(randy.Next(4) == 0)
+                {
 #if !DEBUG
-                mInterstitialAd.LoadAd(new AdRequest.Builder().Build());
+                    mInterstitialAd.LoadAd(new AdRequest.Builder().Build());
 #endif
+                }
             }
         }
 

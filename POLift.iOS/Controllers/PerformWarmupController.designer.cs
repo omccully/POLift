@@ -16,6 +16,10 @@ namespace POLift.iOS.Controllers
     {
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
+        POLift.iOS.AdBannerView AdBanner { get; set; }
+
+        [Outlet]
+        [GeneratedCode ("iOS Designer", "1.0")]
         UIKit.UILabel ExerciseDetailsLabel { get; set; }
 
         [Outlet]
@@ -40,6 +44,11 @@ namespace POLift.iOS.Controllers
 
         void ReleaseDesignerOutlets ()
         {
+            if (AdBanner != null) {
+                AdBanner.Dispose ();
+                AdBanner = null;
+            }
+
             if (ExerciseDetailsLabel != null) {
                 ExerciseDetailsLabel.Dispose ();
                 ExerciseDetailsLabel = null;

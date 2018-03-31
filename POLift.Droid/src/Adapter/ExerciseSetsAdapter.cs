@@ -92,8 +92,9 @@ namespace POLift.Droid.Adapter
             //holder.Title.Text = "new text here";
             IExerciseSets es = this[position];
             holder.TextBox.Text = es.SetCount.ToString();
-            holder.TextView.Text = " sets of " + es.Exercise.Name;
-            //holder.TextView.Text = " sets of " + es.Exercise;
+
+            IExercise ex = es.Exercise;
+            holder.TextView.Text = $" sets of {ex.CondensedDetails}";
 
             if(position <= locked_sets)
             {

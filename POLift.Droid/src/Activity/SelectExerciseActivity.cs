@@ -93,8 +93,9 @@ namespace POLift.Droid
         {
             string category = CurrentCategory();
 
-            exercises_pager_adapter = new ExercisesPagerAdapter(this,
-                Vm.ExercisesInCategories);
+            List<ExerciseCategory> categories = Vm.ExercisesInCategories;
+
+            exercises_pager_adapter = new ExercisesPagerAdapter(this, categories);
             exercises_pager_adapter.ListItemClicked += Exercises_pager_adapter_ListItemClicked;
             exercises_pager_adapter.EditButtonClicked += Exercises_pager_adapter_EditButtonClicked;
             exercises_pager_adapter.DeleteButtonClicked += Exercises_pager_adapter_DeleteButtonClicked;
@@ -108,6 +109,13 @@ namespace POLift.Droid
             }
 
             ExercisesViewPager.Adapter = exercises_pager_adapter;
+
+            if(categories.Sum(ec => ec.Exercises.Count()) == 0)
+            {
+                // if no exercises, just show the create exercise page
+
+                NavigateToCreateExercise();
+            }
         }
 
         private void Exercises_pager_adapter_DeleteButtonClicked(object sender, ExerciseEventArgs e)
@@ -126,6 +134,11 @@ namespace POLift.Droid
         }
 
         private void CreateExerciseLink_Click(object sender, EventArgs e)
+        {
+            NavigateToCreateExercise();
+        }
+
+        void NavigateToCreateExercise()
         {
             var intent = new Intent(this, typeof(CreateExerciseActivity));
 

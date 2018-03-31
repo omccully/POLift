@@ -60,6 +60,12 @@ namespace POLift.iOS.Controllers
                     Resource.Mipmap.ic_backup_white_24dp)*/
             };
 
+            if (Vm.ShowRateApp)
+            {
+                Navigations.Add(new Navigation("Rate app",
+                    RateApp_Click));
+            }
+
             Vm.ShouldReloadMenu += Vm_ShouldReloadMenu;
 
             NavigationDataSource nds = 
@@ -92,7 +98,7 @@ namespace POLift.iOS.Controllers
 
         void RecheckLicense()
         {
-            StoreKitLicenseManager sklm =
+            /*StoreKitLicenseManager sklm =
                 ViewModelLocator.Default.LicenseManager as StoreKitLicenseManager;
 
             if (sklm != null)
@@ -101,21 +107,21 @@ namespace POLift.iOS.Controllers
                 RestoreSklmLicense(sklm);
             }
             else
-            {
+            {*/
                 Vm.RecheckLicense();
-            }
+            //}
         }
 
-        async void RestoreSklmLicense(StoreKitLicenseManager sklm)
+       /* async void RestoreSklmLicense(StoreKitLicenseManager sklm)
         {
             bool result = await sklm.RestoreLicense();
 
             System.Diagnostics.Debug.WriteLine("Restore License result = " + result);
         }
-
+        */
         private void RateApp_Click(object sender, EventArgs e)
         {
-           
+            AppleHelpers.OpenRateApp();
         }
 
         private void HelpAndFeedback_Click(object sender, EventArgs e)

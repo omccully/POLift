@@ -26,7 +26,7 @@ namespace POLift.Core.ViewModel
 
         }
 
-        public event EventHandler ResultSubmittedWithoutCompleting;
+        //public event EventHandler ResultSubmittedWithoutCompleting;
         public event Action<IRoutineResult> ValueChosen;
 
         IRoutine _Routine;
@@ -423,7 +423,7 @@ namespace POLift.Core.ViewModel
             }
 
             // show ad, prompt user for rating
-            ResultSubmittedWithoutCompleting?.Invoke(this, new EventArgs());
+            OnResultSubmittedWithoutCompleting();
 
             return true;
         }

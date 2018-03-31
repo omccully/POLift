@@ -68,21 +68,6 @@ namespace POLift.Droid
             var kvs = BundleKeyValueStorage.ChainedFromStates(savedInstanceState, Intent);
             Vm.RestoreState(kvs);
 
-            //Vm.Reset();
-
-            /*int edit_routine_id = Intent.GetIntExtra("edit_routine_id", -1);
-
-            if (savedInstanceState != null)
-            {
-                Vm.RestoreState(new BundleKeyValueStorage(savedInstanceState));
-            }
-            else if (edit_routine_id != -1)
-            {
-                // edit routine
-                // sets LockedSets, LockedExerciseSets, RoutineToDeleteIfDifferent
-                Vm.EditRoutine(edit_routine_id, Intent.GetIntExtra("exercises_locked", 0));
-            }*/
-
             InitializeExerciseSetsAdapter();
 
             AddExerciseButton.Click += AddExerciseButton_Click;

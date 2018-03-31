@@ -220,6 +220,16 @@ namespace POLift.Core.Model
             }
         }
 
+        public string CondensedDetails
+        {
+            get
+            {
+                return $"{Name} ({MaxRepCount}r;" +
+                    $"{ConsecutiveSetsForWeightIncrease}cs;" +
+                    $"{RestPeriodSeconds}s)";
+            }
+        }
+
         [Ignore]
         public float NextWeight
         {

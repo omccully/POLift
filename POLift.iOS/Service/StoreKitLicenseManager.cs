@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace POLift.iOS.Service
 {
-    public class StoreKitLicenseManager : LicenseManager 
+    /*public class StoreKitLicenseManager : LicenseManager 
     {
         public StoreKitLicenseManager(string device_id, KeyValueStorage kvs = null)
             : base(device_id, kvs)
@@ -88,7 +88,7 @@ namespace POLift.iOS.Service
             
             return Task.Run<bool>(() => false);
 
-            /*return Task.Run<bool>(delegate
+            eturn Task.Run<bool>(delegate
             {
                 LicensePurchaseManager lmp_safe = lmp;
                 System.Diagnostics.Debug.WriteLine("waiting for purchase response...");
@@ -99,7 +99,7 @@ namespace POLift.iOS.Service
                 }
                 System.Diagnostics.Debug.WriteLine("Purchase success = " + success);
                 return success;
-            });*/
+            });
         }
 
         class Test : NSObject, ISKProductsRequestDelegate
@@ -133,16 +133,6 @@ namespace POLift.iOS.Service
             {
                 this.productId = productId;
             }
-
-
-            /* public void RequestProductData()
-             {
-                 NSSet productIdentifiers = NSSet.MakeNSObjectSet<NSString>(
-                     new NSString[] { new NSString(ProductID) });​​​
-                 SKProductsRequest rq = new SKProductsRequest(productIdentifiers);
-                 rq.Delegate = this;
-                 rq.Start();
-             }*/
 
             public void PurchaseLicense()
             {
@@ -356,5 +346,5 @@ namespace POLift.iOS.Service
                 }
             }
         }
-    }
+    }*/
 }

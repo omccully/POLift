@@ -9,27 +9,22 @@ using POLift.Core.Helpers;
 
 using POLift.Core.ViewModel;
 using GalaSoft.MvvmLight.Helpers;
+using Google.MobileAds;
 
 namespace POLift.iOS.Controllers
 {
-    public partial class PerformRoutineController : UIViewController
+    public partial class PerformRoutineController : PerformRoutineBaseController
     {
         // Keep track of bindings to avoid premature garbage collection
         private readonly List<Binding> bindings = new List<Binding>();
+
+        protected override PerformBaseViewModel BaseVm => Vm;
 
         private PerformRoutineViewModel Vm
         {
             get
             {
                 return ViewModelLocator.Default.PerformRoutine;
-            }
-        }
-
-        private TimerViewModel TimerVm
-        {
-            get
-            {
-                return ViewModelLocator.Default.Timer;
             }
         }
 
@@ -42,7 +37,6 @@ namespace POLift.iOS.Controllers
             base.ViewDidLoad();
             Console.WriteLine("PerformRoutineController");
 
-            WeightTextField.EditingChanged += WeightTextField_ValueChanged;
             WeightTextField.ShouldReturn = AppleHelpers.DismissKeyboard;
             RepCountTextField.ShouldReturn = AppleHelpers.DismissKeyboard;
 
@@ -65,28 +59,18 @@ namespace POLift.iOS.Controllers
                 "TouchUpInside",
                 Vm.EditThisExerciseCommand);
 
-            //WeightTextField.SetCommand(
-            //  "ValueChanged",
-            //  Vm.WeightInputChangedCommand);
-
             WeightTextField.EditingChanged += (s, e) => { };
             WeightTextField.ValueChanged += (s, e) => { };
-            //this.SetBinding(
-            //   () => WeightTextField.Text)
-            //    .UpdateSourceTrigger("ValueChanged")
-            //    .WhenSourceChanges(() => Vm.WeightInputText = WeightTextField.Text);
+          
             WeightTextField.Text = "";
             bindings.Add(this.SetBinding(
                 () => WeightTextField.Text,
                 () => Vm.WeightInputText,
                 BindingMode.TwoWay)
                 .ObserveSourceEvent("EditingChanged"));
-            // .WhenSourceChanges(() => Vm.WeightInputText = WeightTextField.Text);
-
             
             RepCountTextField.EditingChanged += (s, e) => { };
             RepCountTextField.ValueChanged += (s, e) => { };
-            RepCountTextField.EditingChanged += RepCountTextField_ValueChanged;
             RepCountTextField.Text = "";
             bindings.Add(this.SetBinding(
                 () => RepCountTextField.Text,
@@ -126,30 +110,24 @@ namespace POLift.iOS.Controllers
                     () => TimerVm.TimerIsStartable,
                     () => RepCountTextField.Enabled));
 
-
-            //Vm.Routine = 
-            //    C.ontainer.Resolve<IPOLDatabase>()
-            //    .ReadByID<Routine>(1);
-
             Vm.ResetWeightInput();
             Vm.PromptUser();
 
+            Vm.ResultSubmittedWithoutCompleting += Vm_ResultSubmittedWithoutCompleting;
+
             Console.WriteLine("view load finished");
-
         }
 
-        private void RepCountTextField_ValueChanged(object sender, EventArgs e)
+        public override void ViewDidUnload()
         {
-            System.Diagnostics.Debug.WriteLine("RepCountTextField_EditingChanged to " + RepCountTextField.Text);
+            Vm.ResultSubmittedWithoutCompleting -= Vm_ResultSubmittedWithoutCompleting;
+
+            base.ViewDidUnload();
         }
 
-        private void WeightTextField_ValueChanged(object sender, EventArgs e)
+        private void Vm_ResultSubmittedWithoutCompleting(object sender, EventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine("WeightTextField_EditingChanged" + WeightTextField.Text);
+            Vm.PromptUserForRating(AppleHelpers.OpenRateApp);
         }
-
-
-
-        
     }
 }

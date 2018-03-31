@@ -29,6 +29,8 @@ namespace POLift.Core.Model
 
         string ShortDetails { get; }
 
+        string CondensedDetails { get; }
+
         float NextWeight { get; }
 
         ExerciseDifficulty GetDifficultyRecord();
