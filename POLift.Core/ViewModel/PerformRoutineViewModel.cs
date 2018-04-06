@@ -140,7 +140,7 @@ namespace POLift.Core.ViewModel
 
             TranslateToRoutine(new_routine, true);
 
-            if (initial_count == 0) PromptUser();
+            if (initial_count == 0) PromptUserForWarmupRoutine();
         }
 
         void PromptUserToResumeRoutine(IRoutineResult recent_uncompleted)

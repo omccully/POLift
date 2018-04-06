@@ -93,7 +93,7 @@ namespace POLift.Core.ViewModel
         {
             DialogService.DisplayAcknowledgementOnce("It is recommended that you create your routine before you " +
                 "go to the gym. However, if you are at the gym now and want to get started right away, you can " +
-                "create your routine \"on the fly\" from the navigation drawer.", TutorialOnTheFlyKey);
+                "create your routine \"on the fly.\"", TutorialOnTheFlyKey);
         }
 
         Navigation purchase_navigation = null;

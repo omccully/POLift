@@ -91,6 +91,23 @@ namespace POLift.Core.ViewModel
             }
         }
 
+        public void PerformRoutineOnTheFlyNavigate()
+        {
+            // navigationService.NavigateTo(ViewModelLocator.PerformRoutinePageKey);
+            ViewModelLocator.Default.PerformRoutine.PerformRoutineOnTheFly();
+        }
+
+        private RelayCommand _PerformRoutineOnTheFlyNavigateCommand;
+        public RelayCommand PerformRoutineOnTheFlyNavigateCommand
+        {
+            get
+            {
+                return _PerformRoutineOnTheFlyNavigateCommand
+                    ?? (_PerformRoutineOnTheFlyNavigateCommand =
+                        new RelayCommand(PerformRoutineOnTheFlyNavigate));
+            }
+        }
+
         private RelayCommand navigateCommand;
         public RelayCommand CreateRoutineNavigateCommand
         {

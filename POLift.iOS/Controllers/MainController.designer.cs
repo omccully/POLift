@@ -19,6 +19,10 @@ namespace POLift.iOS.Controllers
 
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
+        UIKit.UIButton LiftOnTheFlyButton { get; set; }
+
+        [Outlet]
+        [GeneratedCode ("iOS Designer", "1.0")]
         UIKit.UITableView RoutinesTableView { get; set; }
 
         void ReleaseDesignerOutlets ()
@@ -26,6 +30,11 @@ namespace POLift.iOS.Controllers
             if (CreateNewRoutineLink != null) {
                 CreateNewRoutineLink.Dispose ();
                 CreateNewRoutineLink = null;
+            }
+
+            if (LiftOnTheFlyButton != null) {
+                LiftOnTheFlyButton.Dispose ();
+                LiftOnTheFlyButton = null;
             }
 
             if (RoutinesTableView != null) {

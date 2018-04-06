@@ -97,10 +97,12 @@ namespace POLift.Droid
                 new Navigation("Settings", Settings_Click,
                     Resource.Mipmap.ic_settings_white_24dp),
                 new Navigation("Help & feedback", HelpAndFeedback_Click,
-                    Resource.Mipmap.ic_help_white_24dp),
+                    Resource.Mipmap.ic_help_white_24dp)
+                    
+                    //,
 
-                new Navigation("On the fly (beta)", OnTheFly_Click,
-                    Resource.Mipmap.ic_fitness_center_white_24dp)
+                //new Navigation("On the fly (beta)", OnTheFly_Click,
+                 //   Resource.Mipmap.ic_fitness_center_white_24dp)
 
 
                     /*,

@@ -63,6 +63,10 @@ namespace POLift.iOS.Controllers
                 "TouchUpInside",
                 Vm.CreateRoutineNavigateCommand);
 
+            LiftOnTheFlyButton.SetCommand(
+                "TouchUpInside",
+                Vm.PerformRoutineOnTheFlyNavigateCommand);
+
             RoutinesTableView.RowHeight = UITableView.AutomaticDimension;
             RoutinesTableView.EstimatedRowHeight = 40f;
 

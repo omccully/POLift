@@ -31,6 +31,7 @@ namespace POLift.Droid
         ListView RoutinesList;
         Button CreateRoutineLink;
         RoutineAdapter routine_adapter;
+        Button OnTheFlyLink;
 
         private MainViewModel Vm
         {
@@ -51,8 +52,10 @@ namespace POLift.Droid
 
             RoutinesList = view.FindViewById<ListView>(Resource.Id.RoutinesList);
             CreateRoutineLink = view.FindViewById<Button>(Resource.Id.CreateRoutineLink);
+            OnTheFlyLink = view.FindViewById<Button>(Resource.Id.OnTheFlyLink);
 
             CreateRoutineLink.Click += CreateRoutineButton_Click;
+            OnTheFlyLink.Click += OnTheFlyLink_Click;
 
             RoutinesList.ItemClick += RoutinesList_ItemClick;
             RoutinesList.ItemLongClick += RoutinesList_ItemLongClick;
@@ -61,13 +64,21 @@ namespace POLift.Droid
             RoutinesList.Clickable = true;
             RoutinesList.ItemsCanFocus = true;
 
-            //ViewModelLocator.Detauls.Toaster = new Toaster(this.Activity);
             Vm.DialogService = new DialogService(
                 new DialogBuilderFactory(this.Activity),
                 ViewModelLocator.Default.KeyValueStorage);
             Vm.Toaster = new Toaster(this.Activity);
+        }
 
-            //RefreshRoutineList();
+        private void OnTheFlyLink_Click(object sender, EventArgs e)
+        {
+            var intent = new Intent(this.Activity, typeof(PerformRoutineActivity));
+
+            intent.PutExtra(PerformRoutineViewModel.OnTheFlyFlagKey, true);
+
+            PerformRoutineActivity.SavedState = null;
+
+            StartActivityForResult(intent, PerformRoutineRequestCode);
         }
 
         private void RoutinesList_ItemLongClick(object sender, AdapterView.ItemLongClickEventArgs e)

@@ -54,8 +54,9 @@ namespace POLift.Core.ViewModel
                 return;
             }
 
-            ValueChosen?.Invoke(obj);
             navigationService.GoBack();
+
+            ValueChosen?.Invoke(obj);
         }
 
         public IEnumerable<Exercise> Exercises
@@ -108,8 +109,9 @@ namespace POLift.Core.ViewModel
 
         public void SelectExercise(IExercise exercise)
         {
-            ValueChosen?.Invoke(exercise);
             navigationService.GoBack();
+
+            ValueChosen?.Invoke(exercise);
         }
 
         RelayCommand<IExercise> _EditExerciseCommand;
