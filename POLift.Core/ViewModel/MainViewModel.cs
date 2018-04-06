@@ -24,8 +24,8 @@ namespace POLift.Core.ViewModel
 
         public DialogService DialogService;
 
-        IValueReturner<IRoutine> _CreateRoutineViewModel;
-        public IValueReturner<IRoutine> CreateRoutineViewModel
+        ICreateRoutineViewModel _CreateRoutineViewModel;
+        public ICreateRoutineViewModel CreateRoutineViewModel
         {
             get
             {
@@ -106,6 +106,7 @@ namespace POLift.Core.ViewModel
         {
             try
             {
+                CreateRoutineViewModel.Reset();
                 navigationService.NavigateTo(
                     ViewModelLocator.CreateRoutinePageKey);
             }

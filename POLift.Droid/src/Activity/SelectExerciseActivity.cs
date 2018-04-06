@@ -46,13 +46,9 @@ namespace POLift.Droid
         ViewPager ExercisesViewPager;
         ExercisesPagerAdapter exercises_pager_adapter;
 
-        IPOLDatabase Database;
-
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-
-            Database = C.ontainer.Resolve<IPOLDatabase>();
 
             // Create your application here
             SetContentView(Resource.Layout.SelectExercise);

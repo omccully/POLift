@@ -78,11 +78,23 @@ namespace POLift.Core.ViewModel
                             "can get one of the built-in working programs " +
                             "at any time from the navigation drawer by swiping " +
                             "from the left.");
+
+                        InfoUserToLiftOnTheFly();
                     });
+            }
+            else
+            {
+                InfoUserToLiftOnTheFly();
             }
         }
 
-        //Lazy<Task<bool>> lazy_LicenseNotPurchased;
+        const string TutorialOnTheFlyKey = "tutorial_on_the_fly";
+        public void InfoUserToLiftOnTheFly()
+        {
+            DialogService.DisplayAcknowledgementOnce("It is recommended that you create your routine before you " +
+                "go to the gym. However, if you are at the gym now and want to get started right away, you can " +
+                "create your routine \"on the fly\" from the navigation drawer.", TutorialOnTheFlyKey);
+        }
 
         Navigation purchase_navigation = null;
         public async Task<Navigation> GetPurchaseLicenseNavigationLink()
@@ -199,6 +211,12 @@ namespace POLift.Core.ViewModel
         {
             navigationService.NavigateTo(
                 ViewModelLocator.OrmGraphPageKey);
+        }
+
+        public void PerformRoutineOnTheFlyNavigate()
+        {
+           // navigationService.NavigateTo(ViewModelLocator.PerformRoutinePageKey);
+            ViewModelLocator.Default.PerformRoutine.PerformRoutineOnTheFly();
         }
 
         public void GetFreeWeightliftingPrograms(Action navigate_action = null)

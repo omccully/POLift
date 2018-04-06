@@ -119,7 +119,7 @@ namespace POLift.iOS
             l.CheckLicenseAndPrompt();
 
             //l.PromptUserForStartingNextRoutine(database, nav);
-            //l.SideMenu.PromptUserForExternalProgramsIfFirstLaunch();
+            l.SideMenu.PromptUserForExternalProgramsIfFirstLaunch();
             return true;
         }
 

@@ -19,11 +19,11 @@ namespace POLift.Core.Service
             this.KeyValueStorage = KeyValueStorage;
         }
 
-        public void DisplayAcknowledgement(string message, Action action_when_ok = null)
+        public void DisplayAcknowledgement(string message, Action action_when_ok = null, string okay_button = "OK")
         {
             builders.Add(Factory.CreateDialogBuilder()
                 .SetText(message)
-                .AddNeutralButton("OK", Helpers.ToBoolAction(action_when_ok))
+                .AddNeutralButton(okay_button, Helpers.ToBoolAction(action_when_ok))
                 .Show());
         }
 
@@ -158,6 +158,21 @@ namespace POLift.Core.Service
 
             builders.Add(builder);
             builder.Show();
+        }
+
+        public void DisplayAcknowledgementOnce(string message, string key)
+        {
+            bool acknowledged = KeyValueStorage.GetBoolean(key, false);
+
+            if (!acknowledged)
+            {
+                DisplayAcknowledgement(message,
+                    delegate
+                    {
+                        KeyValueStorage.SetValue(key, true);
+                    },
+                    "OK (never show again)");
+            }
         }
 
         public void Dispose()

@@ -38,7 +38,7 @@ namespace POLift.Droid
         {
             base.OnCreate(savedInstanceState);
 
-            ViewModelLocator.Default.DialogService = new DialogService(
+            Vm.DialogService = new DialogService(
                 new DialogBuilderFactory(this.Activity),
                 ViewModelLocator.Default.KeyValueStorage);
 

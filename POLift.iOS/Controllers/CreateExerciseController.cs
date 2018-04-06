@@ -123,6 +123,8 @@ namespace POLift.iOS.Controllers
             WeightIncrementTextField.AddDoneButtonToNumericKeyboard();
             RestPeriodTextField.AddDoneButtonToNumericKeyboard();
             ConsecutiveSetsTextField.AddDoneButtonToNumericKeyboard();
+
+            Vm.InfoUser();
         }
 
 

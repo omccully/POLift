@@ -42,15 +42,6 @@ namespace POLift.Droid
             {
                 RestoreLastFragment();
             }
-
-            //TelephonyManager tm = (TelephonyManager)GetSystemService(Context.TelephonyService);
-            //Helpers.DisplayError(this, tm.DeviceId);
-            // 
-            /*string id =
-                Settings.Secure.GetString(
-                    ApplicationContext.ContentResolver,
-                    Settings.Secure.AndroidId);
-            Helpers.DisplayError(this, id);*/
         }
 
         protected override void OnStart()

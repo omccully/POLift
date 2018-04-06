@@ -34,19 +34,22 @@ namespace POLift.Droid.Service
         public IDialogBuilder AddPositiveButton(string text, Action<bool> action = null)
         {
             
-            builder.SetPositiveButton(text, delegate { action?.Invoke(CheckBoxChecked); });
+            builder.SetPositiveButton(text, 
+                delegate { action?.Invoke(CheckBoxChecked); });
             return this;
         }
 
         public IDialogBuilder AddNeutralButton(string text, Action<bool> action = null)
         {
-            builder.SetNeutralButton(text, delegate { action?.Invoke(CheckBoxChecked); });
+            builder.SetNeutralButton(text, 
+                delegate { action?.Invoke(CheckBoxChecked); });
             return this;
         }
 
         public IDialogBuilder AddNegativeButton(string text, Action<bool> action = null)
         {
-            builder.SetNegativeButton(text, delegate { action?.Invoke(CheckBoxChecked); });
+            builder.SetNegativeButton(text, 
+                delegate { action?.Invoke(CheckBoxChecked); });
             return this;
         }
 

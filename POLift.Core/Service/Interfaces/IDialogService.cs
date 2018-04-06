@@ -12,7 +12,7 @@ namespace POLift.Core.Service
 
         IDialogBuilderFactory Factory { get; }
 
-        void DisplayAcknowledgement(string message, Action action_when_ok = null);
+        void DisplayAcknowledgement(string message, Action action_when_ok = null, string okay_button = "OK");
 
         void DisplayConfirmation(string message, Action action_if_yes, Action action_if_no = null);
 

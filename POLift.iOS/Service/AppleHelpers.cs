@@ -14,6 +14,21 @@ namespace POLift.iOS
 {
     static class AppleHelpers
     {
+        public static void PrintViewHierarchy(UIView view, int depth = 0)
+        {
+            foreach (UIView subview in view.Subviews)
+            {
+                for (int i = 0; i < depth; i++) Console.Write('\t');
+                Console.Write(subview.Class.Name + " " + subview.Bounds + " " + subview.Frame);
+                foreach(NSLayoutConstraint constraint in subview.Constraints)
+                {
+                    Console.Write(" " + constraint.DebugDescription);
+                }
+                Console.WriteLine();
+                PrintViewHierarchy(subview, depth + 1);
+            }
+        }
+
         public static void OpenRateApp()
         {
             NSUrl url = new NSUrl("itms-apps://itunes.apple.com/app/id1352415628");

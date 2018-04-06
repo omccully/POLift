@@ -15,6 +15,7 @@ using POLift.iOS.DataSources;
 using System.Threading.Tasks;
 
 using SidebarNavigation;
+using POLift.iOS.Service;
 
 namespace POLift.iOS.Controllers
 {
@@ -41,7 +42,7 @@ namespace POLift.iOS.Controllers
 
         }
 
-       
+
 
         public override void ViewDidLoad()
         {
@@ -68,7 +69,7 @@ namespace POLift.iOS.Controllers
             Vm.RoutinesListChanged += Vm_RoutinesListChanged;
             Console.WriteLine("load");
         }
-
+       
         public override void ViewDidAppear(bool animated)
         {
             base.ViewDidAppear(animated);

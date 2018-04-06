@@ -19,6 +19,7 @@ namespace POLift.Core.ViewModel
         public ICreateRoutineViewModel CreateRoutineViewModel;
         public IEditRoutineResultViewModel EditRoutineResultViewModel;
         public ICreateExerciseViewModel CreateExerciseViewModel;
+        public ISelectExerciseViewModel SelectExerciseViewModel;
 
         public PerformRoutineViewModel(INavigationService navigationService, IPOLDatabase database)
             : base(navigationService, database)
@@ -28,6 +29,8 @@ namespace POLift.Core.ViewModel
 
         //public event EventHandler ResultSubmittedWithoutCompleting;
         public event Action<IRoutineResult> ValueChosen;
+
+        public Action NavigateSelectExercise;
 
         IRoutine _Routine;
         public IRoutine Routine
@@ -61,6 +64,8 @@ namespace POLift.Core.ViewModel
         public const string AskForRoutineResumeKey = "ask_for_routine_resume";
         public void PromptUser()
         {
+            if (Routine.ExerciseSetIDs == "") return;
+
             IRoutineResult recent_uncompleted =
                 Model.RoutineResult.MostRecentUncompleted(Database, Routine);
 
@@ -75,6 +80,67 @@ namespace POLift.Core.ViewModel
             {
                 PromptUserForWarmupRoutine();
             }
+        }
+
+        public bool OnTheFly { get; private set; } = false;
+        public void PerformRoutineOnTheFly(bool navigate = true)
+        {
+            OnTheFly = true;
+
+            Routine r = new Routine(DateTime.Now.DayOfWeek.ToString(), new List<IExerciseSets>());
+            r.Deleted = true;
+            r.Database = Database;
+            Database.InsertOrUpdateNoID(r);
+
+            this.Routine = r;
+
+            if(navigate)
+            {
+                if(NavigateSelectExercise != null)
+                {
+                    NavigateSelectExercise.Invoke();
+                }
+                else
+                {
+                    SelectExerciseViewModel.ValueChosen += SelectExerciseViewModel_ValueChosen;
+
+                    if (navigationService.CurrentPageKey != ViewModelLocator.PerformRoutinePageKey)
+                    {
+                        navigationService.NavigateTo(ViewModelLocator.PerformRoutinePageKey);
+                    }
+
+                    navigationService.NavigateTo(ViewModelLocator.SelectExercisePageKey);
+                }
+                
+            }
+        }
+
+        public void SelectExerciseViewModel_ValueChosen(int ex_id)
+        {
+            SelectExerciseViewModel_ValueChosen(
+                Database.ReadByID<Exercise>(ex_id));
+        }
+        public void SelectExerciseViewModel_ValueChosen(IExercise ex)
+        {
+            SelectExerciseViewModel.ValueChosen -= SelectExerciseViewModel_ValueChosen;
+
+            // could check navigationService.CurrentPageKey if GoBack is called before invoke
+
+            ExerciseSets es = new ExerciseSets(ex);
+            es.Database = Database;
+
+            List<IExerciseSets> sets = new List<IExerciseSets>(this.Routine.ExerciseSets);
+            int initial_count = sets.Count();
+            sets.Add(es);
+            sets = sets.SaveExerciseSets(Database);
+           
+            Routine new_routine = new Routine(this.Routine.Name, sets);
+            new_routine.Database = Database;
+            Database.InsertOrUndeleteAndUpdate(new_routine);
+
+            TranslateToRoutine(new_routine, true);
+
+            if (initial_count == 0) PromptUser();
         }
 
         void PromptUserToResumeRoutine(IRoutineResult recent_uncompleted)
@@ -396,14 +462,55 @@ namespace POLift.Core.ViewModel
                 base.TimerViewModel
                     .TimerFinishedNotificationService.Cancel();
 
-                if (action_if_completed == null)
+                if(OnTheFly)
                 {
-                    ValueChosen?.Invoke(RoutineResult);
-                    navigationService.GoBack();
+                    RefreshRoutineDetails();
+                    StartTimer();
+
+                    System.Diagnostics.Debug.WriteLine("DialogService.DisplayConfirmation(Your routine has finished...");
+                    DialogService.DisplayConfirmation("Your routine has finished. " +
+                        "Do you want to add more exercises? ", delegate
+                        {
+                            
+                            // yes
+                            System.Diagnostics.Debug.WriteLine("YES!!!!");
+                            if(NavigateSelectExercise != null)
+                            {
+                                NavigateSelectExercise.Invoke();
+                            }
+                            else
+                            {
+                                SelectExerciseViewModel.ValueChosen += SelectExerciseViewModel_ValueChosen;
+
+                                navigationService.NavigateTo(ViewModelLocator.SelectExercisePageKey);
+                            }
+                        }, delegate
+                        {
+                            // no 
+                            System.Diagnostics.Debug.WriteLine("NO@@@@@@@!");
+                            if (action_if_completed == null)
+                            {
+                                ValueChosen?.Invoke(RoutineResult);
+                                navigationService.GoBack();
+                            }
+                            else
+                            {
+                                action_if_completed?.Invoke();
+                            }
+                        });
+
                 }
                 else
                 {
-                    action_if_completed?.Invoke();
+                    if (action_if_completed == null)
+                    {
+                        ValueChosen?.Invoke(RoutineResult);
+                        navigationService.GoBack();
+                    }
+                    else
+                    {
+                        action_if_completed?.Invoke();
+                    }
                 }
 
                 return false;
@@ -466,6 +573,7 @@ namespace POLift.Core.ViewModel
             catch(Exception e)
             {
                 Toaster?.DisplayError(e.Message);
+                System.Diagnostics.Debug.WriteLine(e.ToString());
             }
         }
 
@@ -708,11 +816,22 @@ namespace POLift.Core.ViewModel
         public const string RoutineIdKey = "routine_id";
         public const string ResumeRoutineResultIdKey = "resume_routine_result_id";
         public const string WarmupPromptedKey = "warmup_prompted";
+        public const string OnTheFlyFlagKey = "on_the_fly";
 
         public override void RestoreState(KeyValueStorage kvs)
         {
+            OnTheFly = kvs.GetBoolean(OnTheFlyFlagKey, false);
+
+            int routine_id = kvs.GetInteger(RoutineIdKey, -1);
+
+            if(routine_id <= 0)
+            {
+                PerformRoutineOnTheFly();
+                return;
+            }
+            
             // set Routine
-            RoutineId = kvs.GetInteger(RoutineIdKey, -1);
+            RoutineId = routine_id;
 
             IRoutineResult recent_uncompleted = Model.RoutineResult
                 .MostRecentUncompleted(Database, Routine);
@@ -752,11 +871,16 @@ namespace POLift.Core.ViewModel
                 // if no, prompts user for warmup as well
                 PromptUserToResumeRoutine(recent_uncompleted);
             }
-            
+
+            base.RestoreState(kvs);
         }
 
         public override void SaveState(KeyValueStorage kvs)
         {
+            base.SaveState(kvs);
+
+            kvs.SetValue(OnTheFlyFlagKey, this.OnTheFly);
+
             if(this.RoutineResult != null)
                 kvs.SetValue(ResumeRoutineResultIdKey, this.RoutineResult.ID);
             

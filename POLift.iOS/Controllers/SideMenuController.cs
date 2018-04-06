@@ -52,12 +52,13 @@ namespace POLift.iOS.Controllers
                 //
 
                 new Navigation("Settings", Settings_Click),
-                new Navigation("Help & feedback", HelpAndFeedback_Click)
+                new Navigation("Help & feedback", HelpAndFeedback_Click),
 
                     /*,
                      * TODO: export data as text
                 new Navigation("Export data as text", ExportAsText_Click,
                     Resource.Mipmap.ic_backup_white_24dp)*/
+                new Navigation("On the fly (beta)", Vm.PerformRoutineOnTheFlyNavigate)
             };
 
             if (Vm.ShowRateApp)
@@ -68,7 +69,7 @@ namespace POLift.iOS.Controllers
 
             Vm.ShouldReloadMenu += Vm_ShouldReloadMenu;
 
-            NavigationDataSource nds = 
+            NavigationDataSource nds =
                 new NavigationDataSource(Navigations);
 
             NavigationLinkTableView.Source = nds;

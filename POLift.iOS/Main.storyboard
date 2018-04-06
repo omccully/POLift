@@ -2206,6 +2206,87 @@
             </objects>
             <point key="canvasLocation" x="728" y="2693"/>
         </scene>
+        <scene sceneID="49111">
+            <objects>
+                <viewController id="49112" sceneMemberID="viewController" customClass="NeverShowAgainAlertController" storyboardIdentifier="NeverShowAgainAlert">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="49109"/>
+                        <viewControllerLayoutGuide type="bottom" id="49110"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleAspectFill" id="49113">
+                        <rect key="frame" x="0.0" y="0.0" width="300" height="300"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <subviews>
+                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" id="49419" translatesAutoresizingMaskIntoConstraints="NO">
+                                <rect key="frame" x="45" y="76" width="51" height="31"/>
+                                <constraints>
+                                    <constraint id="50322" firstItem="49419" firstAttribute="height" constant="31"/>
+                                    <constraint id="50323" firstItem="49419" firstAttribute="width" constant="49"/>
+                                </constraints>
+                            </switch>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Never show again" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="49420" translatesAutoresizingMaskIntoConstraints="NO" misplaced="YES">
+                                <rect key="frame" x="110" y="81" width="165" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="50316" translatesAutoresizingMaskIntoConstraints="NO">
+                                <rect key="frame" x="25" y="40" width="250" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="50328" translatesAutoresizingMaskIntoConstraints="NO" misplaced="YES">
+                                <rect key="frame" x="16" y="124" width="127" height="30"/>
+                                <state key="normal" title="Yes">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <constraints>
+                                    <constraint id="50334" firstItem="50328" firstAttribute="height" constant="30"/>
+                                </constraints>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="50329" translatesAutoresizingMaskIntoConstraints="NO" misplaced="YES">
+                                <rect key="frame" x="148" y="124" width="127" height="30"/>
+                                <state key="normal" title="No">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <constraints>
+                                    <constraint id="50333" firstItem="50329" firstAttribute="height" constant="30"/>
+                                </constraints>
+                            </button>
+                        </subviews>
+                        <constraints>
+                            <constraint id="50317" firstItem="50316" firstAttribute="top" secondItem="49109" secondAttribute="bottom" constant="20"/>
+                            <constraint id="50318" firstItem="50316" firstAttribute="leading" secondItem="49113" secondAttribute="leadingMargin" constant="9"/>
+                            <constraint id="50319" firstItem="49113" firstAttribute="trailingMargin" secondItem="50316" secondAttribute="trailing" constant="9"/>
+                            <constraint id="50320" firstItem="49419" firstAttribute="top" secondItem="50316" secondAttribute="bottom" constant="15"/>
+                            <constraint id="50321" firstItem="49419" firstAttribute="leading" secondItem="49113" secondAttribute="leadingMargin" constant="29"/>
+                            <constraint id="50324" firstItem="49420" firstAttribute="leading" secondItem="49419" secondAttribute="trailing" constant="16"/>
+                            <constraint id="50325" firstItem="49420" firstAttribute="top" secondItem="49419" secondAttribute="top" constant="5"/>
+                            <constraint id="50326" firstItem="49113" firstAttribute="trailingMargin" secondItem="49420" secondAttribute="trailing" constant="9"/>
+                            <constraint id="50327" firstItem="49113" firstAttribute="trailingMargin" secondItem="49420" secondAttribute="trailing" constant="9"/>
+                            <constraint id="50330" firstItem="50328" firstAttribute="leading" secondItem="49113" secondAttribute="leadingMargin"/>
+                            <constraint id="50331" firstItem="50328" firstAttribute="top" secondItem="49419" secondAttribute="bottom" constant="17"/>
+                            <constraint id="50332" firstItem="50329" firstAttribute="top" secondItem="49419" secondAttribute="bottom" constant="17"/>
+                            <constraint id="50335" firstItem="50329" firstAttribute="leading" secondItem="50328" secondAttribute="trailing" constant="5"/>
+                            <constraint id="50336" firstItem="50329" firstAttribute="leading" secondItem="50328" secondAttribute="trailing" constant="5"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="CheckBoxSwitch" destination="49419" id="name-outlet-49419"/>
+                        <outlet property="YesButton" destination="50328" id="name-outlet-50328"/>
+                        <outlet property="NoButton" destination="50329" id="name-outlet-50329"/>
+                        <outlet property="MessageLabel" destination="50316" id="name-outlet-50316"/>
+                        <outlet property="SwitchLabelmk" destination="49420" id="name-outlet-49420"/>
+                    </connections>
+                    <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+                    <size key="freeformSize" width="300" height="300"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="49114" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1184" y="2690"/>
+        </scene>
     </scenes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedScreenMetrics key="destination" type="retina47"/>

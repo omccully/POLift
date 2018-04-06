@@ -13,7 +13,7 @@ namespace POLift.Core.ViewModel
     using Model;
     using Service;
 
-    public class SelectExerciseViewModel : ViewModelBase, IValueReturner<IExercise>
+    public class SelectExerciseViewModel : ViewModelBase, ISelectExerciseViewModel
     {
         private readonly INavigationService navigationService;
         private readonly IPOLDatabase Database;

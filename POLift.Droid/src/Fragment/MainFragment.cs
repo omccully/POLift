@@ -26,7 +26,7 @@ namespace POLift.Droid
     {
         const int CreateRoutineRequestCode = 2;
         const int EditRoutineRequestCode = 3;
-        const int PerformRoutineRequestCode = 4;
+        public const int PerformRoutineRequestCode = 484;
 
         ListView RoutinesList;
         Button CreateRoutineLink;
@@ -67,7 +67,7 @@ namespace POLift.Droid
                 ViewModelLocator.Default.KeyValueStorage);
             Vm.Toaster = new Toaster(this.Activity);
 
-            RefreshRoutineList();
+            //RefreshRoutineList();
         }
 
         private void RoutinesList_ItemLongClick(object sender, AdapterView.ItemLongClickEventArgs e)
@@ -121,6 +121,13 @@ namespace POLift.Droid
             StartActivityForResult(intent, CreateRoutineRequestCode);
         }
 
+        public override void OnResume()
+        {
+            base.OnResume();
+
+            RefreshRoutineList();
+        }
+
         public override void OnActivityResult(int requestCode, [GeneratedEnum] Result resultCode, Intent data)
         {
             base.OnActivityResult(requestCode, resultCode, data);
@@ -132,22 +139,21 @@ namespace POLift.Droid
                 //string xml = data.GetStringExtra("routine");
                 //Routine new_routine = Routine.FromXml(xml);
 
-                int id = data.GetIntExtra("routine_id", -1);
+               /* int id = data.GetIntExtra("routine_id", -1);
                 if (id == -1)
                 {
                     return;
                 }
                 //Routine new_routine = POLDatabase.ReadByID<Routine>(id);
 
-                RefreshRoutineList();
+                RefreshRoutineList();*/
             }
 
             if(requestCode == PerformRoutineRequestCode)
             {
                 // routines may have been edited from perform routine page
                 // regardless of result
-                RefreshRoutineList();
-
+                
                 if(resultCode == Result.Ok)
                 {
                     Toast.MakeText(this.Activity, "Routine completed",

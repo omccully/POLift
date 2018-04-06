@@ -120,6 +120,12 @@ namespace POLift.Droid
             imm.ShowSoftInput(ExerciseNameText, ShowFlags.Implicit);
 
             CreateExerciseButton.Click += CreateExerciseButton_Click;
+
+            Vm.DialogService = new DialogService(
+                new DialogBuilderFactory(this),
+                ViewModelLocator.Default.KeyValueStorage);
+
+            Vm.InfoUser();
         }
 
         private void SelectMathTypeSpinner_ItemSelected(object sender, AdapterView.ItemSelectedEventArgs e)

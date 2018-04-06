@@ -70,6 +70,7 @@ namespace POLift.Core.ViewModel
             PerformRoutine.EditRoutineResultViewModel = EditRoutineResult;
             PerformRoutine.CreateRoutineViewModel = CreateRoutine;
             PerformRoutine.CreateExerciseViewModel = CreateExercise;
+            PerformRoutine.SelectExerciseViewModel = SelectExercise;
             
             PerformWarmup.TimerViewModel = Timer;
 
@@ -98,6 +99,8 @@ namespace POLift.Core.ViewModel
                 ViewRoutineResults.DialogService = value;
                 SelectProgramToDownload.DialogService = value;
                 SideMenu.DialogService = value;
+                SelectExercise.DialogService = value;
+                CreateExercise.DialogService = value;
             }
         }
 
@@ -144,6 +147,7 @@ namespace POLift.Core.ViewModel
                 Main.Toaster = value;
                 CreateExercise.Toaster = value;
                 CreateRoutine.Toaster = value;
+                SideMenu.Toaster = value;
             }
         }
 

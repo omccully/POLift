@@ -138,8 +138,17 @@ namespace POLift.Core.ViewModel
 
         public abstract void RefreshRoutineDetails();
 
-        public abstract void SaveState(KeyValueStorage kvs);
+       
+        public const string WorkingSetWeightKey = "working_set_weight";
+        public virtual void SaveState(KeyValueStorage kvs)
+        {
+            kvs.SetValue(WorkingSetWeightKey, WeightInputText);
+        }
 
-        public abstract void RestoreState(KeyValueStorage kvs);
+        public virtual void RestoreState(KeyValueStorage kvs)
+        {
+            string wit = kvs.GetString(WorkingSetWeightKey, null);
+            if (wit != null) WeightInputText = wit;
+        }
     }
 }

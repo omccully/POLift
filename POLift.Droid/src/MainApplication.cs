@@ -151,12 +151,12 @@ namespace POLift.Droid
                 catch { }
             }
 
-            ViewModelLocator.Default.DialogService = new DialogService(
+            /*ViewModelLocator.Default.DialogService = new DialogService(
                 new DialogBuilderFactory(activity),
                 ViewModelLocator.Default.KeyValueStorage);
 
             ViewModelLocator.Default.Vibrator = new AndroidVibrator(activity);
-
+            */
 
 
             //if(last_activity_created.GetType == typeof(MainActivity))

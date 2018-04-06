@@ -10,6 +10,7 @@ using POLift.Core.Helpers;
 using POLift.Core.ViewModel;
 using GalaSoft.MvvmLight.Helpers;
 using Google.MobileAds;
+using POLift.iOS.Service;
 
 namespace POLift.iOS.Controllers
 {

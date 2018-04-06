@@ -292,7 +292,7 @@ namespace POLift.Core.ViewModel
 
 
         public const string ExerciseIdKey = "exercise_id";
-        public const string WorkingSetWeightKey = "working_set_weight";
+        //public const string WorkingSetWeightKey = "working_set_weight";
         public const string WarmupSetIndexKey = "warmup_set_index";
 
         public event Action<float> ValueChosen;
@@ -307,21 +307,27 @@ namespace POLift.Core.ViewModel
                     "Error: Invalid exercise ID (" + WarmupExerciseId + ")");
             }
 
-            WeightInputText = kvs.GetString(WorkingSetWeightKey, "");
+            //WeightInputText = kvs.GetString(WorkingSetWeightKey, "");
 
             WarmupSetIndex = kvs.GetInteger(WarmupSetIndexKey, 0);
+
+            base.RestoreState(kvs);
         }
 
         public override void SaveState(KeyValueStorage kvs)
         {
             InitializationState(kvs, WarmupExercise, WeightInputText);
             kvs.SetValue(WarmupSetIndexKey, WarmupSetIndex);
+
+            
         }
 
         public static void InitializationState(KeyValueStorage kvs, 
             IExercise warmup_exercise, string working_set_weight)
         {
             kvs.SetValue(ExerciseIdKey, warmup_exercise.ID);
+
+            //base.SaveState(kvs);
             kvs.SetValue(WorkingSetWeightKey, working_set_weight);
         }
     }

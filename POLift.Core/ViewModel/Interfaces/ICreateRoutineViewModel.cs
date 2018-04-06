@@ -11,7 +11,7 @@ namespace POLift.Core.ViewModel
     {
         void EditRoutine(IRoutine routine, int locked_sets = 0);
 
-
+        void Reset();
 
     }
 }

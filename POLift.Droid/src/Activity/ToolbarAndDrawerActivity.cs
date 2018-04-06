@@ -97,7 +97,11 @@ namespace POLift.Droid
                 new Navigation("Settings", Settings_Click,
                     Resource.Mipmap.ic_settings_white_24dp),
                 new Navigation("Help & feedback", HelpAndFeedback_Click,
-                    Resource.Mipmap.ic_help_white_24dp)
+                    Resource.Mipmap.ic_help_white_24dp),
+
+                new Navigation("On the fly (beta)", OnTheFly_Click,
+                    Resource.Mipmap.ic_fitness_center_white_24dp)
+
 
                     /*,
                      * TODO: export data as text
@@ -111,11 +115,6 @@ namespace POLift.Droid
                 Navigations.Add(new Navigation("Rate app",
                     RateApp_Click, Resource.Mipmap.ic_rate_review_white_18dp));
             }
-
-            Vm.DialogService = new DialogService(
-                new DialogBuilderFactory(this),
-                ViewModelLocator.Default.KeyValueStorage);
-            Vm.Toaster = new Toaster(this);
 
 #if DEBUG
             //Navigations.Add(new Navigation("Metricize", Metricize_Click,
@@ -139,6 +138,17 @@ namespace POLift.Droid
 
             AddPurchaseLicenseNavigationIfNotPurchased();
             
+        }
+
+        void OnTheFly_Click()
+        {
+            var intent = new Intent(this, typeof(PerformRoutineActivity));
+
+            intent.PutExtra(PerformRoutineViewModel.OnTheFlyFlagKey, true);
+
+            PerformRoutineActivity.SavedState = null;
+
+            StartActivityForResult(intent, MainFragment.PerformRoutineRequestCode);
         }
 
         void FlagExternalProgramsResponse(ISharedPreferences prefs)

@@ -42,7 +42,8 @@ namespace POLift.Droid
         }
 
         const int WarmUpRoutineRequestCode = 100;
-        const int EditRoutineResultRequestCode = 991234;
+        const int EditRoutineResultRequestCode = 3134;
+        const int SelectExerciseRequestCode = 452;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -90,6 +91,8 @@ namespace POLift.Droid
             Vm.Toaster = new Toaster(this);
             Vm.StartWarmup = StartWarmupActivity;
 
+            Vm.NavigateSelectExercise = NavigateSelectExercise;
+
             if (SavedState != null)
             {
                 RestoreActivityState(SavedState);
@@ -106,7 +109,21 @@ namespace POLift.Droid
                 Log.Debug("POLift", "Vm.RestoreState from PerformRoutineActivity.OnCreate");
             }
 
+
+
+           /* if(Vm.OnTheFly && Vm.RoutineResult.Completed)
+            {
+                NavigateSelectExercise();
+            }*/
+
             //Log.Debug("POLift", "perform finish " + sw.ElapsedMilliseconds + "ms");
+        }
+
+        void NavigateSelectExercise()
+        {
+            var intent = new Intent(this, typeof(SelectExerciseActivity));
+            intent.PutExtra("routine_name", Vm.Routine.Name);
+            StartActivityForResult(intent, SelectExerciseRequestCode);
         }
 
         private void Vm_ResultSubmittedWithoutCompleting(object sender, EventArgs e)
@@ -192,6 +209,17 @@ namespace POLift.Droid
 
                     Vm.CreateExercise_ValueChosen(id);
                 }
+                else if(requestCode == SelectExerciseRequestCode)
+                {
+                    int id = data.GetIntExtra("exercise_id", -1);
+                    if (id == -1) return;
+
+                    Vm.DialogService = new DialogService(
+                        new DialogBuilderFactory(this),
+                        ViewModelLocator.Default.KeyValueStorage);
+
+                    Vm.SelectExerciseViewModel_ValueChosen(id);
+                }
             }
         }
 
@@ -274,7 +302,7 @@ namespace POLift.Droid
         protected override void OnDestroy()
         {
             Log.Debug("POLift", "PerformWarmupActivity.OnDestroy()");
-
+            Vm.NavigateSelectExercise = null;
             base.OnDestroy();
         }
     }

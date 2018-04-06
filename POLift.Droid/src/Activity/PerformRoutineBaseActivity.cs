@@ -304,6 +304,15 @@ namespace POLift.Droid
 
         protected abstract void ReportResultButton_Click(object sender, EventArgs e);
 
+        protected override void OnResume()
+        {
+            base.OnResume();
+
+            BaseVm.DialogService = new DialogService(
+                new DialogBuilderFactory(this),
+                ViewModelLocator.Default.KeyValueStorage);
+        }
+
         protected Bundle GetActivityState()
         {
             Bundle bundle = new Bundle();

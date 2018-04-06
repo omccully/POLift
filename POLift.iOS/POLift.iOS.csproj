@@ -140,8 +140,14 @@
     <Compile Include="Controllers\OrmGraphSideMenuController.designer.cs">
       <DependentUpon>OrmGraphSideMenuController.cs</DependentUpon>
     </Compile>
+    <Compile Include="NeverShowAgainAlertController.cs" />
+    <Compile Include="NeverShowAgainAlertController.designer.cs">
+      <DependentUpon>NeverShowAgainAlertController.cs</DependentUpon>
+    </Compile>
     <Compile Include="Service\AppleVibrator.cs" />
     <Compile Include="Service\BackgroundTimer.cs" />
+    <Compile Include="Service\ControllerDialogBuilder.cs" />
+    <Compile Include="Service\ControllerDialogBuilderFactory.cs" />
     <Compile Include="Service\FileOperations.cs" />
     <Compile Include="Service\NotificationService.cs" />
     <Compile Include="Service\StoreKitLicenseManager.cs" />

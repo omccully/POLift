@@ -94,6 +94,7 @@
     <Compile Include="ViewModel\Interfaces\ICreateExerciseViewModel.cs" />
     <Compile Include="ViewModel\Interfaces\ICreateRoutineViewModel.cs" />
     <Compile Include="ViewModel\Interfaces\IPerformWarmupViewModel.cs" />
+    <Compile Include="ViewModel\Interfaces\ISelectExerciseViewModel.cs" />
     <Compile Include="ViewModel\Interfaces\ITimerViewModel.cs" />
     <Compile Include="ViewModel\IValueReturner.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
