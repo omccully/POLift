@@ -8,6 +8,7 @@ using SQLite.Net.Attributes;
 namespace POLift.Core.Model
 {
     using Service;
+    using System.Text.RegularExpressions;
 
     public class Exercise : IExercise, IIdentifiable, IDeletable
     {
@@ -224,9 +225,19 @@ namespace POLift.Core.Model
         {
             get
             {
-                return $"{Name} ({MaxRepCount}r;" +
-                    $"{ConsecutiveSetsForWeightIncrease}cs;" +
-                    $"{RestPeriodSeconds}s)";
+                string group = $"{MaxRepCount}r; " +
+                    $"{ConsecutiveSetsForWeightIncrease}cs; " +
+                    $"{RestPeriodSeconds}s";
+
+                /*Regex reg = new Regex(".(?!$)");
+                group = reg.Replace(group, "$0\u200b");
+
+                foreach(char c in group)
+                {
+                    System.Diagnostics.Debug.WriteLine($"char = {c} ({(int)c})");
+                }*/
+
+                return $"{Name}\n{group}";
             }
         }
 

@@ -94,7 +94,7 @@ namespace POLift.Droid.Adapter
             holder.TextBox.Text = es.SetCount.ToString();
 
             IExercise ex = es.Exercise;
-            holder.TextView.Text = $" sets of {ex.CondensedDetails}";
+            holder.TextView.Text = $"sets of {ex.CondensedDetails}";
 
             if(position <= locked_sets)
             {

@@ -68,7 +68,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="84.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="11040" translatesAutoresizingMaskIntoConstraints="NO" misplaced="YES">
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="11040" translatesAutoresizingMaskIntoConstraints="NO">
                                                     <rect key="frame" x="15" y="3" width="255" height="21"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
@@ -96,7 +96,7 @@
                                                         </mask>
                                                     </variation>
                                                 </button>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="11573" translatesAutoresizingMaskIntoConstraints="NO" misplaced="YES">
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="11573" translatesAutoresizingMaskIntoConstraints="NO">
                                                     <rect key="frame" x="15" y="20" width="245" height="21"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
@@ -360,37 +360,50 @@
                                 <rect key="frame" x="16" y="154" width="349" height="402"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="10570" reuseIdentifier="exercise_sets_cell" customClass="ExerciseSetsCell">
-                                        <rect key="frame" x="0.0" y="28" width="349" height="44"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="10570" reuseIdentifier="exercise_sets_cell" customClass="ExerciseSetsCell" rowHeight="60">
+                                        <rect key="frame" x="0.0" y="28" width="349" height="60"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="10570" id="10571">
-                                            <rect key="frame" x="0.0" y="0.0" width="349" height="43.5"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="349" height="59.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="wordWrap" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="10572" translatesAutoresizingMaskIntoConstraints="NO" numberOfLines="0">
-                                                    <rect key="frame" x="58" y="12" width="262" height="21"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="wordWrap" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="10572" translatesAutoresizingMaskIntoConstraints="NO" numberOfLines="2">
+                                                    <rect key="frame" x="60" y="9" width="262" height="42"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
+                                                    <constraints>
+                                                        <constraint id="54380" firstItem="10572" firstAttribute="height" constant="42"/>
+                                                    </constraints>
+                                                    <variation key="default">
+                                                        <mask key="constraints">
+                                                            <exclude reference="54380"/>
+                                                        </mask>
+                                                    </variation>
+                                                    <variation key="heightClass=regular-widthClass=compact">
+                                                        <mask key="constraints">
+                                                            <include reference="54380"/>
+                                                        </mask>
+                                                    </variation>
                                                 </label>
                                                 <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="3" borderStyle="roundedRect" minimumFontSize="17" id="10573" translatesAutoresizingMaskIntoConstraints="NO">
                                                     <rect key="frame" x="10" y="7" width="42" height="30"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                     <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
                                                     <constraints>
-                                                        <constraint id="33778" firstItem="10573" firstAttribute="width" constant="42"/>
-                                                        <constraint id="33779" firstItem="10573" firstAttribute="height" constant="30"/>
+                                                        <constraint id="54375" firstItem="10573" firstAttribute="height" constant="30"/>
+                                                        <constraint id="54376" firstItem="10573" firstAttribute="width" constant="42"/>
                                                     </constraints>
                                                     <variation key="default">
                                                         <mask key="constraints">
-                                                            <exclude reference="33778"/>
-                                                            <exclude reference="33779"/>
+                                                            <exclude reference="54375"/>
+                                                            <exclude reference="54376"/>
                                                         </mask>
                                                     </variation>
                                                     <variation key="heightClass=regular-widthClass=compact">
                                                         <mask key="constraints">
-                                                            <include reference="33778"/>
-                                                            <include reference="33779"/>
+                                                            <include reference="54375"/>
+                                                            <include reference="54376"/>
                                                         </mask>
                                                     </variation>
                                                 </textField>
@@ -401,12 +414,11 @@
                                                     <exclude reference="10573"/>
                                                 </mask>
                                                 <mask key="constraints">
-                                                    <exclude reference="33776"/>
-                                                    <exclude reference="33777"/>
-                                                    <exclude reference="33780"/>
-                                                    <exclude reference="33781"/>
-                                                    <exclude reference="33782"/>
-                                                    <exclude reference="33783"/>
+                                                    <exclude reference="54373"/>
+                                                    <exclude reference="54374"/>
+                                                    <exclude reference="54377"/>
+                                                    <exclude reference="54378"/>
+                                                    <exclude reference="54379"/>
                                                 </mask>
                                             </variation>
                                             <variation key="heightClass=regular-widthClass=compact">
@@ -415,21 +427,19 @@
                                                     <include reference="10573"/>
                                                 </mask>
                                                 <mask key="constraints">
-                                                    <include reference="33776"/>
-                                                    <include reference="33777"/>
-                                                    <include reference="33780"/>
-                                                    <include reference="33781"/>
-                                                    <include reference="33782"/>
-                                                    <include reference="33783"/>
+                                                    <include reference="54373"/>
+                                                    <include reference="54374"/>
+                                                    <include reference="54377"/>
+                                                    <include reference="54378"/>
+                                                    <include reference="54379"/>
                                                 </mask>
                                             </variation>
                                             <constraints>
-                                                <constraint id="33776" firstItem="10573" firstAttribute="top" secondItem="10571" secondAttribute="top" constant="7"/>
-                                                <constraint id="33777" firstItem="10573" firstAttribute="leading" secondItem="10571" secondAttribute="leading" constant="10"/>
-                                                <constraint id="33780" firstItem="10572" firstAttribute="leading" secondItem="10573" secondAttribute="trailing" constant="6"/>
-                                                <constraint id="33781" firstItem="10572" firstAttribute="top" secondItem="10571" secondAttribute="top" constant="12"/>
-                                                <constraint id="33782" firstItem="10571" firstAttribute="trailing" secondItem="10572" secondAttribute="trailing" constant="29"/>
-                                                <constraint id="33783" firstItem="10571" firstAttribute="bottom" secondItem="10572" secondAttribute="bottom" constant="10"/>
+                                                <constraint id="54373" firstItem="10573" firstAttribute="top" secondItem="10571" secondAttribute="top" constant="7"/>
+                                                <constraint id="54374" firstItem="10573" firstAttribute="leading" secondItem="10571" secondAttribute="leading" constant="10"/>
+                                                <constraint id="54377" firstItem="10572" firstAttribute="top" secondItem="10571" secondAttribute="top" constant="9"/>
+                                                <constraint id="54378" firstItem="10572" firstAttribute="leading" secondItem="10573" secondAttribute="trailing" constant="8"/>
+                                                <constraint id="54379" firstItem="10571" firstAttribute="trailing" secondItem="10572" secondAttribute="trailing" constant="27"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                         <connections>
@@ -2230,7 +2240,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="35981" translatesAutoresizingMaskIntoConstraints="NO" numberOfLines="0" misplaced="YES">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="35981" translatesAutoresizingMaskIntoConstraints="NO" numberOfLines="0">
                                 <rect key="frame" x="16" y="71" width="343" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                 <nil key="textColor"/>

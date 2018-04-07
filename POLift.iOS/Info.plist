@@ -7,9 +7,9 @@
 	<key>CFBundleIdentifier</key>
 	<string>com.cml.POLift</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.2</string>
+	<string>1.3</string>
 	<key>CFBundleVersion</key>
-	<string>1.2</string>
+	<string>1.3</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>MinimumOSVersion</key>
@@ -29,12 +29,8 @@
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<key>XSAppIconAssets</key>
-	<string>Resources/Media.xcassets/PoliftAppIcons.appiconset</string>
-	<key>XSLaunchImageAssets</key>
-	<string>Resources/Media.xcassets/LaunchImages.launchimage</string>
 </dict>
 </plist>

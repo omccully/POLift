@@ -1,4 +1,5 @@
-﻿using Foundation;
+﻿
+using Foundation;
 using System;
 using UIKit;
 using POLift.Core.Model;
@@ -59,6 +60,8 @@ namespace POLift.iOS.Controllers
 
             CreateRoutineButton.SetCommand(Vm.CreateRoutineCommand);
 
+            ExerciseSetsTableView.EstimatedRowHeight = 57;
+            ExerciseSetsTableView.RowHeight = 57;
 
             RefreshExerciseSetsList();
 

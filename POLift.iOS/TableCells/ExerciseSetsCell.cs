@@ -44,7 +44,5 @@ namespace POLift.iOS
             ExerciseNameLabel.PreferredMaxLayoutWidth = 220;
             SetCountTextField.Enabled = EditEnabled;
         }
-
-
     }
 }
