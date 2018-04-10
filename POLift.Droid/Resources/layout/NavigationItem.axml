@@ -3,19 +3,14 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="10dip"  
-              >
-  <ImageView 
-    android:id="@+id/navigation_icon"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:paddingRight="10dip"
-    />
-  <TextView
-    android:id="@+id/navigation_text"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    />
-  
-  
+    android:padding="10dip">
+    <ImageView
+        android:id="@+id/navigation_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingRight="10dip" />
+    <TextView
+        android:id="@+id/navigation_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 </LinearLayout>

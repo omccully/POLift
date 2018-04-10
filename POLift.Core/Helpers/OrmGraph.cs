@@ -13,13 +13,32 @@ namespace POLift.Core.Helpers
     using Model;
     using Service;
 
+    public class OrmGraphStyle
+    {
+        public OxyColor PlotBackgroundColor { get; set; } = OxyColors.White;
+
+
+        public OxyColor WeightAxisTextColor { get; set; } = OxyColors.White;
+
+
+
+        public OrmGraphStyle()
+        {
+
+        }
+    }
+
     public class OrmGraph
     {
         IPOLDatabase Database;
+        public OrmGraphStyle Style { get; set; }
 
-        public OrmGraph(IPOLDatabase database)
+        public static OrmGraphStyle DefaultStyle = new OrmGraphStyle();
+
+        public OrmGraph(IPOLDatabase database, OrmGraphStyle style=null)
         {
             this.Database = database;
+            Style = style == null ? DefaultStyle : style;
         }
 
         public IEnumerable<ExerciseResult> GetPlotData(int exercise_difficulty_id)
@@ -45,10 +64,14 @@ namespace POLift.Core.Helpers
             IEnumerable<ExerciseResult> exercise_results)
         {
             var plotModel = new PlotModel { Title = $"{exercise.Name} one-rep max" };
+            //plotModel.Background = Style.PlotBackgroundColor;
 
             DateTimeAxis date_axis = new DateTimeAxis { Position = AxisPosition.Bottom };
             plotModel.Axes.Add(date_axis);
-            plotModel.Axes.Add(new LinearAxis { Position = AxisPosition.Left });
+
+            LinearAxis weight_axis = new LinearAxis { Position = AxisPosition.Left};
+            //weight_axis.TextColor = Style.WeightAxisTextColor;
+            plotModel.Axes.Add(weight_axis);
 
             var series1 = new LineSeries
             {
@@ -66,6 +89,7 @@ namespace POLift.Core.Helpers
 
                 DateTime max_date = exercise_results.Last().Time;
                 date_axis.AbsoluteMaximum = DateTimeAxis.ToDouble(max_date);
+                date_axis.MinimumRange = date_axis.AbsoluteMaximum - date_axis.AbsoluteMinimum;
 
                 AddExerciseResultsToSeries(series1, exercise_results);
             }

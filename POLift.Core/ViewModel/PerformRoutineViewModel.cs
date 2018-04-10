@@ -122,9 +122,10 @@ namespace POLift.Core.ViewModel
         }
         public void SelectExerciseViewModel_ValueChosen(IExercise ex)
         {
+            // add exercise at end of routine (on the fly mode)
             SelectExerciseViewModel.ValueChosen -= SelectExerciseViewModel_ValueChosen;
 
-            // could check navigationService.CurrentPageKey if GoBack is called before invoke
+            // could check navcigationService.CurrentPageKey if GoBack is called before invoke
 
             ExerciseSets es = new ExerciseSets(ex);
             es.Database = Database;
@@ -185,7 +186,8 @@ namespace POLift.Core.ViewModel
             }
 
             DialogService.DisplayConfirmationNeverShowAgain(
-                $"Would you like to do a{exercise_name} warmup routine?",
+                $"Would you like to do a{exercise_name} warmup routine? " +
+                "A good warmup routine improves performance and reduces the chance of injury.",
                 WarmupKey, delegate
                 {
                     if(StartWarmup == null)
@@ -663,6 +665,7 @@ namespace POLift.Core.ViewModel
         public void EditThisExercise()
         {
             if (this.Routine == null) return;
+            if (this.RoutineResult != null && this.RoutineResult.Completed) return;
 
             if (CreateExerciseViewModel != null)
             {
@@ -712,13 +715,20 @@ namespace POLift.Core.ViewModel
             }
         }
 
-        void ReplaceAllOfCurrentExerciseWith(IExercise obj)
+        void ReplaceAllOfCurrentExerciseWith(IExercise new_ex)
         {
             try
             {
+                System.Diagnostics.Debug.WriteLine($"old ex cat: {new_ex.Category}; new ex cat: {this.Routine.Name}");
+                if (new_ex.Category != this.Routine.Name)
+                {
+                    new_ex.Category = this.Routine.Name;
+                    Database.Update((Exercise)new_ex);
+                }
+
                 IExerciseSets current_es = RoutineResult.CurrentExerciseSets;
 
-                ExerciseSets new_es = new ExerciseSets(obj.ID,
+                ExerciseSets new_es = new ExerciseSets(new_ex.ID,
                     current_es.SetCount, current_es.Database);
 
                 Database.InsertOrUpdateNoID(new_es);

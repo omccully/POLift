@@ -351,6 +351,9 @@
     <AndroidResource Include="Resources\layout\ProgramItem.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
+    <AndroidResource Include="Resources\layout\NavigationDivider.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\CreateExercise.axml">

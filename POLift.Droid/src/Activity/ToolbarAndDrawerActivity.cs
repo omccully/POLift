@@ -84,7 +84,7 @@ namespace POLift.Droid
                     Resource.Mipmap.ic_timeline_white_24dp),
                 //new Navigation("View gym time graph", ViewGymTimeGraphs_Click,
                 //    Resource.Mipmap.ic_timeline_white_24dp),
-                
+                new Navigation(),
                 new Navigation("Backup data", BackupData_Click,
                     Resource.Mipmap.ic_backup_white_24dp),
                 new Navigation("Import data from backup", RestoreData_Click,
@@ -93,7 +93,7 @@ namespace POLift.Droid
                     Resource.Mipmap.ic_cloud_download_white_24dp),
                 new Navigation("Get free lifting programs", GetFreeLiftingPrograms_Click,
                     Resource.Mipmap.ic_cloud_download_white_24dp),
-
+                new Navigation(),
                 new Navigation("Settings", Settings_Click,
                     Resource.Mipmap.ic_settings_white_24dp),
                 new Navigation("Help & feedback", HelpAndFeedback_Click,
@@ -117,7 +117,7 @@ namespace POLift.Droid
                 Navigations.Add(new Navigation("Rate app",
                     RateApp_Click, Resource.Mipmap.ic_rate_review_white_18dp));
             }
-
+            Navigations.Add(new Navigation());
 #if DEBUG
             //Navigations.Add(new Navigation("Metricize", Metricize_Click,
             //    Resource.Mipmap.ic_settings_white_24dp));

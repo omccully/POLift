@@ -14,7 +14,9 @@ namespace POLift.Core.Service
     public class LicenseManager : ILicenseManager
     {
         public string ProductID { get; set; } = "polift_license";
-        public const int TrialPeriodSeconds = 30 * 86400;
+
+        public const int TrialPeriodDays = 14;
+        public const int TrialPeriodSeconds = TrialPeriodDays * 86400;
 
         const string HasLicenseConfirmedKey = "license_manager.has_licence_confirmed";
         const string TimeOfFirstLaunchKey = "license_manager.first_launch_time";

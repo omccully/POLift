@@ -66,8 +66,17 @@ namespace POLift.Droid
             }*/
 
             plot_view = new PlotView(this.Activity);
+            //plot_view.Background = Resources.GetDrawable(
+             //   Resource.Color.white);
+
             plot_view.Background = Resources.GetDrawable(
-                Resource.Color.white);
+                Resource.Color.background_material_light);
+
+            
+            //plot_view.Foreground = Resources.GetDrawable(
+            //    Resource.Color.background_material_dark);
+
+            //plot_view.
 
             ExerciseDifficultyID = (savedInstanceState == null ? 0 :
                 savedInstanceState.GetInt("exercise_difficulty_id"));
@@ -128,7 +137,22 @@ namespace POLift.Droid
             { 
                 Vm.InitializePlot(exercise_difficulty_id);
 
-                plot_view.Model = Vm.PlotModel;
+                OxyColor android_bg = OxyColor.FromArgb(0xff, 0x30, 0x30, 0x30);
+
+                PlotModel model = Vm.PlotModel;
+                model.TitleColor = OxyColors.White;
+                model.Background = android_bg;
+                foreach(OxyPlot.Axes.Axis axis in model.Axes)
+                {
+                    axis.TextColor = OxyColors.White;
+                }
+
+                foreach(Series series in model.Series)
+                {
+                    series.Background = android_bg;
+                }
+
+                plot_view.Model = model;
 
                 frame_layout.RemoveAllViews();
                 frame_layout.AddView(plot_view);

@@ -3,6 +3,8 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:minWidth="50dp"
+    android:minHeight="100dip"
     android:descendantFocusability="blocksDescendants">
     <TextView
         android:id="@+id/ExerciseItemName"
@@ -11,21 +13,28 @@
         android:textSize="20dip"
         android:paddingBottom="10dip"
         android:paddingTop="10dip"
-        android:layout_weight="5" />
-    <ImageButton
+        android:layout_weight="1" />
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/ExerciseEditButton"
-        android:layout_weight="1"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
-        android:src="@android:drawable/ic_menu_edit" />
-    <ImageButton
-        android:src="@android:drawable/ic_menu_delete"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/ExerciseDeleteButton"
-        android:layout_weight="1"
-        android:focusable="false"
-        android:focusableInTouchMode="false" />
+        android:layout_height="match_parent"
+        android:minHeight="50dip"
+        android:minWidth="50dip">
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/ExerciseEditButton"
+            android:minHeight="50dip"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:src="@android:drawable/ic_menu_edit" />
+        <ImageButton
+            android:src="@android:drawable/ic_menu_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minHeight="50dip"
+            android:id="@+id/ExerciseDeleteButton"
+            android:focusable="false"
+            android:focusableInTouchMode="false" />
+    </LinearLayout>
 </LinearLayout>

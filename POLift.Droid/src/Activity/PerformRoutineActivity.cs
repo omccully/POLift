@@ -211,6 +211,7 @@ namespace POLift.Droid
                 }
                 else if(requestCode == SelectExerciseRequestCode)
                 {
+                    // add exercise at end of routine if 
                     int id = data.GetIntExtra("exercise_id", -1);
                     if (id == -1) return;
 

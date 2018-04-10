@@ -25,7 +25,7 @@
         android:paddingTop="15dip"
         android:minHeight="65dip" />
     <Button
-        android:text="Create new routine for later"
+        android:text="Create new routine"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/CreateRoutineLink"

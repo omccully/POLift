@@ -61,24 +61,39 @@ namespace POLift.Droid
             if (view != null)
                 holder = view.Tag as NavigationAdapterViewHolder;
 
+            INavigation navigation_item = Navigations[position];
+
             if (holder == null)
             {
                 holder = new NavigationAdapterViewHolder();
                 var inflater = context.GetSystemService(Context.LayoutInflaterService).JavaCast<LayoutInflater>();
                 //replace with your item and your holder items
                 //comment back in
-                view = inflater.Inflate(Resource.Layout.NavigationItem, parent, false);
-                holder.Title = view.FindViewById<TextView>(Resource.Id.navigation_text);
-                holder.Icon = view.FindViewById<ImageView>(Resource.Id.navigation_icon);
+
+                if(navigation_item.IsDivider)
+                {
+                    view = inflater.Inflate(Resource.Layout.NavigationDivider, parent, false);
+                    view.Tag = null;
+                }
+                else
+                {
+                    view = inflater.Inflate(Resource.Layout.NavigationItem, parent, false);
+                    holder.Title = view.FindViewById<TextView>(Resource.Id.navigation_text);
+                    holder.Icon = view.FindViewById<ImageView>(Resource.Id.navigation_icon);
 
 
-                view.Tag = holder;
+                    view.Tag = holder;
+                }
+                
             }
 
 
             //fill in your items
-            holder.Title.Text = Navigations[position].Text;
-            holder.Icon.SetImageResource(Navigations[position].IconResourceID);
+            if (!navigation_item.IsDivider)
+            {
+                holder.Title.Text = Navigations[position].Text;
+                holder.Icon.SetImageResource(Navigations[position].IconResourceID);
+            }
 
             return view;
         }

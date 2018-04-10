@@ -12,6 +12,15 @@ namespace POLift.Core.Model
 
         public EventHandler Click { get; set; }
 
+        public bool IsDivider => Text == null;
+
+        public Navigation() // divider
+        {
+            this.Text = null;
+            Click = null;
+            this.IconResourceID = 0;
+        }
+
         public Navigation(string Text, EventHandler event_handler, int icon_resource_id=0)
         {
             this.Text = Text;

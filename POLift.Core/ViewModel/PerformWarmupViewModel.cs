@@ -159,6 +159,7 @@ namespace POLift.Core.ViewModel
                 float weight = Single.Parse(WeightInputText);
 
                 int i = 0;
+                int last_set_index = WarmupRoutine.WarmupSets.Count() - 1;
                 foreach (IWarmupSet ws in WarmupRoutine.WarmupSets)
                 {
                     if (i == WarmupSetIndex)
@@ -167,16 +168,27 @@ namespace POLift.Core.ViewModel
                     }
 
                     builder.Append("Weight of ");
-                    builder.Append(ws.GetWeight(WarmupExercise, weight).ToString());
-                    builder.Append(", rest ");
-                    builder.Append(ws.GetRestPeriod(WarmupExercise).ToString());
+                    builder.Append(ws.GetWeight(WarmupExercise, weight));
+                    builder.Append(", ");
+                    builder.Append(ws.Reps.ToString());
+                    builder.Append(" reps, rest ");
+                    if(i == last_set_index)
+                    {
+                        builder.Append(WarmupRoutine.GetLastRestPeriod(WarmupExercise));
+                    }
+                    else
+                    {
+                        builder.Append(ws.GetRestPeriod(WarmupExercise));
+                    }
+                    
+                    builder.Append(" sec");
 
                     if (i < WarmupSetIndex)
                     {
                         builder.Append(" (done)");
                     }
 
-                    if (i < WarmupRoutine.WarmupSets.Count() - 1)
+                    if (i != last_set_index)
                     {
                         builder.AppendLine();
                     }

@@ -9,20 +9,19 @@
         android:text="Done"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+         android:minHeight="65dip"
         android:id="@+id/DoneEditingRoutineResultButton" />
-  
     <ScrollView
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      android:fillViewport="true">
-      <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/edit_routine_result_layout"
-        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:minWidth="25px"
-        android:minHeight="25px"
-        android:layout_weight="1" />
+        android:fillViewport="true">
+        <LinearLayout
+            android:id="@+id/edit_routine_result_layout"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:minWidth="25px"
+            android:minHeight="25px"
+            android:layout_weight="1" />
     </ScrollView>
-  
 </LinearLayout>

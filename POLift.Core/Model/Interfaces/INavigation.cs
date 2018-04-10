@@ -11,5 +11,7 @@ namespace POLift.Core.Model
         int IconResourceID { get; set; }
         EventHandler Click { get; set; }
         void OnClick(EventArgs e = null);
+
+        bool IsDivider { get; }
     }
 }

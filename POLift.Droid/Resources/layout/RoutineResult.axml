@@ -2,26 +2,25 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:minWidth="25px"
+    android:layout_height="match_parent"
+    android:minWidth="50dp"
     android:minHeight="100dip">
     <TextView
         android:id="@+id/RoutineResultTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="5" />
+        android:layout_weight="1" />
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:minWidth="50dip"
-        android:minHeight="50dip"
-        android:layout_weight="1">
+        android:minHeight="50dip">
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/RoutineResultEditButton"
-            android:layout_weight="1"
+            
             android:focusable="false"
             android:focusableInTouchMode="false"
             android:src="@android:drawable/ic_menu_edit"
@@ -31,7 +30,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/RoutineResultDeleteButton"
-            android:layout_weight="1"
+            
             android:focusable="false"
             android:focusableInTouchMode="false"
             android:minHeight="50dip" />

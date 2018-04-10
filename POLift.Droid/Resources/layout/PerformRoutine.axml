@@ -29,12 +29,24 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/RoutineDetails"
                 android:paddingBottom="20dip" />
-            <TextView
-                android:text="Exercise"
-                android:textAppearance="?android:attr/textAppearanceMedium"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/NextExerciseView" />
+                android:orientation="horizontal">
+                <TextView
+                    android:text="Exercise"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:id="@+id/NextExerciseView" />
+                <ImageButton
+                    android:text="Edit this exercise"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@android:drawable/ic_menu_edit"
+                    android:id="@+id/EditThisExerciseButton" />
+            </LinearLayout>
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
@@ -73,7 +85,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/RepResultEditText"
                     android:width="80dip" />
-              <TextView
+                <TextView
                     android:id="@+id/RepDetailsTextView"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:layout_width="wrap_content"
@@ -90,7 +102,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/ReportResultButton"
-                android:paddingTop="15dip" />
+                android:minHeight="65dip" />
             <TextView
                 android:text="Start your set whenever you're ready"
                 android:textAppearance="?android:attr/textAppearanceMedium"
@@ -133,11 +145,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/IMadeAMistakeButton" />
-          <Button
-               android:text="Edit this exercise"
-               android:layout_width="match_parent"
-               android:layout_height="wrap_content"
-               android:id="@+id/EditThisExerciseButton" />
         </LinearLayout>
     </ScrollView>
 </RelativeLayout>
