@@ -63,20 +63,23 @@ namespace POLift.iOS.Controllers
         }
 
         string[] _SectionIndexTitles = null;
-        public override string[] SectionIndexTitles(UITableView tableView)
+        string[] SectionTitles
         {
-            if (_SectionIndexTitles == null)
+            get
             {
-                _SectionIndexTitles = ExerciseDifficultyCategories
-                    .Select(edc => edc.Name).ToArray();
-            }
+                if (_SectionIndexTitles == null)
+                {
+                    _SectionIndexTitles = ExerciseDifficultyCategories
+                        .Select(edc => edc.Name).ToArray();
+                }
 
-            return _SectionIndexTitles;
+                return _SectionIndexTitles;
+            }
         }
 
         public override string TitleForHeader(UITableView tableView, nint section)
         {
-            return SectionIndexTitles(tableView)[section];
+            return SectionTitles[section];
         }
 
 

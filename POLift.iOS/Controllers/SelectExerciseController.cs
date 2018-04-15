@@ -55,6 +55,18 @@ namespace POLift.iOS.Controllers
             ExercisesTableView.EstimatedRowHeight = 40f;
             
             RefreshExerciseList();
+
+            NSIndexPath path = eds.FirstRowInSection(Vm.Category);
+            if(path != null)
+            {
+                Console.WriteLine("path = " + path);
+                
+                this.BeginInvokeOnMainThread(delegate
+                {
+                    ExercisesTableView.ScrollToRow(path,
+                        UITableViewScrollPosition.Top, false);
+                });
+            }
         }
 
         void RefreshExerciseList()
@@ -131,7 +143,7 @@ namespace POLift.iOS.Controllers
             }
 
             string[] _SectionIndexTitles;
-            public string[] sit(UITableView tableView)
+            public string[] sit(UITableView tableView=null)
             {
                 if (_SectionIndexTitles == null)
                 {
@@ -142,6 +154,16 @@ namespace POLift.iOS.Controllers
                 return _SectionIndexTitles;
             }
 
+            public NSIndexPath FirstRowInSection(string category)
+            {
+                int index = Array.IndexOf(sit(), category);
+                Console.WriteLine(category + " index = " + index);
+                if(index != -1)
+                {
+                    return NSIndexPath.FromRowSection(0, index);
+                }
+                return null;
+            }
 
             public override string TitleForHeader(UITableView tableView, nint section)
             {

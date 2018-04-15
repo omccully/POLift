@@ -10,6 +10,6 @@ namespace POLift.Core.ViewModel
 
     public interface ISelectExerciseViewModel : IValueReturner<IExercise>
     {
-
+        string Category { get; set; }
     }
 }

@@ -22,8 +22,8 @@ namespace POLift.Core.ViewModel
         public event Action<IRoutine> ValueChosen;
         public IToaster Toaster;
 
-        IValueReturner<IExercise> _SelectExerciseViewModel;
-        public IValueReturner<IExercise> SelectExerciseViewModel
+        ISelectExerciseViewModel _SelectExerciseViewModel;
+        public ISelectExerciseViewModel SelectExerciseViewModel
         {
             get
             {
@@ -227,6 +227,13 @@ namespace POLift.Core.ViewModel
             return new List<IExerciseSets>(Database.ParseIDs<ExerciseSets>(ids));
         }
 
+        public void AddExerciseNavigate()
+        {
+            SelectExerciseViewModel.Category = this.RoutineNameInput;
+            navigationService.NavigateTo(
+                ViewModelLocator.SelectExercisePageKey);
+        }
+
         RelayCommand _AddExerciseCommand;
         public RelayCommand AddExerciseCommand
         {
@@ -234,9 +241,7 @@ namespace POLift.Core.ViewModel
             {
                 return _AddExerciseCommand ??
                     (_AddExerciseCommand =
-                    new RelayCommand(
-                        () => navigationService.NavigateTo(
-                                ViewModelLocator.SelectExercisePageKey)));
+                    new RelayCommand(AddExerciseNavigate));
             }
         }
 

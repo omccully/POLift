@@ -148,10 +148,12 @@ namespace POLift.iOS.Controllers
             {
                 if (editingStyle == UITableViewCellEditingStyle.Delete)
                 {
+                    //tableView.DeleteRows(new NSIndexPath[] { indexPath },
+                      //  UITableViewRowAnimation.Fade);
+
                     ExerciseSets.RemoveAt(indexPath.Row);
 
-                    tableView.DeleteRows(new NSIndexPath[] { indexPath }, 
-                        UITableViewRowAnimation.Fade);
+                    
                 }
             }
 

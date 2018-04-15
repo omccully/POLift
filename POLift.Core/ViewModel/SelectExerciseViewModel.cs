@@ -24,6 +24,8 @@ namespace POLift.Core.ViewModel
 
         public event EventHandler ExercisesChanged;
 
+        public string Category { get; set; }
+
         ICreateExerciseViewModel _CreateExerciseViewModel;
         public ICreateExerciseViewModel CreateExerciseViewModel
         {

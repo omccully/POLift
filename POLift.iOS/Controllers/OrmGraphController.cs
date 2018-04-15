@@ -58,9 +58,10 @@ namespace POLift.iOS.Controllers
         {
             plot_view = new PlotView();
 
+            int status_bar_height = 64;
             CGRect frame = this.View.Frame;
-            frame.Y += 10;
-            frame.Height -= 10;
+            frame.Y += status_bar_height;
+            frame.Height -= status_bar_height;
             frame.Width -= 10;
             plot_view.Frame = frame;
 

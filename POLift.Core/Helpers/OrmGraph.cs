@@ -13,32 +13,13 @@ namespace POLift.Core.Helpers
     using Model;
     using Service;
 
-    public class OrmGraphStyle
-    {
-        public OxyColor PlotBackgroundColor { get; set; } = OxyColors.White;
-
-
-        public OxyColor WeightAxisTextColor { get; set; } = OxyColors.White;
-
-
-
-        public OrmGraphStyle()
-        {
-
-        }
-    }
-
     public class OrmGraph
     {
         IPOLDatabase Database;
-        public OrmGraphStyle Style { get; set; }
 
-        public static OrmGraphStyle DefaultStyle = new OrmGraphStyle();
-
-        public OrmGraph(IPOLDatabase database, OrmGraphStyle style=null)
+        public OrmGraph(IPOLDatabase database)
         {
             this.Database = database;
-            Style = style == null ? DefaultStyle : style;
         }
 
         public IEnumerable<ExerciseResult> GetPlotData(int exercise_difficulty_id)
@@ -64,13 +45,11 @@ namespace POLift.Core.Helpers
             IEnumerable<ExerciseResult> exercise_results)
         {
             var plotModel = new PlotModel { Title = $"{exercise.Name} one-rep max" };
-            //plotModel.Background = Style.PlotBackgroundColor;
 
             DateTimeAxis date_axis = new DateTimeAxis { Position = AxisPosition.Bottom };
             plotModel.Axes.Add(date_axis);
 
             LinearAxis weight_axis = new LinearAxis { Position = AxisPosition.Left};
-            //weight_axis.TextColor = Style.WeightAxisTextColor;
             plotModel.Axes.Add(weight_axis);
 
             var series1 = new LineSeries
