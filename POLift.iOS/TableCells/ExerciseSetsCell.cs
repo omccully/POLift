@@ -40,7 +40,7 @@ namespace POLift.iOS
             this.ExerciseSets = exercise_sets;
             SetCountTextField.Text = ExerciseSets.SetCount.ToString();
             ExerciseNameLabel.Text = "sets of " + ExerciseSets.Exercise.CondensedDetails;
-            Console.WriteLine("ExerciseNameLabel.Text = " + ExerciseNameLabel.Text);
+            //Console.WriteLine("ExerciseNameLabel.Text = " + ExerciseNameLabel.Text);
             ExerciseNameLabel.PreferredMaxLayoutWidth = 220;
             SetCountTextField.Enabled = EditEnabled;
         }

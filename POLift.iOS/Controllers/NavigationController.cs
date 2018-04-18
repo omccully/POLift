@@ -21,6 +21,16 @@ namespace POLift.iOS.Controllers
             //sidebar_controller = new SidebarController(this.ViewController)
 
             //Console.WriteLine("ViewDidLoad, this.TopViewController= " + this.TopViewController);
+
+            if (this.View.GestureRecognizers != null)
+            {
+                Console.WriteLine("NavigationController");
+                foreach (UIGestureRecognizer rec in this.View.GestureRecognizers)
+                {
+                    Console.WriteLine("UIGestureRecognizer " + rec.DebugDescription);
+                    rec.CancelsTouchesInView = false;
+                }
+            }
         }
 
         public override void PushViewController(UIViewController viewController, bool animated)

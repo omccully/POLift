@@ -90,6 +90,9 @@ namespace POLift.iOS.Controllers
             };
 
             ExercisesTableView.Source = eds;
+            //ExercisesTableView.SectionHeaderHeight = 5;
+           // ExercisesTableView.Section
+            //ExercisesTableView.SeparatorStyle = UITableViewCellSeparatorStyle.None;
             ExercisesTableView.ReloadData();
 
             if (categories.Sum(ec => ec.Exercises.Count()) == 0)
@@ -220,130 +223,5 @@ namespace POLift.iOS.Controllers
                 }
             }
         }
-
-
-
-        /* class ExercisesInCategoriesDataSource : UITableViewSource, IValueReturner<IExercise>
-         {
-             public static NSString ExerciseInCategoriesCellId = new NSString("EditDeleteTableViewCell");
-
-             public event Action<IExercise> ValueChosen;
-             public event Action<IExercise> ExerciseDelete;
-             public event Action<IExercise> ExerciseEdit;
-
-             List<KeyValuePair<string, List<IExercise>>> ExercisesInCategories;
-
-             public ExercisesInCategoriesDataSource(List<KeyValuePair<string, List<IExercise>>> exercises_in_categories)
-             {
-                 this.ExercisesInCategories = exercises_in_categories;
-             }
-
-             public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
-             {
-                 UITableViewCell cell = tableView.DequeueReusableCell("exercise_cell");
-                 //tableView.Cell
-
-                 ExerciseCell rcell = cell as ExerciseCell;
-
-                 //cell.TextLabel.Lines = 3;
-                 //cell.TextLabel.Text = PathToExercise(indexPath).ToString();
-
-                 //rcell.ExerciseLabel.Text = PathToExercise(indexPath).ToString();
-                 //rcell.Update(PathToExercise(indexPath));
-
-                 IExercise exercise = PathToExercise(indexPath);
-                 rcell.Setup(exercise, 
-                 delegate // edit
-                 {
-                     ExerciseEdit?.Invoke(exercise);
-                 },
-                 delegate // delete
-                 {
-                     ExerciseDelete?.Invoke(exercise);
-                 });
-
-                 return cell;
-             }
-
-             public override nint NumberOfSections(UITableView tableView)
-             {
-                 return ExercisesInCategories.Count;
-             }
-
-             string[] _SectionIndexTitles;
-             public override string[] SectionIndexTitles(UITableView tableView)
-             {
-                 if(_SectionIndexTitles == null)
-                 {
-                     _SectionIndexTitles = ExercisesInCategories.Select(ec => ec.Key).ToArray();
-                 }
-
-                 return _SectionIndexTitles;
-             }
-
-
-             public override string TitleForHeader(UITableView tableView, nint section)
-             {
-                 return SectionIndexTitles(tableView)[section];
-             }
-
-             public override nint RowsInSection(UITableView tableview, nint section)
-             {
-                 return ExercisesInCategories[(int)section].Value.Count;
-             }
-
-             public override void RowSelected(UITableView tableView, NSIndexPath indexPath)
-             {
-                 Console.WriteLine($"calling parent.ReturnExercise(exercises[{indexPath.Row}])");
-
-                 ValueChosen?.Invoke(PathToExercise(indexPath));
-             }
-
-
-             IExercise PathToExercise(NSIndexPath indexPath)
-             {
-                 return ExercisesInCategories[indexPath.Section].Value[indexPath.Row];
-             }
-         }
-
-
-
-
-
-         /* class ExercisesDataSource : UITableViewSource, IValueReturner<IExercise>
-  {
-      public static NSString ExerciseCellId = new NSString("ExerciseCell");
-
-      public event Action<IExercise> ValueChosen;
-
-      List<Exercise> exercises;
-
-      public ExercisesDataSource(IEnumerable<Exercise> exercises)
-      {
-          this.exercises = new List<Exercise>(exercises);
-      }
-
-      public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
-      {
-          var cell = tableView.DequeueReusableCell(ExerciseCellId);
-
-          cell.TextLabel.Lines = 3;
-          cell.TextLabel.Text = exercises[indexPath.Row].ToString();
-
-          return cell;
-      }
-
-      public override nint RowsInSection(UITableView tableview, nint section)
-      {
-          return exercises.Count;
-      }
-
-      public override void RowSelected(UITableView tableView, NSIndexPath indexPath)
-      {
-          Console.WriteLine($"calling parent.ReturnExercise(exercises[{indexPath.Row}])");
-
-          ValueChosen?.Invoke(exercises[indexPath.Row]);
-      }
-  }*/
     }
 }

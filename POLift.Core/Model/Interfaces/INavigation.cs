@@ -9,6 +9,7 @@ namespace POLift.Core.Model
     {
         string Text { get; set; }
         int IconResourceID { get; set; }
+        string IconIdentifier { get; set; }
         EventHandler Click { get; set; }
         void OnClick(EventArgs e = null);
 

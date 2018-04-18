@@ -15,7 +15,7 @@ namespace POLift.Core.Service
     {
         public string ProductID { get; set; } = "polift_license";
 
-        public const int TrialPeriodDays = 14;
+        public const int TrialPeriodDays = 21;
         public const int TrialPeriodSeconds = TrialPeriodDays * 86400;
 
         const string HasLicenseConfirmedKey = "license_manager.has_licence_confirmed";

@@ -29,10 +29,25 @@ namespace POLift.iOS.Service
 
             options.Add(Constants.kCRToastTextKey, message);
             options.Add(Constants.kCRToastBackgroundColorKey, color);
-            //options.Add(Constants.kCRToastTextAlignmentKey, CRToast.CRToastType.NavigationBar);
-            //options.Add(Constants.Type, CRToast.CRToastType.NavigationBar);
-            options.Add(Constants.kCRToastTextMaxNumberOfLinesKey, 5);
+            options.Add(Constants.kCRToastTextMaxNumberOfLinesKey, message.Count(c => c == '\n') + 1);
 
+            options.Add(Constants.kCRToastAnimationInTypeKey, CRToastAnimationType.Gravity);
+            options.Add(Constants.kCRToastAnimationOutTypeKey, CRToastAnimationType.Gravity);
+            options.Add(Constants.kCRToastAnimationInDirectionKey, CRToastAnimationDirection.Top);
+            options.Add(Constants.kCRToastAnimationOutDirectionKey, CRToastAnimationDirection.Top);
+
+            options.Add(Constants.kCRToastTextAlignmentKey, CRToastAccessoryViewAlignment.Center);
+
+            // have it depend on message.Length
+            int hold_time = message.Length / 8;
+            hold_time = Math.Min(hold_time, 8);
+            hold_time = Math.Max(hold_time, 4);
+
+            options.Add(Constants.kCRToastTimeIntervalKey, hold_time);
+
+            options.Add(Constants.kCRToastUnderStatusBarKey, true);
+            options.Add(Constants.kCRToastNotificationTypeKey, CRToast.CRToastType.NavigationBar);
+ 
             NSDictionary dict = NSDictionary.FromObjectsAndKeys(
                 options.Values.ToArray(),
                 options.Keys.ToArray());

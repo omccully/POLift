@@ -27,22 +27,43 @@ namespace POLift.iOS.Controllers
         public SideMenuController (IntPtr handle) : base (handle)
         {
         }
-        List<INavigation> Navigations;
+
+        List<List<INavigation>> Navigations;
+        List<INavigation> purchase_section;
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
 
-            NavigationLinkTableView.RegisterClassForCellReuse(
-                typeof(UITableViewCell), NavigationDataSource.NavigationCellId);
+            //NavigationLinkTableView.RegisterClassForCellReuse(
+            //  typeof(NavigationCell), NavigationDataSource.NavigationCellId);
 
-            Navigations = new List<INavigation>()
+            List<INavigation> help_section = new List<INavigation>()
             {
-                new Navigation("Select routine", Vm.SelectRoutineNavigate),
-                new Navigation("View recent sessions", Vm.ViewRecentSessionsNavigate),
-                new Navigation("View 1RM graphs", Vm.ViewOrmGraphsNavigate),
+                new Navigation("Settings", Settings_Click, "SettingsIcon"),
+                new Navigation("Help & feedback", HelpAndFeedback_Click, "HelpIcon")
+            };
 
-                new Navigation("Get free lifting programs", () => Vm.GetFreeWeightliftingPrograms()),
+            purchase_section = new List<INavigation>();
+             // FF545454
+
+            Navigations = new List<List<INavigation>>()
+            {
+                new List<INavigation>()
+                {
+                    new Navigation("Select routine", Vm.SelectRoutineNavigate, "SelectRoutineIcon"),
+                    new Navigation("View recent sessions", Vm.ViewRecentSessionsNavigate, "CalendarIcon"),
+                    new Navigation("View 1RM graphs", Vm.ViewOrmGraphsNavigate, "LineChartIcon")
+                },
+                new List<INavigation>()
+                {
+                    new Navigation("Get free lifting programs", Vm.GetFreeWeightliftingProgramsWithNavigationService,
+                        "DownloadIcon")
+                },
+                help_section,
+                purchase_section
+
+                
                 //    Resource.Mipmap.ic_cloud_download_white_24dp),
                 //new Navigation("Backup data", BackupData_Click),
                 /*new Navigation("Import data from backup", RestoreData_Click,
@@ -51,8 +72,7 @@ namespace POLift.iOS.Controllers
                     Resource.Mipmap.ic_cloud_download_white_24dp),*/
                 //
 
-                new Navigation("Settings", Settings_Click),
-                new Navigation("Help & feedback", HelpAndFeedback_Click)
+                
                 
                 //,
 
@@ -65,20 +85,31 @@ namespace POLift.iOS.Controllers
 
             if (Vm.ShowRateApp)
             {
-                Navigations.Add(new Navigation("Rate app",
-                    RateApp_Click));
+                help_section.Add(new Navigation("Rate app",
+                    RateApp_Click, "RateIcon"));
             }
 
             Vm.ShouldReloadMenu += Vm_ShouldReloadMenu;
 
             NavigationDataSource nds =
                 new NavigationDataSource(Navigations);
-
+            NavigationLinkTableView.SectionHeaderHeight = 20;
             NavigationLinkTableView.Source = nds;
+            //NavigationLinkTableView
 
             nds.RowClicked += Nds_RowClicked;
 
             AddPurchaseLicenseNavigation();
+        }
+
+        public override UIStatusBarStyle PreferredStatusBarStyle()
+        {
+            return UIStatusBarStyle.LightContent;
+        }
+
+        public override bool PrefersStatusBarHidden()
+        {
+            return true;
         }
 
         private void Vm_ShouldReloadMenu(object sender, EventArgs e)
@@ -94,7 +125,9 @@ namespace POLift.iOS.Controllers
 
         async void AddPurchaseLicenseNavigation()
         {
-            await Vm.AddPurchaseLicenseNavigation(Navigations);
+            Tuple<INavigation, INavigation> tup = await Vm.AddPurchaseLicenseNavigation(purchase_section);
+            tup.Item1.IconIdentifier = "PurchaseIcon";
+            tup.Item2.IconIdentifier = "RestorePurchaseIcon";
 
             NavigationLinkTableView.ReloadData();
         }
@@ -163,32 +196,51 @@ namespace POLift.iOS.Controllers
 
             public const string NavigationCellId = "navigation_cell";
 
-            List<INavigation> Navigations;
-            public NavigationDataSource(List<INavigation> Navigations)
+            List<List<INavigation>> Navigations;
+            public NavigationDataSource(List<List<INavigation>> Navigations)
             {
                 this.Navigations = Navigations;
             }
 
             public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
             {
-                UITableViewCell cell = 
-                    tableView.DequeueReusableCell(NavigationCellId);
+                NavigationCell cell = 
+                    tableView.DequeueReusableCell(NavigationCellId) as NavigationCell;
 
-                cell.BackgroundColor = UIColor.Clear;
-                cell.TextLabel.Text = Navigations[indexPath.Row].Text;
-                cell.TextLabel.TextColor = UIColor.White;
+                INavigation nav = IndexPathToNavigation(indexPath);
+
+                UIImage img = nav.IconIdentifier == null ? UIImage.FromBundle("NavigationIcon") : 
+                    UIImage.FromBundle(nav.IconIdentifier);
+
+                cell.Setup(img, nav.Text);
+
                 return cell;
             }
 
+            INavigation IndexPathToNavigation(NSIndexPath path)
+            {
+                return Navigations[path.Section][path.Row];
+            }
+
+            public override string TitleForHeader(UITableView tableView, nint section)
+            {
+                //return section == 0 ? "" : " ";
+                return " ";
+            }
+
             public override nint RowsInSection(UITableView tableView, nint section)
+            {
+                return Navigations[(int)section].Count;
+            }
+
+            public override nint NumberOfSections(UITableView tableView)
             {
                 return Navigations.Count;
             }
 
             public override void RowSelected(UITableView tableView, NSIndexPath indexPath)
             {
-                //.OnClick();
-                RowClicked?.Invoke(Navigations[indexPath.Row]);
+                RowClicked?.Invoke(IndexPathToNavigation(indexPath));
             }
         }
     }

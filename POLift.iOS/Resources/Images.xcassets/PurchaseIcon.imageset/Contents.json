@@ -1,0 +1,28 @@
+{
+  "images": [
+    {
+      "scale": "1x",
+      "idiom": "iphone",
+      "filename": "icons8-buy-50.png"
+    },
+    {
+      "scale": "2x",
+      "idiom": "iphone",
+      "filename": "icons8-buy-100.png"
+    },
+    {
+      "scale": "3x",
+      "idiom": "iphone"
+    },
+    {
+      "idiom": "iphone"
+    }
+  ],
+  "properties": {
+    "template-rendering-intent": ""
+  },
+  "info": {
+    "version": 1,
+    "author": ""
+  }
+}

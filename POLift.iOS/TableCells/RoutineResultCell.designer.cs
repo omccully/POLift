@@ -22,6 +22,10 @@ namespace POLift.iOS
         [GeneratedCode ("iOS Designer", "1.0")]
         UIKit.UILabel RoutineResultLabel { get; set; }
 
+        [Outlet]
+        [GeneratedCode ("iOS Designer", "1.0")]
+        UIKit.UIButton ShareButton { get; set; }
+
         void ReleaseDesignerOutlets ()
         {
             if (EditRoutineResultButton != null) {
@@ -32,6 +36,11 @@ namespace POLift.iOS
             if (RoutineResultLabel != null) {
                 RoutineResultLabel.Dispose ();
                 RoutineResultLabel = null;
+            }
+
+            if (ShareButton != null) {
+                ShareButton.Dispose ();
+                ShareButton = null;
             }
         }
     }

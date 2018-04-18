@@ -48,7 +48,7 @@ namespace POLift.iOS.Service
 
         public void Cancel()
         {
-
+            
         }
     }
 }

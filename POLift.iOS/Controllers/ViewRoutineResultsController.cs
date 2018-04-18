@@ -16,6 +16,9 @@ using Unity;
 
 using POLift.Core.ViewModel;
 
+using Xamarin.Social;
+using Xamarin.Social.Services;
+
 namespace POLift.iOS.Controllers
 {
     public partial class ViewRoutineResultsController : UIViewController
@@ -57,7 +60,7 @@ namespace POLift.iOS.Controllers
                    Vm.RoutineResults.ToList());
             rrds.EditClicked += Vm.NavigateEditRoutineResult;
             rrds.DeleteClicked += Vm.DeleteRoutineResult;
-
+            rrds.ShareClicked += Rrds_ShareClicked;
             RoutineResultsTableView.Source = rrds;
 
             RoutineResultsTableView.RowHeight = UITableView.AutomaticDimension;
@@ -65,9 +68,28 @@ namespace POLift.iOS.Controllers
             RoutineResultsTableView.ReloadData();
         }
 
+        private void Rrds_ShareClicked(IRoutineResult obj)
+        {
+            TwitterService ts = new TwitterService();
+            ts.ConsumerKey = "Z7V4YV2Bw2Z1FZ7QC5Id9uQbn";
+            ts.ConsumerSecret = "15uNGW3vjBSt1xIBnSf3gmkaZJJs8kMrFiBPsK6nP8xDYbYces";
+            ts.CallbackUrl = new Uri("http://polift-app.com");
+            
+            
+
+            Item item = new Item(obj.ToString());
+
+            var share_cont = ts.GetShareUI(item, result =>
+            {
+                DismissViewController(true, null);
+            });
+            PresentViewController(share_cont, true, null);
+        }
+
         class RoutineResultsDataSource : DeleteTableViewSource<IRoutineResult>
         {
             public event Action<IRoutineResult> EditClicked;
+            public event Action<IRoutineResult> ShareClicked;
 
             public RoutineResultsDataSource(IList<IRoutineResult> data)
                 : base(data)
@@ -84,6 +106,10 @@ namespace POLift.iOS.Controllers
                 rrc.Setup(rr, delegate
                 {
                     EditClicked?.Invoke(rr);
+                },
+                delegate
+                {
+                    ShareClicked?.Invoke(rr);
                 });
 
                 return rrc;

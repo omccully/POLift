@@ -3296,10 +3296,7 @@ namespace POLift
 			public const int ic_view_agenda_white_24dp = 2130903054;
 			
 			// aapt resource value: 0x7f03000f
-			public const int polift = 2130903055;
-			
-			// aapt resource value: 0x7f030010
-			public const int polift_new = 2130903056;
+			public const int polift_new = 2130903055;
 			
 			static Mipmap()
 			{

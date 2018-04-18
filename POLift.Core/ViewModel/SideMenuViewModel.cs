@@ -99,11 +99,11 @@ namespace POLift.Core.ViewModel
         Navigation purchase_navigation = null;
         public async Task<Navigation> GetPurchaseLicenseNavigationLink()
         {
-            if(LicenseManager.CheckLicenseCached(false))
+            if (LicenseManager.CheckLicenseCached(false))
             {
                 // await LicenseManager.CheckLicense(false)
                 // user already bought license
-                return new Navigation("License purchased", delegate() { });
+                return new Navigation("License purchased", delegate () { });
             }
 
             string days_left_text = await DaysLeftText();
@@ -124,11 +124,11 @@ namespace POLift.Core.ViewModel
         {
             try
             {
-                if(await LicenseManager.PromptToBuyLicense())
+                if (await LicenseManager.PromptToBuyLicense())
                 {
                     DisplayMessage("Purchase successful");
 
-                    if(purchase_navigation != null)
+                    if (purchase_navigation != null)
                     {
                         purchase_navigation.Text = "License purchased";
                         purchase_navigation.Click = null;
@@ -146,7 +146,7 @@ namespace POLift.Core.ViewModel
             }
         }
 
-        void DisplayMessage(string msg )
+        void DisplayMessage(string msg)
         {
             System.Diagnostics.Debug.WriteLine("SideMenuViewModel.ERROR : " + msg);
 
@@ -186,7 +186,7 @@ namespace POLift.Core.ViewModel
                 return "";
             }
         }
-    
+
 
         void FlagExternalProgramsResponse()
         {
@@ -215,16 +215,22 @@ namespace POLift.Core.ViewModel
 
         public void PerformRoutineOnTheFlyNavigate()
         {
-           // navigationService.NavigateTo(ViewModelLocator.PerformRoutinePageKey);
+            // navigationService.NavigateTo(ViewModelLocator.PerformRoutinePageKey);
             ViewModelLocator.Default.PerformRoutine.PerformRoutineOnTheFly();
         }
 
-        public void GetFreeWeightliftingPrograms(Action navigate_action = null)
+        public void GetFreeWeightliftingProgramsWithNavigationService()
+        {
+            navigationService.NavigateTo(
+                    ViewModelLocator.SelectProgramToDownloadPageKey);
+        }
+
+
+        public void GetFreeWeightliftingPrograms(Action navigate_action=null)
         {
             if(navigate_action == null)
             {
-                navigationService.NavigateTo(
-                    ViewModelLocator.SelectProgramToDownloadPageKey);
+                GetFreeWeightliftingProgramsWithNavigationService();
             }
             else
             {

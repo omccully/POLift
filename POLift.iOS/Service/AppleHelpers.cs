@@ -14,6 +14,23 @@ namespace POLift.iOS
 {
     static class AppleHelpers
     {
+        public static UIView CustomSnapshotFromView(this UIView view)
+        {
+            UIGraphics.BeginImageContextWithOptions(view.Bounds.Size, false, new nfloat(0));
+            view.Layer.RenderInContext(UIGraphics.GetCurrentContext());
+            UIImage img = UIGraphics.GetImageFromCurrentImageContext();
+            UIGraphics.EndImageContext();
+
+            UIView snapshot = new UIImageView(img);
+            snapshot.Layer.MasksToBounds = false;
+            snapshot.Layer.CornerRadius = new nfloat(0.0);
+            snapshot.Layer.ShadowOffset = new CoreGraphics.CGSize(-5.0, 0.0);
+            snapshot.Layer.ShadowRadius = new nfloat(5.0);
+            snapshot.Layer.Opacity = 0.4f;
+
+            return snapshot;
+        }
+
         public static void PrintViewHierarchy(UIView view, int depth = 0)
         {
             foreach (UIView subview in view.Subviews)

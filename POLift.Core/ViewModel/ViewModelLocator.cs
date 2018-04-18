@@ -148,6 +148,7 @@ namespace POLift.Core.ViewModel
                 CreateExercise.Toaster = value;
                 CreateRoutine.Toaster = value;
                 SideMenu.Toaster = value;
+                PerformRoutine.Toaster = value;
             }
         }
 

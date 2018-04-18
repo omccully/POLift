@@ -9,6 +9,7 @@ namespace POLift.Core.Model
     {
         public string Text { get; set; }
         public int IconResourceID { get; set; }
+        public string IconIdentifier { get; set; }
 
         public EventHandler Click { get; set; }
 
@@ -33,6 +34,20 @@ namespace POLift.Core.Model
             this.Text = Text;
             Click = delegate { event_handler(); };
             this.IconResourceID = icon_resource_id;
+        }
+
+        public Navigation(string Text, EventHandler event_handler, string icon_id)
+        {
+            this.Text = Text;
+            Click = event_handler;
+            this.IconIdentifier = icon_id;
+        }
+
+        public Navigation(string Text, Action event_handler, string icon_id)
+        {
+            this.Text = Text;
+            Click = delegate { event_handler(); };
+            this.IconIdentifier = icon_id;
         }
 
         public void OnClick(EventArgs e = null)

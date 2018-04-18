@@ -29,14 +29,27 @@ namespace POLift.iOS.Controllers
             NavController.NavigationMenuButtonClicked += NavController_NavigationMenuButtonClicked;
             NavController.PushViewController(main, false);
             
-            SidebarController = new SidebarController(this, NavController,
+            SidebarController = new LightSidebarController(this, NavController,
                 side_menu);
 
+            //SidebarController.StatusBar
+            //SidebarController.PreferredStatusBarStyle = UIStatusBarStyle.LightContent;
             side_menu.SidebarController = SidebarController;
-
+            
             SidebarController.MenuWidth = 280;
             SidebarController.ReopenOnRotate = false;
             SidebarController.MenuLocation = MenuLocations.Left;
+
+            if(this.View.GestureRecognizers != null)
+            {
+                Console.WriteLine("RootController");
+                foreach (UIGestureRecognizer rec in this.View.GestureRecognizers)
+                {
+                    Console.WriteLine("UIGestureRecognizer " + rec.DebugDescription);
+                    rec.CancelsTouchesInView = false;
+                }
+            }
+            
         }
 
         private void NavController_NavigationMenuButtonClicked(object sender, EventArgs e)

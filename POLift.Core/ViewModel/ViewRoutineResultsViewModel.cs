@@ -8,6 +8,9 @@ using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Views;
 using GalaSoft.MvvmLight;
 
+using Xamarin.Social.Services;
+using Xamarin.Social;
+
 namespace POLift.Core.ViewModel
 {
     using Service;
