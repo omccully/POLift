@@ -40,7 +40,7 @@ namespace POLift.iOS.Controllers
             SidebarController.ReopenOnRotate = false;
             SidebarController.MenuLocation = MenuLocations.Left;
 
-            if(this.View.GestureRecognizers != null)
+           /* if(this.View.GestureRecognizers != null)
             {
                 Console.WriteLine("RootController");
                 foreach (UIGestureRecognizer rec in this.View.GestureRecognizers)
@@ -48,7 +48,7 @@ namespace POLift.iOS.Controllers
                     Console.WriteLine("UIGestureRecognizer " + rec.DebugDescription);
                     rec.CancelsTouchesInView = false;
                 }
-            }
+            }*/
             
         }
 

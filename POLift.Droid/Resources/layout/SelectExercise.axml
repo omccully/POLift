@@ -23,5 +23,5 @@
         android:layout_height="wrap_content"
         android:id="@+id/CreateExerciseLink"
         android:paddingTop="15dip"
-        android:minHeight="65dip"/>
+        android:minHeight="65dip" />
 </LinearLayout>

@@ -361,9 +361,23 @@ namespace POLift.Core.Service
              
             lock (Locker)
             {
-                T obj = Connection.Get<T>(ID);
-                obj.Database = this;
-                return obj;
+                try
+                {
+                    T obj = Connection.Get<T>(ID);
+                    obj.Database = this;
+                    return obj;
+                }
+                catch (Exception e)
+                {
+                    System.Diagnostics.Debug.WriteLine(typeof(T).FullName + " does not include ID " + ID);
+                    IEnumerable<T> table = this.Table<T>();
+                    foreach(T item in table)
+                    {
+                        System.Diagnostics.Debug.WriteLine(item.ToString());
+                    }
+
+                    throw e;
+                }
             }
         }
 

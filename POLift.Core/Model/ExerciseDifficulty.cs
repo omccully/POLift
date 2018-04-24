@@ -261,11 +261,11 @@ namespace POLift.Core.Model
             ).ToList();
         }
 
-        public static List<ExerciseDifficultyCategory> InEdCategories(IPOLDatabase Database,
+        public static List<ExerciseGroupCategory> InEdCategories(IPOLDatabase Database,
             string DefaultCategory = "other")
         {
             return InCategories(Database, DefaultCategory).Select(kvp =>
-                new ExerciseDifficultyCategory(kvp.Key, kvp.Value))
+                new ExerciseGroupCategory(kvp.Key, kvp.Value))
                 .ToList();
         }
     }

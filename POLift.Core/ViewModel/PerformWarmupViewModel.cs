@@ -181,7 +181,7 @@ namespace POLift.Core.ViewModel
                         builder.Append(ws.GetRestPeriod(WarmupExercise));
                     }
                     
-                    builder.Append(" sec");
+                    builder.Append("s");
 
                     if (i < WarmupSetIndex)
                     {

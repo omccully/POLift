@@ -281,6 +281,13 @@ namespace POLift.Core.Model
             }
         }
 
+        [Ignore]
+        public string ExerciseIDs
+        {
+            get => this.ID.ToString();
+            set => throw new NotImplementedException("Exercise.ExerciseIDs.Set not implemented");
+        }
+
         int CalculateUsage()
         {
             return Database.Table<ExerciseResult>()

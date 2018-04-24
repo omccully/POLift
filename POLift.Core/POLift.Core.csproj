@@ -40,6 +40,9 @@
     <Compile Include="Model\ExerciseCategory.cs" />
     <Compile Include="Model\ExerciseDifficulty.cs" />
     <Compile Include="Model\ExerciseDifficultyCategory.cs" />
+    <Compile Include="Model\ExerciseGroupCategory.cs" />
+    <Compile Include="Model\ExerciseName.cs" />
+    <Compile Include="Model\ExerciseNameCategory.cs" />
     <Compile Include="Model\ExerciseResult.cs" />
     <Compile Include="Model\ExerciseSets.cs" />
     <Compile Include="Model\ExternalProgram.cs" />
@@ -47,6 +50,7 @@
     <Compile Include="Model\Interfaces\IDeletable.cs" />
     <Compile Include="Model\Interfaces\IExercise.cs" />
     <Compile Include="Model\Interfaces\IExerciseDifficulty.cs" />
+    <Compile Include="Model\Interfaces\IExerciseGroup.cs" />
     <Compile Include="Model\Interfaces\IExerciseResult.cs" />
     <Compile Include="Model\Interfaces\IExerciseSets.cs" />
     <Compile Include="Model\Interfaces\IIdentifiable.cs" />
@@ -103,6 +107,8 @@
     <Compile Include="ViewModel\PerformRoutineViewModel.cs" />
     <Compile Include="ViewModel\PerformWarmupViewModel.cs" />
     <Compile Include="ViewModel\SelectExerciseDifficultyViewModel.cs" />
+    <Compile Include="ViewModel\SelectExerciseGroupViewModel.cs" />
+    <Compile Include="ViewModel\SelectExerciseNameViewModel.cs" />
     <Compile Include="ViewModel\SelectExerciseViewModel.cs" />
     <Compile Include="ViewModel\SelectProgramToDownloadViewModel.cs" />
     <Compile Include="ViewModel\SideMenuViewModel.cs" />

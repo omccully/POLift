@@ -11,8 +11,8 @@ using UIKit;
 
 namespace POLift.iOS.Controllers
 {
-    [Register ("SelectExerciseDifficultyController")]
-    partial class SelectExerciseDifficultyController
+    [Register ("SelectExerciseGroupController")]
+    partial class SelectExerciseGroupController
     {
         void ReleaseDesignerOutlets ()
         {

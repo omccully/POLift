@@ -47,8 +47,8 @@ namespace POLift.Droid
             ExercisesDifficultyViewPager = 
                 FindViewById<ViewPager>(Resource.Id.ExercisesDifficultyViewPager);
 
-            exercise_difficulty_pager_adapter = new ExerciseDifficultyPagerAdapter(this,
-                Vm.ExerciseDifficultyCategories);
+            //exercise_difficulty_pager_adapter = new ExerciseDifficultyPagerAdapter(this,
+             //   Vm.ExerciseDifficultyCategories);
             exercise_difficulty_pager_adapter.ListItemClicked += Exercise_difficulty_pager_adapter_ListItemClicked;
             ExercisesDifficultyViewPager.Adapter = exercise_difficulty_pager_adapter;
         }

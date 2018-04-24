@@ -69,6 +69,10 @@ namespace POLift.Droid
             ExerciseNameText.TextChanged += (s, e) => { };
 
             bindings.Add(this.SetBinding(
+                () => Vm.SubmitButtonText,
+                () => CreateExerciseButton.Text));
+
+            bindings.Add(this.SetBinding(
                () => Vm.ExerciseNameInput,
                () => ExerciseNameText.Text,
                BindingMode.TwoWay));

@@ -58,6 +58,9 @@ namespace POLift.Core.ViewModel
             // editing exercise does not affect original
             // unless ONLY platemath was changed. 
 
+            Title = EditExerciseTitle;
+            SubmitButtonText = EditExerciseButtonText;
+
             ExerciseNameInput = exercise.Name;
             RepCountInput = exercise.MaxRepCount.ToString();
             WeightIncrementInput = exercise.WeightIncrement.ToString();
@@ -69,6 +72,8 @@ namespace POLift.Core.ViewModel
 
         public void Reset()
         {
+            Title = CreateExerciseTitle;
+            SubmitButtonText = CreateExerciseButtonText;
             ExerciseNameInput = "";
 
             if(KeyValueStorage == null)
@@ -101,7 +106,37 @@ namespace POLift.Core.ViewModel
                 .SetValue(WeightIncrementStorageKey, WeightIncrementInput)
                 .SetValue(RestPeriodStorageKey, RestPeriodInput)
                 .SetValue(ConsecutiveSetsStorageKey, ConsecutiveSetsInput);
-        }       
+        }
+
+        const string CreateExerciseTitle = "Create Exercise";
+        const string EditExerciseTitle = "Edit Exercise";
+        string _Title = CreateExerciseTitle;
+        public string Title
+        {
+            get
+            {
+                return _Title;
+            }
+            set
+            {
+                Set(() => Title, ref _Title, value);
+            }
+        }
+
+        const string CreateExerciseButtonText = "Create exercise";
+        const string EditExerciseButtonText = "Apply changes";
+        string _SubmitButtonText = CreateExerciseButtonText;
+        public string SubmitButtonText
+        {
+            get
+            {
+                return _SubmitButtonText;
+            }
+            set
+            {
+                Set(() => SubmitButtonText, ref _SubmitButtonText, value);
+            }
+        }
 
         string _ExerciseNameInput;
         public string ExerciseNameInput
@@ -335,6 +370,21 @@ namespace POLift.Core.ViewModel
             catch
             {
                 return fail_text;
+            }
+        }
+
+        public void Help()
+        {
+            DialogService.DisplayAcknowledgement(ExerciseDetails.Replace(": ", ":\n"));
+        }
+
+        RelayCommand _HelpCommand;
+        public RelayCommand HelpCommand
+        {
+            get
+            {
+                return _HelpCommand ??
+                    (_HelpCommand = new RelayCommand(Help));
             }
         }
 

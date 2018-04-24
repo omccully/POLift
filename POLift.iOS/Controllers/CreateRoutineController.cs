@@ -1,5 +1,4 @@
-﻿
-using Foundation;
+﻿using Foundation;
 using System;
 using UIKit;
 using POLift.Core.Model;
@@ -15,6 +14,7 @@ using GalaSoft.MvvmLight.Views;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Helpers;
 using CoreGraphics;
+using POLift.iOS.Service;
 
 namespace POLift.iOS.Controllers
 {
@@ -34,6 +34,18 @@ namespace POLift.iOS.Controllers
         {
         }
 
+        public string SubmitButtonText
+        {
+            get
+            {
+                return CreateRoutineButton.Title(UIControlState.Normal);
+            }
+            set
+            {
+                CreateRoutineButton.SetTitle(value, UIControlState.Normal);
+            }
+        }
+
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
@@ -45,14 +57,21 @@ namespace POLift.iOS.Controllers
             //    ExerciseSetsDataSource.ExerciseSetsCellId);
             //ExerciseSetsTableView.RegisterClassForCellReuse(typeof(UITableViewCell),
             //   ExerciseSetsDataSource.ExerciseSetsDeleteCellId);
-             
-            
-
 
             RoutineNameTextField.ShouldReturn = AppleHelpers.DismissKeyboard;
 
+            //TipLabel.Text = "Tip: Long press to move, swipe left to delete\n" +
+             //   "Tap to edit";
+
             AddExerciseLink.SetCommand(Vm.AddExerciseCommand);
 
+            bindings.Add(this.SetBinding(
+                () => Vm.Title,
+                () => Title));
+
+            bindings.Add(this.SetBinding(
+                () => Vm.SubmitButtonText,
+                () => SubmitButtonText));
 
             bindings.Add(this.SetBinding(
                 () => Vm.RoutineNameInput,
@@ -84,9 +103,10 @@ namespace POLift.iOS.Controllers
 
             ExerciseSetsTableView.SetEditing(false, true);
 
-            Vm.ExerciseSets.CollectionChanged += ExerciseSets_CollectionChanged;
+            //Vm.ExerciseSets.CollectionChanged += ExerciseSets_CollectionChanged;
+            Vm.ExerciseSetsChanged += Vm_ExerciseSetsChanged;
 
-            if (this.View.GestureRecognizers != null)
+           /* if (this.View.GestureRecognizers != null)
             {
                 Console.WriteLine("CreateRoutineController");
                 foreach (UIGestureRecognizer rec in this.View.GestureRecognizers)
@@ -108,137 +128,53 @@ namespace POLift.iOS.Controllers
                 Console.WriteLine("UIGestureRecognizer " + rec.Class.Name);
 
                 rec.CancelsTouchesInView = false;
-            }
+            }*/
 
-            UILongPressGestureRecognizer long_press = new UILongPressGestureRecognizer(lp =>
-            {
-                UIGestureRecognizerState state = lp.State;
-
-                CGPoint location = lp.LocationInView(ExerciseSetsTableView);
-
-                NSIndexPath path = ExerciseSetsTableView.IndexPathForRowAtPoint(location);
-                if (path != null) last_valid_path = path;
-
-                Console.WriteLine("LONG PRESS DETECTED: " + state + " " + location.ToString() + " " + path?.DebugDescription);
-
-                CGPoint center;
-                UITableViewCell cell;
-
-                switch (state)
-                {
-                    case UIGestureRecognizerState.Began:
-                        if (path == null) break;
-                        source_index_path = path;
-
-                        cell = ExerciseSetsTableView.CellAt(path);
-
-                        // create snapshot centered at cell
-                        snapshot = cell.CustomSnapshotFromView(); //cell.SnapshotView(false);
-                        center = cell.Center;
-                        snapshot.Center = center;
-                        snapshot.Alpha = new nfloat(0.0);
-                        ExerciseSetsTableView.AddSubview(snapshot);
-                        
-                        UIView.Animate(0.25, delegate
-                        {
-                            // make snapshot bigger
-                            center.Y = location.Y;
-                            snapshot.Center = center;
-                            snapshot.Transform = CGAffineTransform.MakeScale(new nfloat(1.05), new nfloat(1.05));
-                            snapshot.Alpha = new nfloat(0.98);
-
-                            // hide cell
-                            cell.Alpha = new nfloat(0.0);
-                        }, delegate
-                        {
-                            cell.Hidden = true; // hide cell
-                        });
-                        break;
-                    case UIGestureRecognizerState.Changed:
-                        if (path == null) break;
-                        if (snapshot == null) break;
-                        center = snapshot.Center;
-                        center.Y = location.Y;
-                        snapshot.Center = center;
-                        break;
-                    /*case UIGestureRecognizerState.Ended:
-                        if (path == null) break;
-                        if (snapshot == null) break;
-                        center = snapshot.Center;
-                        center.Y = location.Y;
-                        snapshot.Center = center;
-
-                        if (path != null && !path.IsEqual(source_index_path))
-                        {
-                            //ExerciseSetsTableVie
-
-                            es_data_source?.MoveRow(ExerciseSetsTableView, source_index_path, path);
-                        }
-
-                        // source_index_path = path;
-                        break;*/
-                    default:
-                        //if (path == null) break;
-                        if (source_index_path == null) break;
-                        if (snapshot == null) break;
-
-                        // remove snapshot view and make old cell visible again
-                        cell = ExerciseSetsTableView.CellAt(source_index_path);
-                        cell.Hidden = false;
-                        cell.Alpha = new nfloat(0.0);
-
-                        // move the rows. 
-                        if (last_valid_path != null && !last_valid_path.IsEqual(source_index_path))
-                        {
-                            es_data_source?.MoveRow(ExerciseSetsTableView, source_index_path, last_valid_path);
-                        }
-
-                        UIView.Animate(0.25, delegate
-                        {
-                            snapshot.Center = cell.Center;
-                            snapshot.Transform = CGAffineTransform.MakeIdentity();
-                            snapshot.Alpha = new nfloat(0.0);
-
-                            cell.Alpha = new nfloat(1.0);
-                        }, delegate
-                        {
-                            snapshot.RemoveFromSuperview();
-                            snapshot = null;
-
-                            
-                            source_index_path = null;
-                        });
-                        break;
-                }
-            });
-            ExerciseSetsTableView.AddGestureRecognizer(long_press);
-            //this.View.AddGestureRecognizer(long_press);
+            cell_mover =
+                new LongPressTableViewCellMover(ExerciseSetsTableView);
+            cell_mover.GestureRecognizer.CancelsTouchesInView = false;
+            ExerciseSetsTableView.AddGestureRecognizer(cell_mover.GestureRecognizer);
         }
-        NSIndexPath last_valid_path = null;
-        NSIndexPath source_index_path = null;
-        UIView snapshot = null;
+
+        private void Vm_ExerciseSetsChanged(object sender, EventArgs e)
+        {
+            Console.WriteLine("Vm_ExerciseSetsChanged");
+            RefreshExerciseSetsList();
+        }
+
+        LongPressTableViewCellMover cell_mover;
 
         UIBarButtonItem done;
         UIBarButtonItem edit;
         ExerciseSetsDataSource es_data_source;
 
-        private void ExerciseSets_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        /*private void ExerciseSets_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             Console.WriteLine("ExerciseSets_CollectionChanged");
             RefreshExerciseSetsList();
-        }
+        }*/
 
         void RefreshExerciseSetsList()
         {
             Console.WriteLine("RefreshExerciseSetsList");
             ExerciseSetsTableView.Source = es_data_source =
                 new ExerciseSetsDataSource(Vm.ExerciseSets, Vm.LockedExerciseSets);
+            es_data_source.SelectedExerciseSets += Es_data_source_SelectedExerciseSets;
+        }
+
+        private void Es_data_source_SelectedExerciseSets(int index, IExerciseSets obj)
+        {
+            // edit Exercise
+
+            Vm.EditExerciseAtIndex(index);
         }
 
         class ExerciseSetsDataSource : UITableViewSource
         {
             public static NSString ExerciseSetsCellId = new NSString("ExerciseSetsCell");
             public static NSString ExerciseSetsDeleteCellId = new NSString("ExerciseSetsDeleteCell");
+
+            public event Action<int, IExerciseSets> SelectedExerciseSets;
 
             public ObservableCollection<IExerciseSets> ExerciseSets;
             int LockedExerciseSets;
@@ -263,7 +199,7 @@ namespace POLift.iOS.Controllers
                 cell.Setup(ExerciseSets.ElementAt(indexPath.Row), 
                     CanEditRow(tableView, indexPath));
 
-                if (cell.GestureRecognizers != null)
+                /*if (cell.GestureRecognizers != null)
                 {
                     Console.WriteLine("Cell");
                     foreach (UIGestureRecognizer rec in cell.GestureRecognizers)
@@ -271,7 +207,7 @@ namespace POLift.iOS.Controllers
                         Console.WriteLine("UIGestureRecognizer " + rec.DebugDescription);
                         rec.CancelsTouchesInView = false;
                     }
-                }
+                }*/
 
                 return cell;
             }
@@ -344,6 +280,13 @@ namespace POLift.iOS.Controllers
 
                 ExerciseSets.Insert(insertAt, item);
                 ExerciseSets.RemoveAt(deleteAt);
+            }
+
+            public override void RowSelected(UITableView tableView, NSIndexPath indexPath)
+            {
+                System.Diagnostics.Debug.WriteLine("RowSelected " + indexPath.DebugDescription);
+
+                SelectedExerciseSets?.Invoke(indexPath.Row, ExerciseSets.ElementAt(indexPath.Row));
             }
         }
 

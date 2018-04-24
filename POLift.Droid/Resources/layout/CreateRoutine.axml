@@ -49,7 +49,7 @@
         android:layout_weight="1"
         android:id="@+id/ExercisesListView" />
     <TextView
-        android:text="Tip: To delete an exercise, set the set count to 0"
+        android:text="Tip:\tTo delete an exercise, set the set count to 0\n\tTap row to edit exercise"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

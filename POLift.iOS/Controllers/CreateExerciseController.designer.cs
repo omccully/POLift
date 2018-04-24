@@ -28,6 +28,10 @@ namespace POLift.iOS.Controllers
 
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
+        UIKit.UIButton HelpButton { get; set; }
+
+        [Outlet]
+        [GeneratedCode ("iOS Designer", "1.0")]
         UIKit.UIPickerView MathTypePicker { get; set; }
 
         [Outlet]
@@ -57,6 +61,11 @@ namespace POLift.iOS.Controllers
             if (ExerciseNameTextField != null) {
                 ExerciseNameTextField.Dispose ();
                 ExerciseNameTextField = null;
+            }
+
+            if (HelpButton != null) {
+                HelpButton.Dispose ();
+                HelpButton = null;
             }
 
             if (MathTypePicker != null) {

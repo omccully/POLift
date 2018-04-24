@@ -40,7 +40,7 @@ namespace POLift.iOS.Service
 
             // have it depend on message.Length
             int hold_time = message.Length / 8;
-            hold_time = Math.Min(hold_time, 8);
+            hold_time = Math.Min(hold_time, 7);
             hold_time = Math.Max(hold_time, 4);
 
             options.Add(Constants.kCRToastTimeIntervalKey, hold_time);
@@ -51,7 +51,7 @@ namespace POLift.iOS.Service
             NSDictionary dict = NSDictionary.FromObjectsAndKeys(
                 options.Values.ToArray(),
                 options.Keys.ToArray());
-
+            
             CRToastManager.ShowNotificationWithOptions(dict, delegate { });
         }
     }

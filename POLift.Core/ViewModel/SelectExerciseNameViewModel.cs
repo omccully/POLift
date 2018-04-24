@@ -11,12 +11,12 @@ using GalaSoft.MvvmLight;
 
 namespace POLift.Core.ViewModel
 {
-    public class SelectExerciseDifficultyViewModel : SelectExerciseGroupViewModel
+    public class SelectExerciseNameViewModel : SelectExerciseGroupViewModel
     {
-        public SelectExerciseDifficultyViewModel(INavigationService navigationService,
+        public SelectExerciseNameViewModel(INavigationService navigationService,
             IPOLDatabase database) : base(navigationService, database)
         {
-            
+
         }
 
         public override List<ExerciseGroupCategory> ExerciseCategories
@@ -26,7 +26,7 @@ namespace POLift.Core.ViewModel
                 ExerciseDifficulty.Regenerate(Database);
                 ExerciseDifficulty.RefreshAllUsages(Database);
 
-                return ExerciseDifficulty.InEdCategories(Database);
+                return ExerciseName.InEnCategories(Database);
             }
         }
     }

@@ -113,10 +113,6 @@
     <Compile Include="Controllers\OrmGraphController.designer.cs">
       <DependentUpon>OrmGraphController.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controllers\SelectExerciseDifficultyController.cs" />
-    <Compile Include="Controllers\SelectExerciseDifficultyController.designer.cs">
-      <DependentUpon>SelectExerciseDifficultyController.cs</DependentUpon>
-    </Compile>
     <Compile Include="Controllers\NavigationController.cs" />
     <Compile Include="Controllers\NavigationController.designer.cs">
       <DependentUpon>NavigationController.cs</DependentUpon>
@@ -141,6 +137,11 @@
     <Compile Include="Controllers\OrmGraphSideMenuController.designer.cs">
       <DependentUpon>OrmGraphSideMenuController.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controllers\SelectExerciseGroupController.cs" />
+    <Compile Include="Controllers\SelectExerciseGroupController.designer.cs">
+      <DependentUpon>SelectExerciseGroupController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Service\LongPressTableViewCellMoveGestureRecognizer.cs" />
     <Compile Include="TableCells\NavigationCell.cs" />
     <Compile Include="TableCells\NavigationCell.designer.cs">
       <DependentUpon>NavigationCell.cs</DependentUpon>

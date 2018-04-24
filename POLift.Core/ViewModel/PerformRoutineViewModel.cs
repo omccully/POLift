@@ -4,12 +4,14 @@ using GalaSoft.MvvmLight.Views;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Diagnostics;
 
 namespace POLift.Core.ViewModel
 {
     using Helpers;
     using Model;
     using Service;
+    using System.Threading.Tasks;
 
     public class PerformRoutineViewModel : PerformBaseViewModel, IValueReturner<IRoutineResult>
     {
@@ -20,6 +22,8 @@ namespace POLift.Core.ViewModel
         public IEditRoutineResultViewModel EditRoutineResultViewModel;
         public ICreateExerciseViewModel CreateExerciseViewModel;
         public ISelectExerciseViewModel SelectExerciseViewModel;
+
+        public IMainThreadInvoker MainThreadInvoker;
 
         public PerformRoutineViewModel(INavigationService navigationService, IPOLDatabase database)
             : base(navigationService, database)
@@ -245,6 +249,9 @@ namespace POLift.Core.ViewModel
 
                 base.CurrentExercise = value;
 
+                Stopwatch sw = new Stopwatch();
+                sw.Start();
+
                 ResetWeightInput();
 
                 RefreshExerciseDetails();
@@ -255,6 +262,9 @@ namespace POLift.Core.ViewModel
                         "Call RefreshPreviousRepCountDetails");
                     RefreshPreviousRepCountDetails();
                 }
+
+                sw.Stop();
+                Debug.WriteLine("CurrentExercise set " + sw.ElapsedMilliseconds);
             }
         }
 
@@ -282,8 +292,13 @@ namespace POLift.Core.ViewModel
 
         void SwitchToNextExercise()
         {
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
             // get next exercise
             CurrentExercise = RoutineResult.NextExercise;
+
+            sw.Stop();
+            Debug.WriteLine("SwitchToNextExercise " + sw.ElapsedMilliseconds);
         }
 
         string _RepDetails;
@@ -302,6 +317,8 @@ namespace POLift.Core.ViewModel
 
         public override void RefreshRoutineDetails()
         {
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
             if (RoutineResult != null)
             {
                 RoutineDetails = RoutineResult.ShortDetails;
@@ -314,6 +331,8 @@ namespace POLift.Core.ViewModel
             {
                 RoutineDetails = "?";
             }
+            sw.Stop();
+            Debug.WriteLine("RefreshRoutineDetails " + sw.ElapsedMilliseconds);
         }
 
         protected override void RefreshExerciseDetails()
@@ -336,20 +355,66 @@ namespace POLift.Core.ViewModel
 
         void RefreshPreviousRepCountDetails()
         {
-            DateTime start_time = (RoutineResult.StartTime == DateTime.MinValue ?
-                DateTime.Now : RoutineResult.StartTime);
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
 
-            IEnumerable <ExerciseResult> previous_ers = Database.Table<ExerciseResult>()
-                .Where(er => er.ExerciseID == CurrentExercise?.ID &&
-                    er.Time < start_time)
-                .TakeLastEx(3);
-
-            if (previous_ers.Count() == 0)
+            if(MainThreadInvoker == null)
             {
-                RepDetails = "";
+                RepDetails = GetPreviousRepCountDetails();
             }
             else
             {
+                RefreshPreviousRepCountDetailsAsync();
+            }
+
+            sw.Stop();
+            Debug.WriteLine("RefreshPreviousRepCountDetails " + sw.ElapsedMilliseconds);
+        }
+
+        async Task RefreshPreviousRepCountDetailsAsync()
+        {
+            await Task.Run(delegate
+            {
+                
+                string new_rep_count_details = GetPreviousRepCountDetails();
+
+                MainThreadInvoker.Invoke(delegate
+                {
+                    RepDetails = new_rep_count_details;
+                });
+            });
+        }
+
+        Dictionary<int, string> PreviousRepCountCache = new Dictionary<int, string>();
+        string GetPreviousRepCountDetails()
+        {
+            int current_ex_id = CurrentExercise == null ? 0 : CurrentExercise.ID;
+
+            if(PreviousRepCountCache.ContainsKey(current_ex_id))
+            {
+                return PreviousRepCountCache[current_ex_id];
+            }
+
+            DateTime start_time = (RoutineResult.StartTime == DateTime.MinValue ?
+                DateTime.Now : RoutineResult.StartTime);
+            
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+           //// IEnumerable<ExerciseResult> previous_ers = Database.Table<ExerciseResult>()
+             //   .Where(er => er.ExerciseID == current_ex_id &&
+              //      er.Time < start_time)
+              //  .TakeLastEx(3);
+
+            var ers = Database.Query<ExerciseResult>($"Select * FROM ExerciseResult WHERE ExerciseID={current_ex_id}");
+            IEnumerable<ExerciseResult> previous_ers = ers.Where(er => er.Time < start_time)
+                .TakeLastEx(3);
+
+            sw.Stop();
+            Debug.WriteLine("GetPreviousRepCountDetails query " + sw.ElapsedMilliseconds);
+
+            string result = "";
+            if (previous_ers.Count() != 0)
+            { 
                 ExerciseResult first = previous_ers.First();
                 ExerciseResult previous = first;
                 string s = $" (prev: {first.Weight}x{first.RepCount}";
@@ -370,8 +435,11 @@ namespace POLift.Core.ViewModel
                 }
                 s += ")";
 
-                RepDetails = s;
+                result = s;
             }
+
+            PreviousRepCountCache.Add(current_ex_id, result);
+            return result;
         }
 
         void SyncTimerBasedOnLastExerciseResult()
@@ -828,8 +896,12 @@ namespace POLift.Core.ViewModel
         public const string WarmupPromptedKey = "warmup_prompted";
         public const string OnTheFlyFlagKey = "on_the_fly";
 
+        
         public override void RestoreState(KeyValueStorage kvs)
         {
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+
             OnTheFly = kvs.GetBoolean(OnTheFlyFlagKey, false);
 
             int routine_id = kvs.GetInteger(RoutineIdKey, -1);
@@ -839,16 +911,24 @@ namespace POLift.Core.ViewModel
                 PerformRoutineOnTheFly();
                 return;
             }
-            
+
+            Debug.WriteLine("PerformRoutine.RestoreState a " + sw.ElapsedMilliseconds + "ms");
             // set Routine
             RoutineId = routine_id;
+
+            Debug.WriteLine("PerformRoutine.RestoreState b " + sw.ElapsedMilliseconds + "ms");
 
             IRoutineResult recent_uncompleted = Model.RoutineResult
                 .MostRecentUncompleted(Database, Routine);
 
+            Debug.WriteLine("PerformRoutine.RestoreState c " + sw.ElapsedMilliseconds + "ms");
+
+
             int resume_routine_result_id = kvs.GetInteger(ResumeRoutineResultIdKey, -1);
 
             bool warmup_prompted = kvs.GetBoolean(WarmupPromptedKey, false);
+
+            Debug.WriteLine("PerformRoutine.RestoreState before ifs " + sw.ElapsedMilliseconds + "ms");
 
             if (recent_uncompleted != null && recent_uncompleted.ID == resume_routine_result_id)
             {
@@ -883,6 +963,9 @@ namespace POLift.Core.ViewModel
             }
 
             base.RestoreState(kvs);
+
+            sw.Stop();
+            Debug.WriteLine("PerformRoutine.RestoreState " + sw.ElapsedMilliseconds + "ms");
         }
 
         public override void SaveState(KeyValueStorage kvs)

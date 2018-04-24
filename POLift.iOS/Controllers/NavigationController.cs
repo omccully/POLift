@@ -22,7 +22,7 @@ namespace POLift.iOS.Controllers
 
             //Console.WriteLine("ViewDidLoad, this.TopViewController= " + this.TopViewController);
 
-            if (this.View.GestureRecognizers != null)
+            /*if (this.View.GestureRecognizers != null)
             {
                 Console.WriteLine("NavigationController");
                 foreach (UIGestureRecognizer rec in this.View.GestureRecognizers)
@@ -30,7 +30,7 @@ namespace POLift.iOS.Controllers
                     Console.WriteLine("UIGestureRecognizer " + rec.DebugDescription);
                     rec.CancelsTouchesInView = false;
                 }
-            }
+            }*/
         }
 
         public override void PushViewController(UIViewController viewController, bool animated)

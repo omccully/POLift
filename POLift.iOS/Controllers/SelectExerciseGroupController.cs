@@ -1,42 +1,41 @@
 ﻿using Foundation;
 using System;
 using UIKit;
-using System.Collections.Generic;
 using System.Linq;
 
 using POLift.Core.ViewModel;
 using GalaSoft.MvvmLight.Helpers;
 using POLift.Core.Model;
+using System.Collections.Generic;
 
 namespace POLift.iOS.Controllers
 {
-    public partial class SelectExerciseDifficultyController : UITableViewController
+    public partial class SelectExerciseGroupController : UITableViewController
     {
-        const string ExerciseDifficultyCellId = "exercise_difficulty_cell";
+        const string ExerciseGroupCellId = "exercise_group_cell";
 
-        private SelectExerciseDifficultyViewModel Vm
+        private SelectExerciseGroupViewModel Vm
         {
             get
             {
-                return ViewModelLocator.Default.SelectExerciseDifficulty;
+                return ViewModelLocator.Default.SelectExerciseName;
             }
         }
 
-        public SelectExerciseDifficultyController (IntPtr handle) : base (handle)
+        public SelectExerciseGroupController (IntPtr handle) : base (handle)
         {
-            ExerciseDifficultyCategories = new List<ExerciseDifficultyCategory>();
         }
 
-        List<ExerciseDifficultyCategory> _ExerciseDifficultyCategories;
-        List<ExerciseDifficultyCategory> ExerciseDifficultyCategories
+        List<ExerciseGroupCategory> _ExerciseGroupCategories = new List<ExerciseGroupCategory>();
+        List<ExerciseGroupCategory> ExerciseGroupCategories
         {
             get
             {
-                return _ExerciseDifficultyCategories;
+                return _ExerciseGroupCategories;
             }
             set
             {
-                _ExerciseDifficultyCategories = value;
+                _ExerciseGroupCategories = value;
                 _SectionIndexTitles = null;
             }
         }
@@ -46,20 +45,20 @@ namespace POLift.iOS.Controllers
             base.ViewDidLoad();
 
             TableView.RegisterClassForCellReuse(typeof(UITableViewCell),
-                ExerciseDifficultyCellId);
+                ExerciseGroupCellId);
 
-            ExerciseDifficultyCategories = Vm.ExerciseDifficultyCategories;
+            ExerciseGroupCategories = Vm.ExerciseCategories;
         }
 
         public override nint NumberOfSections(UITableView tableView)
         {
-            return ExerciseDifficultyCategories.Count;
+            return ExerciseGroupCategories.Count;
         }
 
         public override nint RowsInSection(UITableView tableView, nint section)
         {
-            return ExerciseDifficultyCategories[(int)section]
-                .ExerciseDifficulties.Count;
+            return ExerciseGroupCategories[(int)section]
+                .ExerciseGroups.Count;
         }
 
         string[] _SectionIndexTitles = null;
@@ -69,7 +68,7 @@ namespace POLift.iOS.Controllers
             {
                 if (_SectionIndexTitles == null)
                 {
-                    _SectionIndexTitles = ExerciseDifficultyCategories
+                    _SectionIndexTitles = ExerciseGroupCategories
                         .Select(edc => edc.Name).ToArray();
                 }
 
@@ -82,31 +81,29 @@ namespace POLift.iOS.Controllers
             return SectionTitles[section];
         }
 
-
         public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
         {
-            UITableViewCell cell = TableView.DequeueReusableCell(ExerciseDifficultyCellId);
+            UITableViewCell cell = TableView.DequeueReusableCell(ExerciseGroupCellId);
 
-            cell.TextLabel.Text = GetEdFromIndexPath(indexPath).ToString();
-            
+            cell.TextLabel.Text = GetEdFromIndexPath(indexPath).Name;
+
             return cell;
         }
 
-
-        ExerciseDifficultyCategory GetEdcFromIndexPath(NSIndexPath indexPath)
+        ExerciseGroupCategory GetEdcFromIndexPath(NSIndexPath indexPath)
         {
-            return ExerciseDifficultyCategories[(int)indexPath.Section];
+            return ExerciseGroupCategories[(int)indexPath.Section];
         }
 
-        IExerciseDifficulty GetEdFromIndexPath(NSIndexPath indexPath)
+        IExerciseGroup GetEdFromIndexPath(NSIndexPath indexPath)
         {
             return GetEdcFromIndexPath(indexPath)
-                .ExerciseDifficulties[(int)indexPath.Row];
+                .ExerciseGroups[(int)indexPath.Row];
         }
 
         public override void RowSelected(UITableView tableView, NSIndexPath indexPath)
         {
-            Vm.ReturnExerciseDifficulty(GetEdFromIndexPath(indexPath));
+            Vm.ReturnExerciseGroup(GetEdFromIndexPath(indexPath));
         }
     }
 }

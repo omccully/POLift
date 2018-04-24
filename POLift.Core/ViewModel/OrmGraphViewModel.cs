@@ -20,6 +20,7 @@ namespace POLift.Core.ViewModel
         OrmGraph orm_graph;
 
         public IValueReturner<IExerciseDifficulty> SelectExerciseDifficultyViewModel;
+        public SelectExerciseGroupViewModel SelectExerciseGroupViewModel;
 
         public OrmGraphViewModel(INavigationService navigationService, IPOLDatabase database)
         {
@@ -30,12 +31,18 @@ namespace POLift.Core.ViewModel
 
         public void PromptUser()
         {
-            SelectExerciseDifficultyViewModel.ValueChosen += 
+            SelectExerciseGroupViewModel.ValueChosen += SelectExerciseGroupViewModel_ValueChosen;
+
+            /*SelectExerciseDifficultyViewModel.ValueChosen += 
                 SelectExerciseDifficultyViewModel_ValueChosen;
 
             navigationService.NavigateTo(
-                ViewModelLocator.SelectExerciseDifficultyPageKey);
+                ViewModelLocator.SelectExerciseDifficultyPageKey);*/
+            navigationService.NavigateTo(
+                ViewModelLocator.SelectExerciseGroupPageKey);
         }
+
+
 
         PlotModel _PlotModel;
         public PlotModel PlotModel
@@ -63,15 +70,34 @@ namespace POLift.Core.ViewModel
             }
         }
 
-        private void SelectExerciseDifficultyViewModel_ValueChosen(IExerciseDifficulty ed)
+        private void SelectExerciseGroupViewModel_ValueChosen(IExerciseGroup obj)
+        {
+            SelectExerciseGroupViewModel.ValueChosen -= 
+                SelectExerciseGroupViewModel_ValueChosen;
+
+            InitializePlot(obj);
+        }
+
+        /*private void SelectExerciseDifficultyViewModel_ValueChosen(IExerciseDifficulty ed)
         {
             SelectExerciseDifficultyViewModel.ValueChosen -= 
                 SelectExerciseDifficultyViewModel_ValueChosen;
 
             InitializePlot(ed);
+        }*/
+
+        public void InitializePlot(IExerciseGroup ex_group)
+        {
+            int[] ids = ex_group.ExerciseIDs.ToIDIntegers();
+
+            IEnumerable<ExerciseResult> data = orm_graph.GetPlotData(ids);
+
+            PlotModel = orm_graph.CreatePlotModel(ex_group.Name, data);
+
+            DataText = OrmGraph.DataSourceText(data);
         }
 
-        public void InitializePlot(int ed_id)
+        /*public void InitializePlot(int ed_id)
         {
             ExerciseDifficulty ed = Database.ReadByID<ExerciseDifficulty>(ed_id);
 
@@ -85,6 +111,6 @@ namespace POLift.Core.ViewModel
             PlotModel = orm_graph.CreatePlotModel(ed, data);
 
             DataText = OrmGraph.DataSourceText(data);
-        }
+        }*/
     }
 }

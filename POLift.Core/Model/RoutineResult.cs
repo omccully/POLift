@@ -129,8 +129,17 @@ namespace POLift.Core.Model
             {
                 // idk why ExerciseResults.Count would ever be
                 // GREATER than the exercise length, but just in case
+            
                 int erc = ExerciseResults.Count;
+
+                // try
+                //{
+                //    Exercises.Length
+                // }
+
+                //int ec = ExerciseIDs.ToIDIntegers().Length; //Exercises.Length;
                 int ec = Exercises.Length;
+
                 return erc >= ec;
             }
         }

@@ -44,7 +44,13 @@ namespace POLift.Core.Helpers
         public PlotModel CreatePlotModel(IExerciseDifficulty exercise,
             IEnumerable<ExerciseResult> exercise_results)
         {
-            var plotModel = new PlotModel { Title = $"{exercise.Name} one-rep max" };
+            return CreatePlotModel(exercise.Name, exercise_results);
+        }
+
+        public PlotModel CreatePlotModel(string name,
+            IEnumerable<ExerciseResult> exercise_results)
+        {
+            var plotModel = new PlotModel { Title = $"{name} one-rep max" };
 
             DateTimeAxis date_axis = new DateTimeAxis { Position = AxisPosition.Bottom };
             plotModel.Axes.Add(date_axis);

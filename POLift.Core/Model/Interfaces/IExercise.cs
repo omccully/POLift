@@ -7,9 +7,9 @@ namespace POLift.Core.Model
 {
     using Service;
 
-    public interface IExercise : IIdentifiable, IDeletable, IDatabaseObject
+    public interface IExercise : IExerciseGroup, IIdentifiable, IDeletable, IDatabaseObject
     {
-        string Name { get; set; }
+        //string Name { get; set; }
 
         int MaxRepCount { get; set; }
 
@@ -21,7 +21,7 @@ namespace POLift.Core.Model
 
         int PlateMathID { get; set; }
 
-        string Category { get; set; }
+        //string Category { get; set; }
 
         IPlateMath PlateMath { get; set; }
 

@@ -23,6 +23,8 @@ namespace POLift.Droid.Adapter
         Context context;
         int locked_sets;
 
+        public event Action<int, IExerciseSets> ItemClicked;
+
         /*public ExerciseSetsAdapter(Context context, IEnumerable<IExerciseSets> exercise_sets, int locked_sets=0)
         {
             this.context = context;
@@ -32,12 +34,15 @@ namespace POLift.Droid.Adapter
         }*/
 
         public ExerciseSetsAdapter(Context context, 
-            ObservableCollection<IExerciseSets> exercise_sets, int locked_sets=0)
+            ObservableCollection<IExerciseSets> exercise_sets, int locked_sets=0, bool auto_update=false)
         {
             this.context = context;
             this.ExerciseSets = exercise_sets;
             this.locked_sets = locked_sets;
-            ExerciseSets.CollectionChanged += ExerciseSets_CollectionChanged;
+            if (auto_update)
+            {
+                ExerciseSets.CollectionChanged += ExerciseSets_CollectionChanged;
+            }
         }
 
         public void Dispose()
@@ -92,6 +97,13 @@ namespace POLift.Droid.Adapter
             //holder.Title.Text = "new text here";
             IExerciseSets es = this[position];
             holder.TextBox.Text = es.SetCount.ToString();
+            //h//older.TextBox.SetTextIsSelectable(true);
+            //holder.TextBox.SetSelectAllOnFocus(true);
+
+            holder.TextView.Click += delegate
+            {
+                ItemClicked?.Invoke(position, es);
+            };
 
             IExercise ex = es.Exercise;
             holder.TextView.Text = $"sets of {ex.CondensedDetails}";
@@ -99,9 +111,11 @@ namespace POLift.Droid.Adapter
             if(position <= locked_sets)
             {
                 holder.MoveUpButton.Enabled = false;
+                holder.MoveUpButton.SetImageResource(Resource.Mipmap.ic_arrow_upward_gray_24dp);
             }
             else
             {
+                holder.MoveUpButton.SetImageResource(Resource.Mipmap.ic_arrow_upward_white_24dp);
                 holder.MoveUpButton.Click += delegate
                 {
                     if (position > 0)

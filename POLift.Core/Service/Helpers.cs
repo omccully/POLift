@@ -185,7 +185,8 @@ namespace POLift.Core.Service
             {
                 if (ts.TotalSeconds >= time_period.Item1)
                 {
-                    int days = (int)ts.TotalSeconds / time_period.Item1;
+                    int days = (int)Math.Round(ts.TotalSeconds / time_period.Item1);
+
                     string result = $"{days} {time_period.Item2}";
 
                     if (days > 1)

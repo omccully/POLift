@@ -26,7 +26,10 @@ namespace POLift.Core.ViewModel
         public const string EditRoutineResultPageKey = "EditRoutineResult";
         public const string OrmGraphPageKey = "OrmGraph";
         public const string SelectExerciseDifficultyPageKey = "SelectExerciseDifficulty";
+        public const string SelectExerciseNamePageKey = "SelectExerciseName";
         public const string SelectProgramToDownloadPageKey = "SelectProgramToDownload";
+        public const string SelectExerciseGroupPageKey = "SelectExerciseGroup";
+
 
         public ViewModelLocator()
         {
@@ -58,9 +61,11 @@ namespace POLift.Core.ViewModel
             SimpleIoc.Default.Register<SelectExerciseDifficultyViewModel>();
             SimpleIoc.Default.Register<SideMenuViewModel>();
             SimpleIoc.Default.Register<SelectProgramToDownloadViewModel>();
+            SimpleIoc.Default.Register<SelectExerciseNameViewModel>();
 
             SelectExercise.CreateExerciseViewModel = CreateExercise;
             CreateRoutine.SelectExerciseViewModel = SelectExercise;
+            CreateRoutine.CreateExerciseViewModel = CreateExercise;
 
             Main.CreateRoutineViewModel = CreateRoutine;
             Main.PerformRoutineViewModel = PerformRoutine;
@@ -76,7 +81,9 @@ namespace POLift.Core.ViewModel
 
             ViewRoutineResults.EditRoutineResultViewModel = EditRoutineResult;
 
-            OrmGraph.SelectExerciseDifficultyViewModel = SelectExerciseDifficulty;
+            //OrmGraph.SelectExerciseDifficultyViewModel = SelectExerciseDifficulty;
+            OrmGraph.SelectExerciseGroupViewModel = SelectExerciseName;
+
 
             TimerService = new PclTimer();
         }
@@ -202,6 +209,7 @@ namespace POLift.Core.ViewModel
 
                 Timer.MainThreadInvoker = value;
                 SideMenu.MainThreadInvoker = value;
+                PerformRoutine.MainThreadInvoker = value;
             }
         }
 
@@ -359,6 +367,14 @@ namespace POLift.Core.ViewModel
             get
             {
                 return SimpleIoc.Default.GetInstance<SelectExerciseDifficultyViewModel>();
+            }
+        }
+
+        public SelectExerciseNameViewModel SelectExerciseName
+        {
+            get
+            {
+                return SimpleIoc.Default.GetInstance<SelectExerciseNameViewModel>();
             }
         }
 

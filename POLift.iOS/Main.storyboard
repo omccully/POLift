@@ -75,24 +75,24 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="11041" translatesAutoresizingMaskIntoConstraints="NO">
-                                                    <rect key="frame" x="298" y="3" width="62" height="30"/>
+                                                    <rect key="frame" x="298" y="3" width="62" height="38"/>
                                                     <state key="normal" title="Edit">
                                                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                     </state>
                                                     <constraints>
                                                         <constraint id="19005" firstItem="11041" firstAttribute="width" constant="62"/>
-                                                        <constraint id="19008" firstItem="11041" firstAttribute="height" constant="30"/>
+                                                        <constraint id="83755" firstItem="11041" firstAttribute="height" constant="38"/>
                                                     </constraints>
                                                     <variation key="default">
                                                         <mask key="constraints">
                                                             <exclude reference="19005"/>
-                                                            <exclude reference="19008"/>
+                                                            <exclude reference="83755"/>
                                                         </mask>
                                                     </variation>
                                                     <variation key="heightClass=regular-widthClass=compact">
                                                         <mask key="constraints">
                                                             <include reference="19005"/>
-                                                            <include reference="19008"/>
+                                                            <include reference="83755"/>
                                                         </mask>
                                                     </variation>
                                                 </button>
@@ -372,8 +372,8 @@
                                     </mask>
                                 </variation>
                             </button>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="5789" translatesAutoresizingMaskIntoConstraints="NO" misplaced="YES">
-                                <rect key="frame" x="6" y="154" width="362" height="421"/>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="5789" translatesAutoresizingMaskIntoConstraints="NO">
+                                <rect key="frame" x="6" y="154" width="362" height="404"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="10570" reuseIdentifier="exercise_sets_cell" customClass="ExerciseSetsCell" rowHeight="60">
@@ -383,8 +383,8 @@
                                             <rect key="frame" x="0.0" y="0.0" width="362" height="59.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="wordWrap" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="10572" translatesAutoresizingMaskIntoConstraints="NO" numberOfLines="2" adjustsLetterSpacingToFitWidth="YES" misplaced="YES">
-                                                    <rect key="frame" x="60" y="9" width="266" height="42"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="wordWrap" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="10572" translatesAutoresizingMaskIntoConstraints="NO" numberOfLines="2" adjustsLetterSpacingToFitWidth="YES">
+                                                    <rect key="frame" x="60" y="9" width="275" height="42"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -464,14 +464,25 @@
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </tableView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="80025" translatesAutoresizingMaskIntoConstraints="NO" text="Tip: Long press to move, swipe left to delete" misplaced="YES">
-                                <rect key="frame" x="16" y="588" width="349" height="21"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="80025" translatesAutoresizingMaskIntoConstraints="NO" text="Tip: Long press to move, swipe left to delete, tap to edit" numberOfLines="2">
+                                <rect key="frame" x="16" y="566" width="349" height="43"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
+                                <constraints>
+                                    <constraint id="86920" firstItem="80025" firstAttribute="height" constant="43"/>
+                                </constraints>
+                                <variation key="default">
+                                    <mask key="constraints">
+                                        <exclude reference="86920"/>
+                                    </mask>
+                                </variation>
+                                <variation key="heightClass=regular-widthClass=compact">
+                                    <mask key="constraints">
+                                        <include reference="86920"/>
+                                    </mask>
+                                </variation>
                             </label>
                         </subviews>
                         <variation key="default">
@@ -494,11 +505,11 @@
                                 <exclude reference="61823"/>
                                 <exclude reference="80026"/>
                                 <exclude reference="80027"/>
-                                <exclude reference="80028"/>
-                                <exclude reference="80029"/>
                                 <exclude reference="80030"/>
                                 <exclude reference="80031"/>
                                 <exclude reference="80032"/>
+                                <exclude reference="86919"/>
+                                <exclude reference="86921"/>
                             </mask>
                         </variation>
                         <variation key="heightClass=regular-widthClass=compact">
@@ -521,11 +532,11 @@
                                 <include reference="61823"/>
                                 <include reference="80026"/>
                                 <include reference="80027"/>
-                                <include reference="80028"/>
-                                <include reference="80029"/>
                                 <include reference="80030"/>
                                 <include reference="80031"/>
                                 <include reference="80032"/>
+                                <include reference="86919"/>
+                                <include reference="86921"/>
                             </mask>
                         </variation>
                         <constraints>
@@ -543,11 +554,11 @@
                             <constraint id="61823" firstItem="1198" firstAttribute="top" secondItem="1440" secondAttribute="bottom" constant="20"/>
                             <constraint id="80026" firstItem="80025" firstAttribute="trailing" secondItem="1201" secondAttribute="trailingMargin" constant="6"/>
                             <constraint id="80027" firstItem="80025" firstAttribute="leading" secondItem="1201" secondAttribute="leadingMargin"/>
-                            <constraint id="80028" firstItem="1440" firstAttribute="top" secondItem="80025" secondAttribute="bottom" constant="8"/>
-                            <constraint id="80029" firstItem="80025" firstAttribute="top" secondItem="5789" secondAttribute="bottom" constant="13"/>
                             <constraint id="80030" firstItem="5789" firstAttribute="trailing" secondItem="1201" secondAttribute="trailingMargin" constant="9"/>
                             <constraint id="80031" firstItem="1201" firstAttribute="leadingMargin" secondItem="5789" secondAttribute="leading" constant="10"/>
                             <constraint id="80032" firstItem="5789" firstAttribute="top" secondItem="1438" secondAttribute="bottom" constant="9"/>
+                            <constraint id="86919" firstItem="80025" firstAttribute="top" secondItem="5789" secondAttribute="bottom" constant="8"/>
+                            <constraint id="86921" firstItem="1440" firstAttribute="top" secondItem="80025" secondAttribute="bottom" constant="8"/>
                         </constraints>
                     </view>
                     <connections>
@@ -555,6 +566,7 @@
                         <outlet property="CreateRoutineButton" destination="1440" id="name-outlet-1440"/>
                         <outlet property="ExerciseSetsTableView" destination="5789" id="name-outlet-5789"/>
                         <outlet property="RoutineNameTextField" destination="1437" id="name-outlet-1437"/>
+                        <outlet property="TipLabel" destination="80025" id="name-outlet-80025"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="1202" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -574,21 +586,24 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Exercise name:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="3833" translatesAutoresizingMaskIntoConstraints="NO">
-                                <rect key="frame" x="12" y="55" width="351" height="21"/>
+                                <rect key="frame" x="12" y="55" width="200" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                                 <constraints>
                                     <constraint id="28419" firstItem="3833" firstAttribute="height" constant="21"/>
+                                    <constraint id="81567" firstItem="3833" firstAttribute="width" constant="200"/>
                                 </constraints>
                                 <variation key="default">
                                     <mask key="constraints">
                                         <exclude reference="28419"/>
+                                        <exclude reference="81567"/>
                                     </mask>
                                 </variation>
                                 <variation key="heightClass=regular-widthClass=compact">
                                     <mask key="constraints">
                                         <include reference="28419"/>
+                                        <include reference="81567"/>
                                     </mask>
                                 </variation>
                             </label>
@@ -814,6 +829,28 @@
                                     </mask>
                                 </variation>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="81568" translatesAutoresizingMaskIntoConstraints="NO">
+                                <rect key="frame" x="306" y="46" width="46" height="40"/>
+                                <state key="normal" title="Help">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <constraints>
+                                    <constraint id="81571" firstItem="81568" firstAttribute="width" constant="46"/>
+                                    <constraint id="83757" firstItem="81568" firstAttribute="height" constant="40"/>
+                                </constraints>
+                                <variation key="default">
+                                    <mask key="constraints">
+                                        <exclude reference="81571"/>
+                                        <exclude reference="83757"/>
+                                    </mask>
+                                </variation>
+                                <variation key="heightClass=regular-widthClass=compact">
+                                    <mask key="constraints">
+                                        <include reference="81571"/>
+                                        <include reference="83757"/>
+                                    </mask>
+                                </variation>
+                            </button>
                         </subviews>
                         <variation key="default">
                             <mask key="subviews">
@@ -830,11 +867,11 @@
                                 <exclude reference="3853"/>
                                 <exclude reference="3854"/>
                                 <exclude reference="5771"/>
+                                <exclude reference="81568"/>
                             </mask>
                             <mask key="constraints">
                                 <exclude reference="28416"/>
                                 <exclude reference="28417"/>
-                                <exclude reference="28418"/>
                                 <exclude reference="28420"/>
                                 <exclude reference="28421"/>
                                 <exclude reference="28423"/>
@@ -867,6 +904,9 @@
                                 <exclude reference="28465"/>
                                 <exclude reference="28466"/>
                                 <exclude reference="30143"/>
+                                <exclude reference="81569"/>
+                                <exclude reference="81570"/>
+                                <exclude reference="81573"/>
                             </mask>
                         </variation>
                         <variation key="heightClass=regular-widthClass=compact">
@@ -884,11 +924,11 @@
                                 <include reference="3853"/>
                                 <include reference="3854"/>
                                 <include reference="5771"/>
+                                <include reference="81568"/>
                             </mask>
                             <mask key="constraints">
                                 <include reference="28416"/>
                                 <include reference="28417"/>
-                                <include reference="28418"/>
                                 <include reference="28420"/>
                                 <include reference="28421"/>
                                 <include reference="28423"/>
@@ -921,12 +961,14 @@
                                 <include reference="28465"/>
                                 <include reference="28466"/>
                                 <include reference="30143"/>
+                                <include reference="81569"/>
+                                <include reference="81570"/>
+                                <include reference="81573"/>
                             </mask>
                         </variation>
                         <constraints>
                             <constraint id="28416" firstItem="3833" firstAttribute="top" secondItem="3562" secondAttribute="bottom" constant="35"/>
                             <constraint id="28417" firstItem="3566" firstAttribute="leadingMargin" secondItem="3833" secondAttribute="leading" constant="4"/>
-                            <constraint id="28418" firstItem="3833" firstAttribute="trailing" secondItem="3566" secondAttribute="trailingMargin" constant="4"/>
                             <constraint id="28420" firstItem="3834" firstAttribute="top" secondItem="3833" secondAttribute="bottom" constant="8"/>
                             <constraint id="28421" firstItem="3566" firstAttribute="leadingMargin" secondItem="3834" secondAttribute="leading" constant="4"/>
                             <constraint id="28423" firstItem="3845" firstAttribute="top" secondItem="3834" secondAttribute="bottom" constant="15"/>
@@ -959,6 +1001,9 @@
                             <constraint id="28465" firstItem="3854" firstAttribute="leading" secondItem="3566" secondAttribute="leadingMargin"/>
                             <constraint id="28466" firstItem="3854" firstAttribute="top" secondItem="3853" secondAttribute="top"/>
                             <constraint id="30143" firstItem="3566" firstAttribute="trailingMargin" secondItem="3834" secondAttribute="trailing" constant="64"/>
+                            <constraint id="81569" firstItem="81568" firstAttribute="top" secondItem="3562" secondAttribute="bottom" constant="26"/>
+                            <constraint id="81570" firstItem="3566" firstAttribute="trailingMargin" secondItem="81568" secondAttribute="trailing" constant="7"/>
+                            <constraint id="81573" firstItem="3566" firstAttribute="trailingMargin" secondItem="81568" secondAttribute="trailing" constant="7"/>
                         </constraints>
                     </view>
                     <connections>
@@ -969,6 +1014,7 @@
                         <outlet property="WeightIncrementTextField" destination="3852" id="name-outlet-3852"/>
                         <outlet property="MathTypePicker" destination="3854" id="name-outlet-3854"/>
                         <outlet property="CreateExerciseButton" destination="5771" id="name-outlet-5771"/>
+                        <outlet property="HelpButton" destination="81568" id="name-outlet-81568"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="3567" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -1025,24 +1071,24 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="10179" translatesAutoresizingMaskIntoConstraints="NO">
-                                                    <rect key="frame" x="318" y="11" width="46" height="30"/>
+                                                    <rect key="frame" x="318" y="11" width="46" height="45"/>
                                                     <state key="normal" title="Edit">
                                                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                     </state>
                                                     <constraints>
-                                                        <constraint id="45122" firstItem="10179" firstAttribute="height" constant="30"/>
                                                         <constraint id="45123" firstItem="10179" firstAttribute="width" constant="46"/>
+                                                        <constraint id="83756" firstItem="10179" firstAttribute="height" constant="45"/>
                                                     </constraints>
                                                     <variation key="default">
                                                         <mask key="constraints">
-                                                            <exclude reference="45122"/>
                                                             <exclude reference="45123"/>
+                                                            <exclude reference="83756"/>
                                                         </mask>
                                                     </variation>
                                                     <variation key="heightClass=regular-widthClass=compact">
                                                         <mask key="constraints">
-                                                            <include reference="45122"/>
                                                             <include reference="45123"/>
+                                                            <include reference="83756"/>
                                                         </mask>
                                                     </variation>
                                                 </button>
@@ -1237,7 +1283,7 @@
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="7011" translatesAutoresizingMaskIntoConstraints="NO">
-                                <rect key="frame" x="17" y="183" width="341" height="30"/>
+                                <rect key="frame" x="17" y="175" width="341" height="30"/>
                                 <state key="normal" title="Report result">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
@@ -1256,9 +1302,9 @@
                                     </mask>
                                 </variation>
                             </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="7036" translatesAutoresizingMaskIntoConstraints="NO" text="reps">
-                                <rect key="frame" x="144" y="132" width="191" height="21"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="7036" translatesAutoresizingMaskIntoConstraints="NO" text="reps" adjustsLetterSpacingToFitWidth="YES">
+                                <rect key="frame" x="144" y="132" width="221" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                                 <constraints>
@@ -1275,9 +1321,9 @@
                                     </mask>
                                 </variation>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="math" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="7037" translatesAutoresizingMaskIntoConstraints="NO">
-                                <rect key="frame" x="144" y="94" width="210" height="21"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="math" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="7037" translatesAutoresizingMaskIntoConstraints="NO" adjustsLetterSpacingToFitWidth="YES">
+                                <rect key="frame" x="144" y="94" width="221" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                                 <constraints>
@@ -1319,7 +1365,7 @@
                                 </variation>
                             </containerView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="11476" translatesAutoresizingMaskIntoConstraints="NO">
-                                <rect key="frame" x="17" y="259" width="341" height="30"/>
+                                <rect key="frame" x="17" y="251" width="341" height="30"/>
                                 <state key="normal" title="Modify rest of routine">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
@@ -1338,7 +1384,7 @@
                                 </variation>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="11525" translatesAutoresizingMaskIntoConstraints="NO">
-                                <rect key="frame" x="18" y="223" width="339" height="30"/>
+                                <rect key="frame" x="18" y="215" width="339" height="30"/>
                                 <state key="normal" title="I Made a mistake">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
@@ -1408,7 +1454,6 @@
                                 <exclude reference="37591"/>
                                 <exclude reference="37594"/>
                                 <exclude reference="37595"/>
-                                <exclude reference="37596"/>
                                 <exclude reference="37598"/>
                                 <exclude reference="37601"/>
                                 <exclude reference="37602"/>
@@ -1416,7 +1461,6 @@
                                 <exclude reference="37604"/>
                                 <exclude reference="37606"/>
                                 <exclude reference="37607"/>
-                                <exclude reference="37609"/>
                                 <exclude reference="37612"/>
                                 <exclude reference="38178"/>
                                 <exclude reference="38179"/>
@@ -1435,6 +1479,8 @@
                                 <exclude reference="55327"/>
                                 <exclude reference="60251"/>
                                 <exclude reference="60254"/>
+                                <exclude reference="84683"/>
+                                <exclude reference="84684"/>
                             </mask>
                         </variation>
                         <variation key="heightClass=regular-widthClass=compact">
@@ -1466,7 +1512,6 @@
                                 <include reference="37591"/>
                                 <include reference="37594"/>
                                 <include reference="37595"/>
-                                <include reference="37596"/>
                                 <include reference="37598"/>
                                 <include reference="37601"/>
                                 <include reference="37602"/>
@@ -1474,7 +1519,6 @@
                                 <include reference="37604"/>
                                 <include reference="37606"/>
                                 <include reference="37607"/>
-                                <include reference="37609"/>
                                 <include reference="37612"/>
                                 <include reference="38178"/>
                                 <include reference="38179"/>
@@ -1493,6 +1537,8 @@
                                 <include reference="55327"/>
                                 <include reference="60251"/>
                                 <include reference="60254"/>
+                                <include reference="84683"/>
+                                <include reference="84684"/>
                             </mask>
                         </variation>
                         <constraints>
@@ -1508,7 +1554,6 @@
                             <constraint id="37591" firstItem="7007" firstAttribute="leading" secondItem="7006" secondAttribute="trailing" constant="2"/>
                             <constraint id="37594" firstItem="7037" firstAttribute="leading" secondItem="7007" secondAttribute="trailing" constant="8"/>
                             <constraint id="37595" firstItem="7037" firstAttribute="top" secondItem="7007" secondAttribute="top" constant="5"/>
-                            <constraint id="37596" firstItem="6660" firstAttribute="trailingMargin" secondItem="7037" secondAttribute="trailing" constant="5"/>
                             <constraint id="37598" firstItem="7008" firstAttribute="leading" secondItem="6660" secondAttribute="leadingMargin"/>
                             <constraint id="37601" firstItem="7351" firstAttribute="top" secondItem="7007" secondAttribute="bottom" constant="8"/>
                             <constraint id="37602" firstItem="7351" firstAttribute="width" secondItem="7007" secondAttribute="width"/>
@@ -1516,9 +1561,10 @@
                             <constraint id="37604" firstItem="7008" firstAttribute="leading" secondItem="6660" secondAttribute="leadingMargin"/>
                             <constraint id="37606" firstItem="7036" firstAttribute="leading" secondItem="7351" secondAttribute="trailing" constant="8"/>
                             <constraint id="37607" firstItem="7036" firstAttribute="top" secondItem="7351" secondAttribute="top" constant="5"/>
-                            <constraint id="37609" firstItem="6660" firstAttribute="trailingMargin" secondItem="7036" secondAttribute="trailing" constant="24"/>
                             <constraint id="37612" firstItem="7008" firstAttribute="top" secondItem="7351" secondAttribute="top" constant="5"/>
-                            <constraint id="38178" firstItem="7011" firstAttribute="top" secondItem="7351" secondAttribute="bottom" constant="26"/>
+                            <constraint id="38178" firstItem="7011" firstAttribute="top" secondItem="7351" secondAttribute="bottom" constant="26">
+                                <variation key="heightClass=regular-widthClass=compact" constant="18"/>
+                            </constraint>
                             <constraint id="38179" firstItem="6660" firstAttribute="trailingMargin" secondItem="7011" secondAttribute="trailing" constant="1"/>
                             <constraint id="38180" firstItem="7011" firstAttribute="leading" secondItem="6660" secondAttribute="leadingMargin" constant="1"/>
                             <constraint id="38184" firstItem="6660" firstAttribute="trailingMargin" secondItem="11525" secondAttribute="trailing" constant="2"/>
@@ -1539,6 +1585,8 @@
                             <constraint id="60254" firstItem="11525" firstAttribute="top" secondItem="7011" secondAttribute="bottom" constant="30">
                                 <variation key="heightClass=regular-widthClass=compact" constant="10"/>
                             </constraint>
+                            <constraint id="84683" firstItem="7036" firstAttribute="trailing" secondItem="6660" secondAttribute="trailingMargin" constant="6"/>
+                            <constraint id="84684" firstItem="7037" firstAttribute="trailing" secondItem="6660" secondAttribute="trailingMargin" constant="6"/>
                         </constraints>
                     </view>
                     <connections>
@@ -1965,46 +2013,46 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="12301" translatesAutoresizingMaskIntoConstraints="NO">
-                                                    <rect key="frame" x="308" y="13" width="56" height="30"/>
+                                                    <rect key="frame" x="308" y="13" width="56" height="25.5"/>
                                                     <state key="normal" title="Edit">
                                                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                     </state>
                                                     <constraints>
-                                                        <constraint id="76883" firstItem="12301" firstAttribute="height" constant="30"/>
                                                         <constraint id="76884" firstItem="12301" firstAttribute="width" constant="56"/>
+                                                        <constraint id="83758" firstItem="12301" firstAttribute="height" constant="40"/>
                                                     </constraints>
                                                     <variation key="default">
                                                         <mask key="constraints">
-                                                            <exclude reference="76883"/>
                                                             <exclude reference="76884"/>
+                                                            <exclude reference="83758"/>
                                                         </mask>
                                                     </variation>
                                                     <variation key="heightClass=regular-widthClass=compact">
                                                         <mask key="constraints">
-                                                            <include reference="76883"/>
                                                             <include reference="76884"/>
+                                                            <include reference="83758"/>
                                                         </mask>
                                                     </variation>
                                                 </button>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="77829" translatesAutoresizingMaskIntoConstraints="NO">
-                                                    <rect key="frame" x="310" y="64" width="46" height="30"/>
+                                                    <rect key="frame" x="310" y="59.5" width="46" height="35"/>
                                                     <state key="normal" title="Share">
                                                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                     </state>
                                                     <constraints>
-                                                        <constraint id="77831" firstItem="77829" firstAttribute="height" constant="30"/>
                                                         <constraint id="77832" firstItem="77829" firstAttribute="width" constant="46"/>
+                                                        <constraint id="83759" firstItem="77829" firstAttribute="height" constant="35"/>
                                                     </constraints>
                                                     <variation key="default">
                                                         <mask key="constraints">
-                                                            <exclude reference="77831"/>
                                                             <exclude reference="77832"/>
+                                                            <exclude reference="83759"/>
                                                         </mask>
                                                     </variation>
                                                     <variation key="heightClass=regular-widthClass=compact">
                                                         <mask key="constraints">
-                                                            <include reference="77831"/>
                                                             <include reference="77832"/>
+                                                            <include reference="83759"/>
                                                         </mask>
                                                     </variation>
                                                 </button>
@@ -2120,33 +2168,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="12976" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="219" y="2700"/>
-        </scene>
-        <scene sceneID="13460">
-            <objects>
-                <tableViewController id="13461" sceneMemberID="viewController" customClass="SelectExerciseDifficultyController" storyboardIdentifier="SelectExerciseDifficultyPage">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="13462">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="13465">
-                                <rect key="frame" x="0.0" y="28" width="375" height="44"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="13465" id="13466">
-                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                </tableViewCellContentView>
-                            </tableViewCell>
-                        </prototypes>
-                        <connections>
-                            <outlet property="dataSource" destination="13461" id="13463"/>
-                            <outlet property="delegate" destination="13461" id="13464"/>
-                        </connections>
-                    </tableView>
-                </tableViewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="13467" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="1198" y="1907"/>
         </scene>
         <scene sceneID="13904">
             <objects>
@@ -2318,7 +2339,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="35981" translatesAutoresizingMaskIntoConstraints="NO" numberOfLines="0" misplaced="YES">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="35981" translatesAutoresizingMaskIntoConstraints="NO" numberOfLines="0">
                                 <rect key="frame" x="16" y="71" width="343" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                 <nil key="textColor"/>
@@ -2419,6 +2440,33 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="49114" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1184" y="2690"/>
+        </scene>
+        <scene sceneID="88924">
+            <objects>
+                <tableViewController id="88925" sceneMemberID="viewController" customClass="SelectExerciseGroupController" storyboardIdentifier="SelectExerciseGroupPage">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="88926">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="88929">
+                                <rect key="frame" x="0.0" y="28" width="375" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="88929" id="88930">
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="88925" id="88927"/>
+                            <outlet property="delegate" destination="88925" id="88928"/>
+                        </connections>
+                    </tableView>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="88931" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1192" y="1900"/>
         </scene>
     </scenes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">

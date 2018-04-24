@@ -5,13 +5,14 @@ using System.Text;
 
 namespace POLift.Core.Model
 {
-    public interface IExerciseDifficulty : IIdentifiable, IDatabaseObject
+    public interface IExerciseDifficulty : IExerciseGroup, IIdentifiable, IDatabaseObject
     {
-        string Name { get; set; }
+        //string Name { get; set; }
         int RestPeriodSeconds { get; set; }
-        string ExerciseIDs { get; set; }
+        //string ExerciseIDs { get; set; }
         IEnumerable<Exercise> Exercises { get; set; }
         int Usage { get; set; }
+        //string Category { get; set; }
 
         bool RefreshUsage();
 

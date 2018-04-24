@@ -30,6 +30,10 @@ namespace POLift.iOS.Controllers
         [GeneratedCode ("iOS Designer", "1.0")]
         UIKit.UITextField RoutineNameTextField { get; set; }
 
+        [Outlet]
+        [GeneratedCode ("iOS Designer", "1.0")]
+        UIKit.UILabel TipLabel { get; set; }
+
         void ReleaseDesignerOutlets ()
         {
             if (AddExerciseLink != null) {
@@ -50,6 +54,11 @@ namespace POLift.iOS.Controllers
             if (RoutineNameTextField != null) {
                 RoutineNameTextField.Dispose ();
                 RoutineNameTextField = null;
+            }
+
+            if (TipLabel != null) {
+                TipLabel.Dispose ();
+                TipLabel = null;
             }
         }
     }

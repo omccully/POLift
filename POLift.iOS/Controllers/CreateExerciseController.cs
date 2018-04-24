@@ -27,6 +27,17 @@ namespace POLift.iOS.Controllers
         {
         }
 
+        public string SubmitButtonText
+        {
+            get
+            {
+                return CreateExerciseButton.Title(UIControlState.Normal);
+            }
+            set
+            {
+                CreateExerciseButton.SetTitle(value, UIControlState.Normal);
+            }
+        }
         MathTypePickerViewModel PickerVM;
         MathTypePickerDelegate PickerDelegate;
         public override void ViewDidLoad()
@@ -34,6 +45,7 @@ namespace POLift.iOS.Controllers
             base.ViewDidLoad();
 
             CreateExerciseButton.SetCommand(Vm.CreateExerciseCommand);
+            HelpButton.SetCommand(Vm.HelpCommand);
 
             PickerVM = new MathTypePickerViewModel();
             PickerVM.MathTypeSelected += PickerVM_MathTypeSelected;
@@ -51,6 +63,14 @@ namespace POLift.iOS.Controllers
             
 
             ExerciseNameTextField.EditingChanged += (s, e) => { };
+
+            bindings.Add(this.SetBinding(
+                () => Vm.Title,
+                () => Title));
+
+            bindings.Add(this.SetBinding(
+                () => Vm.SubmitButtonText,
+                () => SubmitButtonText));
 
             bindings.Add(this.SetBinding(
                () => Vm.ExerciseNameInput,

@@ -74,6 +74,8 @@ namespace POLift.iOS
             nav.Configure(ViewModelLocator.OrmGraphPageKey, "OrmGraphRootPage");
             nav.Configure(ViewModelLocator.SelectExerciseDifficultyPageKey, "SelectExerciseDifficultyPage");
             nav.Configure(ViewModelLocator.SelectProgramToDownloadPageKey, "SelectProgramToDownloadPage");
+            nav.Configure(ViewModelLocator.SelectExerciseNamePageKey, "SelectExerciseNamePage");
+            nav.Configure(ViewModelLocator.SelectExerciseGroupPageKey, "SelectExerciseGroupPage");
 
             ViewModelLocator l = ViewModelLocator.Default;
             l.KeyValueStorage = new UserDefaultsKeyValueStorage();
