@@ -227,11 +227,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="src\Activity\SelectExerciseDifficultyActivity.cs" />
     <Compile Include="src\Activity\SelectExerciseGroupActivity.cs" />
     <Compile Include="src\Activity\SelectProgramToDownloadActivity.cs" />
-    <Compile Include="src\Adapter\ExerciseDifficultyAdapter.cs" />
-    <Compile Include="src\Adapter\ExerciseDifficultyPagerAdapter.cs" />
     <Compile Include="src\Adapter\ExerciseGroupAdapter.cs" />
     <Compile Include="src\Adapter\ExerciseGroupPagerAdapter.cs" />
     <Compile Include="src\MainApplication.cs" />
