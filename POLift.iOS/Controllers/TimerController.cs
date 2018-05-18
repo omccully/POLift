@@ -61,6 +61,41 @@ namespace POLift.iOS.Controllers
             bindings.Add(this.SetBinding(
                () => Vm.TimerState,
                () => this.TimerState));
+
+
+            // button text
+            bindings.Add(this.SetBinding(
+               () => Vm.Add30SecButtonText,
+               () => Add30SecButtonText));
+
+            bindings.Add(this.SetBinding(
+               () => Vm.Sub30SecButtonText,
+               () => Sub30SecButtonText));
+
+        }
+
+        public string Add30SecButtonText
+        {
+            get
+            {
+                return Add30SecButton.Title(UIControlState.Normal);
+            }
+            set
+            {
+                Add30SecButton.SetTitle(value, UIControlState.Normal);
+            }
+        }
+
+        public string Sub30SecButtonText
+        {
+            get
+            {
+                return Sub30SecButton.Title(UIControlState.Normal);
+            }
+            set
+            {
+                Sub30SecButton.SetTitle(value, UIControlState.Normal);
+            }
         }
 
         TimerState _TimerState = TimerState.Skipped;

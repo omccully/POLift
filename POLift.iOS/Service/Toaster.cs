@@ -39,9 +39,9 @@ namespace POLift.iOS.Service
             options.Add(Constants.kCRToastTextAlignmentKey, CRToastAccessoryViewAlignment.Center);
 
             // have it depend on message.Length
-            int hold_time = message.Length / 8;
-            hold_time = Math.Min(hold_time, 7);
-            hold_time = Math.Max(hold_time, 4);
+            int hold_time = message.Length / 15;
+            hold_time = Math.Min(hold_time, 5);
+            hold_time = Math.Max(hold_time, 2);
 
             options.Add(Constants.kCRToastTimeIntervalKey, hold_time);
 

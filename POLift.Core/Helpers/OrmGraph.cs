@@ -84,12 +84,16 @@ namespace POLift.Core.Helpers
             return plotModel;
         }
 
-        public void AddExerciseResultsToSeries(LineSeries series1, IEnumerable<ExerciseResult> exercise_results)
+        public void AddExerciseResultsToSeries(LineSeries series1, 
+            IEnumerable<ExerciseResult> exercise_results, bool only_up=false)
         {
             // must average each day's 1RM
             DateTime last_date = DateTime.MinValue;
             int orm_sum = 0;
             int orm_count = 0;
+
+            int highest_orm = 0;
+
             foreach (ExerciseResult ex_result in exercise_results)
             {
                 int orm = Helpers.OneRepMax(ex_result.Weight, ex_result.RepCount);
@@ -104,7 +108,17 @@ namespace POLift.Core.Helpers
                     if (orm_count > 0)
                     {
                         double last_date_d = DateTimeAxis.ToDouble(last_date);
-                        series1.Points.Add(new DataPoint(last_date_d, orm_sum / orm_count));
+                        int orm_average = orm_sum / orm_count;
+
+                        if (!only_up)
+                        {
+                            series1.Points.Add(new DataPoint(last_date_d, orm_average));
+                        }
+                        else if(orm_average >= highest_orm)
+                        {
+                            series1.Points.Add(new DataPoint(last_date_d, orm_average));
+                            highest_orm = orm_average;
+                        }
                     }
 
                     orm_sum = orm;

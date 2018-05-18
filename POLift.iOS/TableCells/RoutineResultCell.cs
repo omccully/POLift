@@ -21,7 +21,7 @@ namespace POLift.iOS
             EditClicked = edit_handler;
             EditRoutineResultButton.TouchUpInside += EditClicked;
 
-            ShareButton.Hidden = true;
+            //ShareButton.Hidden = true;
 
             ShareClicked = share_handler;
             if(ShareClicked != null)
@@ -30,6 +30,8 @@ namespace POLift.iOS
             }
             
             RoutineResultLabel.Text = rr.ToString();
+
+            base.SelectionStyle = UITableViewCellSelectionStyle.None;
         }
 
         public override void PrepareForReuse()

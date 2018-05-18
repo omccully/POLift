@@ -160,7 +160,7 @@ namespace POLift.Core.Service
             builder.Show();
         }
 
-        public void DisplayAcknowledgementOnce(string message, string key)
+        public bool DisplayAcknowledgementOnce(string message, string key, Action action_if_ok=null)
         {
             bool acknowledged = KeyValueStorage.GetBoolean(key, false);
 
@@ -170,9 +170,17 @@ namespace POLift.Core.Service
                     delegate
                     {
                         KeyValueStorage.SetValue(key, true);
+                        action_if_ok?.Invoke();
                     },
                     "OK (never show again)");
+                return true;
+            } 
+            else
+            {
+                action_if_ok?.Invoke();
             }
+
+            return false;
         }
 
         public void Dispose()

@@ -143,6 +143,8 @@ namespace POLift.Droid
         {
             base.OnActivityResult(requestCode, resultCode, data);
 
+            System.Diagnostics.Debug.WriteLine("OnActivityResult(" + requestCode + "," + resultCode);
+
             if(resultCode == Result.Ok && 
                 (requestCode == CreateRoutineRequestCode || 
                 requestCode == EditRoutineRequestCode))
@@ -166,11 +168,28 @@ namespace POLift.Droid
                 // regardless of result
                 
                 if(resultCode == Result.Ok)
-                {
+                { 
                     Toast.MakeText(this.Activity, "Routine completed",
                         ToastLength.Long).Show();
+
+                    bool backup_show = ViewModelLocator.Default.SideMenu.TryAskForBackup(delegate
+                    {
+                        AndroidHelpers.BackupData(this.Activity);
+                    });
+
+                    if(!backup_show)
+                    {
+                        int id = data.GetIntExtra("routine_result_id", -1);
+
+                        Vm.AskForShareRoutineResult(id, delegate (IRoutineResult rr)
+                        {
+                            this.Activity.ShareRoutineResult(rr);
+                        });
+                    }
                 }
             }
         }
+
+        
     }
 }

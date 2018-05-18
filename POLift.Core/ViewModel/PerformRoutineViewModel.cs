@@ -560,8 +560,8 @@ namespace POLift.Core.ViewModel
                             System.Diagnostics.Debug.WriteLine("NO@@@@@@@!");
                             if (action_if_completed == null)
                             {
-                                ValueChosen?.Invoke(RoutineResult);
                                 navigationService.GoBack();
+                                ValueChosen?.Invoke(RoutineResult);
                             }
                             else
                             {

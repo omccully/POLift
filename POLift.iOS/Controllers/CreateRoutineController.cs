@@ -52,7 +52,7 @@ namespace POLift.iOS.Controllers
 
             //Vm.Reset();
 
-
+            //ExerciseSetsTableView.AllowSelection = false;
             //ExerciseSetsTableView.RegisterClassForCellReuse(typeof(UITableViewCell),
             //    ExerciseSetsDataSource.ExerciseSetsCellId);
             //ExerciseSetsTableView.RegisterClassForCellReuse(typeof(UITableViewCell),
@@ -133,7 +133,19 @@ namespace POLift.iOS.Controllers
             cell_mover =
                 new LongPressTableViewCellMover(ExerciseSetsTableView);
             cell_mover.GestureRecognizer.CancelsTouchesInView = false;
+            cell_mover.Began += cell_mover_Began;
+            cell_mover.Ended += cell_mover_Ended;
             ExerciseSetsTableView.AddGestureRecognizer(cell_mover.GestureRecognizer);
+        }
+
+        private void cell_mover_Began(object sender, EventArgs e)
+        {
+            ExerciseSetsTableView.AllowsSelection = false;
+        }
+
+        private void cell_mover_Ended(object sender, EventArgs e)
+        {
+            ExerciseSetsTableView.AllowsSelection = true;
         }
 
         private void Vm_ExerciseSetsChanged(object sender, EventArgs e)
@@ -160,13 +172,21 @@ namespace POLift.iOS.Controllers
             ExerciseSetsTableView.Source = es_data_source =
                 new ExerciseSetsDataSource(Vm.ExerciseSets, Vm.LockedExerciseSets);
             es_data_source.SelectedExerciseSets += Es_data_source_SelectedExerciseSets;
+            ExerciseSetsTableView.ReloadData();
         }
 
         private void Es_data_source_SelectedExerciseSets(int index, IExerciseSets obj)
         {
             // edit Exercise
-
-            Vm.EditExerciseAtIndex(index);
+            //if(!cell_mover.LongPressDown)
+            //
+               // System.Diagnostics.Debug.WriteLine("!cell_mover.LongPressDown");
+                Vm.EditExerciseAtIndex(index);
+            //}
+            //else
+            //{
+              //  System.Diagnostics.Debug.WriteLine("cell_mover.LongPressDown");
+            //}
         }
 
         class ExerciseSetsDataSource : UITableViewSource
@@ -209,7 +229,40 @@ namespace POLift.iOS.Controllers
                     }
                 }*/
 
+                cell.SetCountZeroed = Cell_SetCountZeroed;
+
                 return cell;
+            }
+
+            private void Cell_SetCountZeroed(ExerciseSetsCell cell, IExerciseSets obj)
+            {
+                int index = -1;
+                for(int i = 0; i < ExerciseSets.Count; i++)
+                {
+                    if(obj == ExerciseSets.ElementAt(i))
+                    {
+                        if(index == -1)
+                        {
+                            index = i;
+                        }
+                        else
+                        {
+                            System.Diagnostics.Debug.WriteLine("Dupe somehow");
+                            return;
+                        }
+                    }
+                }
+
+                if(index >= 0)
+                {
+                    cell.DismissKeyboard();
+                    ViewModelLocator.Default.DialogService.DisplayConfirmation(
+                        "Would you like to delete this exercise?", delegate
+                        {
+                            // could do a remove animation here and dismiss the keyboard
+                            ExerciseSets.RemoveAt(index);
+                        });
+                }
             }
 
             bool CanEditRow(int row)
@@ -259,6 +312,11 @@ namespace POLift.iOS.Controllers
 
             public override void MoveRow(UITableView tableView, NSIndexPath sourceIndexPath, NSIndexPath destinationIndexPath)
             { 
+                if(!CanMoveRow(tableView, sourceIndexPath) || !CanMoveRow(tableView, destinationIndexPath))
+                {
+                    return;
+                }
+
                 var item = ExerciseSets[sourceIndexPath.Row];
                 int deleteAt = sourceIndexPath.Row;
                 int insertAt = destinationIndexPath.Row;
@@ -285,10 +343,11 @@ namespace POLift.iOS.Controllers
             public override void RowSelected(UITableView tableView, NSIndexPath indexPath)
             {
                 System.Diagnostics.Debug.WriteLine("RowSelected " + indexPath.DebugDescription);
-
-                SelectedExerciseSets?.Invoke(indexPath.Row, ExerciseSets.ElementAt(indexPath.Row));
+                if(CanEditRow(tableView, indexPath))
+                {
+                    SelectedExerciseSets?.Invoke(indexPath.Row, ExerciseSets.ElementAt(indexPath.Row));
+                }
             }
         }
-
     }
 }

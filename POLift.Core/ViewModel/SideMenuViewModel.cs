@@ -74,10 +74,10 @@ namespace POLift.Core.ViewModel
                     delegate
                     {
                         FlagExternalProgramsResponse();
-                        Toaster.DisplayMessage("If you change your mind, you " +
+                        /*Toaster.DisplayMessage("If you change your mind, you " +
                             "can get one of the built-in working programs " +
                             "at any time from the navigation drawer by swiping " +
-                            "from the left.");
+                            "from the left.");*/
 
                         InfoUserToLiftOnTheFly();
                     });
@@ -225,6 +225,90 @@ namespace POLift.Core.ViewModel
                     ViewModelLocator.SelectProgramToDownloadPageKey);
         }
 
+        public TimeSpan TimeSinceLastBackup
+        {
+            get
+            {
+                int last_backup_timestamp = KeyValueStorage.GetInteger(LastBackupTimeKey);
+                if (last_backup_timestamp == 0) return TimeSpan.MaxValue;
+                DateTime last_backup_time = Helpers.UnixTimeToDateTime(last_backup_timestamp);
+                return DateTime.UtcNow - last_backup_time;
+            }
+        }
+
+        public string BackupNavigationButtonText
+        {
+            get
+            {
+                TimeSpan time_since_backup = TimeSinceLastBackup;
+                string text_since_backup = " (never done)";
+                if (time_since_backup != TimeSpan.MaxValue)
+                {
+                    if (time_since_backup.TotalDays < 1)
+                    {
+                        text_since_backup = " (last done today)";
+                    }
+                    else if (time_since_backup.TotalDays < 2)
+                    {
+                        text_since_backup = " (last done yesterday)";
+                    }
+                    else
+                    {
+                        int days_rounded = (int)Math.Round(time_since_backup.TotalDays);
+                        text_since_backup = $" ({days_rounded} days ago)";
+                    }
+                }
+                return "Backup" + text_since_backup;
+            }
+        }
+
+        const string LastBackupTimeKey = "last_backup_time";
+        public void Backup(Action backup_action)
+        {
+            //int last_backup_time = KeyValueStorage.GetInteger(LastBackupTimeKey);
+            KeyValueStorage.SetValue(LastBackupTimeKey, (int)Helpers.UnixTimeStamp());
+
+            backup_action?.Invoke();
+        }
+
+        public const string AskForBackupPreferenceKey = "ask_for_backup";
+        public bool TryAskForBackup(Action backup_action)
+        {
+            const int RoutineResultsBetweenBackups = 5;
+
+            int last_backup_timestamp = KeyValueStorage.GetInteger(LastBackupTimeKey);
+            DateTime last_backup_time = Helpers.UnixTimeToDateTime(last_backup_timestamp);
+            TimeSpan time_since_last_backup = DateTime.UtcNow - last_backup_time;
+            int days_ago = (int)time_since_last_backup.TotalDays;
+
+            int rr_count_since_last_backup = database.Table<RoutineResult>()
+                .Where(rr => rr.StartTime > last_backup_time).Count();
+
+            string pretext = "";
+            if(last_backup_timestamp == 0)
+            {
+                pretext = "You have never backed up your data. ";
+            }
+            else
+            {
+                pretext = $"Your last backup was {days_ago} days ago, and you performed" +
+                    $" {rr_count_since_last_backup} routines since then. ";
+            }
+
+            if (rr_count_since_last_backup >= RoutineResultsBetweenBackups)
+            {
+                DialogService.DisplayConfirmationNeverShowAgain(
+                    pretext + 
+                    "Would you like to perform a backup now?", 
+                    AskForBackupPreferenceKey, 
+                    delegate
+                    {
+                        Backup(backup_action);
+                    });
+                return true;
+            }
+            return false;
+        }
 
         public void GetFreeWeightliftingPrograms(Action navigate_action=null)
         {

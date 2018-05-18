@@ -226,7 +226,8 @@ namespace POLift.Core.ViewModel
             {
                 Timer.Start(TimerTicked, 1000);
                 System.Diagnostics.Debug.WriteLine("Started timer");
-            } else
+            }
+            else
             {
                 System.Diagnostics.Debug.WriteLine("Timer already running");
             }
@@ -352,7 +353,7 @@ namespace POLift.Core.ViewModel
         }
 
         
-        string _Add30SecButtonText;
+        string _Add30SecButtonText = "+30 sec";
         public string Add30SecButtonText
         {
             get
@@ -365,7 +366,7 @@ namespace POLift.Core.ViewModel
             }
         }
 
-        string _Sub30SecButtonText;
+        string _Sub30SecButtonText = "-30 sec";
         public string Sub30SecButtonText
         {
             get

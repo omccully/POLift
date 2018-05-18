@@ -11,7 +11,7 @@ namespace POLift.Core.Model
         int RestPeriodSeconds { get; set; }
         //string ExerciseIDs { get; set; }
         IEnumerable<Exercise> Exercises { get; set; }
-        int Usage { get; set; }
+        //int Usage { get; set; }
         //string Category { get; set; }
 
         bool RefreshUsage();

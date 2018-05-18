@@ -9,11 +9,52 @@ using UIKit;
 
 using GalaSoft.MvvmLight.Helpers;
 using System.Drawing;
+using POLift.Core.Model;
+using Social;
+using POLift.iOS.Service;
+using POLift.Core.Service;
 
 namespace POLift.iOS
 {
     static class AppleHelpers
     {
+        public static void ShareRoutineResult(this UIViewController vc,
+            IRoutineResult rr)
+        {
+            if (SLComposeViewController.IsAvailable(SLServiceKind.Twitter))
+            {
+                Console.WriteLine("Twitter available");
+                vc.ShareRoutineResult(rr, SLServiceKind.Twitter);
+            }
+            else if (SLComposeViewController.IsAvailable(SLServiceKind.Facebook))
+            {
+                Console.WriteLine("Facebook available");
+                vc.ShareRoutineResult(rr, SLServiceKind.Twitter);
+            }
+            else
+            {
+                Console.WriteLine("No social media services available");
+                Toaster toaster = new Toaster();
+                toaster.DisplayError("No Facebook/Twitter services available");
+            }
+        }
+
+        public static void ShareRoutineResult(this UIViewController vc,
+            IRoutineResult rr, SLServiceKind kind)
+        {
+            SLComposeViewController slcvc = SLComposeViewController.FromService(kind);
+            slcvc.CompletionHandler = delegate
+            {
+                vc.DismissViewController(true, null);
+                Console.WriteLine("Cancelling");
+            };
+
+            slcvc.SetInitialText(rr.ShareText());
+            // add url once website gets set up slcvc.AddUrl()
+
+            vc.PresentViewController(slcvc, true, null);
+        }
+
         public static UIView CustomSnapshotFromView(this UIView view)
         {
             UIGraphics.BeginImageContextWithOptions(view.Bounds.Size, false, new nfloat(0));

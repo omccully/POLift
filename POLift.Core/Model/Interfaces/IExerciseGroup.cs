@@ -10,7 +10,9 @@ namespace POLift.Core.Model
     {
         string Name { get; set; }
         string ExerciseIDs { get; set; }
-
+        
         string Category { get; set; }
+
+        int Usage { get; set; }
     }
 }

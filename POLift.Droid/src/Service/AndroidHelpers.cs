@@ -15,6 +15,8 @@ using Android.Views;
 using Android.Widget;
 using Android.Util;
 using Android.Preferences;
+using Android.Support.V4.Content;
+using Android.Support.V4.App;
 
 namespace POLift.Droid.Service
 {
@@ -24,6 +26,37 @@ namespace POLift.Droid.Service
     public static class AndroidHelpers
     {
         //public static Intent 
+
+        public static void ShareRoutineResult(this Context context, IRoutineResult rr)
+        {
+            Intent tweet = new Intent(Intent.ActionSend);
+            tweet.PutExtra(Intent.ExtraText, rr.ShareText());
+            tweet.SetType("text/plain");
+            context.StartActivity(Intent.CreateChooser(tweet, "Share this via"));
+        }
+
+        public static void BackupData(Activity activity)
+        {
+            try
+            {
+                Java.IO.File export_file = new Java.IO.File(C.DatabasePath);
+                Android.Net.Uri uri = FileProvider.GetUriForFile(activity,
+                    "com.cml.poliftprovider", export_file);
+
+                Intent share_intent = ShareCompat.IntentBuilder.From(activity)
+                    .SetType("application/octet-stream")
+                    .SetStream(uri)
+                    .Intent;
+
+                share_intent.SetData(uri);
+                share_intent.AddFlags(ActivityFlags.GrantReadUriPermission);
+                activity.StartActivity(share_intent);
+            }
+            catch (ActivityNotFoundException err)
+            {
+                DisplayError(activity, err.Message);
+            }
+        }
 
         public static void NavigateToAppRating(Context context)
         {

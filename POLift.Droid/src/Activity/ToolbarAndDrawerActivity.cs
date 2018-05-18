@@ -54,6 +54,8 @@ namespace POLift.Droid
 
         IPOLDatabase Database;
 
+        Navigation BackupNavigation;
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -74,6 +76,9 @@ namespace POLift.Droid
                 ViewModelLocator.Default.KeyValueStorage);
             Vm.Toaster = new Toaster(this);
 
+            BackupNavigation = new Navigation(Vm.BackupNavigationButtonText, BackupData_Click,
+                    Resource.Mipmap.ic_backup_white_24dp);
+
             List<INavigation> Navigations = new List<INavigation>()
             {
                 new Navigation("Select routine", SelectRoutine_Click,
@@ -85,8 +90,7 @@ namespace POLift.Droid
                 //new Navigation("View gym time graph", ViewGymTimeGraphs_Click,
                 //    Resource.Mipmap.ic_timeline_white_24dp),
                 new Navigation(),
-                new Navigation("Backup data", BackupData_Click,
-                    Resource.Mipmap.ic_backup_white_24dp),
+                BackupNavigation,
                 new Navigation("Import data from backup", RestoreData_Click,
                     Resource.Mipmap.ic_cloud_download_white_24dp),
                 new Navigation("Import routines and exercises only", ImportRoutinesAndExercises_Click,
@@ -120,7 +124,7 @@ namespace POLift.Droid
             Navigations.Add(new Navigation());
 #if DEBUG
             //Navigations.Add(new Navigation("Metricize", Metricize_Click,
-            //    Resource.Mipmap.ic_settings_white_24dp));
+             //   Resource.Mipmap.ic_settings_white_24dp));
 #endif
 
             _NavigationAdapter = new NavigationAdapter(this, Navigations);
@@ -130,7 +134,8 @@ namespace POLift.Droid
             ActionBarDrawerToggle drawer_toggle = new ActionBarDrawerToggle(this, _DrawerLayout, toolbar,
                 Resource.String.drawer_opened,
                  Resource.String.drawer_closed);
-            
+            _DrawerLayout.DrawerOpened += _DrawerLayout_DrawerOpened;
+
             _DrawerLayout.SetDrawerListener(drawer_toggle);
             _DrawerLayout.Post(() => drawer_toggle.SyncState());
 
@@ -139,7 +144,17 @@ namespace POLift.Droid
             Vm.PromptUserForExternalProgramsIfFirstLaunch(GetFreeLiftingPrograms);
 
             AddPurchaseLicenseNavigationIfNotPurchased();
-            
+        }
+
+        private void _DrawerLayout_DrawerOpened(object sender, DrawerLayout.DrawerOpenedEventArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine("_DrawerLayout_DrawerOpened");
+            string new_text = Vm.BackupNavigationButtonText;
+            if (new_text != BackupNavigation.Text)
+            {
+                BackupNavigation.Text = Vm.BackupNavigationButtonText;
+                _NavigationAdapter.NotifyDataSetChanged();
+            }
         }
 
         void OnTheFly_Click()
@@ -275,7 +290,13 @@ namespace POLift.Droid
 
         private void BackupData_Click(object sender, EventArgs e)
         {
-            try
+            Vm.Backup(delegate
+            {
+                AndroidHelpers.BackupData(this);
+            });
+            
+
+           /* try
             {
                 Java.IO.File export_file = new Java.IO.File(C.DatabasePath);
                 Android.Net.Uri uri = FileProvider.GetUriForFile(this,
@@ -293,7 +314,7 @@ namespace POLift.Droid
             catch(ActivityNotFoundException err)
             {
                 AndroidHelpers.DisplayError(this, err.Message);
-            }
+            }*/
         }
 
 

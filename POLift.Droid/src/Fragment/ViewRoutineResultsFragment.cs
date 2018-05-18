@@ -52,8 +52,14 @@ namespace POLift.Droid
 
             RoutineResultAdapter.DeleteButtonClicked += RoutineResultAdapter_DeleteButtonClicked;
             RoutineResultAdapter.EditButtonClicked += RoutineResultAdapter_EditButtonClicked;
+            RoutineResultAdapter.ShareButtonClicked += RoutineResultAdapter_ShareButtonClicked;
 
             this.ListAdapter = RoutineResultAdapter;
+        }
+
+        private void RoutineResultAdapter_ShareButtonClicked(object sender, ContainerEventArgs<IRoutineResult> e)
+        {
+            this.Activity.ShareRoutineResult(e.Contents);
         }
 
         private void RoutineResultAdapter_EditButtonClicked(object sender, ContainerEventArgs<IRoutineResult> e)

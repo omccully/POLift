@@ -16,8 +16,9 @@ using Unity;
 
 using POLift.Core.ViewModel;
 
-using Xamarin.Social;
-using Xamarin.Social.Services;
+using Social;
+using POLift.iOS.Service;
+using POLift.iOS;
 
 namespace POLift.iOS.Controllers
 {
@@ -40,7 +41,7 @@ namespace POLift.iOS.Controllers
         {
             base.ViewDidLoad();
 
-           
+            //RoutineResultsTableView.AllowsSelection = false;
 
             try
             {
@@ -70,20 +71,20 @@ namespace POLift.iOS.Controllers
 
         private void Rrds_ShareClicked(IRoutineResult obj)
         {
-            TwitterService ts = new TwitterService();
+            /*TwitterService ts = new TwitterService();
             ts.ConsumerKey = "Z7V4YV2Bw2Z1FZ7QC5Id9uQbn";
             ts.ConsumerSecret = "15uNGW3vjBSt1xIBnSf3gmkaZJJs8kMrFiBPsK6nP8xDYbYces";
             ts.CallbackUrl = new Uri("http://polift-app.com");
             
-            
-
             Item item = new Item(obj.ToString());
 
             var share_cont = ts.GetShareUI(item, result =>
             {
                 DismissViewController(true, null);
             });
-            PresentViewController(share_cont, true, null);
+            PresentViewController(share_cont, true, null);*/
+           
+            this.ShareRoutineResult(obj);
         }
 
         class RoutineResultsDataSource : DeleteTableViewSource<IRoutineResult>

@@ -42,8 +42,6 @@ namespace POLift.iOS.Controllers
 
         }
 
-
-
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
@@ -59,6 +57,9 @@ namespace POLift.iOS.Controllers
                     this.Storyboard.InstantiateViewController(
                     "CreateRoutinePage"), true);
             };*/
+
+            Vm.RoutineCompleted += Vm_RoutineCompleted;
+
             CreateNewRoutineLink.SetCommand(
                 "TouchUpInside",
                 Vm.CreateRoutineNavigateCommand);
@@ -73,7 +74,43 @@ namespace POLift.iOS.Controllers
             Vm.RoutinesListChanged += Vm_RoutinesListChanged;
             Console.WriteLine("load");
         }
-       
+
+        public override void ViewDidUnload()
+        {
+            base.ViewDidUnload();
+
+            Vm.RoutineCompleted -= Vm_RoutineCompleted;
+        }
+
+        private void Vm_RoutineCompleted(IRoutineResult obj)
+        {
+            // TODO: ask for backup
+
+            Action share_rr_action = delegate
+            {
+                Vm.AskForShareRoutineResult(obj, delegate
+                {
+                    this.ShareRoutineResult(obj);
+                });
+            };
+
+            if(Vm.TotalRoutineResults >= 15)
+            {
+                // executes share_rr_action if dialog doesn't appear as well
+                Vm.DialogService.DisplayAcknowledgementOnce(
+                    "It's highly recommended that you ensure that iCloud backups " +
+                    "are enabled for the POLift app. This will make sure that you " + 
+                    "can regain access to your POLift data if your phone gets lost, stolen, or broken. " +
+                    "This can be done in your iCloud settings.",
+                    SideMenuViewModel.AskForBackupPreferenceKey,
+                    share_rr_action);
+            }
+            else
+            {
+                share_rr_action();
+            } 
+        }
+
         public override void ViewDidAppear(bool animated)
         {
             base.ViewDidAppear(animated);

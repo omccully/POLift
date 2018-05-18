@@ -229,7 +229,11 @@ namespace POLift.Droid
             // user submitted a result for this CurrentExercise
             Vm.SubmitResultFromInput(delegate
             {
-                SetResult(Result.Ok);
+                Intent result_intent = new Intent();
+                result_intent.PutExtra("routine_result_id", Vm.RoutineResult.ID);
+
+                SetResult(Result.Ok, result_intent);
+
                 Finish();
             });
         }

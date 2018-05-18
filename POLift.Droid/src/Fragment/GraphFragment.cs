@@ -11,12 +11,17 @@ using Android.Util;
 using Android.Views;
 using Android.Widget;
 using Android.Preferences;
+using Android.Support.Design.Widget;
+using Android.Graphics;
+using Android.Graphics.Drawables;
+using Android.Media;
+using Android.Provider;
 
 using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Series;
 using OxyPlot.Xamarin.Android;
-
+using System.IO;
 using Microsoft.Practices.Unity;
 
 using GalaSoft.MvvmLight.Helpers;
@@ -166,6 +171,83 @@ namespace POLift.Droid
 
             // generate list of values for sidebar
             GraphDataTextView.Text = Vm.DataText;
+
+            View view = this.Activity.LayoutInflater.Inflate(Resource.Layout.FloatingShareButton, frame_layout);
+            
+            //System.Diagnostics.Debug.WriteLine(view.GetType());
+            FloatingActionButton fab = view.FindViewById<FloatingActionButton>(Resource.Id.floating_share_button);
+            //FloatingActionButton fab = view as FloatingActionButton;
+
+            if(fab != null)
+            {
+                System.Diagnostics.Debug.WriteLine("fab != null");
+                fab.Click += Fab_Click;
+                //frame_layout.AddView(fab);
+                
+                
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine("fab == null");
+            }
+
+
+
+
+            //frame_layout.AddView(
+           //     )
+        }
+
+        private void Fab_Click(object sender, EventArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine("Fab_Click");
+            if (plot_view == null) return;
+
+            Intent i = new Intent(Intent.ActionSend);
+
+            i.SetType("image/png");
+            System.IO.Stream stream = new MemoryStream();
+
+            i.PutExtra(Intent.ExtraStream, GetImageUri(this.Activity, ScreenshotView(plot_view)));
+
+            this.Activity.StartActivity(Intent.CreateChooser(i, "Share this via"));
+        }
+
+        
+
+        public Android.Net.Uri GetImageUri(Context inContext, Bitmap inImage)
+        {
+            System.IO.Stream bytes = new MemoryStream();
+            //inImage.Compress(Bitmap.CompressFormat.Jpeg, 100, bytes);
+          
+            string path = MediaStore.Images.Media.InsertImage(inContext.ContentResolver, inImage, "1rm Graph", "1 rep max over time");
+            return Android.Net.Uri.Parse(path);
+        }
+
+        public static Bitmap ScreenshotView(View view)
+        {
+
+            Bitmap returnedBitmap = Bitmap.CreateBitmap(view.Width, view.Height, Bitmap.Config.Argb8888);
+
+            Canvas canvas = new Canvas(returnedBitmap);
+
+            Drawable bgDrawable = view.Background;
+            if (bgDrawable != null)
+                bgDrawable.Draw(canvas);
+            else
+                canvas.DrawColor(Color.White);
+            
+            view.Draw(canvas);
+
+            Paint p = new Paint();
+            p.Color = Color.Blue;
+            p.SetStyle(Paint.Style.Fill);
+            p.TextSize = 26;
+            p.UnderlineText = true;
+
+            canvas.DrawText("polift-app.com", 15, 47, p);
+
+            return returnedBitmap;
         }
     }
 }

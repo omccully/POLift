@@ -21,9 +21,21 @@ namespace POLift.Core.Service
             73, 70, 66, 63, 60
         };
 
+        public static string ShareText(this IRoutineResult rr)
+        {
+            return rr.ToString() + System.Environment.NewLine +
+                "Logged with #POLift https://polift-app.com";
+        }
+
         public static long UnixTimeStamp()
         {
             return (long)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+        }
+
+        public static DateTime UnixTimeToDateTime(long unix_timestamp)
+        {
+            DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
+            return dtDateTime.AddSeconds(unix_timestamp).ToLocalTime();
         }
 
         public static int OneRepMax(float weight, int reps)

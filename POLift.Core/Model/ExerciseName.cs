@@ -14,27 +14,33 @@ namespace POLift.Core.Model
         public string ExerciseIDs { get; set; }
 
         public string Category { get; set; }
+        public int Usage { get; set; }
 
-        public ExerciseName(string name, string exercise_ids)
+        public ExerciseName(string name, string exercise_ids, string category = "other")
         {
             this.Name = name;
+            this.Usage = exercise_ids.ToIDIntegers().Count();
             this.ExerciseIDs = exercise_ids;
+            this.Category = category;
         }
 
         public ExerciseName(IEnumerable<IExercise> exercises, string default_category="other")
         {
             HashSet<int> ex_ids = new HashSet<int>();
 
-            int highest_usage = 0;
-            string highest_usage_category = "";
-            foreach(IExercise ex in exercises)
+            this.Usage = 0;
+            this.Name = null;
+
+            string highest_usage_category = null;
+            foreach(IExercise ex in exercises.OrderBy(ex => ex.Usage))
             {
                 ex_ids.Add(ex.ID);
+                Usage += ex.Usage;
 
-                if(ex.Usage >= highest_usage)
+                if (this.Name == null) this.Name = ex.Name;
+
+                if(highest_usage_category == null && !String.IsNullOrWhiteSpace(ex.Category))
                 {
-                    this.Name = ex.Name;
-                    highest_usage = ex.Usage;
                     highest_usage_category = ex.Category;
                 }
             }
@@ -49,9 +55,8 @@ namespace POLift.Core.Model
         {
             HashSet<int> ex_ids = new HashSet<int>();
 
-            int highest_usage = 0;
-            string highest_usage_category = "";
-            foreach (IExerciseDifficulty difficulty in difficulties)
+            string highest_usage_category = null;
+            foreach (IExerciseDifficulty difficulty in difficulties.OrderByDescending(ed => ed.Usage))
             {
                 int[] ids = difficulty.ExerciseIDs.ToIDIntegers();
 
@@ -60,10 +65,10 @@ namespace POLift.Core.Model
                     ex_ids.Add(id);
                 }
 
-                if (difficulty.Usage >= highest_usage)
+                if (this.Name == null) this.Name = difficulty.Name;
+
+                if (highest_usage_category == null && !String.IsNullOrWhiteSpace(difficulty.Category))
                 {
-                    this.Name = difficulty.Name;
-                    highest_usage = difficulty.Usage;
                     highest_usage_category = difficulty.Category;
                 }
             }
@@ -91,7 +96,9 @@ namespace POLift.Core.Model
 
             // now group the ENs into categories
             return exercise_names.GroupBy(en => en.Category).Select(grouping =>
-                new ExerciseGroupCategory(grouping.Key, grouping)).ToList();
+                new ExerciseGroupCategory(grouping.Key, 
+                        grouping.OrderByDescending(g => g.Usage))
+            ).ToList();
         }
     }
 }

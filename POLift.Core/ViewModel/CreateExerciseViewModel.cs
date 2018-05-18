@@ -48,7 +48,7 @@ namespace POLift.Core.ViewModel
             DialogService.DisplayAcknowledgementOnce("POLift sets itself apart from other apps by " +
                 "automatically starting a rest timer and " +
                 "automatically increasing the weight once you reach a preset goal for a certain weight. " +
-                "For example, an exercise can be configured for increasing the weight when you get 5 reps 5 times in a row (for StrongLifts 5x5) " +
+                "For example, an exercise can be configured for increasing the weight when you get 5 reps 5 times in a row (for 5x5) " +
                 "or at 6 reps for the first time (for Bigger Leaner Stronger program). " +
                 "You set these rules yourself when you create an exercise.", TutorialSelectExerciseKey);
         }

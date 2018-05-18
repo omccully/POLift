@@ -25,7 +25,7 @@ namespace POLift.Core.Model
 
         IPlateMath PlateMath { get; set; }
 
-        int Usage { get; set; }
+        //int Usage { get; set; }
 
         string ShortDetails { get; }
 

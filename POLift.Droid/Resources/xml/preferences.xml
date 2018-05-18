@@ -19,7 +19,6 @@
     android:summary="When selecting an uncompleted routine"
     android:defaultValue="true"
       />
-
   <CheckBoxPreference
     android:key="ask_for_start_next_routine"
     android:title="Ask for next routine start"
@@ -32,6 +31,12 @@
     android:summary="the above setting must be disabled"
     android:defaultValue="false"
       />
+  <CheckBoxPreference
+    android:key="ask_for_share_routine_result"
+    android:title="Ask to share routine result?"
+    android:summary="when routine is completed"
+    android:defaultValue="true"
+      />
   <!--
   <CheckBoxPreference
       android:key="ask_for_more_exercises"
@@ -40,12 +45,4 @@
       android:defaultValue="false"
       />
   -->
-
-  <!--<CheckBoxPreference
-    android:key="ask_for_warmup"
-    android:title="Perform warmup by default"
-    android:summary="the above setting must be disabled"
-    android:defaultValue="false"
-      />-->
-
 </PreferenceScreen>

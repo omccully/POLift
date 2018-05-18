@@ -32,6 +32,12 @@ namespace POLift.Droid
             EditButtonClicked?.Invoke(this, e);
         }
 
+        public event EventHandler<ContainerEventArgs<IRoutineResult>> ShareButtonClicked;
+        protected virtual void OnShareButtonClicked(ContainerEventArgs<IRoutineResult> e)
+        {
+            ShareButtonClicked?.Invoke(this, e);
+        }
+
         public RoutineResultAdapter(Context context, IEnumerable<IRoutineResult> routine_results)
         {
             this.context = context;
@@ -101,6 +107,8 @@ namespace POLift.Droid
                 Resource.Id.RoutineResultEditButton);
             holder.DeleteButton = view.FindViewById<ImageButton>(
                 Resource.Id.RoutineResultDeleteButton);
+            holder.ShareButton = view.FindViewById<ImageButton>(
+                Resource.Id.RoutineResultShareButton);
 
             IRoutineResult rr = this[position];
 
@@ -114,6 +122,11 @@ namespace POLift.Droid
             holder.DeleteButton.Click += delegate
             {
                 OnDeleteButtonClicked(new ContainerEventArgs<IRoutineResult>(rr));
+            };
+
+            holder.ShareButton.Click += delegate
+            {
+                OnShareButtonClicked(new ContainerEventArgs<IRoutineResult>(rr));
             };
 
             return view;
@@ -135,5 +148,6 @@ namespace POLift.Droid
         public TextView Text { get; set; }
         public ImageButton EditButton { get; set; }
         public ImageButton DeleteButton { get; set; }
+        public ImageButton ShareButton { get; set; }
     }
 }

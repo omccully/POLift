@@ -12,6 +12,10 @@ namespace POLift.iOS.Service
     class LongPressTableViewCellMover
     {
         public UILongPressGestureRecognizer GestureRecognizer { get; set; }
+        public bool LongPressDown { get; set; } = false;
+
+        public event EventHandler Began;
+        public event EventHandler Ended;
 
         UITableView table_view;
         public LongPressTableViewCellMover(UITableView table_view)
@@ -42,7 +46,12 @@ namespace POLift.iOS.Service
             switch (state)
             {
                 case UIGestureRecognizerState.Began:
-                    if (path == null) break;
+                    if (path == null || !CanMoveRow(path))
+                    {
+                        source_index_path = null;
+                        break;
+                    }
+
                     source_index_path = path;
 
                     cell = table_view.CellAt(path);
@@ -68,6 +77,9 @@ namespace POLift.iOS.Service
                     {
                         cell.Hidden = true; // hide cell
                     });
+
+                    LongPressDown = true;
+                    Began?.Invoke(this, new EventArgs());
                     break;
                 case UIGestureRecognizerState.Changed:
                     if (path == null) break;
@@ -77,6 +89,8 @@ namespace POLift.iOS.Service
                     snapshot.Center = center;
                     break;
                 default:
+                    Ended?.Invoke(this, new EventArgs());
+                    LongPressDown = false;
                     //if (path == null) break;
                     if (source_index_path == null) break;
                     if (snapshot == null) break;
@@ -87,7 +101,9 @@ namespace POLift.iOS.Service
                     cell.Alpha = new nfloat(0.0);
 
                     // move the rows. 
-                    if (last_valid_path != null && !last_valid_path.IsEqual(source_index_path))
+                    if (last_valid_path != null && 
+                        !last_valid_path.IsEqual(source_index_path) &&
+                        CanMoveRow(last_valid_path))
                     {
                         if(table_view.Source != null)
                         {
@@ -117,7 +133,26 @@ namespace POLift.iOS.Service
 
                         source_index_path = null;
                     });
+
+                    
                     break;
+            }
+        }
+
+        bool CanMoveRow(NSIndexPath indexPath)
+        {
+            if (table_view.Source != null)
+            {
+                return table_view.Source.CanMoveRow(table_view, indexPath);
+            }
+            else if (table_view.DataSource != null)
+            {
+                return table_view.DataSource.CanMoveRow(table_view, indexPath);
+            }
+            else
+            {
+                Console.WriteLine($"No data source for move ({source_index_path.DebugDescription} -> {last_valid_path.DebugDescription}");
+                return false;
             }
         }
     }

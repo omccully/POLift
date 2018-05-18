@@ -58,9 +58,12 @@ namespace POLift.Core.ViewModel
             this.database = database;
         }
 
-        private void PerformRoutine_ValueChosen(IRoutineResult obj)
+
+        public event Action<IRoutineResult> RoutineCompleted;
+        public void PerformRoutine_ValueChosen(IRoutineResult obj)
         {
             Toaster?.DisplayMessage("Routine completed");
+            RoutineCompleted?.Invoke(obj);
         }
 
         private void CreateRoutine_ValueChosen(IRoutine obj)
@@ -189,6 +192,36 @@ namespace POLift.Core.ViewModel
                     });
         }
 
+        public void AskForShareRoutineResult(int rr_id, Action<IRoutineResult> share_action)
+        {
+            if (rr_id <= 0) return;
+
+            IRoutineResult rr = database.ReadByID<RoutineResult>(rr_id);
+
+            AskForShareRoutineResult(rr, delegate
+            {
+                share_action?.Invoke(rr);
+            });
+        }
+
+        public int TotalRoutineResults
+        {
+            get
+            {
+                return database.Table<RoutineResult>().Count();
+            }
+        }
+
+        const string AskForShareRoutineResultKey = "ask_for_share_routine_result";
+        public void AskForShareRoutineResult(IRoutineResult rr, Action share_action)
+        {
+            
+            DialogService.DisplayConfirmationYesNotNowNever(
+                "You completed the routine. " +
+                "Would you like to share your results of this routine?",
+                AskForShareRoutineResultKey,
+                share_action);
+        }
 
         public void PromptUserForStartingNextRoutine(Action<IRoutine> navigate_to_routine = null)
         {
