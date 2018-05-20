@@ -91,7 +91,11 @@ namespace POLift.Core.Model
         {
             int exercises = ExerciseSets.Count();
             int total_sets = ExerciseSets.Sum(e => e.SetCount);
-            string result = $"{Name} ({exercises} exercises, {total_sets} sets)";
+
+            string ex_plur = Helpers.Plur(exercises);
+            string set_plur = Helpers.Plur(total_sets);
+
+            string result = $"{Name} ({exercises} exercise{ex_plur}, {total_sets} set{set_plur})";
 
             //result += $"(ID {ID})";
 

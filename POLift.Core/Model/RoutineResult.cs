@@ -334,7 +334,11 @@ namespace POLift.Core.Model
                 if (this.EndTime != null)
                 {
                     TimeSpan span = (this.EndTime - this.StartTime);
-                    return $"{this.StartTime.ToLocalTime()} ({(int)span.TotalMinutes} mins) ";
+
+                    DateTime start = this.StartTime.ToLocalTime();
+                    string start_str = start.ToString("d") + " " + start.ToString("t");
+
+                    return $"{start_str} ({(int)span.TotalMinutes + 1} mins) ";
                 }
                 return null;
             }

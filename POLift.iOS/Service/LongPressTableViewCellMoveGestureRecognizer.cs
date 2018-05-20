@@ -38,7 +38,9 @@ namespace POLift.iOS.Service
             NSIndexPath path = table_view.IndexPathForRowAtPoint(location);
             if (path != null) last_valid_path = path;
 
+#if DEBUG
             Console.WriteLine("LONG PRESS DETECTED: " + state + " " + location.ToString() + " " + path?.DebugDescription);
+#endif
 
             CGPoint center;
             UITableViewCell cell;
@@ -70,7 +72,7 @@ namespace POLift.iOS.Service
                         snapshot.Center = center;
                         snapshot.Transform = CGAffineTransform.MakeScale(new nfloat(1.05), new nfloat(1.05));
                         snapshot.Alpha = new nfloat(0.98);
-
+                      
                         // hide cell
                         cell.Alpha = new nfloat(0.0);
                     }, delegate

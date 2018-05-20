@@ -37,6 +37,13 @@
     android:summary="when routine is completed"
     android:defaultValue="true"
       />
+  <CheckBoxPreference
+   android:key="ask_for_backup"
+   android:title="Backup reminder"
+   android:summary="when routine is completed"
+   android:defaultValue="true"
+      />
+  
   <!--
   <CheckBoxPreference
       android:key="ask_for_more_exercises"

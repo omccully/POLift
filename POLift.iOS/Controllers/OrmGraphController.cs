@@ -66,6 +66,8 @@ namespace POLift.iOS.Controllers
             plot_view.Frame = frame;
 
             plot_view.Model = Vm.PlotModel;
+            System.Diagnostics.Debug.WriteLine("fontsize = " + plot_view.Model.TitleFontSize);
+            plot_view.Model.TitleFontSize = 16.0;
             //bindings.Add(this.SetBinding(
             //    () => Vm.PlotModel,
             //    () => plot_view.Model));
@@ -124,6 +126,9 @@ namespace POLift.iOS.Controllers
             var line_point_end = new CGPoint(line_point.X, line_point.Y + size.Width);
             UIGraphics.GetCurrentContext().DrawLinearGradient(grad, line_point, line_point_end, CGGradientDrawingOptions.None);
             */
+
+            CGSize size = str.DrawString(point, font);
+            System.Diagnostics.Debug.WriteLine("drew at size " + size.ToString());
 
             UIImage img = UIGraphics.GetImageFromCurrentImageContext();
             UIGraphics.EndImageContext();

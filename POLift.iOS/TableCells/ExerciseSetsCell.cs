@@ -62,6 +62,8 @@ namespace POLift.iOS
             ExerciseNameLabel.PreferredMaxLayoutWidth = 220;
             SetCountTextField.Enabled = EditEnabled;
 
+            if(!EditEnabled) this.BackgroundColor = UIColor.LightGray;
+
             base.SelectionStyle = UITableViewCellSelectionStyle.None;
         }
 

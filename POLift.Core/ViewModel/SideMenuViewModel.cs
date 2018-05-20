@@ -255,7 +255,7 @@ namespace POLift.Core.ViewModel
                     else
                     {
                         int days_rounded = (int)Math.Round(time_since_backup.TotalDays);
-                        text_since_backup = $" ({days_rounded} days ago)";
+                        text_since_backup = $" (last done {days_rounded} days ago)";
                     }
                 }
                 return "Backup" + text_since_backup;

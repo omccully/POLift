@@ -111,12 +111,15 @@ namespace POLift.Droid
         {
             System.Diagnostics.Debug.WriteLine("Exercise_sets_adapter_ItemClicked");
 
-            Vm.EditExerciseAtIndex(index, delegate
+            if(index >= Vm.LockedExerciseSets)
             {
-                var intent = new Intent(this, typeof(CreateExerciseActivity));
-                intent.PutExtra("edit_exercise_id", es.ExerciseID);
-                StartActivityForResult(intent, CreateExerciseRequestCode);
-            });
+                Vm.EditExerciseAtIndex(index, delegate
+                {
+                    var intent = new Intent(this, typeof(CreateExerciseActivity));
+                    intent.PutExtra("edit_exercise_id", es.ExerciseID);
+                    StartActivityForResult(intent, CreateExerciseRequestCode);
+                });
+            }
         }
 
         protected override void OnSaveInstanceState(Bundle outState)
