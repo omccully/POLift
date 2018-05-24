@@ -254,7 +254,7 @@ namespace POLift.Core.ViewModel
             int previous_routine_id = -1;
             foreach (RoutineResult rr in rrs)
             {
-                System.Diagnostics.Debug.WriteLine("checking " + rr);
+               // System.Diagnostics.Debug.WriteLine("checking " + rr);
                 if (previous_routine_id != -1 &&
                     (rr.RoutineID == latest_routine_id || rr.Routine.Name == latest_routine_name))
                 {

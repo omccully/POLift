@@ -281,8 +281,14 @@ namespace POLift.Core.ViewModel
             TimeSpan time_since_last_backup = DateTime.UtcNow - last_backup_time;
             int days_ago = (int)time_since_last_backup.TotalDays;
 
-            int rr_count_since_last_backup = database.Table<RoutineResult>()
-                .Where(rr => rr.StartTime > last_backup_time).Count();
+            var rrs = database.Table<RoutineResult>()
+                .Where(rr => !rr.Deleted && rr.StartTime > last_backup_time);
+
+            foreach(RoutineResult rr in rrs)
+            {
+                System.Diagnostics.Debug.WriteLine(rr.StartTime + " " + rr.ToString());
+            }
+            int rr_count_since_last_backup = rrs.Count();
 
             string pretext = "";
             if(last_backup_timestamp == 0)
@@ -294,6 +300,8 @@ namespace POLift.Core.ViewModel
                 pretext = $"Your last backup was {days_ago} days ago, and you performed" +
                     $" {rr_count_since_last_backup} routines since then. ";
             }
+
+            System.Diagnostics.Debug.WriteLine($"TryAskForBackup rrs={rr_count_since_last_backup} {pretext}");
 
             if (rr_count_since_last_backup >= RoutineResultsBetweenBackups)
             {
