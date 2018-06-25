@@ -53,7 +53,7 @@ namespace POLift.Core.ViewModel
                 "You set these rules yourself when you create an exercise.", TutorialSelectExerciseKey);
         }
 
-        public void EditExercise(IExercise exercise, bool name_input_enabled = false)
+        public void EditExercise(IExercise exercise, bool name_input_enabled = true)
         {
             // editing exercise does not affect original
             // unless ONLY platemath was changed. 

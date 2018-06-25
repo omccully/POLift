@@ -10,7 +10,7 @@ namespace POLift.Core.ViewModel
 
     public interface ICreateExerciseViewModel : IValueReturner<IExercise>
     {
-        void EditExercise(IExercise exercise, bool name_input_enabled = false);
+        void EditExercise(IExercise exercise, bool name_input_enabled = true);
 
         void Reset();
     }

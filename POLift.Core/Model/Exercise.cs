@@ -379,7 +379,8 @@ namespace POLift.Core.Model
             return (this.Name == r.Name &&
                 this.MaxRepCount == r.MaxRepCount && 
                 this.WeightIncrement == r.WeightIncrement &&
-                this.RestPeriodSeconds == r.RestPeriodSeconds);
+                this.RestPeriodSeconds == r.RestPeriodSeconds &&
+                this.ConsecutiveSetsForWeightIncrease == r.ConsecutiveSetsForWeightIncrease);
         }
 
         public static bool operator ==(Exercise a, Exercise b)

@@ -738,7 +738,7 @@ namespace POLift.Core.ViewModel
             if (CreateExerciseViewModel != null)
             {
                 CreateExerciseViewModel.ValueChosen += CreateExercise_ValueChosen;
-                CreateExerciseViewModel.EditExercise(this.CurrentExercise);
+                CreateExerciseViewModel.EditExercise(this.CurrentExercise, false);
             }
 
             navigationService.NavigateTo(ViewModelLocator.CreateExercisePageKey);
