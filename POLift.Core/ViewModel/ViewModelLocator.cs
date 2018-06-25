@@ -188,6 +188,7 @@ namespace POLift.Core.ViewModel
 
                 CreateExercise.KeyValueStorage = value;
                 SideMenu.KeyValueStorage = value;
+                Timer.KeyValueStorage = value;
 
                 if(LicenseManager != null)
                 {

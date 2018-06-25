@@ -2199,8 +2199,8 @@ namespace POLift
 		public partial class Id
 		{
 			
-			// aapt resource value: 0x7f0c00d3
-			public const int Add30SecButton = 2131493075;
+			// aapt resource value: 0x7f0c00d4
+			public const int Add30SecButton = 2131493076;
 			
 			// aapt resource value: 0x7f0c0082
 			public const int AddExerciseButton = 2131492994;
@@ -2208,26 +2208,26 @@ namespace POLift
 			// aapt resource value: 0x7f0c0077
 			public const int ConsecutiveSetsForWeightIncrease = 2131492983;
 			
-			// aapt resource value: 0x7f0c00d0
-			public const int CountDownTextView = 2131493072;
+			// aapt resource value: 0x7f0c00d1
+			public const int CountDownTextView = 2131493073;
 			
 			// aapt resource value: 0x7f0c007e
 			public const int CreateExerciseButton = 2131492990;
 			
-			// aapt resource value: 0x7f0c00e1
-			public const int CreateExerciseLink = 2131493089;
+			// aapt resource value: 0x7f0c00e2
+			public const int CreateExerciseLink = 2131493090;
 			
 			// aapt resource value: 0x7f0c0084
 			public const int CreateRoutineButton = 2131492996;
 			
-			// aapt resource value: 0x7f0c00a7
-			public const int CreateRoutineLink = 2131493031;
+			// aapt resource value: 0x7f0c00a8
+			public const int CreateRoutineLink = 2131493032;
 			
 			// aapt resource value: 0x7f0c0097
 			public const int DoneEditingRoutineResultButton = 2131493015;
 			
-			// aapt resource value: 0x7f0c00c7
-			public const int EditThisExerciseButton = 2131493063;
+			// aapt resource value: 0x7f0c00c8
+			public const int EditThisExerciseButton = 2131493064;
 			
 			// aapt resource value: 0x7f0c009c
 			public const int ExerciseDeleteButton = 2131493020;
@@ -2256,98 +2256,98 @@ namespace POLift
 			// aapt resource value: 0x7f0c009f
 			public const int ExerciseSetsName = 2131493023;
 			
-			// aapt resource value: 0x7f0c00e2
-			public const int ExercisesDifficultyViewPager = 2131493090;
+			// aapt resource value: 0x7f0c00e3
+			public const int ExercisesDifficultyViewPager = 2131493091;
 			
 			// aapt resource value: 0x7f0c0083
 			public const int ExercisesListView = 2131492995;
 			
-			// aapt resource value: 0x7f0c00e0
-			public const int ExercisesViewPager = 2131493088;
+			// aapt resource value: 0x7f0c00e1
+			public const int ExercisesViewPager = 2131493089;
 			
-			// aapt resource value: 0x7f0c00a4
-			public const int GraphDataTextView = 2131493028;
+			// aapt resource value: 0x7f0c00a5
+			public const int GraphDataTextView = 2131493029;
+			
+			// aapt resource value: 0x7f0c00d6
+			public const int IMadeAMistakeButton = 2131493078;
 			
 			// aapt resource value: 0x7f0c00d5
-			public const int IMadeAMistakeButton = 2131493077;
+			public const int ModifyRestOfRoutineButton = 2131493077;
 			
-			// aapt resource value: 0x7f0c00d4
-			public const int ModifyRestOfRoutineButton = 2131493076;
+			// aapt resource value: 0x7f0c00ab
+			public const int NeverShowAgainCheckBox = 2131493035;
 			
-			// aapt resource value: 0x7f0c00aa
-			public const int NeverShowAgainCheckBox = 2131493034;
+			// aapt resource value: 0x7f0c00c7
+			public const int NextExerciseView = 2131493063;
 			
-			// aapt resource value: 0x7f0c00c6
-			public const int NextExerciseView = 2131493062;
+			// aapt resource value: 0x7f0c00cf
+			public const int NextWarmupView = 2131493071;
+			
+			// aapt resource value: 0x7f0c00a7
+			public const int OnTheFlyLink = 2131493031;
+			
+			// aapt resource value: 0x7f0c00c3
+			public const int PerformRoutineLinearLayout = 2131493059;
+			
+			// aapt resource value: 0x7f0c00c5
+			public const int PerformRoutineMainContent = 2131493061;
+			
+			// aapt resource value: 0x7f0c00cb
+			public const int PlateMathTextView = 2131493067;
 			
 			// aapt resource value: 0x7f0c00ce
-			public const int NextWarmupView = 2131493070;
-			
-			// aapt resource value: 0x7f0c00a6
-			public const int OnTheFlyLink = 2131493030;
-			
-			// aapt resource value: 0x7f0c00c2
-			public const int PerformRoutineLinearLayout = 2131493058;
-			
-			// aapt resource value: 0x7f0c00c4
-			public const int PerformRoutineMainContent = 2131493060;
-			
-			// aapt resource value: 0x7f0c00ca
-			public const int PlateMathTextView = 2131493066;
-			
-			// aapt resource value: 0x7f0c00cd
-			public const int RepDetailsTextView = 2131493069;
+			public const int RepDetailsTextView = 2131493070;
 			
 			// aapt resource value: 0x7f0c0076
 			public const int RepRangeMaxText = 2131492982;
 			
+			// aapt resource value: 0x7f0c00cd
+			public const int RepResultEditText = 2131493069;
+			
 			// aapt resource value: 0x7f0c00cc
-			public const int RepResultEditText = 2131493068;
+			public const int RepResultLabel = 2131493068;
 			
-			// aapt resource value: 0x7f0c00cb
-			public const int RepResultLabel = 2131493067;
-			
-			// aapt resource value: 0x7f0c00cf
-			public const int ReportResultButton = 2131493071;
+			// aapt resource value: 0x7f0c00d0
+			public const int ReportResultButton = 2131493072;
 			
 			// aapt resource value: 0x7f0c0079
 			public const int RestPeriodSecondsTextBox = 2131492985;
 			
-			// aapt resource value: 0x7f0c00db
-			public const int RoutineDeleteButton = 2131493083;
+			// aapt resource value: 0x7f0c00dc
+			public const int RoutineDeleteButton = 2131493084;
 			
-			// aapt resource value: 0x7f0c00c5
-			public const int RoutineDetails = 2131493061;
-			
-			// aapt resource value: 0x7f0c00d7
-			public const int RoutineDetailsTextView = 2131493079;
-			
-			// aapt resource value: 0x7f0c00da
-			public const int RoutineEditButton = 2131493082;
+			// aapt resource value: 0x7f0c00c6
+			public const int RoutineDetails = 2131493062;
 			
 			// aapt resource value: 0x7f0c00d8
-			public const int RoutineItemName = 2131493080;
+			public const int RoutineDetailsTextView = 2131493080;
+			
+			// aapt resource value: 0x7f0c00db
+			public const int RoutineEditButton = 2131493083;
 			
 			// aapt resource value: 0x7f0c00d9
-			public const int RoutineMoreDetails = 2131493081;
+			public const int RoutineItemName = 2131493081;
 			
-			// aapt resource value: 0x7f0c00de
-			public const int RoutineResultDeleteButton = 2131493086;
-			
-			// aapt resource value: 0x7f0c00dd
-			public const int RoutineResultEditButton = 2131493085;
+			// aapt resource value: 0x7f0c00da
+			public const int RoutineMoreDetails = 2131493082;
 			
 			// aapt resource value: 0x7f0c00df
-			public const int RoutineResultShareButton = 2131493087;
+			public const int RoutineResultDeleteButton = 2131493087;
 			
-			// aapt resource value: 0x7f0c00dc
-			public const int RoutineResultTextView = 2131493084;
+			// aapt resource value: 0x7f0c00de
+			public const int RoutineResultEditButton = 2131493086;
+			
+			// aapt resource value: 0x7f0c00e0
+			public const int RoutineResultShareButton = 2131493088;
+			
+			// aapt resource value: 0x7f0c00dd
+			public const int RoutineResultTextView = 2131493085;
 			
 			// aapt resource value: 0x7f0c0080
 			public const int RoutineTitleText = 2131492992;
 			
-			// aapt resource value: 0x7f0c00a5
-			public const int RoutinesList = 2131493029;
+			// aapt resource value: 0x7f0c00a6
+			public const int RoutinesList = 2131493030;
 			
 			// aapt resource value: 0x7f0c00a1
 			public const int SelectExercisesListInTab = 2131493025;
@@ -2358,35 +2358,35 @@ namespace POLift
 			// aapt resource value: 0x7f0c009e
 			public const int SetCountText = 2131493022;
 			
+			// aapt resource value: 0x7f0c00d3
+			public const int SkipTimerButton = 2131493075;
+			
 			// aapt resource value: 0x7f0c00d2
-			public const int SkipTimerButton = 2131493074;
+			public const int Sub30SecButton = 2131493074;
 			
-			// aapt resource value: 0x7f0c00d1
-			public const int Sub30SecButton = 2131493073;
-			
-			// aapt resource value: 0x7f0c00e6
-			public const int TimeLeftTextView = 2131493094;
-			
-			// aapt resource value: 0x7f0c00e4
-			public const int WarmupRoutineTextView = 2131493092;
+			// aapt resource value: 0x7f0c00e7
+			public const int TimeLeftTextView = 2131493095;
 			
 			// aapt resource value: 0x7f0c00e5
-			public const int WarmupSetFinishedButton = 2131493093;
+			public const int WarmupRoutineTextView = 2131493093;
 			
-			// aapt resource value: 0x7f0c00c9
-			public const int WeightEditText = 2131493065;
+			// aapt resource value: 0x7f0c00e6
+			public const int WarmupSetFinishedButton = 2131493094;
+			
+			// aapt resource value: 0x7f0c00ca
+			public const int WeightEditText = 2131493066;
 			
 			// aapt resource value: 0x7f0c007b
 			public const int WeightIncrementTextBox = 2131492987;
 			
-			// aapt resource value: 0x7f0c00c8
-			public const int WeightLabel = 2131493064;
+			// aapt resource value: 0x7f0c00c9
+			public const int WeightLabel = 2131493065;
 			
-			// aapt resource value: 0x7f0c00e3
-			public const int WorkingSetWeightEditText = 2131493091;
+			// aapt resource value: 0x7f0c00e4
+			public const int WorkingSetWeightEditText = 2131493092;
 			
-			// aapt resource value: 0x7f0c00ae
-			public const int action0 = 2131493038;
+			// aapt resource value: 0x7f0c00af
+			public const int action0 = 2131493039;
 			
 			// aapt resource value: 0x7f0c0064
 			public const int action_bar = 2131492964;
@@ -2409,17 +2409,17 @@ namespace POLift
 			// aapt resource value: 0x7f0c0041
 			public const int action_bar_title = 2131492929;
 			
-			// aapt resource value: 0x7f0c00ab
-			public const int action_container = 2131493035;
+			// aapt resource value: 0x7f0c00ac
+			public const int action_container = 2131493036;
 			
 			// aapt resource value: 0x7f0c0065
 			public const int action_context_bar = 2131492965;
 			
-			// aapt resource value: 0x7f0c00b2
-			public const int action_divider = 2131493042;
+			// aapt resource value: 0x7f0c00b3
+			public const int action_divider = 2131493043;
 			
-			// aapt resource value: 0x7f0c00ac
-			public const int action_image = 2131493036;
+			// aapt resource value: 0x7f0c00ad
+			public const int action_image = 2131493037;
 			
 			// aapt resource value: 0x7f0c0003
 			public const int action_menu_divider = 2131492867;
@@ -2436,17 +2436,17 @@ namespace POLift
 			// aapt resource value: 0x7f0c0043
 			public const int action_mode_close_button = 2131492931;
 			
-			// aapt resource value: 0x7f0c00ad
-			public const int action_text = 2131493037;
+			// aapt resource value: 0x7f0c00ae
+			public const int action_text = 2131493038;
 			
-			// aapt resource value: 0x7f0c00bb
-			public const int actions = 2131493051;
+			// aapt resource value: 0x7f0c00bc
+			public const int actions = 2131493052;
 			
 			// aapt resource value: 0x7f0c0044
 			public const int activity_chooser_view_content = 2131492932;
 			
-			// aapt resource value: 0x7f0c00c3
-			public const int adView = 2131493059;
+			// aapt resource value: 0x7f0c00c4
+			public const int adView = 2131493060;
 			
 			// aapt resource value: 0x7f0c001e
 			public const int add = 2131492894;
@@ -2472,8 +2472,8 @@ namespace POLift
 			// aapt resource value: 0x7f0c004b
 			public const int buttonPanel = 2131492939;
 			
-			// aapt resource value: 0x7f0c00af
-			public const int cancel_action = 2131493039;
+			// aapt resource value: 0x7f0c00b0
+			public const int cancel_action = 2131493040;
 			
 			// aapt resource value: 0x7f0c0030
 			public const int center = 2131492912;
@@ -2487,8 +2487,8 @@ namespace POLift
 			// aapt resource value: 0x7f0c005b
 			public const int checkbox = 2131492955;
 			
-			// aapt resource value: 0x7f0c00b7
-			public const int chronometer = 2131493047;
+			// aapt resource value: 0x7f0c00b8
+			public const int chronometer = 2131493048;
 			
 			// aapt resource value: 0x7f0c0039
 			public const int clip_horizontal = 2131492921;
@@ -2541,20 +2541,20 @@ namespace POLift
 			// aapt resource value: 0x7f0c0012
 			public const int disableHome = 2131492882;
 			
-			// aapt resource value: 0x7f0c00eb
-			public const int drawer_item_1rm_graphs = 2131493099;
-			
 			// aapt resource value: 0x7f0c00ec
-			public const int drawer_item_gym_time_graph = 2131493100;
+			public const int drawer_item_1rm_graphs = 2131493100;
+			
+			// aapt resource value: 0x7f0c00ed
+			public const int drawer_item_gym_time_graph = 2131493101;
+			
+			// aapt resource value: 0x7f0c00f0
+			public const int drawer_item_help_and_feedback = 2131493104;
 			
 			// aapt resource value: 0x7f0c00ef
-			public const int drawer_item_help_and_feedback = 2131493103;
+			public const int drawer_item_settings = 2131493103;
 			
-			// aapt resource value: 0x7f0c00ee
-			public const int drawer_item_settings = 2131493102;
-			
-			// aapt resource value: 0x7f0c00ea
-			public const int drawer_item_view_recent_sessions = 2131493098;
+			// aapt resource value: 0x7f0c00eb
+			public const int drawer_item_view_recent_sessions = 2131493099;
 			
 			// aapt resource value: 0x7f0c0093
 			public const int drawer_layout = 2131493011;
@@ -2568,8 +2568,8 @@ namespace POLift
 			// aapt resource value: 0x7f0c0021
 			public const int end = 2131492897;
 			
-			// aapt resource value: 0x7f0c00c1
-			public const int end_padder = 2131493057;
+			// aapt resource value: 0x7f0c00c2
+			public const int end_padder = 2131493058;
 			
 			// aapt resource value: 0x7f0c002a
 			public const int enterAlways = 2131492906;
@@ -2601,6 +2601,9 @@ namespace POLift
 			// aapt resource value: 0x7f0c00a2
 			public const int floating_share_button = 2131493026;
 			
+			// aapt resource value: 0x7f0c00a4
+			public const int graph_filters = 2131493028;
+			
 			// aapt resource value: 0x7f0c00a3
 			public const int graph_frame = 2131493027;
 			
@@ -2613,8 +2616,8 @@ namespace POLift
 			// aapt resource value: 0x7f0c0049
 			public const int icon = 2131492937;
 			
-			// aapt resource value: 0x7f0c00bc
-			public const int icon_group = 2131493052;
+			// aapt resource value: 0x7f0c00bd
+			public const int icon_group = 2131493053;
 			
 			// aapt resource value: 0x7f0c0025
 			public const int ifRoom = 2131492901;
@@ -2622,8 +2625,8 @@ namespace POLift
 			// aapt resource value: 0x7f0c0046
 			public const int image = 2131492934;
 			
-			// aapt resource value: 0x7f0c00b8
-			public const int info = 2131493048;
+			// aapt resource value: 0x7f0c00b9
+			public const int info = 2131493049;
 			
 			// aapt resource value: 0x7f0c0000
 			public const int item_touch_helper_previous_elevation = 2131492864;
@@ -2637,11 +2640,11 @@ namespace POLift
 			// aapt resource value: 0x7f0c0096
 			public const int left_drawer = 2131493014;
 			
-			// aapt resource value: 0x7f0c00bd
-			public const int line1 = 2131493053;
+			// aapt resource value: 0x7f0c00be
+			public const int line1 = 2131493054;
 			
-			// aapt resource value: 0x7f0c00bf
-			public const int line3 = 2131493055;
+			// aapt resource value: 0x7f0c00c0
+			public const int line3 = 2131493056;
 			
 			// aapt resource value: 0x7f0c000f
 			public const int listMode = 2131492879;
@@ -2649,17 +2652,17 @@ namespace POLift
 			// aapt resource value: 0x7f0c0048
 			public const int list_item = 2131492936;
 			
-			// aapt resource value: 0x7f0c00e8
-			public const int masked = 2131493096;
-			
-			// aapt resource value: 0x7f0c00b1
-			public const int media_actions = 2131493041;
-			
-			// aapt resource value: 0x7f0c00ed
-			public const int menu_bottom = 2131493101;
-			
 			// aapt resource value: 0x7f0c00e9
-			public const int menu_top = 2131493097;
+			public const int masked = 2131493097;
+			
+			// aapt resource value: 0x7f0c00b2
+			public const int media_actions = 2131493042;
+			
+			// aapt resource value: 0x7f0c00ee
+			public const int menu_bottom = 2131493102;
+			
+			// aapt resource value: 0x7f0c00ea
+			public const int menu_top = 2131493098;
 			
 			// aapt resource value: 0x7f0c0022
 			public const int middle = 2131492898;
@@ -2673,11 +2676,11 @@ namespace POLift
 			// aapt resource value: 0x7f0c008d
 			public const int navigation_header_container = 2131493005;
 			
-			// aapt resource value: 0x7f0c00a8
-			public const int navigation_icon = 2131493032;
-			
 			// aapt resource value: 0x7f0c00a9
-			public const int navigation_text = 2131493033;
+			public const int navigation_icon = 2131493033;
+			
+			// aapt resource value: 0x7f0c00aa
+			public const int navigation_text = 2131493034;
 			
 			// aapt resource value: 0x7f0c0026
 			public const int never = 2131492902;
@@ -2688,14 +2691,14 @@ namespace POLift
 			// aapt resource value: 0x7f0c0010
 			public const int normal = 2131492880;
 			
-			// aapt resource value: 0x7f0c00ba
-			public const int notification_background = 2131493050;
+			// aapt resource value: 0x7f0c00bb
+			public const int notification_background = 2131493051;
+			
+			// aapt resource value: 0x7f0c00b5
+			public const int notification_main_column = 2131493045;
 			
 			// aapt resource value: 0x7f0c00b4
-			public const int notification_main_column = 2131493044;
-			
-			// aapt resource value: 0x7f0c00b3
-			public const int notification_main_column_container = 2131493043;
+			public const int notification_main_column_container = 2131493044;
 			
 			// aapt resource value: 0x7f0c0037
 			public const int parallax = 2131492919;
@@ -2706,8 +2709,8 @@ namespace POLift
 			// aapt resource value: 0x7f0c0038
 			public const int pin = 2131492920;
 			
-			// aapt resource value: 0x7f0c00d6
-			public const int program_title = 2131493078;
+			// aapt resource value: 0x7f0c00d7
+			public const int program_title = 2131493079;
 			
 			// aapt resource value: 0x7f0c0006
 			public const int progress_circular = 2131492870;
@@ -2721,11 +2724,11 @@ namespace POLift
 			// aapt resource value: 0x7f0c0035
 			public const int right = 2131492917;
 			
-			// aapt resource value: 0x7f0c00b9
-			public const int right_icon = 2131493049;
+			// aapt resource value: 0x7f0c00ba
+			public const int right_icon = 2131493050;
 			
-			// aapt resource value: 0x7f0c00b5
-			public const int right_side = 2131493045;
+			// aapt resource value: 0x7f0c00b6
+			public const int right_side = 2131493046;
 			
 			// aapt resource value: 0x7f0c001a
 			public const int screen = 2131492890;
@@ -2820,8 +2823,8 @@ namespace POLift
 			// aapt resource value: 0x7f0c0036
 			public const int start = 2131492918;
 			
-			// aapt resource value: 0x7f0c00b0
-			public const int status_bar_latest_event_content = 2131493040;
+			// aapt resource value: 0x7f0c00b1
+			public const int status_bar_latest_event_content = 2131493041;
 			
 			// aapt resource value: 0x7f0c005e
 			public const int submenuarrow = 2131492958;
@@ -2832,11 +2835,11 @@ namespace POLift
 			// aapt resource value: 0x7f0c0011
 			public const int tabMode = 2131492881;
 			
-			// aapt resource value: 0x7f0c00c0
-			public const int text = 2131493056;
+			// aapt resource value: 0x7f0c00c1
+			public const int text = 2131493057;
 			
-			// aapt resource value: 0x7f0c00be
-			public const int text2 = 2131493054;
+			// aapt resource value: 0x7f0c00bf
+			public const int text2 = 2131493055;
 			
 			// aapt resource value: 0x7f0c0052
 			public const int textSpacerNoButtons = 2131492946;
@@ -2871,8 +2874,8 @@ namespace POLift
 			// aapt resource value: 0x7f0c000d
 			public const int textinput_error = 2131492877;
 			
-			// aapt resource value: 0x7f0c00b6
-			public const int time = 2131493046;
+			// aapt resource value: 0x7f0c00b7
+			public const int time = 2131493047;
 			
 			// aapt resource value: 0x7f0c004a
 			public const int title = 2131492938;
@@ -2910,8 +2913,8 @@ namespace POLift
 			// aapt resource value: 0x7f0c000e
 			public const int view_offset_helper = 2131492878;
 			
-			// aapt resource value: 0x7f0c00e7
-			public const int visible = 2131493095;
+			// aapt resource value: 0x7f0c00e8
+			public const int visible = 2131493096;
 			
 			// aapt resource value: 0x7f0c0027
 			public const int withText = 2131492903;

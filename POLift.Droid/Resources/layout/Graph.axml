@@ -14,6 +14,16 @@
         android:layout_height="match_parent"
         android:background="#202020"
         android:layout_gravity="end">
+      <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="vertical"
+           android:id="@+id/graph_filters">
+        </LinearLayout>
         <TextView
             android:id="@+id/GraphDataTextView"
             android:layout_width="match_parent"
@@ -21,5 +31,8 @@
             android:text=""
             android:paddingTop="10dip"
             android:paddingLeft="10dip" />
+      </LinearLayout>
+
+        
     </ScrollView>
 </android.support.v4.widget.DrawerLayout>

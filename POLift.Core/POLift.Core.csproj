@@ -39,6 +39,7 @@
     <Compile Include="Model\Exercise.cs" />
     <Compile Include="Model\ExerciseCategory.cs" />
     <Compile Include="Model\ExerciseDifficulty.cs" />
+    <Compile Include="Model\ExerciseFilter.cs" />
     <Compile Include="Model\ExerciseGroupCategory.cs" />
     <Compile Include="Model\ExerciseName.cs" />
     <Compile Include="Model\ExerciseResult.cs" />

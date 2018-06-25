@@ -13,6 +13,7 @@ using Android.Views;
 using Android.Widget;
 using Android.Preferences;
 using Android.Util;
+using Android.Views.InputMethods;
 
 using System.Diagnostics;
 
@@ -110,6 +111,8 @@ namespace POLift.Droid
             }
 
 
+            this.RepResultEditText.EditorAction += RepResultEditText_EditorAction;
+            //this.RepResultEditText.SetImeActionLabel("Enter", ImeAction.Go);
 
            /* if(Vm.OnTheFly && Vm.RoutineResult.Completed)
             {
@@ -117,6 +120,31 @@ namespace POLift.Droid
             }*/
 
             //Log.Debug("POLift", "perform finish " + sw.ElapsedMilliseconds + "ms");
+        }
+
+        private void RepResultEditText_EditorAction(object sender, TextView.EditorActionEventArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine("ActionId=" + e.ActionId + " EventAction=" + e.Event?.Action);
+            if (e.ActionId == ImeAction.Go)
+            {
+                // enter button pressed
+
+                /*ReportResult();
+
+                //dismiss keyboard
+                InputMethodManager imm = (InputMethodManager)GetSystemService(Context.InputMethodService);
+                imm.HideSoftInputFromWindow(Rep)
+                
+                 
+                 
+                 if(imm.isAcceptingText()) { // verify if the soft keyboard is open                      
+        imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+    }
+                 
+                 */
+
+                ReportResultButton.PerformClick();
+            }
         }
 
         void NavigateSelectExercise()
@@ -139,6 +167,7 @@ namespace POLift.Droid
 
             Intent intent = new Intent(this, typeof(CreateExerciseActivity));
             intent.PutExtra("edit_exercise_id", Vm.CurrentExercise.ID);
+            intent.PutExtra("allow_name_edit", false);
             StartActivityForResult(intent, EditExerciseRequestCode);
         }
 
@@ -224,9 +253,8 @@ namespace POLift.Droid
             }
         }
 
-        protected override void ReportResultButton_Click(object sender, EventArgs e)
+        void ReportResult()
         {
-            // user submitted a result for this CurrentExercise
             Vm.SubmitResultFromInput(delegate
             {
                 Intent result_intent = new Intent();
@@ -236,6 +264,12 @@ namespace POLift.Droid
 
                 Finish();
             });
+        }
+
+        protected override void ReportResultButton_Click(object sender, EventArgs e)
+        {
+            // user submitted a result for this CurrentExercise
+            ReportResult();
         }
 
         void PromptUserForRating()

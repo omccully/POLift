@@ -13,9 +13,11 @@ using Android.Gms.Ads;
 using Android.Util;
 using Android.Support.Compat;
 using Android.Support.V4.App;
+using Android.Preferences;
 
 using Microsoft.Practices.Unity;
 using TaskStackBuilder = Android.Support.V4.App.TaskStackBuilder;
+
 
 using GalaSoft.MvvmLight.Helpers;
 
@@ -73,6 +75,8 @@ namespace POLift.Droid
 
         Intent parent_intent;
 
+        ISharedPreferences prefs;
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             Log.Debug("POLift", "PerformRoutineBaseActivity.OnCreate()");
@@ -111,10 +115,10 @@ namespace POLift.Droid
                 System.Diagnostics.Debug.WriteLine(this.GetType() + " savedInstanceState:");
                 System.Diagnostics.Debug.WriteLine(savedInstanceState.Inspect());
             }
-            
 
 
 
+            prefs = PreferenceManager.GetDefaultSharedPreferences(this);
 
             List<KeyValueStorage> storages = new List<KeyValueStorage>();
             if (savedInstanceState != null)
@@ -122,6 +126,7 @@ namespace POLift.Droid
                 storages.Add(new BundleKeyValueStorage(savedInstanceState));
             }
             storages.Add(new BundleKeyValueStorage(Intent.Extras));
+            storages.Add(TimerVm.KeyValueStorage);
 
             TimerVm.RestoreState(new ChainedKeyValueStorage(storages));
 
@@ -394,6 +399,9 @@ namespace POLift.Droid
         {
             // dismiss dialog boxes to prevent window leaks
             BaseVm.DialogService.Dispose();
+
+            // save timer to preferences so it can be restored next launch.
+            TimerVm.SaveState(new PreferencesKeyValueStorage(prefs));
 
             foreach (Binding b in Bindings)
             {

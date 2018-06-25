@@ -82,6 +82,7 @@ namespace POLift.Droid
             plot_view.Background = Resources.GetDrawable(
                 Resource.Color.background_material_light);
 
+            
 
             //plot_view.Foreground = Resources.GetDrawable(
             //    Resource.Color.background_material_dark);
@@ -114,6 +115,7 @@ namespace POLift.Droid
         }
 
         FrameLayout frame_layout = null;
+        ViewGroup filters_group = null;
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             if (this.View != null) return this.View;
@@ -121,7 +123,7 @@ namespace POLift.Droid
             View result = inflater.Inflate(Resource.Layout.Graph, container, false);
             frame_layout = result.FindViewById<FrameLayout>(Resource.Id.graph_frame);
             GraphDataTextView = result.FindViewById<TextView>(Resource.Id.GraphDataTextView);
-
+            filters_group = result.FindViewById<ViewGroup>(Resource.Id.graph_filters);
             InitializePlot(exercise_name_group);
 
             return result;
@@ -142,10 +144,48 @@ namespace POLift.Droid
             }
         }
 
+
+        MultiExerciseSelector ExSelector = null;
+        string last_exercise_ids = null;
+        IEnumerable<IExercise> exercises = null;
+
         void InitializePlot(IExerciseGroup exercise_group)
         {
             if (String.IsNullOrWhiteSpace(exercise_group.ExerciseIDs)) return;
             if (frame_layout == null || plot_view.Parent != null) return;
+
+            if(ExSelector == null || last_exercise_ids != exercise_group.ExerciseIDs)
+            {
+                exercises = exercise_group.ExerciseIDs
+                    .ToIDIntegers().Select(id => Vm.Database.ReadByID<Exercise>(id))
+                    .Cast<IExercise>();
+                ExSelector = new MultiExerciseSelector(exercises);
+                ExSelector.CheckedChanged += ExSelector_CheckedChanged;
+            }
+
+            InitializePlotOfSelected();
+
+            last_exercise_ids = exercise_group.ExerciseIDs;
+        }
+
+        private void ExSelector_CheckedChanged(object sender, CheckBoxStateChangeEventArgs e)
+        {
+            // display loading
+            e.CheckBox.Text = "Loading...";
+            //e.CheckBox.Visibility = ViewStates.Gone;
+            //e.CheckBox.Visibility = ViewStates.Visible;
+            // e.CheckBox.Invalidate();
+            this.View.Post(delegate
+            {
+                InitializePlotOfSelected();
+            });
+        }
+
+        void InitializePlotOfSelected()
+        {
+            System.Diagnostics.Debug.WriteLine("InitializePlotOfSelected()");
+            ExerciseName exercise_group = new ExerciseName(exercise_name_group.Name, 
+                ExSelector.ExerciseIDs);
 
             Vm.InitializePlot(exercise_group);
 
@@ -154,12 +194,12 @@ namespace POLift.Droid
             PlotModel model = Vm.PlotModel;
             model.TitleColor = OxyColors.White;
             model.Background = android_bg;
-            foreach(OxyPlot.Axes.Axis axis in model.Axes)
+            foreach (OxyPlot.Axes.Axis axis in model.Axes)
             {
                 axis.TextColor = OxyColors.White;
             }
 
-            foreach(Series series in model.Series)
+            foreach (Series series in model.Series)
             {
                 series.Background = android_bg;
             }
@@ -172,31 +212,32 @@ namespace POLift.Droid
             // generate list of values for sidebar
             GraphDataTextView.Text = Vm.DataText;
 
+            filters_group.RemoveAllViews();
+            ExSelector.AddViews(filters_group);
+
+
             View view = this.Activity.LayoutInflater.Inflate(Resource.Layout.FloatingShareButton, frame_layout);
-            
+
             //System.Diagnostics.Debug.WriteLine(view.GetType());
             FloatingActionButton fab = view.FindViewById<FloatingActionButton>(Resource.Id.floating_share_button);
             //FloatingActionButton fab = view as FloatingActionButton;
 
-            if(fab != null)
+            if (fab != null)
             {
                 System.Diagnostics.Debug.WriteLine("fab != null");
                 fab.Click += Fab_Click;
                 //frame_layout.AddView(fab);
-                
-                
+
+
             }
             else
             {
                 System.Diagnostics.Debug.WriteLine("fab == null");
             }
 
-
-
-
-            //frame_layout.AddView(
-           //     )
         }
+
+
 
         private void Fab_Click(object sender, EventArgs e)
         {
@@ -245,7 +286,9 @@ namespace POLift.Droid
             p.TextSize = 26;
             p.UnderlineText = true;
 
-            canvas.DrawText("polift-app.com", 15, 47, p);
+            //canvas.DrawText("polift-app.com", 15, 47, p);
+            canvas.DrawText("polift-app.com", 80, 105, p);
+            
 
             return returnedBitmap;
         }

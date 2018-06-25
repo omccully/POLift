@@ -48,12 +48,12 @@ namespace POLift.Core.ViewModel
             DialogService.DisplayAcknowledgementOnce("POLift sets itself apart from other apps by " +
                 "automatically starting a rest timer and " +
                 "automatically increasing the weight once you reach a preset goal for a certain weight. " +
-                "For example, an exercise can be configured for increasing the weight when you get 5 reps 5 times in a row (for 5x5) " +
+                "For example, an exercise can be configured for increasing the weight when you get 5 reps 5 sets in a row (for 5x5) " +
                 "or at 6 reps for the first time (for Bigger Leaner Stronger program). " +
                 "You set these rules yourself when you create an exercise.", TutorialSelectExerciseKey);
         }
 
-        public void EditExercise(IExercise exercise)
+        public void EditExercise(IExercise exercise, bool name_input_enabled = false)
         {
             // editing exercise does not affect original
             // unless ONLY platemath was changed. 
@@ -68,6 +68,8 @@ namespace POLift.Core.ViewModel
             ConsecutiveSetsInput = exercise.ConsecutiveSetsForWeightIncrease.ToString();
 
             PlateMath = exercise.PlateMath;
+
+            NameInputEnabled = name_input_enabled;
         }
 
         public void Reset()
@@ -75,6 +77,7 @@ namespace POLift.Core.ViewModel
             Title = CreateExerciseTitle;
             SubmitButtonText = CreateExerciseButtonText;
             ExerciseNameInput = "";
+            NameInputEnabled = true;
 
             if(KeyValueStorage == null)
             {
@@ -150,6 +153,19 @@ namespace POLift.Core.ViewModel
                 System.Diagnostics.Debug.WriteLine("ExerciseNameInput");
                 Set(() => ExerciseNameInput, ref _ExerciseNameInput, value);
                 UpdateExerciseDetails();
+            }
+        }
+
+        bool _NameInputEnabled = true;
+        public bool NameInputEnabled
+        {
+            get
+            {
+                return _NameInputEnabled;
+            }
+            set
+            {
+                Set(() => NameInputEnabled, ref _NameInputEnabled, value);
             }
         }
 
@@ -312,7 +328,9 @@ namespace POLift.Core.ViewModel
             {
                 builder.Append("You will try to get as many reps of ")
                 .Append(EnsureString(ExerciseNameInput, "<exercise name>"))
-                .Append(" as you can for each set. If you get ")
+                .Append(" as you can for each set up to ")
+                .Append(EnsureInt(RepCountInput, "<reps>"))
+                .Append(" reps. If you get ")
                 .Append(EnsureInt(RepCountInput, "<reps>"))
                 .Append(" reps");
 

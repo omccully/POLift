@@ -16,7 +16,7 @@ namespace POLift.Core.ViewModel
     public class OrmGraphViewModel : ViewModelBase
     {
         private readonly INavigationService navigationService;
-        private readonly IPOLDatabase Database;
+        public readonly IPOLDatabase Database;
         OrmGraph orm_graph;
 
         public IValueReturner<IExerciseDifficulty> SelectExerciseDifficultyViewModel;
@@ -85,6 +85,21 @@ namespace POLift.Core.ViewModel
 
             InitializePlot(ed);
         }*/
+
+        List<ExerciseFilter> Filters = new List<ExerciseFilter>();
+        bool PassesFilters(IExercise exercise)
+        {
+            foreach(ExerciseFilter filter in Filters)
+            {
+                if (!filter.Accepts(exercise)) return false;
+            }
+            return true;
+        }
+
+        List<IExercise> FilterExercises(IEnumerable<IExercise> exercises)
+        {
+            return exercises.Where(ex => PassesFilters(ex)).ToList();
+        }
 
         public void InitializePlot(IExerciseGroup ex_group)
         {

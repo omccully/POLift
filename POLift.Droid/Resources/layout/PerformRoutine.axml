@@ -84,7 +84,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/RepResultEditText"
-                    android:width="80dip" />
+                    android:width="80dip"
+                    android:imeOptions="actionGo" />
                 <TextView
                     android:id="@+id/RepDetailsTextView"
                     android:textAppearance="?android:attr/textAppearanceMedium"
@@ -104,11 +105,12 @@
                 android:id="@+id/ReportResultButton"
                 android:minHeight="65dip" />
             <TextView
-                android:text="Start your set whenever you're ready"
+                android:text="Start your next set"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/CountDownTextView" />
+                android:id="@+id/CountDownTextView"
+                android:gravity="center" />
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"

@@ -231,6 +231,7 @@
     <Compile Include="src\Activity\SelectProgramToDownloadActivity.cs" />
     <Compile Include="src\Adapter\ExerciseGroupAdapter.cs" />
     <Compile Include="src\Adapter\ExerciseGroupPagerAdapter.cs" />
+    <Compile Include="src\Fragment\MultiExerciseSelector.cs" />
     <Compile Include="src\MainApplication.cs" />
     <Compile Include="src\Activity\EditRoutineResultActivity.cs" />
     <Compile Include="src\Activity\RoutineDetailsActivity.cs" />

@@ -26,6 +26,7 @@ namespace POLift.Core.ViewModel
         public Timer Timer;
         // public Action<Action> MainThreadInvoker;
         public IMainThreadInvoker MainThreadInvoker;
+        public KeyValueStorage KeyValueStorage;
 
         public INotificationService TimerFinishedNotificationService { get; set; }
 
@@ -186,19 +187,29 @@ namespace POLift.Core.ViewModel
 
         void SetCountDownText(int seconds_left)
         {
+            int mins = Math.Abs(seconds_left) / 60;
+            int sec = Math.Abs(seconds_left) % 60;
+            string sign = seconds_left < 0 ? "-" : "";
+            string clock = $"{sign}{mins}:{sec.ToString().PadLeft(2, '0')}";
+            string tiptext = "";
+
             if (seconds_left > 0)
             {
-                TimerStatus = "Resting for another " +
-                   seconds_left + " seconds.";
-                //CountDownTextView.SetTextColor(Android.Graphics.Color.Orange);
+                tiptext = "Resting";
+                //TimerStatus = "Resting for another " +
+                 //  seconds_left + " seconds.";
+                // orange
             }
             else
             {
-                TimerStatus = "The timer has been done for " +
-                    Math.Abs(seconds_left) + " seconds." + Environment.NewLine +
-                    "Start your next set whenever you're ready";
-               // CountDownTextView.SetTextColor(Android.Graphics.Color.Green);
+                //TimerStatus = "The timer has been done for " +
+                //    Math.Abs(seconds_left) + " seconds." + Environment.NewLine +
+                //    "Start your next set whenever you're ready";
+                tiptext = "Start your next set";
+               // green
             }
+
+            TimerStatus = tiptext + Environment.NewLine + clock;
         }
 
         bool _TimerIsStartable = true;
@@ -237,7 +248,10 @@ namespace POLift.Core.ViewModel
             SetCountDownText(seconds_left);
 
             UpdateGUIByTimerState();
+
+            SaveState();
         }
+
 
 
         bool Notified = false;
@@ -294,10 +308,12 @@ namespace POLift.Core.ViewModel
 
         public void SkipTimer()
         {
-            CancelTimer("Timer skipped. " + System.Environment.NewLine +
-                 "Start your next set whenever you're ready");
+            CancelTimer("Timer skipped " + System.Environment.NewLine +
+                 "Start your next set");
 
             Vibrator?.Vibrate();
+
+            SaveState();
         }
 
         RelayCommand _SkipTimerCommand;
@@ -319,6 +335,8 @@ namespace POLift.Core.ViewModel
                 UpdateGUIByTimerState();
                 Vibrator?.Vibrate();
             }
+
+            SaveState();
         }
 
         RelayCommand _Add30SecCommand;
@@ -340,6 +358,8 @@ namespace POLift.Core.ViewModel
                 UpdateGUIByTimerState();
                 Vibrator?.Vibrate();
             }
+
+            SaveState();
         }
 
         RelayCommand _Sub30SecCommand;
@@ -458,20 +478,14 @@ namespace POLift.Core.ViewModel
             }
         }
 
-        public const string RestPeriodSecondsRemainingKey = "rest_period_seconds_remaining";
-        public const string Add30SecCountKey = "add_30_sec_count";
-        public const string Sub30SecCountKey = "sub_30_sec_count";
-        public const string EndTimeKey = "end_time";
+        //public const string RestPeriodSecondsRemainingKey = "rest_period_seconds_remaining";
+
+        public const string Add30SecCountKey = "timer_add_30_sec_count";
+        public const string Sub30SecCountKey = "timer_sub_30_sec_count";
+        public const string EndTimeKey = "timer_end_time";
 
         public void RestoreState(KeyValueStorage kvs)
         {
-            if (!this.Timer.IsRunning)
-            {
-                this.AddSecCount = 0;
-                this.SubSecCount = 0;
-                return;
-            }
-
             string end_time_str = kvs.GetString(EndTimeKey, null);
             if(end_time_str != null)
             {
@@ -480,13 +494,56 @@ namespace POLift.Core.ViewModel
 
             this.AddSecCount = kvs.GetInteger(Add30SecCountKey);
             this.SubSecCount = kvs.GetInteger(Sub30SecCountKey);
+
+            if (SecondsLeft > -500)
+            {
+                System.Diagnostics.Debug.WriteLine("Restoring timer, SecondsLeft = " + SecondsLeft);
+                
+                TimerEnabled = true;
+                if(SecondsLeft < 0)
+                {
+                    Notified = true;
+                }
+
+                if (!Timer.IsRunning)
+                {
+                    System.Diagnostics.Debug.WriteLine("Starting timer raw");
+                    Timer.Start(TimerTicked, 1000);
+                }
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine("Not restoring timer, SecondsLeft = " + SecondsLeft);
+                TimerStatus = "Start your next set";
+                this.AddSecCount = 0;
+                this.SubSecCount = 0;
+            }
         }
 
         public void SaveState(KeyValueStorage kvs)
         {
-            kvs.SetValue(EndTimeKey, EndTime.ToString());
-            kvs.SetValue(Add30SecCountKey, this.AddSecCount);
-            kvs.SetValue(Sub30SecCountKey, this.SubSecCount);
+            if(TimerEnabled)
+            {
+                kvs.SetValue(EndTimeKey, EndTime.ToString());
+                kvs.SetValue(Add30SecCountKey, this.AddSecCount);
+                kvs.SetValue(Sub30SecCountKey, this.SubSecCount);
+            }
+            else
+            {
+                kvs.SetValue(EndTimeKey, (string)null);
+                kvs.SetValue(Add30SecCountKey, 0);
+                kvs.SetValue(Sub30SecCountKey, 0);
+            }
+        }
+
+        void SaveState()
+        {
+            SaveState(KeyValueStorage);
+        }
+
+        public void RestoreState()
+        {
+            RestoreState(KeyValueStorage);
         }
     }
 }

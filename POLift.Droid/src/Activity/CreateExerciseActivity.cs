@@ -78,6 +78,10 @@ namespace POLift.Droid
                BindingMode.TwoWay));
 
             bindings.Add(this.SetBinding(
+               () => Vm.NameInputEnabled,
+               () => ExerciseNameText.Enabled));
+
+            bindings.Add(this.SetBinding(
               () => Vm.RepCountInput,
               () => RepRangeMaxText.Text,
               BindingMode.TwoWay));
@@ -111,9 +115,11 @@ namespace POLift.Droid
             }
             else
             {
+                bool allow_name_edit = Intent.GetBooleanExtra("allow_name_edit", true);
+
                 IExercise exercise = Database.ReadByID<Exercise>(edit_exercise_id);
 
-                Vm.EditExercise(exercise);
+                Vm.EditExercise(exercise, allow_name_edit);
 
                 SelectMathTypeSpinner.SetSelection(exercise.PlateMathID);
             }
