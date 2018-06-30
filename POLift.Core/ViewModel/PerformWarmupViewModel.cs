@@ -172,16 +172,12 @@ namespace POLift.Core.ViewModel
                     builder.Append(", ");
                     builder.Append(ws.Reps.ToString());
                     builder.Append(" reps, rest ");
-                    if(i == last_set_index)
-                    {
-                        builder.Append(WarmupRoutine.GetLastRestPeriod(WarmupExercise));
-                    }
-                    else
-                    {
-                        builder.Append(ws.GetRestPeriod(WarmupExercise));
-                    }
-                    
-                    builder.Append("s");
+                    int rest_period = i == last_set_index ?
+                        WarmupRoutine.GetLastRestPeriod(WarmupExercise) :
+                        ws.GetRestPeriod(WarmupExercise);
+
+                    builder.Append(rest_period.SecondsToClock());
+                   // builder.Append(rest_period + "s");
 
                     if (i < WarmupSetIndex)
                     {

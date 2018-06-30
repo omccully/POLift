@@ -271,6 +271,7 @@
     <Compile Include="src\Service\MainThreadInvoker.cs" />
     <Compile Include="src\Service\NotificationService.cs" />
     <Compile Include="src\Service\PreferencesKeyValueStorage.cs" />
+    <Compile Include="src\Service\TimeSpanKeyListener.cs" />
     <Compile Include="src\Service\Toaster.cs" />
   </ItemGroup>
   <ItemGroup>

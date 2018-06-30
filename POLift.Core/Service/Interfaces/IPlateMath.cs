@@ -11,8 +11,8 @@ namespace POLift.Core.Service
 
         bool SplitWeights { get; }
 
-        Dictionary<float, int> CalculateTotalPlateCounts(float weight);
+        Dictionary<float, int> CalculateTotalPlateCounts(float weight, bool one_side_if_split = false);
 
-        string PlateCountsToString(float weight);
+        string PlateCountsToString(float weight, bool one_side_if_split = false);
     }
 }

@@ -9,6 +9,8 @@ using Android.Runtime;
 using Microsoft.Practices.Unity;
 using Android.Preferences;
 using Android.Views.InputMethods;
+using Android.Text;
+using Android.Text.Method;
 
 using GalaSoft.MvvmLight.Helpers;
 
@@ -29,6 +31,7 @@ namespace POLift.Droid
         EditText RepRangeMaxText;
         Button CreateExerciseButton;
         EditText RestPeriodSecondsText;
+        EditText RestPeriodMinutesText;
         EditText WeightIncrementText;
         Spinner SelectMathTypeSpinner;
         TextView ExerciseDetailsTextView;
@@ -57,13 +60,19 @@ namespace POLift.Droid
             RepRangeMaxText = FindViewById<EditText>(Resource.Id.RepRangeMaxText);
             CreateExerciseButton = FindViewById<Button>(Resource.Id.CreateExerciseButton);
             RestPeriodSecondsText = FindViewById<EditText>(Resource.Id.RestPeriodSecondsTextBox);
+            RestPeriodMinutesText = FindViewById<EditText>(Resource.Id.RestPeriodMinutesTextBox);
             WeightIncrementText = FindViewById<EditText>(Resource.Id.WeightIncrementTextBox);
             SelectMathTypeSpinner = FindViewById<Spinner>(Resource.Id.SelectMathTypeSpinner);
             ExerciseDetailsTextView = FindViewById<TextView>(Resource.Id.ExerciseDetailsTextView);
             ConsecutiveSetsForWeightIncrease = FindViewById<EditText>(Resource.Id.ConsecutiveSetsForWeightIncrease);
+            //RestPeriodSecondsText.InputType = Android.Text.InputTypes.DatetimeVariationTime;
 
             SelectMathTypeSpinner.Adapter = new PlateMathTypeAdapter(this, PlateMath.PlateMathTypes);
-
+            //RestPeriodSecondsText.SetFilters(new IInputFilter[] { new TimeSpanInputFilter() });
+            //RestPeriodSecondsText.InputType = InputTypes.ClassText;
+            // RestPeriodSecondsText.Key
+            RestPeriodSecondsText.FocusChange += RestPeriodSecondsText_FocusChange;
+            RestPeriodMinutesText.FocusChange += RestPeriodMinutesText_FocusChange;
             SelectMathTypeSpinner.ItemSelected += SelectMathTypeSpinner_ItemSelected;
 
             ExerciseNameText.TextChanged += (s, e) => { };
@@ -92,9 +101,14 @@ namespace POLift.Droid
               BindingMode.TwoWay));
 
             bindings.Add(this.SetBinding(
-                () => Vm.RestPeriodInput,
+                () => Vm.RestPeriodSecondsInput,
                 () => RestPeriodSecondsText.Text,
                 BindingMode.TwoWay));
+
+            bindings.Add(this.SetBinding(
+               () => Vm.RestPeriodMinutesInput,
+               () => RestPeriodMinutesText.Text,
+               BindingMode.TwoWay));
 
             bindings.Add(this.SetBinding(
                () => Vm.ConsecutiveSetsInput,
@@ -136,6 +150,22 @@ namespace POLift.Droid
                 ViewModelLocator.Default.KeyValueStorage);
 
             Vm.InfoUser();
+        }
+
+        private void RestPeriodMinutesText_FocusChange(object sender, Android.Views.View.FocusChangeEventArgs e)
+        {
+            if (!e.HasFocus)
+            {
+                Vm.NormalizeRestPeriodMinutes();
+            }
+        }
+
+        private void RestPeriodSecondsText_FocusChange(object sender, Android.Views.View.FocusChangeEventArgs e)
+        {
+            if(!e.HasFocus)
+            {
+                Vm.NormalizeRestPeriodSeconds();
+            }
         }
 
         private void SelectMathTypeSpinner_ItemSelected(object sender, AdapterView.ItemSelectedEventArgs e)

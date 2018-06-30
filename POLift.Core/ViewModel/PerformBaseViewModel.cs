@@ -123,7 +123,7 @@ namespace POLift.Core.ViewModel
             }
             else
             {
-                string plate_counts_str = CurrentPlateMath.PlateCountsToString(weight_input);
+                string plate_counts_str = CurrentPlateMath.PlateCountsToString(weight_input, true);
                 PlateMathDetails = $" ({plate_counts_str})";
             }
         }

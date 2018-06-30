@@ -38,6 +38,14 @@ namespace POLift.Core.Service
             return dtDateTime.AddSeconds(unix_timestamp).ToLocalTime();
         }
 
+        public static string SecondsToClock(this int seconds)
+        {
+            int mins = Math.Abs(seconds) / 60;
+            int sec = Math.Abs(seconds) % 60;
+            string sign = seconds < 0 ? "-" : "";
+            return $"{sign}{mins}:{sec.ToString().PadLeft(2, '0')}";
+        }
+
         public static int OneRepMax(float weight, int reps)
         {
             int rep_index = reps - 1;

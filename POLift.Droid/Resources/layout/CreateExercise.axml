@@ -36,16 +36,37 @@
         android:layout_height="wrap_content"
         android:id="@+id/ConsecutiveSetsForWeightIncrease" />
     <TextView
-        android:text="Rest period (seconds)"
+        android:text="Rest period (minutes : seconds)"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/textView10" />
-    <EditText
-        android:inputType="number"
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/RestPeriodSecondsTextBox" />
+        android:layout_height="wrap_content">
+        <EditText
+            android:inputType="number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="50dip"
+            android:gravity="right"
+            android:id="@+id/RestPeriodMinutesTextBox"
+            android:selectAllOnFocus="true"
+            android:maxLength="2" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=":" />
+        <EditText
+            android:inputType="number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="50dip"
+            android:id="@+id/RestPeriodSecondsTextBox"
+            android:selectAllOnFocus="true"
+            android:maxLength="2" />
+    </LinearLayout>
     <TextView
         android:text="Weight increase amount"
         android:textAppearance="?android:attr/textAppearanceMedium"

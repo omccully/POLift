@@ -187,10 +187,6 @@ namespace POLift.Core.ViewModel
 
         void SetCountDownText(int seconds_left)
         {
-            int mins = Math.Abs(seconds_left) / 60;
-            int sec = Math.Abs(seconds_left) % 60;
-            string sign = seconds_left < 0 ? "-" : "";
-            string clock = $"{sign}{mins}:{sec.ToString().PadLeft(2, '0')}";
             string tiptext = "";
 
             if (seconds_left > 0)
@@ -209,7 +205,7 @@ namespace POLift.Core.ViewModel
                // green
             }
 
-            TimerStatus = tiptext + Environment.NewLine + clock;
+            TimerStatus = tiptext + Environment.NewLine + seconds_left.SecondsToClock();
         }
 
         bool _TimerIsStartable = true;

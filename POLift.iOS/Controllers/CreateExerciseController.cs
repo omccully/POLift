@@ -69,6 +69,10 @@ namespace POLift.iOS.Controllers
                 () => Title));
 
             bindings.Add(this.SetBinding(
+                () => Vm.NameInputEnabled,
+                () => ExerciseNameTextField.Enabled));
+
+            bindings.Add(this.SetBinding(
                 () => Vm.SubmitButtonText,
                 () => SubmitButtonText));
 
@@ -91,8 +95,14 @@ namespace POLift.iOS.Controllers
               .ObserveTargetEvent("EditingChanged"));
 
             bindings.Add(this.SetBinding(
-                () => Vm.RestPeriodInput,
-                () => RestPeriodTextField.Text,
+                () => Vm.RestPeriodMinutesInput,
+                () => RestPeriodMinutesTextField.Text,
+                BindingMode.TwoWay)
+                .ObserveTargetEvent("EditingChanged"));
+
+            bindings.Add(this.SetBinding(
+                () => Vm.RestPeriodSecondsInput,
+                () => RestPeriodSecondsTextField.Text,
                 BindingMode.TwoWay)
                 .ObserveTargetEvent("EditingChanged"));
 
@@ -102,52 +112,33 @@ namespace POLift.iOS.Controllers
                BindingMode.TwoWay)
                .ObserveTargetEvent("EditingChanged"));
 
-            /*
-            bindings.Add(this.SetBinding(
-                () => ExerciseNameTextField.Text,
-                () => Vm.ExerciseNameInput,
-                BindingMode.TwoWay)
-                .ObserveSourceEvent("EditingChanged"));
-
-            bindings.Add(this.SetBinding(
-                () => RepCountTextField.Text,
-                () => Vm.RepCountInput,
-                BindingMode.TwoWay)
-                .ObserveSourceEvent("EditingChanged"));
-
-            bindings.Add(this.SetBinding(
-                () => WeightIncrementTextField.Text,
-                () => Vm.WeightIncrementInput,
-                BindingMode.TwoWay)
-                .ObserveSourceEvent("EditingChanged"));
-
-            bindings.Add(this.SetBinding(
-                () => RestPeriodTextField.Text,
-                () => Vm.RestPeriodInput,
-                BindingMode.TwoWay)
-                .ObserveSourceEvent("EditingChanged"));
-
-            bindings.Add(this.SetBinding(
-                () => ConsecutiveSetsTextField.Text,
-                () => Vm.ConsecutiveSetsInput,
-                BindingMode.TwoWay)
-                .ObserveSourceEvent("EditingChanged"));*/
-
             ExerciseNameTextField.ShouldReturn = AppleHelpers.DismissKeyboard;
             RepCountTextField.ShouldReturn = AppleHelpers.DismissKeyboard;
             WeightIncrementTextField.ShouldReturn = AppleHelpers.DismissKeyboard;
-            RestPeriodTextField.ShouldReturn = AppleHelpers.DismissKeyboard;
+            RestPeriodMinutesTextField.ShouldReturn = AppleHelpers.DismissKeyboard;
+            RestPeriodSecondsTextField.ShouldReturn = AppleHelpers.DismissKeyboard;
             ConsecutiveSetsTextField.ShouldReturn = AppleHelpers.DismissKeyboard;
 
             RepCountTextField.AddDoneButtonToNumericKeyboard();
             WeightIncrementTextField.AddDoneButtonToNumericKeyboard();
-            RestPeriodTextField.AddDoneButtonToNumericKeyboard();
+            RestPeriodMinutesTextField.AddDoneButtonToNumericKeyboard();
+            RestPeriodSecondsTextField.AddDoneButtonToNumericKeyboard();
             ConsecutiveSetsTextField.AddDoneButtonToNumericKeyboard();
 
+            RestPeriodSecondsTextField.EditingDidEnd += RestPeriodSecondsTextField_EditingDidEnd;
+            RestPeriodMinutesTextField.EditingDidEnd += RestPeriodMinutesTextField_EditingDidEnd;
             Vm.InfoUser();
         }
 
+        private void RestPeriodMinutesTextField_EditingDidEnd(object sender, EventArgs e)
+        {
+            Vm.NormalizeRestPeriodMinutes();
+        }
 
+        private void RestPeriodSecondsTextField_EditingDidEnd(object sender, EventArgs e)
+        {
+            Vm.NormalizeRestPeriodSeconds();
+        }
 
         private void PickerVM_MathTypeSelected(IPlateMath obj)
         {

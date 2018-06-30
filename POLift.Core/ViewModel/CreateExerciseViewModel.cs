@@ -26,14 +26,14 @@ namespace POLift.Core.ViewModel
 
         public const string MaxRepsStorageKey = "create_exercise_max_reps";
         public const string WeightIncrementStorageKey = "create_exercise_weight_increment";
-        public const string RestPeriodStorageKey = "create_exercise_rest_period_seconds";
+        public const string RestPeriodStorageKey = "create_exercise_rest_period_seconds_int";
         public const string ConsecutiveSetsStorageKey = "consecutive_sets_for_weight_increase";
         public const string ExerciseCreatedSinceLastDifficultyRegenerationStorageKey =
             "exercise_created_since_last_difficulty_regeneration";
 
         const string DefaultMaxReps = "8";
         const string DefaultWeightIncrement = "5";
-        const string DefaultRestPeriod = "150";
+        const int DefaultRestPeriod = 150;
         const string DefaultConsecutiveSets = "1";
 
         public CreateExerciseViewModel(INavigationService navigationService, IPOLDatabase database)
@@ -64,7 +64,8 @@ namespace POLift.Core.ViewModel
             ExerciseNameInput = exercise.Name;
             RepCountInput = exercise.MaxRepCount.ToString();
             WeightIncrementInput = exercise.WeightIncrement.ToString();
-            RestPeriodInput = exercise.RestPeriodSeconds.ToString();
+            //RestPeriodInput = exercise.RestPeriodSeconds.ToString();
+            SetRestPeriodInSeconds(exercise.RestPeriodSeconds);
             ConsecutiveSetsInput = exercise.ConsecutiveSetsForWeightIncrease.ToString();
 
             PlateMath = exercise.PlateMath;
@@ -83,7 +84,8 @@ namespace POLift.Core.ViewModel
             {
                 RepCountInput = DefaultMaxReps;
                 WeightIncrementInput = DefaultWeightIncrement;
-                RestPeriodInput = DefaultRestPeriod;
+                //RestPeriodInput = DefaultRestPeriod;
+                SetRestPeriodInSeconds(DefaultRestPeriod);
                 ConsecutiveSetsInput = DefaultConsecutiveSets;
             }
             else
@@ -98,7 +100,7 @@ namespace POLift.Core.ViewModel
         {
             RepCountInput = KeyValueStorage.GetString(MaxRepsStorageKey, DefaultMaxReps);
             WeightIncrementInput = KeyValueStorage.GetString(WeightIncrementStorageKey, DefaultWeightIncrement);
-            RestPeriodInput = KeyValueStorage.GetString(RestPeriodStorageKey, DefaultRestPeriod);
+            SetRestPeriodInSeconds(KeyValueStorage.GetInteger(RestPeriodStorageKey, DefaultRestPeriod));
             ConsecutiveSetsInput = KeyValueStorage.GetString(ConsecutiveSetsStorageKey, DefaultConsecutiveSets);
         }
 
@@ -107,8 +109,13 @@ namespace POLift.Core.ViewModel
             KeyValueStorage
                 .SetValue(MaxRepsStorageKey, RepCountInput)
                 .SetValue(WeightIncrementStorageKey, WeightIncrementInput)
-                .SetValue(RestPeriodStorageKey, RestPeriodInput)
                 .SetValue(ConsecutiveSetsStorageKey, ConsecutiveSetsInput);
+
+            try
+            {
+                KeyValueStorage.SetValue(RestPeriodStorageKey, GetRestPeriodInSeconds());
+            }
+            catch { }
         }
 
         const string CreateExerciseTitle = "Create Exercise";
@@ -199,7 +206,7 @@ namespace POLift.Core.ViewModel
             }
         }
 
-        string _RestPeriodInput;
+        /*string _RestPeriodInput;
         public string RestPeriodInput
         {
             get
@@ -212,7 +219,78 @@ namespace POLift.Core.ViewModel
                 Set(() => RestPeriodInput, ref _RestPeriodInput, value);
                 UpdateExerciseDetails();
             }
+        }*/
+
+        string _RestPeriodMinutesInput;
+        public string RestPeriodMinutesInput
+        {
+            get
+            {
+                return _RestPeriodMinutesInput;
+            }
+            set
+            {
+                Set(() => RestPeriodMinutesInput, ref _RestPeriodMinutesInput, value);
+                UpdateExerciseDetails();
+                // UpdateRestPeriodInputFromSplit();
+            }
         }
+
+        string _RestPeriodSecondsInput;
+        public string RestPeriodSecondsInput
+        {
+            get
+            {
+                return _RestPeriodSecondsInput;
+            }
+            set
+            { 
+                Set(() => RestPeriodSecondsInput, ref _RestPeriodSecondsInput, value);
+                UpdateExerciseDetails();
+                //UpdateRestPeriodInputFromSplit();
+            }
+        }
+
+        int GetRestPeriodInSeconds()
+        {
+            return Int32.Parse(RestPeriodMinutesInput) * 60 + Int32.Parse(RestPeriodSecondsInput);
+        }
+
+        void SetRestPeriodInSeconds(int sec)
+        {
+            RestPeriodMinutesInput = (sec / 60).ToString();
+            NormalizeRestPeriodMinutes();
+
+            RestPeriodSecondsInput = (sec % 60).ToString().PadLeft(2, '0');
+            NormalizeRestPeriodSeconds();
+        }
+
+        public void NormalizeRestPeriodMinutes()
+        {
+            if (RestPeriodMinutesInput.Length == 0)
+            {
+                RestPeriodMinutesInput = "0";
+            }
+        }
+
+        public void NormalizeRestPeriodSeconds()
+        {
+            if (RestPeriodSecondsInput.Length < 2)
+            {
+                RestPeriodSecondsInput = RestPeriodSecondsInput.PadLeft(2, '0');
+            }
+        }
+
+        /*void UpdateRestPeriodInputFromSplit()
+        {
+            try
+            {
+                int min = Int32.Parse(_RestPeriodMinutesInput);
+                int sec = Int32.Parse(_RestPeriodSecondsInput);
+                RestPeriodInput = (min * 60 + sec).ToString();
+            }
+            catch { }
+        }*/
 
         string _ConsecutiveSetsInput;
         public string ConsecutiveSetsInput
@@ -276,7 +354,9 @@ namespace POLift.Core.ViewModel
                 string name = ExerciseNameInput;
                 int max_reps = Int32.Parse(RepCountInput);
                 float weight_increment = Single.Parse(WeightIncrementInput);
-                int rest_period_s = Int32.Parse(RestPeriodInput);
+
+                int rest_period_s = GetRestPeriodInSeconds();
+
                 int consecutive_sets = Int32.Parse(ConsecutiveSetsInput);
 
                 Exercise ex = new Exercise(name, max_reps, weight_increment,
@@ -354,10 +434,9 @@ namespace POLift.Core.ViewModel
                     .Append(" using setting \"consecutive sets\" to a number greater than 0). ");
             }
 
-
             builder.Append("You will rest for ")
-                 .Append(EnsureInt(RestPeriodInput, "<rest period seconds>"))
-                 .Append(" seconds in between sets.");
+                 .Append(EnsureNoException(() => GetRestPeriodInSeconds().SecondsToClock(), "<rest period seconds>"))
+                 .Append(" in between sets.");
 
             ExerciseDetails = builder.ToString();
         }
@@ -369,21 +448,19 @@ namespace POLift.Core.ViewModel
 
         string EnsureInt(string input_text, string fail_text = "?")
         {
-            try
-            {
-                return Int32.Parse(input_text).ToString();
-            }
-            catch
-            {
-                return fail_text;
-            }
+            return EnsureNoException(() => Int32.Parse(input_text).ToString(), fail_text);
         }
 
         string EnsureFloat(string input_text, string fail_text = "?")
         {
+            return EnsureNoException(() => Single.Parse(input_text).ToString(), fail_text);
+        }
+
+        string EnsureNoException(Func<string> act, string fail_text = "?")
+        {
             try
             {
-                return Single.Parse(input_text).ToString();
+                return act.Invoke();
             }
             catch
             {

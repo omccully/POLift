@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace POLift.Core.Service
 {
@@ -64,30 +63,34 @@ namespace POLift.Core.Service
             return result;
         }
 
-        public Dictionary<float, int> CalculateTotalPlateCounts(float weight)
+        public Dictionary<float, int> CalculateTotalPlateCounts(float weight, bool one_side_if_split = false)
         {
             weight -= BarWeight;
 
             if (SplitWeights)
             {
+                Dictionary<float, int> pc = CalculatePlateCountsOneSide(weight / 2.0f);
+                if (one_side_if_split) return pc;
 
-                return CalculatePlateCountsOneSide(weight / 2.0f).
-                    // double all values
-                    Select(f => new KeyValuePair<float, int>(f.Key, f.Value * 2))
+                // double all values
+                return pc
+                    .Select(f => new KeyValuePair<float, int>(f.Key, f.Value * 2))
                     .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
             }
 
             return CalculatePlateCountsOneSide(weight);
         }
 
-        public string PlateCountsToString(float weight)
+        public string PlateCountsToString(float weight, bool one_side_if_split = false)
         {
-            return PlateCountsToString(CalculateTotalPlateCounts(weight));
+            return PlateCountsToString(CalculateTotalPlateCounts(weight, one_side_if_split));
         }
 
         static string PlateCountsToString(Dictionary<float, int> dict)
         {
-            return String.Join(", ", dict.Select(kv => $"{kv.Key}x{kv.Value}"));
+            return String.Join(", ", dict.Select(kv => 
+                kv.Value == 1 ? kv.Key.ToString() : $"{kv.Key}x{kv.Value}"
+            ));
         }
 
         /// <summary>

@@ -214,7 +214,10 @@ namespace POLift.Core.Model
                     sb.Append(", manual progression");
                 }
 
-                sb.Append($", {RestPeriodSeconds} sec rest");
+                //sb.Append($", {RestPeriodSeconds} sec rest");
+
+                sb.Append($", " + RestPeriodSeconds.SecondsToClock() + " rest");
+
                 //sb.Append($", {Usage} usage");
 
                 return sb.ToString();
@@ -227,7 +230,7 @@ namespace POLift.Core.Model
             {
                 string group = $"{MaxRepCount}r; " +
                     $"{ConsecutiveSetsForWeightIncrease}cs; " +
-                    $"{RestPeriodSeconds}s";
+                    $"{RestPeriodSeconds.SecondsToClock()}";
 
                 /*Regex reg = new Regex(".(?!$)");
                 group = reg.Replace(group, "$0\u200b");

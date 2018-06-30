@@ -40,7 +40,11 @@ namespace POLift.iOS.Controllers
 
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
-        UIKit.UITextField RestPeriodTextField { get; set; }
+        UIKit.UITextField RestPeriodMinutesTextField { get; set; }
+
+        [Outlet]
+        [GeneratedCode ("iOS Designer", "1.0")]
+        UIKit.UITextField RestPeriodSecondsTextField { get; set; }
 
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
@@ -78,9 +82,14 @@ namespace POLift.iOS.Controllers
                 RepCountTextField = null;
             }
 
-            if (RestPeriodTextField != null) {
-                RestPeriodTextField.Dispose ();
-                RestPeriodTextField = null;
+            if (RestPeriodMinutesTextField != null) {
+                RestPeriodMinutesTextField.Dispose ();
+                RestPeriodMinutesTextField = null;
+            }
+
+            if (RestPeriodSecondsTextField != null) {
+                RestPeriodSecondsTextField.Dispose ();
+                RestPeriodSecondsTextField = null;
             }
 
             if (WeightIncrementTextField != null) {
