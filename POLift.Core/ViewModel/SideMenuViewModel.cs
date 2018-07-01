@@ -271,7 +271,7 @@ namespace POLift.Core.ViewModel
             backup_action?.Invoke();
         }
 
-        public const string AskForBackupPreferenceKey = "ask_for_backup";
+        public const string BackupAfterRoutinePreferenceKey = "backup_after_routine";
         public bool TryAskForBackup(Action backup_action)
         {
             const int RoutineResultsBetweenBackups = 5;
@@ -284,10 +284,10 @@ namespace POLift.Core.ViewModel
             var rrs = database.Table<RoutineResult>()
                 .Where(rr => !rr.Deleted && rr.StartTime > last_backup_time);
 
-            foreach(RoutineResult rr in rrs)
+            /*foreach(RoutineResult rr in rrs)
             {
                 System.Diagnostics.Debug.WriteLine(rr.StartTime + " " + rr.ToString());
-            }
+            }*/
             int rr_count_since_last_backup = rrs.Count();
 
             string pretext = "";
@@ -305,15 +305,22 @@ namespace POLift.Core.ViewModel
 
             if (rr_count_since_last_backup >= RoutineResultsBetweenBackups)
             {
-                DialogService.DisplayConfirmationNeverShowAgain(
-                    pretext + 
-                    "Would you like to perform a backup now?", 
-                    AskForBackupPreferenceKey, 
-                    delegate
-                    {
-                        Backup(backup_action);
-                    });
-                return true;
+                bool ask = DialogService.KeyValueStorage.GetBoolean(
+                    DialogService.AskForKey(BackupAfterRoutinePreferenceKey), true);
+
+                if (ask)
+                {
+                    DialogService.DisplayConfirmationNeverShowAgain(
+                        pretext +
+                        "Would you like to perform a backup now?",
+                        BackupAfterRoutinePreferenceKey,
+                        delegate
+                        {
+                            Backup(backup_action);
+                        });
+                }
+                
+                return ask;
             }
             return false;
         }

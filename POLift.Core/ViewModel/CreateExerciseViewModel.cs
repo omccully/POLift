@@ -206,21 +206,6 @@ namespace POLift.Core.ViewModel
             }
         }
 
-        /*string _RestPeriodInput;
-        public string RestPeriodInput
-        {
-            get
-            {
-                return _RestPeriodInput;
-            }
-            set
-            {
-                System.Diagnostics.Debug.WriteLine("RestPeriodInput");
-                Set(() => RestPeriodInput, ref _RestPeriodInput, value);
-                UpdateExerciseDetails();
-            }
-        }*/
-
         string _RestPeriodMinutesInput;
         public string RestPeriodMinutesInput
         {
@@ -232,7 +217,6 @@ namespace POLift.Core.ViewModel
             {
                 Set(() => RestPeriodMinutesInput, ref _RestPeriodMinutesInput, value);
                 UpdateExerciseDetails();
-                // UpdateRestPeriodInputFromSplit();
             }
         }
 
@@ -247,7 +231,6 @@ namespace POLift.Core.ViewModel
             { 
                 Set(() => RestPeriodSecondsInput, ref _RestPeriodSecondsInput, value);
                 UpdateExerciseDetails();
-                //UpdateRestPeriodInputFromSplit();
             }
         }
 
@@ -280,17 +263,6 @@ namespace POLift.Core.ViewModel
                 RestPeriodSecondsInput = RestPeriodSecondsInput.PadLeft(2, '0');
             }
         }
-
-        /*void UpdateRestPeriodInputFromSplit()
-        {
-            try
-            {
-                int min = Int32.Parse(_RestPeriodMinutesInput);
-                int sec = Int32.Parse(_RestPeriodSecondsInput);
-                RestPeriodInput = (min * 60 + sec).ToString();
-            }
-            catch { }
-        }*/
 
         string _ConsecutiveSetsInput;
         public string ConsecutiveSetsInput

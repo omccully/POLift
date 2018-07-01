@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.cml.polift" android:versionName="2.6" android:installLocation="preferExternal" android:versionCode="28">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.cml.polift" android:versionName="2.7" android:installLocation="preferExternal" android:versionCode="29">
 	<!-- com.cml.polift -->
 	<uses-sdk android:minSdkVersion="14" android:targetSdkVersion="25" />
 	<uses-permission android:name="android.permission.VIBRATE" />
@@ -7,7 +7,6 @@
 	<uses-permission android:name="android.permission.INTERNET" />
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-  
 	<application android:allowBackup="true" android:label="@string/app_name" android:theme="@style/POLTheme" android:icon="@mipmap/polift_new">
 		<provider android:name="android.support.v4.content.FileProvider" android:authorities="com.cml.poliftprovider" android:exported="false" android:grantUriPermissions="true">
 			<meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/filepaths" />

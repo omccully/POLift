@@ -183,6 +183,11 @@ namespace POLift.Core.Service
             return false;
         }
 
+        public bool ShouldAskByBaseKey(string base_key)
+        {
+            return KeyValueStorage.GetBoolean(AskForKey(base_key), true);
+        }
+
         public void Dispose()
         {
             if (builders == null) return; // already disposed

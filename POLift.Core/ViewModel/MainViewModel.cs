@@ -215,7 +215,7 @@ namespace POLift.Core.ViewModel
         const string AskForShareRoutineResultKey = "ask_for_share_routine_result";
         public void AskForShareRoutineResult(IRoutineResult rr, Action share_action)
         {
-            
+            System.Diagnostics.Debug.WriteLine("AskForShareRoutineResult dialog");
             DialogService.DisplayConfirmationYesNotNowNever(
                 "You completed the routine. " +
                 "Would you like to share your results of this routine?",

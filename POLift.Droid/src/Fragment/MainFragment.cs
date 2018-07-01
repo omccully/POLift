@@ -177,8 +177,10 @@ namespace POLift.Droid
                         AndroidHelpers.BackupData(this.Activity);
                     });
 
-                    if(!backup_show)
+                    System.Diagnostics.Debug.WriteLine("backup_show = " + backup_show);
+                    if (!backup_show)
                     {
+                        System.Diagnostics.Debug.WriteLine("Vm.AskForShareRoutineResult");
                         int id = data.GetIntExtra("routine_result_id", -1);
 
                         Vm.AskForShareRoutineResult(id, delegate (IRoutineResult rr)
