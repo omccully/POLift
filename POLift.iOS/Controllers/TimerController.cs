@@ -62,7 +62,6 @@ namespace POLift.iOS.Controllers
                () => Vm.TimerState,
                () => this.TimerState));
 
-
             // button text
             bindings.Add(this.SetBinding(
                () => Vm.Add30SecButtonText,
@@ -72,6 +71,7 @@ namespace POLift.iOS.Controllers
                () => Vm.Sub30SecButtonText,
                () => Sub30SecButtonText));
 
+            Vm.RestoreState();
         }
 
         public string Add30SecButtonText

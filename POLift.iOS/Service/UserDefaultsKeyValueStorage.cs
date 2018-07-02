@@ -27,13 +27,36 @@ namespace POLift.iOS.Service
 
         public override string GetString(string key, string default_val = null)
         {
-            if (Defaults[key] == null) return default_val;
-            return Defaults.StringForKey(key);
+            //try
+           // {
+             if (Defaults[key] == null) return default_val;
+
+            //}
+            // catch(ArgumentNullException e)
+            //{
+            //   System.Diagnostics.Debug.WriteLine("ArgumentNullException getting string");
+            //    return null;
+            //}
+
+            string stored = Defaults.StringForKey(key);
+
+            return stored == NullString ? null : stored;
         }
 
+        public const string NullString = "polift_ud_null";
         public override KeyValueStorage SetValue(string key, string val)
         {
-            Defaults.SetString(val, key);
+            if(val == null)
+            {
+                //System.Diagnostics.Debug.WriteLine("Setting " + key + " = null");
+                //NSString ns_string = null;
+                Defaults.SetString(NullString, key);
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine("Setting " + key + " = " + val);
+                Defaults.SetString(val, key);
+            }
 
             return this;
         }

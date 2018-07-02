@@ -304,12 +304,21 @@ namespace POLift.Core.ViewModel
 
         public void SkipTimer()
         {
-            CancelTimer("Timer skipped " + System.Environment.NewLine +
-                 "Start your next set");
+            try
+            {
+                System.Diagnostics.Debug.WriteLine("SkipTimer()");
+                CancelTimer("Timer skipped " + System.Environment.NewLine +
+                     "Start your next set");
 
-            Vibrator?.Vibrate();
+                Vibrator?.Vibrate();
 
-            SaveState();
+                SaveState();
+            }
+            catch(Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine(e.ToString());
+                
+            }
         }
 
         RelayCommand _SkipTimerCommand;

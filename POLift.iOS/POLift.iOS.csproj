@@ -63,7 +63,8 @@
     <MtouchArch>ARMv7, ARM64</MtouchArch>
     <ConsolePause>false</ConsolePause>
     <CodesignKey>iPhone Distribution: Oscar McCully (S327K8X9MS)</CodesignKey>
-    <CodesignProvision>POLift iOS Distribution Profile</CodesignProvision>
+    <CodesignProvision>IAB POLift Distribution Profile</CodesignProvision>
+    <BuildIpa>true</BuildIpa>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Ad-Hoc|iPhone' ">
     <DebugType>none</DebugType>

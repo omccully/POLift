@@ -102,7 +102,7 @@ namespace POLift.iOS.Controllers
                     "are enabled for the POLift app. This will make sure that you " + 
                     "can regain access to your POLift data if your phone gets lost, stolen, or broken. " +
                     "This can be done in your iCloud settings.",
-                    SideMenuViewModel.AskForBackupPreferenceKey,
+                    SideMenuViewModel.BackupAfterRoutinePreferenceKey,
                     share_rr_action);
             }
             else
