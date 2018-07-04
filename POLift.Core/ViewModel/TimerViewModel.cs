@@ -335,6 +335,8 @@ namespace POLift.Core.ViewModel
         {
             AddSecCount++;
 
+            SetCountDownText(SecondsLeft);
+
             if (SecondsLeft <= 0)
             {
                 UpdateGUIByTimerState();
@@ -357,6 +359,8 @@ namespace POLift.Core.ViewModel
         public void Sub30Sec()
         {
             SubSecCount++;
+
+            SetCountDownText(SecondsLeft);            
 
             if (SecondsLeft <= 0)
             {

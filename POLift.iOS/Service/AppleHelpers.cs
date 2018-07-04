@@ -111,32 +111,45 @@ namespace POLift.iOS
                 .ObserveSourceEvent("EditingChanged");
         }
 
-        public static void AddDoneButtonToNumericKeyboard(this UITextField text_field)
+
+        static UIBarButtonItem DoneBarButton(UITextField text_field, UIBarButtonSystemItem but = UIBarButtonSystemItem.Done)
         {
-            UIToolbar toolbar = new UIToolbar(new RectangleF(0.0f, 0.0f, 50.0f, 44.0f));
-            var doneButton = new UIBarButtonItem(UIBarButtonSystemItem.Done, delegate
+            return new UIBarButtonItem(but, delegate
             {
                 text_field.ResignFirstResponder();
             });
+        }
 
-            toolbar.Items = new UIBarButtonItem[] {
+        public static void AddDoneButtonToNumericKeyboard(this UITextField text_field)
+        {
+            AddButtonToKeyboard(text_field, DoneBarButton(text_field));
+        }
+
+        public static void AddButtonToKeyboard(this UITextField text_field, UIBarButtonItem bar_but_item)
+        {
+            AddButtonsToKeyboard(text_field, new UIBarButtonItem[] {
                 new UIBarButtonItem (UIBarButtonSystemItem.FlexibleSpace),
-                doneButton
-            };
+                bar_but_item
+            });
+        }
+
+        public static void AddButtonsToKeyboard(this UITextField text_field, UIBarButtonItem[] bar_button_items)
+        {
+            UIToolbar toolbar = new UIToolbar(new RectangleF(0.0f, 0.0f, 50.0f, 44.0f));
+
+            toolbar.Items = bar_button_items;
 
             text_field.InputAccessoryView = toolbar;
         }
 
-        /*public static Binding TwoWayBinding(this UIViewController cont,
-             Expression<Func<string>> text_field, Expression<Func<string>> view_model_prop)
+        public static void AddSubmitCancelButtonsToNumericKeyboard(this UITextField text_field, EventHandler enter_action)
         {
-            //text_field..EditingChanged += (s, e) => { };
-
-            return cont.SetBinding<string, string>(
-                () => text_field.Text,
-                view_model_field,
-                BindingMode.TwoWay)
-                .ObserveSourceEvent("EditingChanged");
-        }*/
+            AddButtonsToKeyboard(text_field, new UIBarButtonItem[]
+            {
+                DoneBarButton(text_field, UIBarButtonSystemItem.Cancel),
+                new UIBarButtonItem(UIBarButtonSystemItem.FlexibleSpace),
+                new UIBarButtonItem("Submit", UIBarButtonItemStyle.Done, enter_action)
+            });
+        }
     }
 }
