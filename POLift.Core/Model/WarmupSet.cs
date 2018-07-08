@@ -33,7 +33,9 @@ namespace POLift.Core.Model
 
         public int GetRestPeriod(IExercise ex)
         {
-            return (ex.RestPeriodSeconds * PercentOfRestPeriod) / 100;
+            const int MaxRestPeriod = 90;
+            return Math.Min(MaxRestPeriod, 
+                (ex.RestPeriodSeconds * PercentOfRestPeriod) / 100);
         }
     }
 }

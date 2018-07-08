@@ -20,7 +20,9 @@ namespace POLift.Core.Model
 
         public int GetLastRestPeriod(IExercise ex)
         {
-            return (ex.RestPeriodSeconds * PercentLastRestPeriod) / 100;
+            const int MaxRestPeriod = 150;
+            return Math.Min(MaxRestPeriod,
+                (ex.RestPeriodSeconds * PercentLastRestPeriod) / 100);
         }
 
         public static IWarmupRoutine Default
