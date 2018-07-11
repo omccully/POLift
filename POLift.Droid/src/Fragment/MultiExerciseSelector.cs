@@ -27,14 +27,16 @@ namespace POLift.Droid
 
     public class MultiExerciseSelector
     {
-        Dictionary<IExercise, bool> ExercisesMap = 
+        // TODO: group exercises with the same rep count and rest period
+
+        Dictionary<IExercise, bool> ExerciseCheckedMap = 
             new Dictionary<IExercise, bool>();
 
         public string ExerciseIDs
         {
             get
             {
-                return ExercisesMap.Where(kvp => kvp.Value)
+                return ExerciseCheckedMap.Where(kvp => kvp.Value)
                     .Select(kvp => kvp.Key.ID).ToIDString();
             }
         }
@@ -43,15 +45,15 @@ namespace POLift.Droid
 
         public MultiExerciseSelector(IEnumerable<IExercise> exercises)
         {
-            foreach(IExercise ex in exercises)
+            foreach (IExercise ex in exercises)
             {
-                ExercisesMap.Add(ex, true);
+                if(ex.Usage > 1) ExerciseCheckedMap.Add(ex, true);
             }
         }
 
         public void AddViews(ViewGroup vg)
         {
-            foreach (KeyValuePair<IExercise, bool> pair in ExercisesMap)
+            foreach (KeyValuePair<IExercise, bool> pair in ExerciseCheckedMap)
             {
                 IExercise ex = pair.Key;
 
@@ -59,12 +61,12 @@ namespace POLift.Droid
                 cb.LayoutParameters = new ViewGroup.LayoutParams(
                     ViewGroup.LayoutParams.FillParent,
                     ViewGroup.LayoutParams.WrapContent);
-                cb.Text = $"{ex.MaxRepCount}r {ex.RestPeriodSeconds}s";
+                cb.Text = $"{ex.MaxRepCount}r {ex.RestPeriodSeconds.SecondsToClock()} ({ex.Usage - 1})";
                 cb.Checked = pair.Value;
                 cb.CheckedChange += delegate
                 {
                     System.Diagnostics.Debug.WriteLine(ex + " " + cb.Checked);
-                    ExercisesMap[ex] = cb.Checked;
+                    ExerciseCheckedMap[ex] = cb.Checked;
                     CheckedChanged.Invoke(this, new CheckBoxStateChangeEventArgs(cb));
                 };
                 vg.AddView(cb);
@@ -73,8 +75,8 @@ namespace POLift.Droid
 
         public bool Accepts(IExercise exercise)
         {
-            if (!ExercisesMap.ContainsKey(exercise)) return false;
-            return ExercisesMap[exercise];
+            if (!ExerciseCheckedMap.ContainsKey(exercise)) return false;
+            return ExerciseCheckedMap[exercise];
         }
 
         public List<IExercise> Filter(IEnumerable<IExercise> exercises)

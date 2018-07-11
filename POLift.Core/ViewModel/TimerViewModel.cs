@@ -76,14 +76,12 @@ namespace POLift.Core.ViewModel
 
         void UpdateGUIByTimerState()
         {
+            Sub30SecEnabled = TimerEnabled;
+            Add30SecEnabled = TimerEnabled;
+            SkipTimerEnabled = TimerEnabled;
+
             if (TimerEnabled && SecondsLeft > 0)
             {
-                Sub30SecEnabled = true;
-                Add30SecEnabled = true;
-                SkipTimerEnabled = true;
-
-                TimerRunningPositive = true;
-
                 TimerState = TimerState.RunningPositive;
 
                 TimerIsStartable = false;
@@ -91,12 +89,6 @@ namespace POLift.Core.ViewModel
             }
             else
             {
-                Sub30SecEnabled = false;
-                Add30SecEnabled = false;
-                SkipTimerEnabled = false;
-
-                TimerRunningPositive = false;
-
                 TimerState = TimerState.Elapsed;
 
                 TimerIsStartable = true;
@@ -118,7 +110,7 @@ namespace POLift.Core.ViewModel
         }
 
 
-        bool _TimerRunningPositive = false;
+      /*  bool _TimerRunningPositive = false;
         public bool TimerRunningPositive
         {
             get
@@ -129,7 +121,7 @@ namespace POLift.Core.ViewModel
             {
                 Set(ref _TimerRunningPositive, value);
             }
-        }
+        }*/
 
         string _TimerStatus;
         public string TimerStatus
@@ -337,11 +329,12 @@ namespace POLift.Core.ViewModel
 
             SetCountDownText(SecondsLeft);
 
-            if (SecondsLeft <= 0)
+            UpdateGUIByTimerState();
+
+            /*if (SecondsLeft <= 0)
             {
-                UpdateGUIByTimerState();
                 Vibrator?.Vibrate();
-            }
+            }*/
 
             SaveState();
         }
@@ -358,13 +351,15 @@ namespace POLift.Core.ViewModel
 
         public void Sub30Sec()
         {
+            if (SubSecCount >= 15) return;
             SubSecCount++;
 
-            SetCountDownText(SecondsLeft);            
+            SetCountDownText(SecondsLeft);
+
+            UpdateGUIByTimerState();
 
             if (SecondsLeft <= 0)
             {
-                UpdateGUIByTimerState();
                 Vibrator?.Vibrate();
             }
 

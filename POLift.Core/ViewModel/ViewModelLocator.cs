@@ -84,7 +84,6 @@ namespace POLift.Core.ViewModel
             //OrmGraph.SelectExerciseDifficultyViewModel = SelectExerciseDifficulty;
             OrmGraph.SelectExerciseGroupViewModel = SelectExerciseName;
 
-
             TimerService = new PclTimer();
         }
 
@@ -108,6 +107,7 @@ namespace POLift.Core.ViewModel
                 SideMenu.DialogService = value;
                 SelectExercise.DialogService = value;
                 CreateExercise.DialogService = value;
+                OrmGraph.DialogService = value;
             }
         }
 

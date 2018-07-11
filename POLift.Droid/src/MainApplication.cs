@@ -87,6 +87,8 @@ namespace POLift.Droid
             var nav = new NavigationService();
             SimpleIoc.Default.Register<INavigationService>(() => nav);
 
+            System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+            sw.Start();
             ViewModelLocator l = ViewModelLocator.Default;
             l.KeyValueStorage = new PreferencesKeyValueStorage(
                 PreferenceManager.GetDefaultSharedPreferences(this));
@@ -105,9 +107,12 @@ namespace POLift.Droid
             l.Vibrator = new AndroidVibrator(this);
 
             l.TimerService = new PclTimer();
+            // TODO: use SimpleIoc properly so that not all viewmodels are
+            // instantiated when first launch
 
             //l.TimerFinishedNotificationService = new NotificationService();
-
+            sw.Stop();
+            System.Diagnostics.Debug.WriteLine("VML time = " + sw.ElapsedMilliseconds);
             System.Diagnostics.Debug.WriteLine("OnCreate()end");
         }
 

@@ -32,6 +32,7 @@ namespace POLift.Droid
     using Core.Service;
     using Core.Helpers;
     using Core.ViewModel;
+    using Service;
 
     public class GraphFragment : Fragment
     {
@@ -82,7 +83,9 @@ namespace POLift.Droid
             plot_view.Background = Resources.GetDrawable(
                 Resource.Color.background_material_light);
 
-            
+            Vm.DialogService = new DialogService(
+                new DialogBuilderFactory(this.Activity),
+                ViewModelLocator.Default.KeyValueStorage);
 
             //plot_view.Foreground = Resources.GetDrawable(
             //    Resource.Color.background_material_dark);
@@ -145,14 +148,15 @@ namespace POLift.Droid
         }
 
 
-        MultiExerciseSelector ExSelector = null;
-        string last_exercise_ids = null;
+        static MultiExerciseSelector ExSelector = null;
+        static string last_exercise_ids = null;
         IEnumerable<IExercise> exercises = null;
 
         void InitializePlot(IExerciseGroup exercise_group)
         {
             if (String.IsNullOrWhiteSpace(exercise_group.ExerciseIDs)) return;
             if (frame_layout == null || plot_view.Parent != null) return;
+
 
             if(ExSelector == null || last_exercise_ids != exercise_group.ExerciseIDs)
             {

@@ -17,6 +17,7 @@ namespace POLift.Core.ViewModel
     {
         private readonly INavigationService navigationService;
         public readonly IPOLDatabase Database;
+        public DialogService DialogService;
         OrmGraph orm_graph;
 
         public IValueReturner<IExerciseDifficulty> SelectExerciseDifficultyViewModel;
@@ -42,7 +43,14 @@ namespace POLift.Core.ViewModel
                 ViewModelLocator.SelectExerciseGroupPageKey);
         }
 
-
+        const string TutorialOrmGrapheKey = "tutorial_orm_graph";
+        public void InfoUser()
+        {
+            DialogService.DisplayAcknowledgementOnce(
+                "To view the data used to construct this chart, " + 
+                "swipe from the right.", 
+                TutorialOrmGrapheKey);
+        }
 
         PlotModel _PlotModel;
         public PlotModel PlotModel
@@ -110,6 +118,8 @@ namespace POLift.Core.ViewModel
             PlotModel = orm_graph.CreatePlotModel(ex_group.Name, data);
 
             DataText = OrmGraph.DataSourceText(data);
+
+            InfoUser();
         }
 
         /*public void InitializePlot(int ed_id)
