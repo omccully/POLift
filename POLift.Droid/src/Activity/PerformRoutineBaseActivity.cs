@@ -199,6 +199,7 @@ namespace POLift.Droid
             {
                 InitializeAds();
             }
+            System.Diagnostics.Debug.WriteLine("ShowAds = " + LicenseManager.ShowAds);
         }
 
         TimerState _TimerState = TimerState.Skipped;
@@ -245,6 +246,7 @@ namespace POLift.Droid
 
         void InitializeAds()
         {
+            System.Diagnostics.Debug.WriteLine("InitializeAds");
             AdView ad_view = FindViewById<AdView>(Resource.Id.adView);
 
             ad_view.Visibility = ViewStates.Visible;
@@ -266,6 +268,7 @@ namespace POLift.Droid
 
 #if DEBUG
             mInterstitialAd.AdUnitId = Resources.GetString(Resource.String.interstitial_ad_unit_id_test);
+            //mInterstitialAd.AdUnitId = Resources.GetString(Resource.String.interstitial_ad_unit_id);
 #else
             mInterstitialAd.AdUnitId = Resources.GetString(Resource.String.interstitial_ad_unit_id);
 #endif
@@ -289,22 +292,28 @@ namespace POLift.Droid
 
         private void Ad_listener_AdLoaded(object sender, EventArgs e)
         {
+            System.Diagnostics.Debug.WriteLine("@@@@@@@@@@@@@@Ad_listener_AdLoaded");
             mInterstitialAd.Show();
         }
 
         Random randy = new Random();
         InterstitialAd mInterstitialAd;
-        protected void TryShowFullScreenAd()
+        protected bool TryShowFullScreenAd()
         {
+            System.Diagnostics.Debug.WriteLine("TryShowFullScreenAd");
             if (LicenseManager.ShowAds)
             {
                 if(randy.Next(4) == 0)
                 {
-#if !DEBUG
+                    System.Diagnostics.Debug.WriteLine("*************mInterstitialAd.LoadAd");
                     mInterstitialAd.LoadAd(new AdRequest.Builder().Build());
+#if !DEBUG
+                    //mInterstitialAd.LoadAd(new AdRequest.Builder().Build());
 #endif
+                    return true;
                 }
             }
+            return false;
         }
 
         protected abstract void ReportResultButton_Click(object sender, EventArgs e);

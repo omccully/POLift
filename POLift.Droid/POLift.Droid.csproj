@@ -227,10 +227,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="src\Activity\PerformRoutineListActivity.cs" />
     <Compile Include="src\Activity\SelectExerciseGroupActivity.cs" />
     <Compile Include="src\Activity\SelectProgramToDownloadActivity.cs" />
     <Compile Include="src\Adapter\ExerciseGroupAdapter.cs" />
     <Compile Include="src\Adapter\ExerciseGroupPagerAdapter.cs" />
+    <Compile Include="src\Adapter\ExerciseWithResultAdapter.cs" />
     <Compile Include="src\Fragment\MultiExerciseSelector.cs" />
     <Compile Include="src\MainApplication.cs" />
     <Compile Include="src\Activity\EditRoutineResultActivity.cs" />
@@ -356,6 +358,12 @@
       <SubType>Designer</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\FloatingShareButton.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\PerformRoutineList.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\PerformRoutineListItem.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>

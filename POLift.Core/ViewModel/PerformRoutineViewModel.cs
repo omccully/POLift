@@ -461,15 +461,15 @@ namespace POLift.Core.ViewModel
             }
         }
 
-        public void PromptUserForRating(Action rating_action)
+        public bool PromptUserForRating(Action rating_action)
         {
             const string ask_for_rating_pref_key = "ask_for_rating";
 
-            if (RoutineResult.ResultCount != 1) return;
+            if (RoutineResult.ResultCount != 1) return false;
 
             int rr_count = Database.Table<RoutineResult>().Count();
 
-            if (rr_count != 10 && rr_count < 15) return;
+            if (rr_count != 10 && rr_count < 15) return false;
 
             DialogService.DisplayConfirmationYesNotNowNever(
                 "Thank you for using POLift. Would you like to " +
@@ -483,7 +483,9 @@ namespace POLift.Core.ViewModel
             {
                 DialogService.KeyValueStorage
                     .SetValue(ask_for_rating_pref_key, false);
+                return true;
             }
+            return false;
         }
 
         bool ReportExerciseResult(float weight, int reps, Action action_if_completed = null)
@@ -603,6 +605,14 @@ namespace POLift.Core.ViewModel
             OnResultSubmittedWithoutCompleting();
 
             return true;
+        }
+
+        public void PromptUserForFeedback(Action action)
+        {
+            DialogService.DisplayAcknowledgementYesNotNowNeverByTimeSpan(
+                "We value feedback very highly. " +
+                "Would you like to visit our subreddit on Reddit to provide feedback about POLift?",
+                "reddit_feedback", TimeSpan.FromHours(20), action);
         }
 
         public void SubmitResultFromInput(Action action_if_completed = null)

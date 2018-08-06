@@ -20,6 +20,8 @@ namespace POLift.Core.Service
 
         void DisplayConfirmationYesNotNowNever(string message, string ask_for_key, Action action_if_yes);
 
+        void DisplayAcknowledgementYesNotNowNeverByTimeSpan(string message, string key, TimeSpan span, Action action_if_ok);
+
         void DisplayConfirmationYesNoYesNeverShowAgain(string message, string ask_for_key,
             Action action_if_yes, Action action_if_no = null);
     }

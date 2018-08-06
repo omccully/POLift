@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <TextView
+        android:text="Exercise 0/0: Exercise name"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/ExerciseDetailsTextView" />
+    <TextView
+        android:text="Start your next set"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/CountDownTextView"
+        android:gravity="center" />
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:text="-30 sec"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/Sub30SecButton"
+            android:layout_weight="1"
+            android:enabled="false" />
+        <Button
+            android:text="Skip timer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/SkipTimerButton"
+            android:layout_weight="1"
+            android:enabled="false" />
+        <Button
+            android:text="+30 sec"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/Add30SecButton"
+            android:layout_weight="1"
+            android:enabled="false" />
+    </LinearLayout>
+    <ListView
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/ExercisesListView" />
+</LinearLayout>

@@ -14,10 +14,18 @@ using Social;
 using POLift.iOS.Service;
 using POLift.Core.Service;
 
+using POLift.Core.ViewModel;
+
 namespace POLift.iOS
 {
     static class AppleHelpers
     {
+        public static void OpenHelpAndFeedback()
+        {
+            UIApplication.SharedApplication.OpenUrl(
+                new NSUrl(SideMenuViewModel.HelpUrl));
+        }
+
         public static void ShareRoutineResult(this UIViewController vc,
             IRoutineResult rr)
         {

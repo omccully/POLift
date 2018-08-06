@@ -160,6 +160,17 @@ namespace POLift.Core.Service
             builder.Show();
         }
 
+        public void DisplayAcknowledgementYesNotNowNeverByTimeSpan(string message, string key, TimeSpan span, Action action_if_ok)
+        {
+            string ask_for_key = AskForKey(key);
+            string last_asked_time = LastAskTimeKey(key);
+
+            DateTime last_asked = Helpers.UnixTimeToDateTime(KeyValueStorage.GetInteger(last_asked_time, 0));
+            if (DateTime.Now - last_asked < span) return; // too soon.
+
+            DisplayConfirmationYesNotNowNever(message, ask_for_key, action_if_ok);
+        }
+
         public bool DisplayAcknowledgementOnce(string message, string key, Action action_if_ok=null)
         {
             bool acknowledged = KeyValueStorage.GetBoolean(key, false);
@@ -209,6 +220,11 @@ namespace POLift.Core.Service
         public static string DefaultKey(string key)
         {
             return $"default_{key}";
+        }
+
+        public static string LastAskTimeKey(string key)
+        {
+            return $"last_ask_time_{key}";
         }
 
         void DefaultSettingTo(string key, bool default_val)

@@ -156,8 +156,13 @@ namespace POLift.Droid
 
         private void Vm_ResultSubmittedWithoutCompleting(object sender, EventArgs e)
         {
-            TryShowFullScreenAd();
-            PromptUserForRating();
+            if(!TryShowFullScreenAd())
+            {
+                if (!PromptUserForRating())
+                {
+                    PromptUserForFeedback();
+                }
+            }
         }
 
         const int EditExerciseRequestCode = 9851;
@@ -272,9 +277,17 @@ namespace POLift.Droid
             ReportResult();
         }
 
-        void PromptUserForRating()
+        void PromptUserForFeedback()
         {
-            Vm.PromptUserForRating(delegate
+            Vm.PromptUserForFeedback(delegate
+            {
+                StartActivity(AndroidHelpers.HelpAndFeedbackIntent());
+            });
+        }
+
+        bool PromptUserForRating()
+        {
+            return Vm.PromptUserForRating(delegate
             {
                 AndroidHelpers.NavigateToAppRating(this);
             });
@@ -342,6 +355,7 @@ namespace POLift.Droid
         {
             Log.Debug("POLift", "PerformWarmupActivity.OnDestroy()");
             Vm.NavigateSelectExercise = null;
+            Vm.ResultSubmittedWithoutCompleting -= Vm_ResultSubmittedWithoutCompleting;
             base.OnDestroy();
         }
     }

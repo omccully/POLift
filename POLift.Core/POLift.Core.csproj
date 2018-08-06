@@ -44,6 +44,7 @@
     <Compile Include="Model\ExerciseName.cs" />
     <Compile Include="Model\ExerciseResult.cs" />
     <Compile Include="Model\ExerciseSets.cs" />
+    <Compile Include="Model\ExerciseWithResult.cs" />
     <Compile Include="Model\ExternalProgram.cs" />
     <Compile Include="Model\Interfaces\IDatabaseObject.cs" />
     <Compile Include="Model\Interfaces\IDeletable.cs" />
@@ -103,6 +104,8 @@
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\OrmGraphViewModel.cs" />
     <Compile Include="ViewModel\PerformBaseViewModel.cs" />
+    <Compile Include="ViewModel\PerformRoutineListItemViewModel.cs" />
+    <Compile Include="ViewModel\PerformRoutineListViewModel.cs" />
     <Compile Include="ViewModel\PerformRoutineViewModel.cs" />
     <Compile Include="ViewModel\PerformWarmupViewModel.cs" />
     <Compile Include="ViewModel\SelectExerciseDifficultyViewModel.cs" />

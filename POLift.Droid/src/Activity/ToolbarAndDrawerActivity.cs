@@ -249,9 +249,7 @@ namespace POLift.Droid
 
         private void HelpAndFeedback_Click(object sender, EventArgs e)
         {
-            Intent intent = new Intent(Intent.ActionView);
-            intent.SetData(Android.Net.Uri.Parse("https://reddit.com/r/POLift/"));
-            StartActivity(intent);
+            StartActivity(AndroidHelpers.HelpAndFeedbackIntent());
         }
 
         private void GetFreeLiftingPrograms_Click(object sender, EventArgs e)

@@ -27,6 +27,9 @@ namespace POLift.iOS.Controllers
         {
         }
 
+        const string TestBannerAdId = "ca-app-pub-3940256099942544/2934735716";
+        const string BannerAdId = "ca-app-pub-1015422455885077/4098077945";
+
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
@@ -70,10 +73,11 @@ namespace POLift.iOS.Controllers
                 Console.WriteLine("Showing ad");
 
 #if DEBUG
-                AdBanner.AdUnitID = "ca-app-pub-3940256099942544/2934735716";
+                //AdBanner.AdUnitID = "ca-app-pub-3940256099942544/2934735716";
 #else
-                 AdBanner.AdUnitID = "ca-app-pub-1015422455885077/4098077945";
+                //AdBanner.AdUnitID = "ca-app-pub-1015422455885077/4098077945";
 #endif
+                AdBanner.AdUnitID = BannerAdId;
 
                 AdBanner.RootViewController = this;
 

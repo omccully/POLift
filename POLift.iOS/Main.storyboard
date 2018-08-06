@@ -597,7 +597,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Exercise name:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="3833" translatesAutoresizingMaskIntoConstraints="NO">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Exercise name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="3833" translatesAutoresizingMaskIntoConstraints="NO">
                                 <rect key="frame" x="12" y="30" width="200" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
@@ -637,8 +637,8 @@
                                     </mask>
                                 </variation>
                             </textField>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Rep count to trigger weight increase:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="3845" translatesAutoresizingMaskIntoConstraints="NO">
-                                <rect key="frame" x="12" y="98" width="331" height="21"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Rep count to trigger weight increase" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" id="3845" translatesAutoresizingMaskIntoConstraints="NO" adjustsLetterSpacingToFitWidth="YES" minimumFontSize="14">
+                                <rect key="frame" x="12" y="98" width="343" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -677,7 +677,7 @@
                                     </mask>
                                 </variation>
                             </textField>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Consecutive sets for weight increase:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="3847" translatesAutoresizingMaskIntoConstraints="NO">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Consecutive sets for weight increase" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="3847" translatesAutoresizingMaskIntoConstraints="NO">
                                 <rect key="frame" x="12" y="167" width="286" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
@@ -1028,7 +1028,9 @@
                                 <variation key="heightClass=regular-widthClass=compact" constant="9"/>
                             </constraint>
                             <constraint id="28424" firstItem="3566" firstAttribute="leadingMargin" secondItem="3845" secondAttribute="leading" constant="4"/>
-                            <constraint id="28425" firstItem="3566" firstAttribute="trailingMargin" secondItem="3845" secondAttribute="trailing" constant="16"/>
+                            <constraint id="28425" firstItem="3566" firstAttribute="trailingMargin" secondItem="3845" secondAttribute="trailing" constant="16">
+                                <variation key="heightClass=regular-widthClass=compact" constant="4"/>
+                            </constraint>
                             <constraint id="28427" firstItem="3846" firstAttribute="top" secondItem="3845" secondAttribute="bottom" constant="8"/>
                             <constraint id="28428" firstItem="3566" firstAttribute="leadingMargin" secondItem="3846" secondAttribute="leading" constant="4"/>
                             <constraint id="28430" firstItem="3847" firstAttribute="top" secondItem="3846" secondAttribute="bottom" constant="13">
@@ -1946,12 +1948,12 @@
                         <viewControllerLayoutGuide type="bottom" id="8003"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="8006">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="100"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="100"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Status" textAlignment="center" lineBreakMode="clip" baselineAdjustment="alignBaselines" id="8015" translatesAutoresizingMaskIntoConstraints="NO" numberOfLines="2" adjustsLetterSpacingToFitWidth="YES" minimumFontSize="12">
-                                <rect key="frame" x="8" y="2" width="296" height="50"/>
+                                <rect key="frame" x="17" y="2" width="342" height="50"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -1970,7 +1972,7 @@
                                 </variation>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="8045" translatesAutoresizingMaskIntoConstraints="NO">
-                                <rect key="frame" x="8" y="57" width="96.5" height="30"/>
+                                <rect key="frame" x="8" y="57" width="114.5" height="30"/>
                                 <state key="normal" title="-30 sec">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>

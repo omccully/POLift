@@ -106,7 +106,9 @@ namespace POLift.Core.Service
             {
                 using (StreamReader reponse_reader = new StreamReader(response_stream))
                 {
-                    return Int32.Parse(reponse_reader.ReadToEnd());
+                    int secs = Int32.Parse(reponse_reader.ReadToEnd());
+                    System.Diagnostics.Debug.WriteLine("seconds remaining in trial from server = " + secs);
+                    return secs;
                 }
             }
         }
@@ -119,15 +121,17 @@ namespace POLift.Core.Service
             }
             catch (Exception e)
             {
+                System.Diagnostics.Debug.WriteLine(e.ToString());
                 if (KeyValueStorage != null)
                 {
                     long first_launch = KeyValueStorage.GetInteger(TimeOfFirstLaunchKey, 0);
+                    System.Diagnostics.Debug.WriteLine("first_launch = " + first_launch);
 
                     if (first_launch != 0)
                     {
                         long trial_end_time = first_launch + TrialPeriodSeconds;
                         int sec_left = (int)(trial_end_time - Core.Service.Helpers.UnixTimeStamp());
-
+                        System.Diagnostics.Debug.WriteLine("trial_end_time = " + trial_end_time + ", sec_left = " + sec_left);
                         return sec_left;
                     }
                 }

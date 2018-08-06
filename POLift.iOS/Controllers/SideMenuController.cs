@@ -162,8 +162,7 @@ namespace POLift.iOS.Controllers
 
         private void HelpAndFeedback_Click(object sender, EventArgs e)
         {
-            UIApplication.SharedApplication.OpenUrl(
-                new NSUrl(SideMenuViewModel.HelpUrl));
+            AppleHelpers.OpenHelpAndFeedback();
         }
 
         private void BackupData_Click(object sender, EventArgs e)

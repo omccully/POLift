@@ -52,9 +52,11 @@ namespace POLift.iOS.Controllers
             base.ViewDidUnload();
         }
 
+
+        const string InterstitialAdId = "ca-app-pub-1015422455885077/8711276229";
         private void CreateAndLoadInterstitial()
         {
-            interstitial = new Interstitial("ca-app-pub-1015422455885077/8711276229");
+            interstitial = new Interstitial(InterstitialAdId);
 
             Request req = Request.GetDefaultRequest();
 #if DEBUG
@@ -80,10 +82,15 @@ namespace POLift.iOS.Controllers
         Random randy = new Random();
         private void BaseVm_ResultSubmittedWithoutCompleting(object sender, EventArgs e)
         {
-            TryShowFullScreenAd();
+            if (!TryShowFullScreenAd())
+            {
+                ResultSubmittedWithoutCompleting(sender, e);
+            }
         }
 
-        void TryShowFullScreenAd()
+        protected abstract void ResultSubmittedWithoutCompleting(object sender, EventArgs e);
+
+        bool TryShowFullScreenAd()
         {
             if (!ShowAds)
             {
@@ -97,6 +104,7 @@ namespace POLift.iOS.Controllers
                 {
                     Console.WriteLine("showing interstitial...");
                     interstitial.PresentFromRootViewController(this);
+                    return true;
                 }
                 else
                 {
@@ -107,6 +115,7 @@ namespace POLift.iOS.Controllers
             {
                 Console.WriteLine("ad wasn't ready");
             }
+            return false;
         }
     }
 }

@@ -39,20 +39,20 @@
 			<string>ask_for_start_next_routine</string>
 			<key>Type</key>
 			<string>PSToggleSwitchSpecifier</string>
-			<key>Title</key>
-			<string>Ask to start next routine on startup</string>
 			<key>DefaultValue</key>
 			<false/>
+			<key>Title</key>
+			<string>Ask start next routine on launch</string>
 		</dict>
 		<dict>
 			<key>Key</key>
 			<string>ask_for_share_routine_result</string>
 			<key>Type</key>
 			<string>PSToggleSwitchSpecifier</string>
-			<key>Title</key>
-			<string>Ask to share routine result when completed</string>
 			<key>DefaultValue</key>
 			<true/>
+			<key>Title</key>
+			<string>Ask share routine result when completed</string>
 		</dict>
 	</array>
 </dict>

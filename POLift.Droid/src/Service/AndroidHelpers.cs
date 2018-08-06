@@ -26,6 +26,13 @@ namespace POLift.Droid.Service
     public static class AndroidHelpers
     {
         //public static Intent 
+       
+        public static Intent HelpAndFeedbackIntent()
+        {
+            Intent intent = new Intent(Intent.ActionView);
+            intent.SetData(Android.Net.Uri.Parse("https://reddit.com/r/POLift/"));
+            return intent;
+        }
 
         public static void ShareRoutineResult(this Context context, IRoutineResult rr)
         {

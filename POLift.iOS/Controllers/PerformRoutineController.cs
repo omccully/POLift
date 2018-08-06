@@ -123,6 +123,22 @@ namespace POLift.iOS.Controllers
             Console.WriteLine("view load finished");
         }
 
+        protected void ResultSubmittedWithoutCompleting(object sender, EventArgs e)
+        {
+            bool asked_for_rating = Vm.PromptUserForRating(delegate
+            {
+                AppleHelpers.OpenRateApp();
+            });
+
+            if(!asked_for_rating)
+            {
+                Vm.PromptUserForFeedback(delegate
+                {
+                    AppleHelpers.OpenHelpAndFeedback();
+                });
+            }
+        }
+
         public override void ViewDidUnload()
         {
             Vm.ResultSubmittedWithoutCompleting -= Vm_ResultSubmittedWithoutCompleting;

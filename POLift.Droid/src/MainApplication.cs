@@ -68,17 +68,17 @@ namespace POLift.Droid
             string device_id = Settings.Secure.GetString(
                     ApplicationContext.ContentResolver,
                     Settings.Secure.AndroidId);
+
+            System.Diagnostics.Debug.WriteLine("DeviceID = " + device_id);
  
             //license_manager.BackupPreferences = 
             //    PreferenceManager.GetDefaultSharedPreferences(this);
 
             Database = C.ontainer.Resolve<IPOLDatabase>();
 
-            string id = "pub-1015422455885077";
-
             try
             {
-                MobileAds.Initialize(ApplicationContext, id);
+                MobileAds.Initialize(ApplicationContext, "ca-app-pub-1015422455885077~9023659423");
             }
             catch { }
 
