@@ -14,7 +14,6 @@ using System.IO;
 using System.Xml;
 using Android.Support.V4.View;
 
-using Microsoft.Practices.Unity;
 
 namespace POLift.Droid
 {

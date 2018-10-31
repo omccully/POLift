@@ -22,7 +22,6 @@ using OxyPlot.Axes;
 using OxyPlot.Series;
 using OxyPlot.Xamarin.Android;
 using System.IO;
-using Microsoft.Practices.Unity;
 
 using GalaSoft.MvvmLight.Helpers;
 
@@ -61,7 +60,7 @@ namespace POLift.Droid
             base.OnCreate(savedInstanceState);
 
             // Create your fragment here
-            //Database = C.ontainer.Resolve<IPOLDatabase>();
+            //Database = C.Database
             //orm_graph = new OrmGraph(Database);
 
 

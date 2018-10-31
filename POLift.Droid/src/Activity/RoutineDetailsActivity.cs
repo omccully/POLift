@@ -10,8 +10,6 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 
-using Microsoft.Practices.Unity;
-
 namespace POLift.Droid
 {
     using Core.Service;
@@ -29,7 +27,7 @@ namespace POLift.Droid
 
             // Create your application here
             SetContentView(Resource.Layout.RoutineDetails);
-            Database = C.ontainer.Resolve<IPOLDatabase>();
+            Database = C.Database;
 
             TextView DetailsTextView = FindViewById<TextView>(
                 Resource.Id.RoutineDetailsTextView);

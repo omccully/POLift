@@ -10,7 +10,6 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 
-using Microsoft.Practices.Unity;
 
 using GalaSoft.MvvmLight.Helpers;
 

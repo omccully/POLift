@@ -15,8 +15,6 @@ using Android.Telephony;
 using Android.Provider;
 using Android.Preferences;
 
-using Microsoft.Practices.Unity;
-
 using Plugin.InAppBilling;
 
 namespace POLift.Droid

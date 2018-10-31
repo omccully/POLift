@@ -11,8 +11,6 @@ using Android.Util;
 using Android.Views;
 using Android.Widget;
 
-using Microsoft.Practices.Unity;
-
 namespace POLift.Droid
 {
     using Service;

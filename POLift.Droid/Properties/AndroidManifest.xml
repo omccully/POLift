@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.cml.polift" android:versionName="2.9" android:installLocation="preferExternal" android:versionCode="30">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.cml.polift" android:versionName="3.0" android:installLocation="preferExternal" android:versionCode="31">
 	<!-- com.cml.polift -->
-	<uses-sdk android:minSdkVersion="14" android:targetSdkVersion="25" />
+	<uses-sdk android:minSdkVersion="14" android:targetSdkVersion="26" />
 	<uses-permission android:name="android.permission.VIBRATE" />
 	<uses-permission android:name="com.android.vending.BILLING" />
 	<uses-permission android:name="android.permission.INTERNET" />

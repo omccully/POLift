@@ -12,7 +12,7 @@ using Android.Views;
 using Android.Widget;
 using Android.Provider;
 
-using Microsoft.Practices.Unity;
+
 
 namespace POLift.Droid
 {
@@ -21,22 +21,18 @@ namespace POLift.Droid
 
     static class C
     {
-        public static UnityContainer ontainer { get; private set; }
-
         static string DatabaseFileName = "database.db3";
         static string DatabaseDirectory = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
         public static string DatabasePath = Path.Combine(DatabaseDirectory, DatabaseFileName);
+        public static IPOLDatabase Database;
 
         static C()
         {
             try
             {
-                ontainer = new UnityContainer();
-            
-                ontainer.RegisterInstance<IPOLDatabase>(
-                    new POLDatabase(
+                  Database = new POLDatabase(
                         new SQLite.Net.Platform.XamarinAndroid.SQLitePlatformAndroidN(),
-                        C.DatabasePath));
+                        C.DatabasePath);
             }
             catch(Exception e)
             {

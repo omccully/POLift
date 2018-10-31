@@ -15,7 +15,6 @@ using Android.Support.Compat;
 using Android.Support.V4.App;
 using Android.Preferences;
 
-using Microsoft.Practices.Unity;
 using TaskStackBuilder = Android.Support.V4.App.TaskStackBuilder;
 
 

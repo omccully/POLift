@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Text;
 using Android.Content;
 using Android.Runtime;
-using Microsoft.Practices.Unity;
 using Android.Preferences;
 using Android.Views.InputMethods;
 using Android.Text;
@@ -54,7 +53,7 @@ namespace POLift.Droid
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.CreateExercise);
 
-            Database = C.ontainer.Resolve<IPOLDatabase>();
+            Database = C.Database;
 
             ExerciseNameText = FindViewById<EditText>(Resource.Id.ExerciseNameText);
             RepRangeMaxText = FindViewById<EditText>(Resource.Id.RepRangeMaxText);

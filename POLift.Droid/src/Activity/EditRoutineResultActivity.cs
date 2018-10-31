@@ -4,7 +4,6 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
-using Microsoft.Practices.Unity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,7 +38,7 @@ namespace POLift.Droid
 
             int routine_result_id = Intent.GetIntExtra("routine_result_id", -1);
 
-            Database = C.ontainer.Resolve<IPOLDatabase>();
+            Database = C.Database;
 
             if(routine_result_id > 0)
             {

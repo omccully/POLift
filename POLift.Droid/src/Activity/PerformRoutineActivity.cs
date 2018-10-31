@@ -17,7 +17,6 @@ using Android.Views.InputMethods;
 
 using System.Diagnostics;
 
-using Microsoft.Practices.Unity;
 
 using GalaSoft.MvvmLight.Helpers;
 

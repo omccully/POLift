@@ -16,8 +16,6 @@ using Android.Util;
 
 using Newtonsoft.Json;
 
-using Microsoft.Practices.Unity;
-
 namespace POLift.Droid
 {
     using Service;

@@ -17,8 +17,6 @@ using Android.Util;
 using Plugin.InAppBilling;
 using Plugin.InAppBilling.Abstractions;
 
-using Microsoft.Practices.Unity;
-
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Threading;
 using GalaSoft.MvvmLight.Views;
@@ -70,11 +68,11 @@ namespace POLift.Droid
                     Settings.Secure.AndroidId);
 
             System.Diagnostics.Debug.WriteLine("DeviceID = " + device_id);
- 
+
             //license_manager.BackupPreferences = 
             //    PreferenceManager.GetDefaultSharedPreferences(this);
 
-            Database = C.ontainer.Resolve<IPOLDatabase>();
+            Database = C.Database;
 
             try
             {

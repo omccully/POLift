@@ -26,8 +26,6 @@ using ActionBarDrawerToggle = Android.Support.V7.App.ActionBarDrawerToggle;
 using FragmentManager = Android.App.FragmentManager;
 using FragmentTransaction = Android.App.FragmentTransaction;
 
-using Microsoft.Practices.Unity;
-
 namespace POLift.Droid
 {
     using Service;
@@ -63,7 +61,7 @@ namespace POLift.Droid
             // Create your application here
             SetContentView(Resource.Layout.Drawer);
 
-            Database = C.ontainer.Resolve<IPOLDatabase>();
+            Database = C.Database;
 
             _DrawerLayout = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
             DrawerListView = FindViewById<ListView>(Resource.Id.left_drawer);

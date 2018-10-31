@@ -11,8 +11,6 @@ using Android.Views;
 using Android.Widget;
 using Android.Util;
 
-using Microsoft.Practices.Unity;
-
 using System.Diagnostics;
 
 using GalaSoft.MvvmLight.Helpers;
