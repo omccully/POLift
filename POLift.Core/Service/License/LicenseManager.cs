@@ -13,63 +13,28 @@ namespace POLift.Core.Service
 {
     public class LicenseManager : ILicenseManager
     {
-        public string ProductID { get; set; } = "polift_license";
-
-        public const int TrialPeriodDays = 15;
-        public const int TrialPeriodSeconds = TrialPeriodDays * 86400;
-
         const string HasLicenseConfirmedKey = "license_manager.has_licence_confirmed";
-        const string TimeOfFirstLaunchKey = "license_manager.first_launch_time";
+        public string ProductID { get; set; } = "polift_license";
 
         public readonly string DeviceID;
 
         public bool ShowAds { get; set; } = false;
 
-        string LicenseLookupURL
-        {
-            get
-            {
-                string device_id_encoded = WebUtility.UrlEncode(DeviceID);
-                string domain = "polift-app.com";
-                string path = $"polift/check_license.php?device_id={device_id_encoded}";
-                return $"http://{domain}/{path}";
-            }
-        }
-
-        KeyValueStorage _KeyValueStorage;
-        public KeyValueStorage KeyValueStorage
-        {
-            get
-            {
-                return _KeyValueStorage;
-            }
-            set
-            {
-                _KeyValueStorage = value;
-                if (value != null)
-                {
-                    if(value.GetInteger(TimeOfFirstLaunchKey, 0) == 0)
-                    {
-                        // first launch time was never set
-
-                        value.SetValue(TimeOfFirstLaunchKey,
-                            (int)Helpers.UnixTimeStamp());
-                    }
-                }
-            }
-        }
+        ITrialPeriodSource TrialPeriodSource;
+        public KeyValueStorage KeyValueStorage { get; set; }
 
         public LicenseManager(string device_id, KeyValueStorage kvs = null)
         {
             this.DeviceID = device_id;
 
-            lazy_SecondsRemainingInTrial = new Lazy<Task<int>>(
-                SecondsRemainingInTrialFromServer_NotCached);
-
             lazy_CheckLicense = new Lazy<Task<bool>>(
                 CheckLicenseStrict_NotCached);
 
             KeyValueStorage = kvs;
+
+            ITrialPeriodSource CachedTrialPeriodSource = new TrialPeriodSourceCacher(
+                new CloudServiceTrialPeriodSource(device_id));
+            TrialPeriodSource = new TrialPeriodSourceOfflineFailover(CachedTrialPeriodSource, kvs);
 
 #if DEBUG
             CrossInAppBilling.Current.InTestingMode = true;
@@ -81,68 +46,9 @@ namespace POLift.Core.Service
             return (await SecondsRemainingInTrial()) > 0;
         }
 
-        Lazy<Task<int>> lazy_SecondsRemainingInTrial;
-        private async Task<int> SecondsRemainingInTrialFromServer_NotCached()
-        {
-            WebRequest web_request = HttpWebRequest.Create(LicenseLookupURL);
-            //web_request.Timeout = 3000;
-            web_request.Proxy = null;
-
-            System.Diagnostics.Debug.WriteLine("Querying license server");
-            Task<WebResponse> response_task = web_request.GetResponseAsync();
-
-            // force a 4000 ms timeout because something weird was happening
-            if (await Task.WhenAny(response_task, Task.Delay(4000)) != response_task)
-            {
-                // timeout
-                System.Diagnostics.Debug.WriteLine("await timeout");
-                throw new TimeoutException();
-            }
-            System.Diagnostics.Debug.WriteLine("Received response from license server");
-
-            WebResponse web_response = await response_task;
-
-            using (Stream response_stream = web_response.GetResponseStream())
-            {
-                using (StreamReader reponse_reader = new StreamReader(response_stream))
-                {
-                    int secs = Int32.Parse(reponse_reader.ReadToEnd());
-                    System.Diagnostics.Debug.WriteLine("seconds remaining in trial from server = " + secs);
-                    return secs;
-                }
-            }
-        }
-
-        public async Task<int> SecondsRemainingInTrialInner()
-        {
-            try
-            {
-                return await lazy_SecondsRemainingInTrial.Value;
-            }
-            catch (Exception e)
-            {
-                System.Diagnostics.Debug.WriteLine(e.ToString());
-                if (KeyValueStorage != null)
-                {
-                    long first_launch = KeyValueStorage.GetInteger(TimeOfFirstLaunchKey, 0);
-                    System.Diagnostics.Debug.WriteLine("first_launch = " + first_launch);
-
-                    if (first_launch != 0)
-                    {
-                        long trial_end_time = first_launch + TrialPeriodSeconds;
-                        int sec_left = (int)(trial_end_time - Core.Service.Helpers.UnixTimeStamp());
-                        System.Diagnostics.Debug.WriteLine("trial_end_time = " + trial_end_time + ", sec_left = " + sec_left);
-                        return sec_left;
-                    }
-                }
-
-                throw e;
-            }
-        }
-
         public async Task<int> SecondsRemainingInTrial()
         {
-            int result = await SecondsRemainingInTrialInner();
+            int result = await TrialPeriodSource.SecondsRemainingInTrial();
             if (result <= 0)
             {
                 ShowAds = true;
