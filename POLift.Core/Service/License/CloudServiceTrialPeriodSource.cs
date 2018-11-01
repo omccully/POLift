@@ -41,7 +41,9 @@ namespace POLift.Core.Service
 
             bool success = await signal.WaitAsync(Timeout);
 
-            if(!success)
+            serviceClient.CloseAsync();
+
+            if (!success)
             {
                 throw new Exception("Cloud service request timed out after " +
                     Timeout.TotalSeconds + " seconds");
