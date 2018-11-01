@@ -4,6 +4,7 @@ using POLift.Core.Model;
 using POLift.Core.Service;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -46,17 +47,28 @@ namespace POLift.Core.ViewModel
             }
         }
 
-
-        public async Task RefreshProgramsList()
+        public void RefreshProgramsList()
         {
-            try
+            var serviceClient = new POLiftCloudService.ServiceClient();
+            serviceClient.GetAllLiftingProgramsCompleted += (o, e) =>
             {
-                Programs = await ExternalProgram.QueryProgramsList();
-            }
-            catch
-            {
-                Toaster?.DisplayError("Error getting programs list");
-            }
+                serviceClient.CloseAsync();
+
+                if (e.Error != null)
+                {
+                    Toaster?.DisplayError("Error getting programs list");
+                    return;
+                }
+
+                Programs = e.Result.Select(lp => new ExternalProgram()
+                {
+                    title = lp.Title,
+                    description = lp.Description,
+                    file = lp.FileName
+                }).ToArray();
+            };
+
+            serviceClient.GetAllLiftingProgramsAsync();
         }
 
         public void SelectExternalProgram(ExternalProgram program, string temp_dir = "", Action go_back_action = null)
@@ -72,29 +84,44 @@ namespace POLift.Core.ViewModel
                 });
         }
 
-        async Task ImportProgramAsync(ExternalProgram program, string temp_dir = "", Action go_back_action = null)
+        void ImportProgramAsync(ExternalProgram program, string temp_dir = "", Action go_back_action = null)
         {
-            try
-            {
-                System.Diagnostics.Debug.WriteLine("ImportFromUrlAsync(" + program.DownloadUrl);
-                
-                await Service.Helpers.ImportFromUrlAsync(program.DownloadUrl, 
-                    Database, temp_dir, FileOperations, false);
+            System.Diagnostics.Debug.WriteLine("ImportFromStream(" + program.file);
 
-                if(go_back_action == null)
-                {
-                    navigationService.GoBack();
-                }
-                else
-                {
-                    go_back_action();
-                }
-            }
-            catch(Exception e)
+            var serviceClient = new POLiftCloudService.ServiceClient();
+            EventHandler<POLiftCloudService.DownloadLiftingProgramCompletedEventArgs> event_handler = null;
+            event_handler = (o, e) =>
             {
-                System.Diagnostics.Debug.WriteLine(e);
-                Toaster?.DisplayError("Error importing program: " + e.Message);
-            }
+                try
+                {
+                    if (e.Error != null) throw e.Error;
+
+                    Service.Helpers.ImportFromStream(new MemoryStream(e.Result), Database, temp_dir, FileOperations, false);
+
+                    if (go_back_action == null)
+                    {
+                        navigationService.GoBack();
+                    }
+                    else
+                    {
+                        go_back_action();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine(ex);
+                    Toaster?.DisplayError("Error importing program: " + ex.Message);
+                }
+                serviceClient.DownloadLiftingProgramCompleted -= event_handler;
+                serviceClient.CloseAsync();
+            };
+
+            serviceClient.DownloadLiftingProgramCompleted += event_handler;
+
+            serviceClient.DownloadLiftingProgramAsync(program.file);
+                
+            //await Service.Helpers.ImportFromUrlAsync(program.DownloadUrl, 
+            //    Database, temp_dir, FileOperations, false);
         }
     }
 }

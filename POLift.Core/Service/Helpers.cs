@@ -298,15 +298,33 @@ namespace POLift.Core.Service
             }
         }*/
 
-        public static async Task ImportFromUrlAsync(string url, IPOLDatabase Database, string temp_dir, IFileOperations fops, bool full=true)
+
+        /*
+    public static async Task ImportFromUrlAsync(string url, IPOLDatabase Database, string temp_dir, IFileOperations fops, bool full=true)
+    {
+        const string ImportFile = "database-import.db3";
+        string ImportFilePath = Path.Combine(temp_dir, ImportFile);
+
+        using (Stream response_stream = await HttpQueryStreamAsync(url))
+        {
+            fops.Write(ImportFilePath, response_stream);
+        }
+
+        ImportDatabaseFromLocalFile(ImportFilePath, Database, full);
+
+        try
+        {
+            fops.Delete(ImportFilePath);
+        }
+        catch { }
+    }*/
+
+        public static void ImportFromStream(Stream response_stream, IPOLDatabase Database, string temp_dir, IFileOperations fops, bool full = true)
         {
             const string ImportFile = "database-import.db3";
             string ImportFilePath = Path.Combine(temp_dir, ImportFile);
 
-            using (Stream response_stream = await HttpQueryStreamAsync(url))
-            {
-                fops.Write(ImportFilePath, response_stream);
-            }
+            fops.Write(ImportFilePath, response_stream);
 
             ImportDatabaseFromLocalFile(ImportFilePath, Database, full);
 
@@ -315,6 +333,14 @@ namespace POLift.Core.Service
                 fops.Delete(ImportFilePath);
             }
             catch { }
+        }
+
+        public static async Task ImportFromUrlAsync(string url, IPOLDatabase Database, string temp_dir, IFileOperations fops, bool full = true)
+        {
+            using (Stream response_stream = await HttpQueryStreamAsync(url))
+            {
+                ImportFromStream(response_stream, Database, temp_dir, fops, full);
+            }
         }
 
         public static void ImportDatabaseFromLocalFile(string local_file, 
