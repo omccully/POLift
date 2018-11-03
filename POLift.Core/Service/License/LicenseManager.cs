@@ -34,7 +34,8 @@ namespace POLift.Core.Service
 
             ITrialPeriodSource CachedTrialPeriodSource = new TrialPeriodSourceCacher(
                 new CloudServiceTrialPeriodSource(device_id));
-            TrialPeriodSource = new TrialPeriodSourceOfflineFailover(CachedTrialPeriodSource, kvs);
+            TrialPeriodSource = 
+                new TrialPeriodSourceOfflineFailover(CachedTrialPeriodSource, kvs);
 
 #if DEBUG
             CrossInAppBilling.Current.InTestingMode = true;
@@ -49,6 +50,7 @@ namespace POLift.Core.Service
         public async Task<int> SecondsRemainingInTrial()
         {
             int result = await TrialPeriodSource.SecondsRemainingInTrial();
+            System.Diagnostics.Debug.WriteLine("Final SecondsRemainingInTrial Result = " + result);
             if (result <= 0)
             {
                 ShowAds = true;

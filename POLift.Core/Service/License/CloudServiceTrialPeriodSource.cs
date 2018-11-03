@@ -10,7 +10,7 @@ namespace POLift.Core.Service
     class CloudServiceTrialPeriodSource : ITrialPeriodSource
     {
         string DeviceId;
-        TimeSpan Timeout = TimeSpan.FromSeconds(15);
+        public TimeSpan Timeout { get; set; } = TimeSpan.FromSeconds(12);
 
         public CloudServiceTrialPeriodSource(string deviceId)
         {
@@ -26,27 +26,37 @@ namespace POLift.Core.Service
         {
             SemaphoreSlim signal = new SemaphoreSlim(0, 1);
 
-            POLiftCloudService.ServiceClient serviceClient = 
+            POLiftCloudService.ServiceClient serviceClient =
                 new POLiftCloudService.ServiceClient();
-            TimeSpan result;
+            serviceClient.Endpoint.Binding.SendTimeout = Timeout;
 
-            serviceClient.TimeLeftInTrialCompleted += (o, e) => 
+            TimeSpan result;
+            Exception exception = null;
+
+            serviceClient.TimeLeftInTrialCompleted += (o, e) =>
             {
-                if (e.Error != null) throw e.Error;
-                result = e.Result;
+                if (e.Error != null)
+                {
+                    exception = e.Error;
+                }
+                else
+                {
+                    result = e.Result;
+                }
+
                 signal.Release();
+
+                serviceClient.CloseAsync();
             };
-      
+
             serviceClient.TimeLeftInTrialAsync(DeviceId);
 
-            bool success = await signal.WaitAsync(Timeout);
+            bool success = await signal.WaitAsync(Timeout + TimeSpan.FromSeconds(10));
 
-            serviceClient.CloseAsync();
-
-            if (!success)
+            if (!success || exception != null)
             {
                 throw new Exception("Cloud service request timed out after " +
-                    Timeout.TotalSeconds + " seconds");
+                   Timeout.TotalSeconds + " seconds");
             }
 
             return result;

@@ -181,8 +181,10 @@ namespace POLift.Core.ViewModel
                     return $" (expired {days_left} day{plur} ago)";
                 }
             }
-            catch
+            catch(Exception e)
             {
+                System.Diagnostics.Debug.WriteLine("Error determining trial period: " +
+                    e.ToString() + "\n --- end---");
                 return "";
             }
         }

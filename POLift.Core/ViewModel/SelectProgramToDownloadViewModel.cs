@@ -47,18 +47,43 @@ namespace POLift.Core.ViewModel
             }
         }
 
+        bool _IsLoading = false;
+        public bool IsLoading
+        {
+            get
+            {
+                return _IsLoading;
+            }
+            set
+            {
+                Set(ref _IsLoading, value);
+            }
+        }
+
+       TimeSpan WcfTimeout = TimeSpan.FromSeconds(12);
         public void RefreshProgramsList()
         {
+            Programs = new ExternalProgram[] { new ExternalProgram() { title = "Loading..." } };
+
+            System.Diagnostics.Debug.WriteLine("RefreshProgramsList()");
             var serviceClient = new POLiftCloudService.ServiceClient();
+            serviceClient.Endpoint.Binding.OpenTimeout = WcfTimeout;
+            serviceClient.Endpoint.Binding.SendTimeout = WcfTimeout;
+
             serviceClient.GetAllLiftingProgramsCompleted += (o, e) =>
             {
+                System.Diagnostics.Debug.WriteLine("GetAllLiftingProgramsCompleted");
+   
                 serviceClient.CloseAsync();
 
                 if (e.Error != null)
                 {
                     Toaster?.DisplayError("Error getting programs list");
+                    System.Diagnostics.Debug.WriteLine("Error getting programs list");
                     return;
                 }
+
+                System.Diagnostics.Debug.WriteLine("GetAllLiftingProgramsCompleted " + e.Result);
 
                 Programs = e.Result.Select(lp => new ExternalProgram()
                 {
@@ -68,11 +93,14 @@ namespace POLift.Core.ViewModel
                 }).ToArray();
             };
 
+            System.Diagnostics.Debug.WriteLine("serviceClient.GetAllLiftingProgramsAsync()");
             serviceClient.GetAllLiftingProgramsAsync();
         }
 
         public void SelectExternalProgram(ExternalProgram program, string temp_dir = "", Action go_back_action = null)
         {
+            if (program.file == null) return;
+
             System.Diagnostics.Debug.WriteLine("SelectExternalProgram");
             DialogService?.DisplayConfirmation("Are you sure you want to import the routines " +
                 "and exercises for the " + program.title + " lifting program?",
@@ -89,12 +117,13 @@ namespace POLift.Core.ViewModel
             System.Diagnostics.Debug.WriteLine("ImportFromStream(" + program.file);
 
             var serviceClient = new POLiftCloudService.ServiceClient();
-            EventHandler<POLiftCloudService.DownloadLiftingProgramCompletedEventArgs> event_handler = null;
-            event_handler = (o, e) =>
+            serviceClient.Endpoint.Binding.SendTimeout = WcfTimeout;
+
+            serviceClient.DownloadLiftingProgramCompleted += (o, e) =>
             {
                 try
                 {
-                    if (e.Error != null) throw e.Error;
+                    if (e.Error != null) throw e.Error; // this is caught later on in the event
 
                     Service.Helpers.ImportFromStream(new MemoryStream(e.Result), Database, temp_dir, FileOperations, false);
 
@@ -112,11 +141,9 @@ namespace POLift.Core.ViewModel
                     System.Diagnostics.Debug.WriteLine(ex);
                     Toaster?.DisplayError("Error importing program: " + ex.Message);
                 }
-                serviceClient.DownloadLiftingProgramCompleted -= event_handler;
+
                 serviceClient.CloseAsync();
             };
-
-            serviceClient.DownloadLiftingProgramCompleted += event_handler;
 
             serviceClient.DownloadLiftingProgramAsync(program.file);
                 

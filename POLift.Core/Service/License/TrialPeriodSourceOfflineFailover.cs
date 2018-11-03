@@ -8,7 +8,6 @@ namespace POLift.Core.Service
 {
     class TrialPeriodSourceOfflineFailover : ITrialPeriodSource
     {
-        
         const string TimeOfFirstLaunchKey = "license_manager.first_launch_time";
 
         // assumptions made about trial period
@@ -44,22 +43,24 @@ namespace POLift.Core.Service
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine(e.ToString());
-                if (KeyValueStorage != null)
+                System.Diagnostics.Debug.WriteLine("Caught error, using failover: " + e.ToString() + 
+                    "\n----------end---------");
+
+                long first_launch = KeyValueStorage.GetInteger(TimeOfFirstLaunchKey, 0);
+                System.Diagnostics.Debug.WriteLine("first_launch = " + first_launch);
+
+                if (first_launch != 0)
                 {
-                    long first_launch = KeyValueStorage.GetInteger(TimeOfFirstLaunchKey, 0);
-                    System.Diagnostics.Debug.WriteLine("first_launch = " + first_launch);
-
-                    if (first_launch != 0)
-                    {
-                        long trial_end_time = first_launch + TrialPeriodSeconds;
-                        int sec_left = (int)(trial_end_time - Core.Service.Helpers.UnixTimeStamp());
-                        System.Diagnostics.Debug.WriteLine("trial_end_time = " + trial_end_time + ", sec_left = " + sec_left);
-                        return sec_left;
-                    }
+                    long trial_end_time = first_launch + TrialPeriodSeconds;
+                    int sec_left = (int)(trial_end_time - Core.Service.Helpers.UnixTimeStamp());
+                    System.Diagnostics.Debug.WriteLine("trial_end_time = " + trial_end_time + ", sec_left = " + sec_left);
+                    return sec_left;
                 }
-
-                throw e;
+                else
+                {
+                    KeyValueStorage.SetValue(TimeOfFirstLaunchKey, Helpers.UnixTimeStamp());
+                    return TrialPeriodSeconds;
+                }
             }
         }
 
