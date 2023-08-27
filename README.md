@@ -14,4 +14,10 @@ POLift has many innovative features not commonly found in most workout apps:
 
 More information can be found at http://polift-app.com/
 
+## Related Repositories
+
+- [POLift-LandingSite](https://github.com/omccully/POLift-LandingSite) - Code for the landing page (http://polift-app.com/)
+
+## Demo
+
 ![Phone demo](/phone.png)
